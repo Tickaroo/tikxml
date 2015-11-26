@@ -2,6 +2,7 @@
 A fast xml parser for android (and java)
 
 # Work in Progress
+[![Build Status](https://travis-ci.org/Tickaroo/tikxml.svg?branch=master)](https://travis-ci.org/Tickaroo/tikxml)
 
 # License
 ```
