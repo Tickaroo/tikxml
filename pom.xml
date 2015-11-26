@@ -137,52 +137,6 @@
                 </executions>
             </plugin>
 
-
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>xml-maven-plugin</artifactId>
-                <version>1.0</version>
-                <configuration>
-                    <transformationSets>
-                        <transformationSet>
-                            <!-- Configures the source directory of XML files. -->
-                            <dir>${project.build.directory}/findbugs</dir>
-                            <!-- Configures the directory in which the FindBugs report is written.-->
-                            <outputDir>${project.build.directory}/findbugs</outputDir>
-                            <!-- Selects the used stylesheet. -->
-                            <!-- <stylesheet>fancy-hist.xsl</stylesheet> -->
-                            <stylesheet>default.xsl</stylesheet>
-                            <!--<stylesheet>plain.xsl</stylesheet>-->
-                            <!--<stylesheet>fancy.xsl</stylesheet>-->
-                            <!--<stylesheet>summary.xsl</stylesheet>-->
-                            <fileMappers>
-                                <!-- Configures the file extension of the output files. -->
-                                <fileMapper
-                                        implementation="org.codehaus.plexus.components.io.filemappers.FileExtensionMapper">
-                                    <targetExtension>.html</targetExtension>
-                                </fileMapper>
-                            </fileMappers>
-                        </transformationSet>
-                    </transformationSets>
-                </configuration>
-                <executions>
-                    <!-- Ensures that the XSLT transformation is run when the project is compiled. -->
-                    <execution>
-                        <phase>compile</phase>
-                        <goals>
-                            <goal>transform</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <dependencies>
-                    <dependency>
-                        <groupId>com.google.code.findbugs</groupId>
-                        <artifactId>findbugs</artifactId>
-                        <version>3.0.0</version>
-                    </dependency>
-                </dependencies>
-            </plugin>
-
         </plugins>
     </build>
 
