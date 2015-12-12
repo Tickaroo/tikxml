@@ -1,0 +1,85 @@
+/*
+ * Copyright (C) 2015 Tickaroo
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package com.tickaroo.tikxml;
+
+/**
+ * Lexical scoping elements within a XML reader or writer.
+ *
+ * @author Hannes Dorfmann
+ * @since 1.0
+ */
+final class XmlScope {
+
+  /** No object or array has been started. */
+  static final int EMPTY_DOCUMENT = 0;
+
+  /** A document at least one object */
+  static final int NONEMPTY_DOCUMENT = 1;
+
+  /** We are in the opening xml tag like {@code <element>} */
+  static final int ELEMENT_OPENING = 2;
+
+  /** We are in the scope of reading attributes of a given element */
+  static final int ELEMENT_ATTRIBUTE = 3;
+
+  /**
+   * We are in an elment's content (between opening and closing xml element tag) like {@code
+   * <element>HERE WE ARE</element>}
+   */
+  static final int ELEMENT_CONTENT = 4;
+
+  /**
+   * A document that's been closed and cannot be accessed.
+   */
+  static final int CLOSED = 8;
+
+
+  /**
+   * Renders the path in a JSON document to a string. The {@code pathNames} and {@code pathIndices}
+   * parameters corresponds directly to stack: At indices where the stack contains an object
+   * (EMPTY_OBJECT, DANGLING_NAME or NONEMPTY_OBJECT), pathNames contains the name at this scope.
+   * Where it contains an array (EMPTY_ARRAY, NONEMPTY_ARRAY) pathIndices contains the current index
+   * in that array. Otherwise the value is undefined, and we take advantage of that by incrementing
+   * pathIndices when doing so isn't useful.
+   */
+  static String getPath(int stackSize, int[] stack, String[] pathNames, int[] pathIndices) {
+    StringBuilder result = new StringBuilder();
+    for (int i = 0, size = stackSize; i < size; i++) {
+      switch (stack[i]) {
+        case ELEMENT_OPENING:
+        case ELEMENT_CONTENT:
+          result.append('/');
+          if (pathNames[i] != null) {
+            result.append(pathNames[i]);
+          }
+          break;
+
+        case ELEMENT_ATTRIBUTE:
+          if (pathNames[i] != null) {
+            result.append("[@");
+            result.append(pathNames[i]);
+            result.append(']');
+          }
+          break;
+        case NONEMPTY_DOCUMENT:
+        case EMPTY_DOCUMENT:
+        case CLOSED:
+          break;
+      }
+    }
+    return result.toString();
+  }
+}
