@@ -121,6 +121,8 @@ public class XmlReader implements Closeable {
       case PEEKED_DOUBLE_QUOTED:
       case PEEKED_SINGLE_QUOTED:
         return XmlToken.ATTRIBUTE_VALUE;
+      case PEEKED_ELEMENT_TEXT_CONTENT:
+        return XmlToken.ELEMENT_TEXT_CONTENT;
       default:
         throw new AssertionError();
     }
@@ -201,6 +203,25 @@ public class XmlReader implements Closeable {
 
     } else if (peekStack == XmlScope.ELEMENT_CONTENT) {
 
+      int c = nextNonWhitespace(true);
+
+      if (c == '<' && fillBuffer(2) && buffer.getByte(1) == '/') {
+        buffer.readByte(); // consume <
+        buffer.readByte(); // consume /
+
+        // Check if its
+        String closingElementName = nextUnquotedValue();
+        if (closingElementName != null && closingElementName.equals(pathNames[stackSize - 1])) {
+
+        } else {
+          syntaxError("Expected a closing element tag </"+pathNames[stackSize - 1]+"> but found </"+closingElementName+">" );
+        }
+
+      }
+
+      // TODO CDATA
+
+
     } else if (peekStack == XmlScope.EMPTY_DOCUMENT) {
       stack[stackSize - 1] = XmlScope.NONEMPTY_DOCUMENT;
     } else if (peekStack == XmlScope.NONEMPTY_DOCUMENT) {
@@ -269,14 +290,14 @@ public class XmlReader implements Closeable {
   }
 
   /**
-   * Returns true if the current array or object has another element.
+   * Returns true if a xml element can be read now
    */
-  public boolean hasNext() throws IOException {
+  public boolean hasElement() throws IOException {
     int p = peeked;
     if (p == PEEKED_NONE) {
       p = doPeek();
     }
-    return p != PEEKED_ELEMENT_END;
+    return p == PEEKED_ELEMENT_BEGIN;
   }
 
   /**
@@ -292,7 +313,6 @@ public class XmlReader implements Closeable {
     }
     return p == PEEKED_ATTRIBUTE_NAME;
   }
-
 
   /**
    * Consumes the next token attribute of a xml element. Assumes that {@link #beginElement()} has
@@ -364,15 +384,15 @@ public class XmlReader implements Closeable {
 
 
   /**
-   * Returns true if the current xml element ( object )  has another a body which contains either a
-   * value or other child xml elements ( objects )
+   * Returns true if the current xml element  has another a body which contains either a value or
+   * other child xml elements ( objects )
    */
-  public boolean hasBody() throws IOException {
+  public boolean hasTextContent() throws IOException {
     int p = peeked;
     if (p == PEEKED_NONE) {
       p = doPeek();
     }
-    return p != PEEKED_ELEMENT_TEXT_CONTENT;
+    return p == PEEKED_ELEMENT_TEXT_CONTENT;
   }
 
   /**
@@ -719,7 +739,13 @@ public class XmlReader implements Closeable {
     /**
      * Indicates that we are reading a xml elements attribute value
      */
-    ATTRIBUTE_VALUE
+    ATTRIBUTE_VALUE,
+
+    /**
+     * Indicates that we are reading the text content of an xml element like this {@code <element>
+     * This is the text content </element>}
+     */
+    ELEMENT_TEXT_CONTENT
 
   }
 
