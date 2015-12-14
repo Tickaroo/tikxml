@@ -31,6 +31,10 @@ public class XmlReaderPathTest {
       reader.nextAttributeValue();
       Assert.assertEquals("/element", reader.getPath());
 
+      reader.nextTextContent();
+      Assert.assertEquals("/element/text()", reader.getPath());
+
+
 
 
 

@@ -61,7 +61,7 @@ public class XmlReaderTest {
       Assert.assertEquals(XmlReader.XmlToken.ELEMENT_TEXT_CONTENT, reader.peek());
       Assert.assertEquals(elementText, reader.nextTextContent());
       Assert.assertFalse(reader.hasTextContent());
-      
+
       Assert.assertEquals(XmlReader.XmlToken.ELEMENT_END, reader.peek());
       reader.endElement();
 
