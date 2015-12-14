@@ -354,4 +354,21 @@ public class XmlReaderTest {
     }
   }
 
+  @Test
+  public void noElementName() throws IOException {
+    String xml = "<></>";
+    XmlReader reader = readerFrom(xml);
+
+    try {
+      Assert.assertTrue(reader.hasElement());
+      reader.beginElement();
+
+      exception.expect(IOException.class);
+      exception.expectMessage("Expected xml element name (literal expected) at path /");
+      reader.nextElementName();
+    } finally {
+      reader.close();
+    }
+  }
+
 }
