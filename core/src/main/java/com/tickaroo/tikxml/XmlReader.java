@@ -133,7 +133,7 @@ public class XmlReader implements Closeable {
       case PEEKED_EOF:
         return XmlToken.END_OF_DOCUMENT;
       default:
-        throw new AssertionError();
+        throw new AssertionError("Unknown XmlToken: Peeked = " + p);
     }
   }
 
@@ -314,7 +314,10 @@ public class XmlReader implements Closeable {
   }
 
   /**
-   * Returns true if a xml element can be read now
+   * Checks if there is one more unconsumed xml element that can be consumed afterwards with {@link
+   * #beginElement()}
+   *
+   * @return true if there is at least one more unconsumed xml element, otherwise false
    */
   public boolean hasElement() throws IOException {
     int p = peeked;
@@ -323,6 +326,7 @@ public class XmlReader implements Closeable {
     }
     return p == PEEKED_ELEMENT_BEGIN;
   }
+
 
   /**
    * Returns true if the current xml element has an unparsed attribute. {@link #beginElement()} must
@@ -623,7 +627,7 @@ public class XmlReader implements Closeable {
       p = doPeek();
     }
     if (p != PEEKED_ELEMENT_NAME) {
-      throw syntaxError("Expected XML Tag Element name, but");
+      throw syntaxError("Expected XML Tag Element name, but have " + peek());
     }
 
     String result = nextUnquotedValue();
@@ -780,6 +784,39 @@ public class XmlReader implements Closeable {
       }
     }
   }
+
+/*
+  public void skipElement() throws IOException {
+
+    int count = 0;
+    do {
+      int p = peeked;
+      if (p == PEEKED_NONE) {
+        p = doPeek();
+      }
+
+      if (p == PEEKED_ELEMENT_BEGIN) {
+        beginElement();
+        count++;
+      } else if (p == PEEKED_ELEMENT_END) {
+        stackSize--;
+        count--;
+      } else if (p == PEEKED_UNQUOTED_NAME || p == PEEKED_UNQUOTED) {
+        skipUnquotedValue();
+      } else if (p == PEEKED_DOUBLE_QUOTED || p == PEEKED_DOUBLE_QUOTED_NAME) {
+        skipQuotedValue(DOUBLE_QUOTE_OR_SLASH);
+      } else if (p == PEEKED_SINGLE_QUOTED || p == PEEKED_SINGLE_QUOTED_NAME) {
+        skipQuotedValue(SINGLE_QUOTE_OR_SLASH);
+      } else if (p == PEEKED_NUMBER) {
+        buffer.skip(peekedNumberLength);
+      }
+      peeked = PEEKED_NONE;
+    } while (count != 0);
+
+    pathIndices[stackSize - 1]++;
+    pathNames[stackSize - 1] = "null";
+  }
+  */
 
 
   /**

@@ -371,4 +371,51 @@ public class XmlReaderTest {
     }
   }
 
+
+  @Test
+  public void nestedElements() throws IOException {
+    String xml = "<foo a='1'> <bar b='2'></bar> <bar b='3'> <other c='4' /> </bar> </foo>";
+    XmlReader reader = readerFrom(xml);
+
+    try {
+      Assert.assertTrue(reader.hasElement());
+      reader.beginElement();
+      Assert.assertEquals("foo", reader.nextElementName());
+      Assert.assertTrue(reader.hasAttribute());
+      Assert.assertEquals("a", reader.nextAttributeName());
+      Assert.assertEquals("1", reader.nextAttributeValue());
+
+      Assert.assertTrue(reader.hasElement());
+      reader.beginElement();
+      Assert.assertEquals("bar", reader.nextElementName());
+      Assert.assertTrue(reader.hasAttribute());
+      Assert.assertEquals("b", reader.nextAttributeName());
+      Assert.assertEquals("2", reader.nextAttributeValue());
+      reader.endElement();
+
+      Assert.assertTrue(reader.hasElement());
+      reader.beginElement();
+      Assert.assertEquals("bar", reader.nextElementName());
+      Assert.assertTrue(reader.hasAttribute());
+      Assert.assertEquals("b", reader.nextAttributeName());
+      Assert.assertEquals("3", reader.nextAttributeValue());
+
+      Assert.assertTrue(reader.hasElement());
+      reader.beginElement();
+      Assert.assertEquals("other", reader.nextElementName());
+      Assert.assertTrue(reader.hasAttribute());
+      Assert.assertEquals("c", reader.nextAttributeName());
+      Assert.assertEquals("4", reader.nextAttributeValue());
+      reader.endElement(); // end other
+
+      reader.endElement(); // end bar
+
+      reader.endElement(); // end foo
+
+
+    } finally {
+      reader.close();
+    }
+  }
+
 }
