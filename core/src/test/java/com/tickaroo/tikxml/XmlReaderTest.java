@@ -269,4 +269,89 @@ public class XmlReaderTest {
     }
   }
 
+  @Test
+  public void noAttributesNoTextContent() throws IOException {
+    String xml = "<foo></foo>";
+    XmlReader reader = readerFrom(xml);
+
+    try {
+      Assert.assertTrue(reader.hasElement());
+      reader.beginElement();
+      Assert.assertEquals("foo", reader.nextElementName());
+      Assert.assertFalse(reader.hasAttribute());
+      Assert.assertFalse(reader.hasTextContent());
+      reader.endElement();
+
+      Assert.assertFalse(reader.hasElement());
+      Assert.assertEquals(XmlReader.XmlToken.END_OF_DOCUMENT, reader.peek());
+
+    } finally {
+      reader.close();
+    }
+  }
+
+  @Test
+  public void noAttributesButTextContent() throws IOException {
+    String xml = "<foo>Value</foo>";
+    XmlReader reader = readerFrom(xml);
+
+    try {
+      Assert.assertTrue(reader.hasElement());
+      reader.beginElement();
+      Assert.assertEquals("foo", reader.nextElementName());
+      Assert.assertFalse(reader.hasAttribute());
+      Assert.assertTrue(reader.hasTextContent());
+      Assert.assertEquals("Value", reader.nextTextContent());
+      reader.endElement();
+
+      Assert.assertFalse(reader.hasElement());
+      Assert.assertEquals(XmlReader.XmlToken.END_OF_DOCUMENT, reader.peek());
+
+    } finally {
+      reader.close();
+    }
+  }
+
+
+  @Test
+  public void skipTextContent() throws IOException {
+    String xml = "<foo>Value</foo>";
+    XmlReader reader = readerFrom(xml);
+
+    try {
+      Assert.assertTrue(reader.hasElement());
+      reader.beginElement();
+      Assert.assertEquals("foo", reader.nextElementName());
+      Assert.assertFalse(reader.hasAttribute());
+      Assert.assertTrue(reader.hasTextContent());
+      reader.skipTextContent();
+      reader.endElement();
+
+      Assert.assertFalse(reader.hasElement());
+      Assert.assertEquals(XmlReader.XmlToken.END_OF_DOCUMENT, reader.peek());
+
+    } finally {
+      reader.close();
+    }
+  }
+
+  @Test
+  public void skipUncompleteTextContent() throws IOException {
+    String xml = "<foo>Value";
+    XmlReader reader = readerFrom(xml);
+
+    try {
+      Assert.assertTrue(reader.hasElement());
+      reader.beginElement();
+      Assert.assertEquals("foo", reader.nextElementName());
+      Assert.assertFalse(reader.hasAttribute());
+      Assert.assertTrue(reader.hasTextContent());
+      exception.expect(IOException.class);
+      exception.expectMessage("Unterminated element text content. Expected </foo> but haven't found at path /foo/text()");
+      reader.skipTextContent();
+    } finally {
+      reader.close();
+    }
+  }
+
 }

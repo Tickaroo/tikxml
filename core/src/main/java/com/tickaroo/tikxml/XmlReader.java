@@ -31,7 +31,7 @@ import okio.ByteString;
  */
 public class XmlReader implements Closeable {
 
-  private static final ByteString LINEFEED_OR_CARRIAGE_RETURN = ByteString.encodeUtf8("\n\r");
+  //private static final ByteString LINEFEED_OR_CARRIAGE_RETURN = ByteString.encodeUtf8("\n\r");
 
   private static final ByteString UNQUOTED_STRING_TERMINALS
       = ByteString.encodeUtf8(" >/=");
@@ -422,7 +422,8 @@ public class XmlReader implements Closeable {
   }
 
   /**
-   * Get the next text content of an xml element
+   * Get the next text content of an xml element. Text content is {@code <element>text
+   * content</element>}
    *
    * @return The xml element's text content
    * @throws IOException
@@ -443,7 +444,34 @@ public class XmlReader implements Closeable {
 
       return buffer.readUtf8(index);
     } else {
-      throw new XmlDataException("Expected xml element attribute value (in double quotes or single quotes) but was " + peek()
+      throw new XmlDataException("Expected xml element text content but was " + peek()
+          + " at path " + getPath());
+    }
+  }
+
+  /**
+   * Skip the text content. Text content is {@code <element>text content</element>}
+   *
+   * @throws IOException
+   */
+  public void skipTextContent() throws IOException {
+
+    int p = peeked;
+    if (p == PEEKED_NONE) {
+      p = doPeek();
+    }
+
+    if (p == PEEKED_ELEMENT_TEXT_CONTENT) {
+      peeked = PEEKED_NONE;
+
+      // Read text until '<' found
+      long index = source.indexOf(OPENING_XML_ELEMENT);
+      if (index == -1L)
+        throw syntaxError("Unterminated element text content. Expected </" + pathNames[stackSize - 1] + "> but haven't found");
+
+      buffer.skip(index);
+    } else {
+      throw new XmlDataException("Expected xml element text content but was " + peek()
           + " at path " + getPath());
     }
   }
@@ -752,6 +780,7 @@ public class XmlReader implements Closeable {
       }
     }
   }
+
 
   /**
    * Skip an unquoted value
