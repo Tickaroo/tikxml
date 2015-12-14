@@ -129,6 +129,9 @@ public class XmlReader implements Closeable {
 
       case PEEKED_ELEMENT_TEXT_CONTENT:
         return XmlToken.ELEMENT_TEXT_CONTENT;
+
+      case PEEKED_EOF:
+        return XmlToken.END_OF_DOCUMENT;
       default:
         throw new AssertionError();
     }
@@ -777,7 +780,12 @@ public class XmlReader implements Closeable {
      * Indicates that we are reading the text content of an xml element like this {@code <element>
      * This is the text content </element>}
      */
-    ELEMENT_TEXT_CONTENT
+    ELEMENT_TEXT_CONTENT,
+
+    /**
+     * Indicates that we have reached the end of the document
+     */
+    END_OF_DOCUMENT
 
   }
 

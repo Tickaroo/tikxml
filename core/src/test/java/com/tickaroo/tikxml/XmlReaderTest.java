@@ -2,7 +2,6 @@ package com.tickaroo.tikxml;
 
 import java.io.IOException;
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -28,6 +27,7 @@ public class XmlReaderTest {
 
 
       Assert.assertEquals(reader.peek(), XmlReader.XmlToken.ELEMENT_BEGIN);
+      Assert.assertTrue(reader.hasElement());
       reader.beginElement();
 
       Assert.assertEquals(XmlReader.XmlToken.ELEMENT_NAME, reader.peek());
@@ -64,6 +64,9 @@ public class XmlReaderTest {
 
       Assert.assertEquals(XmlReader.XmlToken.ELEMENT_END, reader.peek());
       reader.endElement();
+
+
+      Assert.assertEquals(XmlReader.XmlToken.END_OF_DOCUMENT, reader.peek());
 
     } finally {
       reader.close();
@@ -109,12 +112,20 @@ public class XmlReaderTest {
 
 
   @Test
-  @Ignore
-  public void readObjectWithMultilineComment() {
-    Assert.fail("Not implemented yet");
-
-    String xml = "<element><!-- comment \n multiline \n --> Value</element>";
+  public void readObjectWithMultilineComment() throws IOException {
+    String xml = "<element><!-- comment \n multiline \n -->Value</element>";
     XmlReader reader = readerFrom(xml);
+
+    Assert.assertTrue(reader.hasElement());
+    reader.beginElement();
+    Assert.assertEquals("element", reader.nextElementName());
+    Assert.assertTrue(reader.hasTextContent());
+    Assert.assertEquals(reader.nextTextContent(), "Value");
+    reader.endElement();
+
+    Assert.assertEquals(XmlReader.XmlToken.END_OF_DOCUMENT, reader.peek());
+    reader.close();
+
   }
 
   @Test
