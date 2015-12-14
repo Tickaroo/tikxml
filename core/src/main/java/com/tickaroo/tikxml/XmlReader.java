@@ -36,8 +36,8 @@ public class XmlReader implements Closeable {
   private static final ByteString UNQUOTED_STRING_TERMINALS
       = ByteString.encodeUtf8(" >/=");
 
-  private static final ByteString DOUBLE_QUOTE = ByteString.encodeUtf8("\"");
-  private static final ByteString SINGLE_QUOTE = ByteString.encodeUtf8("'");
+  private static final Byte DOUBLE_QUOTE = (byte) '"';
+  private static final Byte SINGLE_QUOTE = (byte) '\'';
   private static final Byte OPENING_XML_ELEMENT = (byte) '<';
 
   //
@@ -173,13 +173,19 @@ public class XmlReader implements Closeable {
           buffer.readByte(); // consume '>'
 
           int nextChar = nextNonWhitespace(true);
+
           if (nextChar != '<') {
             return peeked = PEEKED_ELEMENT_TEXT_CONTENT;
           }
           break;
 
         case '/':
+          // Self closing />
+
           if (fillBuffer(2) && buffer.getByte(1) == '>') {
+            // remove XmlScope.ELEMENT_ATTRIBUTE from top of the stack
+            popStack();
+
             // correct closing xml tag
             buffer.readByte(); // consuming '/'
             buffer.readByte(); // consuming '>'
@@ -212,28 +218,6 @@ public class XmlReader implements Closeable {
 
     } else if (peekStack == XmlScope.ELEMENT_CONTENT) {
 
-      int c = nextNonWhitespace(true);
-
-      if (c == '<' && fillBuffer(2) && buffer.getByte(1) == '/') {
-        buffer.readByte(); // consume <
-        buffer.readByte(); // consume /
-
-        // Check if its
-        String closingElementName = nextUnquotedValue();
-        if (closingElementName != null && closingElementName.equals(pathNames[stackSize - 1])) {
-
-          if (nextNonWhitespace(false) == '>') {
-            buffer.readByte(); // consume >
-            return peeked = PEEKED_ELEMENT_END;
-          } else {
-            syntaxError("Missing closing '>' character in </" + pathNames[stackSize - 1]);
-          }
-
-        } else {
-          syntaxError("Expected a closing element tag </" + pathNames[stackSize - 1] + "> but found </" + closingElementName + ">");
-        }
-
-      }
 
       // TODO CDATA
 
@@ -252,8 +236,33 @@ public class XmlReader implements Closeable {
 
     int c = nextNonWhitespace(true);
     switch (c) {
+
+      // Handling open < and closing </
       case '<':
         buffer.readByte(); // consume '<'.
+
+        // Check if </ which means end of element
+        if (fillBuffer(1) && buffer.getByte(0) == '/') {
+
+          buffer.readByte(); // consume /
+
+          // Check if it is the corresponding xml element name
+          String closingElementName = nextUnquotedValue();
+          if (closingElementName != null && closingElementName.equals(pathNames[stackSize - 1])) {
+
+            if (nextNonWhitespace(false) == '>') {
+              buffer.readByte(); // consume >
+              return peeked = PEEKED_ELEMENT_END;
+            } else {
+              syntaxError("Missing closing '>' character in </" + pathNames[stackSize - 1]);
+            }
+
+          } else {
+            syntaxError("Expected a closing element tag </" + pathNames[stackSize - 1] + "> but found </" + closingElementName + ">");
+          }
+
+        }
+        // its just a < which means begin of the element
         return peeked = PEEKED_ELEMENT_BEGIN;
 
       case '"':
@@ -273,7 +282,6 @@ public class XmlReader implements Closeable {
    * Consumes the next token from the JSON stream and asserts that it is the beginning of a new
    * object.
    */
-
   public void beginElement() throws IOException {
     int p = peeked;
     if (p == PEEKED_NONE) {
@@ -365,9 +373,11 @@ public class XmlReader implements Closeable {
     }
 
     if (p == PEEKED_DOUBLE_QUOTED || p == PEEKED_SINGLE_QUOTED) {
+      String attributeValue = nextQuotedValue(p == PEEKED_DOUBLE_QUOTED ? DOUBLE_QUOTE : SINGLE_QUOTE);
+
       peeked = PEEKED_NONE;
-      pathNames[stackSize - 1] = null; // Remove attribute name from stack
-      return nextQuotedValue(p == PEEKED_DOUBLE_QUOTED ? DOUBLE_QUOTE : SINGLE_QUOTE);
+      pathNames[stackSize - 1] = null; // Remove attribute name from stack, do that after nextQuotedValue() to ensure that xpath is correctly in case that nextQuotedValue() fails
+      return attributeValue;
     } else {
       throw new XmlDataException("Expected xml element attribute value (in double quotes or single quotes) but was " + peek()
           + " at path " + getPath());
@@ -462,6 +472,7 @@ public class XmlReader implements Closeable {
    * Removes the top element of the stack
    */
   private void popStack() {
+    stack[stackSize - 1] = 0;
     stackSize--;
     pathNames[stackSize] = null; // Free the last path name so that it can be garbage collected!
     pathIndices[stackSize - 1]++;
@@ -558,7 +569,7 @@ public class XmlReader implements Closeable {
     }
 
     if (throwOnEof) {
-      throw new EOFException("End of input");
+      throw new EOFException("Unexpected end of input at path " + getPath());
     } else {
       return -1;
     }
@@ -612,11 +623,12 @@ public class XmlReader implements Closeable {
    *
    * @throws IOException if any unicode escape sequences are malformed.
    */
-  private String nextQuotedValue(ByteString runTerminator) throws IOException {
+  private String nextQuotedValue(byte runTerminator) throws IOException {
     StringBuilder builder = null;
     while (true) {
-      long index = source.indexOfElement(runTerminator);
-      if (index == -1L) throw syntaxError("Unterminated string");
+      long index = source.indexOf(runTerminator);
+      if (index == -1L)
+        throw syntaxError("Unterminated string (" + (runTerminator == DOUBLE_QUOTE ? "double quote \"" : "single quote '") + " is missing)");
 
       // If we've got an escape character, we're going to need a string builder.
       if (buffer.getByte(index) == '\\') {
@@ -726,9 +738,9 @@ public class XmlReader implements Closeable {
    * @param runTerminator The terminator to skip
    * @throws IOException
    */
-  private void skipQuotedValue(ByteString runTerminator) throws IOException {
+  private void skipQuotedValue(Byte runTerminator) throws IOException {
     while (true) {
-      long index = source.indexOfElement(runTerminator);
+      long index = source.indexOf(runTerminator);
       if (index == -1L) throw syntaxError("Unterminated string");
 
       if (buffer.getByte(index) == '\\') {
