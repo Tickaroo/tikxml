@@ -418,4 +418,59 @@ public class XmlReaderTest {
     }
   }
 
+  @Test
+  public void mixingTextContentChildElements() throws IOException {
+    String xml = "<foo a='1'>Value1 first part<bar b='2'></bar>Value2 second part<bar b='3'> <other c='4' /> </bar>Value3 third part</foo>";
+    XmlReader reader = readerFrom(xml);
+
+    try {
+      Assert.assertTrue(reader.hasElement());
+      reader.beginElement();
+      Assert.assertEquals("foo", reader.nextElementName());
+      Assert.assertTrue(reader.hasAttribute());
+      Assert.assertEquals("a", reader.nextAttributeName());
+      Assert.assertEquals("1", reader.nextAttributeValue());
+
+      Assert.assertTrue(reader.hasTextContent());
+      Assert.assertEquals("Value1 first part", reader.nextTextContent());
+
+      Assert.assertTrue(reader.hasElement());
+      reader.beginElement();
+      Assert.assertEquals("bar", reader.nextElementName());
+      Assert.assertTrue(reader.hasAttribute());
+      Assert.assertEquals("b", reader.nextAttributeName());
+      Assert.assertEquals("2", reader.nextAttributeValue());
+      reader.endElement();
+
+      Assert.assertTrue(reader.hasTextContent());
+      Assert.assertEquals("Value2 second part", reader.nextTextContent());
+
+      Assert.assertTrue(reader.hasElement());
+      reader.beginElement();
+      Assert.assertEquals("bar", reader.nextElementName());
+      Assert.assertTrue(reader.hasAttribute());
+      Assert.assertEquals("b", reader.nextAttributeName());
+      Assert.assertEquals("3", reader.nextAttributeValue());
+
+      Assert.assertTrue(reader.hasElement());
+      reader.beginElement();
+      Assert.assertEquals("other", reader.nextElementName());
+      Assert.assertTrue(reader.hasAttribute());
+      Assert.assertEquals("c", reader.nextAttributeName());
+      Assert.assertEquals("4", reader.nextAttributeValue());
+      reader.endElement(); // end other
+
+      reader.endElement(); // end bar
+
+      Assert.assertTrue(reader.hasTextContent());
+      Assert.assertEquals("Value3 third part", reader.nextTextContent());
+
+
+      reader.endElement(); // end foo
+
+
+    } finally {
+      reader.close();
+    }
+  }
 }

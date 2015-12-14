@@ -217,18 +217,22 @@ public class XmlReader implements Closeable {
       }
 
     } else if (peekStack == XmlScope.ELEMENT_CONTENT) {
-
+      int c = nextNonWhitespace(true);
+      if (c != '<') {
+        return peeked = PEEKED_ELEMENT_TEXT_CONTENT;
+      }
 
       // TODO CDATA
 
-
     } else if (peekStack == XmlScope.EMPTY_DOCUMENT) {
       stack[stackSize - 1] = XmlScope.NONEMPTY_DOCUMENT;
+
     } else if (peekStack == XmlScope.NONEMPTY_DOCUMENT) {
       int c = nextNonWhitespace(false);
       if (c == -1) {
         return peeked = PEEKED_EOF;
       }
+
     } else if (peekStack == XmlScope.CLOSED) {
       throw new IllegalStateException("XmlReader is closed");
     }
