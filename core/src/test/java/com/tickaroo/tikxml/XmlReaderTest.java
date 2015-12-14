@@ -20,7 +20,8 @@ public class XmlReaderTest {
   @Test
   public void readObjectWithAttributes() throws IOException {
 
-    String xml = "<element a=\"qwe\" b='123' c=\"skipMe\"></element>";
+    String elementText = "I'm an ElementText\n with multiple lines and special \n chars @ \" üäöß?1§$%&&/()=*'";
+    String xml = "<element a=\"qwe\" b='123' c=\"skipMe\">" + elementText + "</element>";
     XmlReader reader = readerFrom(xml);
 
     try {
@@ -55,6 +56,14 @@ public class XmlReaderTest {
       reader.skipAttributeValue();
 
       Assert.assertFalse(reader.hasAttribute());
+
+      Assert.assertTrue(reader.hasTextContent());
+      Assert.assertEquals(XmlReader.XmlToken.ELEMENT_TEXT_CONTENT, reader.peek());
+      Assert.assertEquals(elementText, reader.nextTextContent());
+      Assert.assertFalse(reader.hasTextContent());
+      
+      Assert.assertEquals(XmlReader.XmlToken.ELEMENT_END, reader.peek());
+      reader.endElement();
 
     } finally {
       reader.close();
@@ -107,4 +116,19 @@ public class XmlReaderTest {
     String xml = "<element><!-- comment \n multiline \n --> Value</element>";
     XmlReader reader = readerFrom(xml);
   }
+
+  @Test
+  public void unclosedElement() throws IOException {
+    String xml = "<fooElement a=\"qwe\">This is the text";
+    XmlReader reader = readerFrom(xml);
+    reader.beginElement();
+    reader.nextElementName();
+    reader.nextAttributeName();
+    reader.nextAttributeValue();
+    exception.expect(IOException.class);
+    exception.expectMessage("Unterminated element text content. Expected </fooElement> but haven't found at path /fooElement/text()");
+    reader.nextTextContent();
+    reader.close();
+  }
+
 }

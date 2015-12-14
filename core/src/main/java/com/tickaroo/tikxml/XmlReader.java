@@ -38,6 +38,7 @@ public class XmlReader implements Closeable {
 
   private static final ByteString DOUBLE_QUOTE = ByteString.encodeUtf8("\"");
   private static final ByteString SINGLE_QUOTE = ByteString.encodeUtf8("'");
+  private static final Byte OPENING_XML_ELEMENT = (byte) '<';
 
   //
   // Peek states
@@ -112,8 +113,12 @@ public class XmlReader implements Closeable {
     switch (p) {
       case PEEKED_ELEMENT_BEGIN:
         return XmlToken.ELEMENT_BEGIN;
+
       case PEEKED_ELEMENT_NAME:
         return XmlToken.ELEMENT_NAME;
+
+      case PEEKED_ELEMENT_END:
+        return XmlToken.ELEMENT_END;
 
       case PEEKED_ATTRIBUTE_NAME:
         return XmlToken.ATTRIBUTE_NAME;
@@ -121,6 +126,7 @@ public class XmlReader implements Closeable {
       case PEEKED_DOUBLE_QUOTED:
       case PEEKED_SINGLE_QUOTED:
         return XmlToken.ATTRIBUTE_VALUE;
+
       case PEEKED_ELEMENT_TEXT_CONTENT:
         return XmlToken.ELEMENT_TEXT_CONTENT;
       default:
@@ -213,8 +219,15 @@ public class XmlReader implements Closeable {
         String closingElementName = nextUnquotedValue();
         if (closingElementName != null && closingElementName.equals(pathNames[stackSize - 1])) {
 
+          if (nextNonWhitespace(false) == '>') {
+            buffer.readByte(); // consume >
+            return peeked = PEEKED_ELEMENT_END;
+          } else {
+            syntaxError("Missing closing '>' character in </" + pathNames[stackSize - 1]);
+          }
+
         } else {
-          syntaxError("Expected a closing element tag </"+pathNames[stackSize - 1]+"> but found </"+closingElementName+">" );
+          syntaxError("Expected a closing element tag </" + pathNames[stackSize - 1] + "> but found </" + closingElementName + ">");
         }
 
       }
@@ -396,6 +409,33 @@ public class XmlReader implements Closeable {
   }
 
   /**
+   * Get the next text content of an xml element
+   *
+   * @return The xml element's text content
+   * @throws IOException
+   */
+  public String nextTextContent() throws IOException {
+    int p = peeked;
+    if (p == PEEKED_NONE) {
+      p = doPeek();
+    }
+
+    if (p == PEEKED_ELEMENT_TEXT_CONTENT) {
+      peeked = PEEKED_NONE;
+
+      // Read text until '<' found
+      long index = source.indexOf(OPENING_XML_ELEMENT);
+      if (index == -1L)
+        throw syntaxError("Unterminated element text content. Expected </" + pathNames[stackSize - 1] + "> but haven't found");
+
+      return buffer.readUtf8(index);
+    } else {
+      throw new XmlDataException("Expected xml element attribute value (in double quotes or single quotes) but was " + peek()
+          + " at path " + getPath());
+    }
+  }
+
+  /**
    * Push a new scope on top of the scope stack
    *
    * @param newTop The scope that should be pushed on top of the stack
@@ -426,11 +466,9 @@ public class XmlReader implements Closeable {
 
 
   /**
-   * Returns a <a href="http://goessner.net/articles/JsonPath/">JsonPath</a> to the current location
-   * in the JSON value.
+   * Returns a XPath to the current location in the XML value.
    */
   public String getPath() {
-    // TODO update to xml
     return XmlScope.getPath(stackSize, stack, pathNames, pathIndices);
   }
 
@@ -440,16 +478,6 @@ public class XmlReader implements Closeable {
     peeked = PEEKED_NONE;
     buffer.clear();
     source.close();
-  }
-
-
-  /**
-   * Advances the position until after the next newline character. If the line is terminated by
-   * "\r\n", the '\n' must be consumed as whitespace by the caller.
-   */
-  private void skipToEndOfLine() throws IOException {
-    long index = source.indexOfElement(LINEFEED_OR_CARRIAGE_RETURN);
-    buffer.skip(index != -1 ? index + 1 : buffer.size());
   }
 
   /**
@@ -714,11 +742,10 @@ public class XmlReader implements Closeable {
    * Skip an unquoted value
    *
    * @throws IOException
+   *
+   * private void skipUnquotedValue() throws IOException { long i = source.indexOfElement(UNQUOTED_STRING_TERMINALS);
+   * buffer.skip(i != -1L ? i : buffer.size()); }
    */
-  private void skipUnquotedValue() throws IOException {
-    long i = source.indexOfElement(UNQUOTED_STRING_TERMINALS);
-    buffer.skip(i != -1L ? i : buffer.size());
-  }
 
   public enum XmlToken {
     /**
@@ -730,6 +757,11 @@ public class XmlReader implements Closeable {
      * xml element name
      */
     ELEMENT_NAME,
+
+    /**
+     * Indicates that an xml element ends
+     */
+    ELEMENT_END,
 
     /**
      * Indicates that we are reading an attribute name (of an xml element)

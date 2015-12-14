@@ -60,10 +60,17 @@ final class XmlScope {
     for (int i = 0, size = stackSize; i < size; i++) {
       switch (stack[i]) {
         case ELEMENT_OPENING:
+          result.append('/');
+          if (pathNames[i] != null) {
+            result.append(pathNames[i]);
+          }
+          break;
+
         case ELEMENT_CONTENT:
           result.append('/');
           if (pathNames[i] != null) {
             result.append(pathNames[i]);
+            result.append("/text()");
           }
           break;
 
