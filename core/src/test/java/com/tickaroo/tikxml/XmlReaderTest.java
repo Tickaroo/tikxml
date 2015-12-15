@@ -473,4 +473,61 @@ public class XmlReaderTest {
       reader.close();
     }
   }
+
+  @Test
+  public void cdata() throws IOException {
+    String cdata = "< hello <> & cdata</foo>";
+    String xml = "<foo>NormalValue<![CDATA[" + cdata + "]]>nextvalue</foo>";
+    XmlReader reader = readerFrom(xml);
+
+    try {
+      Assert.assertTrue(reader.hasElement());
+      reader.beginElement();
+      Assert.assertEquals("foo", reader.nextElementName());
+
+      Assert.assertFalse(reader.hasAttribute());
+
+      Assert.assertTrue(reader.hasTextContent());
+      Assert.assertEquals("NormalValue", reader.nextTextContent());
+
+      Assert.assertTrue(reader.hasTextContent());
+      Assert.assertEquals(cdata, reader.nextTextContent());
+
+      Assert.assertTrue(reader.hasTextContent());
+      Assert.assertEquals("nextvalue", reader.nextTextContent());
+
+      reader.endElement();
+      Assert.assertFalse(reader.hasElement());
+
+    } finally {
+      reader.close();
+    }
+  }
+
+
+  @Test
+  public void missingClosingCDATA() throws IOException {
+    String cdata = "< hello <> & cdata</foo>";
+    String xml = "<foo>NormalValue<![CDATA[" + cdata + "nextvalue</foo>";
+    XmlReader reader = readerFrom(xml);
+
+    try {
+      Assert.assertTrue(reader.hasElement());
+      reader.beginElement();
+      Assert.assertEquals("foo", reader.nextElementName());
+
+      Assert.assertFalse(reader.hasAttribute());
+
+      Assert.assertTrue(reader.hasTextContent());
+      Assert.assertEquals("NormalValue", reader.nextTextContent());
+
+
+      exception.expect(IOException.class);
+      exception.expectMessage("<![CDATA[ at /foo/text() has never been closed with ]]>");
+      Assert.assertEquals(cdata, reader.nextTextContent());
+
+    } finally {
+      reader.close();
+    }
+  }
 }

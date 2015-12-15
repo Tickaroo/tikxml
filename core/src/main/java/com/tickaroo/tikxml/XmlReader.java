@@ -62,6 +62,9 @@ public class XmlReader implements Closeable {
   /** Peeked an attribute name (of a xml element) */
   private static final int PEEKED_ATTRIBUTE_NAME = 8;
 
+  /** Peeked a CDATA */
+  private static final int PEEKED_CDATA = 9;
+
   /** The input XML. */
   private int peeked = PEEKED_NONE;
 
@@ -128,6 +131,7 @@ public class XmlReader implements Closeable {
         return XmlToken.ATTRIBUTE_VALUE;
 
       case PEEKED_ELEMENT_TEXT_CONTENT:
+      case PEEKED_CDATA:
         return XmlToken.ELEMENT_TEXT_CONTENT;
 
       case PEEKED_EOF:
@@ -177,6 +181,11 @@ public class XmlReader implements Closeable {
           if (nextChar != '<') {
             return peeked = PEEKED_ELEMENT_TEXT_CONTENT;
           }
+
+          if (isCDATA()) {
+            buffer.skip(9); // skip opening cdata tag
+            return peeked = PEEKED_CDATA;
+          }
           break;
 
         case '/':
@@ -218,11 +227,16 @@ public class XmlReader implements Closeable {
 
     } else if (peekStack == XmlScope.ELEMENT_CONTENT) {
       int c = nextNonWhitespace(true);
+
       if (c != '<') {
         return peeked = PEEKED_ELEMENT_TEXT_CONTENT;
       }
 
-      // TODO CDATA
+      if (isCDATA()) {
+        buffer.skip(9); // skip opening cdata tag
+        return peeked = PEEKED_CDATA;
+      }
+
 
     } else if (peekStack == XmlScope.EMPTY_DOCUMENT) {
       stack[stackSize - 1] = XmlScope.NONEMPTY_DOCUMENT;
@@ -280,6 +294,38 @@ public class XmlReader implements Closeable {
 
 
     return PEEKED_NONE;
+  }
+
+  /**
+   * Checks for CDATA beginning {@code <![CDATA[ }. This method doesn't consume the opening CDATA
+   * Tag
+   *
+   * @return true, if CDATA openining tag, otherwise false
+   * @throws IOException
+   */
+  private boolean isCDATA() throws IOException {
+
+    boolean preData = fillBuffer(9);
+    if (preData) {
+      char[] opening = new char[9];
+      for (int i = 0; i < 9; i++) {
+        opening[i] = (char) buffer.getByte(i);
+      }
+    }
+
+    boolean isCData = fillBuffer(9)
+        && buffer.getByte(0) == '<'
+        && buffer.getByte(1) == '!'
+        && buffer.getByte(2) == '['
+        && buffer.getByte(3) == 'C'
+        && buffer.getByte(4) == 'D'
+        && buffer.getByte(5) == 'A'
+        && buffer.getByte(6) == 'T'
+        && buffer.getByte(7) == 'A'
+        && buffer.getByte(8) == '[';
+
+
+    return isCData;
   }
 
   /**
@@ -426,7 +472,7 @@ public class XmlReader implements Closeable {
     if (p == PEEKED_NONE) {
       p = doPeek();
     }
-    return p == PEEKED_ELEMENT_TEXT_CONTENT;
+    return p == PEEKED_ELEMENT_TEXT_CONTENT || p == PEEKED_CDATA;
   }
 
   /**
@@ -443,6 +489,7 @@ public class XmlReader implements Closeable {
     }
 
     if (p == PEEKED_ELEMENT_TEXT_CONTENT) {
+
       peeked = PEEKED_NONE;
 
       // Read text until '<' found
@@ -451,10 +498,46 @@ public class XmlReader implements Closeable {
         throw syntaxError("Unterminated element text content. Expected </" + pathNames[stackSize - 1] + "> but haven't found");
 
       return buffer.readUtf8(index);
+
+    } else if (p == PEEKED_CDATA) {
+      peeked = PEEKED_NONE;
+
+      // Search index of closing CDATA tag ]]>
+      long index = indexOfClosingCDATA();
+
+      String result = buffer.readUtf8(index);
+      buffer.readByte(); // consume ]
+      buffer.readByte(); // consume ]
+      buffer.readByte(); // consume >
+      return result;
+
     } else {
       throw new XmlDataException("Expected xml element text content but was " + peek()
           + " at path " + getPath());
     }
+  }
+
+  /**
+   * Returns the index of the last character before starting the CDATA closing tag "{@code ]]>}".
+   * This method does not consume the closing CDATA tag.
+   *
+   * @return index of last character before closing tag.
+   * @throws IOException
+   */
+  private long indexOfClosingCDATA() throws IOException {
+    long index;
+    do {
+      index = source.indexOf((byte) ']');
+      if (index == -1) {
+        throw new EOFException("<![CDATA[ at " + getPath() + " has never been closed with ]]>");
+      }
+    }
+    while (index != -1 && fillBuffer(index + 3)
+        && buffer.getByte(index + 1) == ']'
+        && buffer.getByte(index + 2) == ']'
+        && buffer.getByte(index + 3) == '>');
+
+    return index;
   }
 
   /**
@@ -478,6 +561,13 @@ public class XmlReader implements Closeable {
         throw syntaxError("Unterminated element text content. Expected </" + pathNames[stackSize - 1] + "> but haven't found");
 
       buffer.skip(index);
+
+    } else if (p == PEEKED_CDATA) {
+      peeked = PEEKED_NONE;
+      // Search index of closing CDATA tag ]]>
+      long index = indexOfClosingCDATA();
+      buffer.skip(index + 3); // +3 because of consuming closing tag
+
     } else {
       throw new XmlDataException("Expected xml element text content but was " + peek()
           + " at path " + getPath());
@@ -552,7 +642,7 @@ public class XmlReader implements Closeable {
    * Returns true once {@code limit - pos >= minimum}. If the data is exhausted before that many
    * characters are available, this returns false.
    */
-  private boolean fillBuffer(int minimum) throws IOException {
+  private boolean fillBuffer(long minimum) throws IOException {
     return source.request(minimum);
   }
 
@@ -578,7 +668,7 @@ public class XmlReader implements Closeable {
       }
 
       buffer.skip(p - 1);
-      if (c == '<' && fillBuffer(4)) {
+      if (c == '<' && fillBuffer(4) && !isCDATA()) {
 
         byte peek = buffer.getByte(1);
         if (peek == '!') {
