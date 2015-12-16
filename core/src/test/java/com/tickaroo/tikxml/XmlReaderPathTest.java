@@ -13,7 +13,7 @@ public class XmlReaderPathTest {
 
   @Test
   public void test() throws IOException {
-    XmlReader reader = readerFrom("<element a='123' b=\"qwe\">value</element>");
+    XmlReader reader = readerFrom("<element a='123' b=\"qwe\">value<bar a='123' /></element>");
 
     try {
       reader.beginElement();
@@ -34,9 +34,22 @@ public class XmlReaderPathTest {
       reader.nextTextContent();
       Assert.assertEquals("/element/text()", reader.getPath());
 
+      reader.beginElement();
+      reader.nextElementName();
+      Assert.assertEquals("/element/bar", reader.getPath());
+      reader.nextAttributeName();
+      Assert.assertEquals("/element/bar[@a]", reader.getPath());
+      reader.nextAttributeValue();
+      Assert.assertEquals("/element/bar", reader.getPath());
+      reader.endElement();
 
+      Assert.assertEquals("/element/text()", reader.getPath());
+      reader.endElement();
+
+      Assert.assertEquals("/", reader.getPath());
     } finally {
       reader.close();
     }
   }
+
 }

@@ -89,6 +89,6 @@ final class XmlScope {
           break;
       }
     }
-    return result.toString();
+    return result.length() == 0 ? "/" : result.toString();
   }
 }
