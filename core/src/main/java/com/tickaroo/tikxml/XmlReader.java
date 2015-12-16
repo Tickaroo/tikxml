@@ -315,7 +315,7 @@ public class XmlReader implements Closeable {
         && buffer.getByte(6) == 'T'
         && buffer.getByte(7) == 'A'
         && buffer.getByte(8) == '[';
-    
+
   }
 
   /**
@@ -522,7 +522,7 @@ public class XmlReader implements Closeable {
         throw new EOFException("<![CDATA[ at " + getPath() + " has never been closed with ]]>");
       }
     }
-    while (index != -1 && fillBuffer(index + 3)
+    while (fillBuffer(index + 3)
         && buffer.getByte(index + 1) == ']'
         && buffer.getByte(index + 2) == ']'
         && buffer.getByte(index + 3) == '>');
