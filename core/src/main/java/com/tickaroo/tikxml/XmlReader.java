@@ -869,38 +869,64 @@ public class XmlReader implements Closeable {
     }
   }
 
-/*
-  public void skipElement() throws IOException {
+  /**
+   * This method skips the rest of an xml Element. This method is typically invoked once {@link
+   * #beginElement()} ang {@link #nextElementName()} has been consumed, but we don't want to consume
+   * the xml element with the given name. So with this method we can  skip the whole remaining xml
+   * element (attribute, text content and child elements) by using this method.
+   *
+   * @throws IOException
+   */
+  public void skipRemainingElement() throws IOException {
 
-    int count = 0;
+    int stackPeek = stack[stackSize - 1];
+    if (stackPeek != XmlScope.ELEMENT_OPENING && stackPeek != XmlScope.ELEMENT_ATTRIBUTE) {
+      throw new AssertionError("This method can only be invoked after having consumed the opening element via beginElement()");
+    }
+
+    int count = 1;
     do {
-      int p = peeked;
-      if (p == PEEKED_NONE) {
-        p = doPeek();
-      }
+      switch (peek()) {
+        case ELEMENT_BEGIN:
+          beginElement();
+          count++;
+          break;
 
-      if (p == PEEKED_ELEMENT_BEGIN) {
-        beginElement();
-        count++;
-      } else if (p == PEEKED_ELEMENT_END) {
-        stackSize--;
-        count--;
-      } else if (p == PEEKED_UNQUOTED_NAME || p == PEEKED_UNQUOTED) {
-        skipUnquotedValue();
-      } else if (p == PEEKED_DOUBLE_QUOTED || p == PEEKED_DOUBLE_QUOTED_NAME) {
-        skipQuotedValue(DOUBLE_QUOTE_OR_SLASH);
-      } else if (p == PEEKED_SINGLE_QUOTED || p == PEEKED_SINGLE_QUOTED_NAME) {
-        skipQuotedValue(SINGLE_QUOTE_OR_SLASH);
-      } else if (p == PEEKED_NUMBER) {
-        buffer.skip(peekedNumberLength);
+
+        case ELEMENT_END:
+          endElement();
+          count--;
+          break;
+
+        case ELEMENT_NAME:
+          nextElementName(); // TODO add a skip element name method
+          break;
+
+        case ATTRIBUTE_NAME:
+          nextAttributeName(); // TODO add a skip attribute name method
+          break;
+
+        case ATTRIBUTE_VALUE:
+          skipAttributeValue();
+          break;
+
+        case ELEMENT_TEXT_CONTENT:
+          skipTextContent();
+          break;
+
+        case END_OF_DOCUMENT:
+          if (count != 0) {
+            throw syntaxError("Unexpected end of file! At least one xml element is not closed!");
+          }
+          break;
+
+        default:
+          new AssertionError("Oops, there is something not implemented correctly internally. Please fill an issue on https://github.com/Tickaroo/tikxml/issues . Please include stacktrace and the model class you try to parse");
+
       }
       peeked = PEEKED_NONE;
     } while (count != 0);
-
-    pathIndices[stackSize - 1]++;
-    pathNames[stackSize - 1] = "null";
   }
-  */
 
 
   /**

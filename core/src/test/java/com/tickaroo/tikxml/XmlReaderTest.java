@@ -561,4 +561,82 @@ public class XmlReaderTest {
       reader.close();
     }
   }
+
+  @Test
+  public void skipRemainingElement() throws IOException {
+    String xml = "<foo><e1></e1><bar a='1' b='2'>TextContent<child a='1'>Child text Value<other b='123'>Text<inline /></other></child> <![CDATA[some <cdata></> &]]> </bar>TextAfterSkippedElement<element></element></foo>";
+    XmlReader reader = readerFrom(xml);
+
+    try {
+      Assert.assertTrue(reader.hasElement());
+      reader.beginElement();
+      Assert.assertEquals("foo", reader.nextElementName());
+
+      reader.beginElement();
+      Assert.assertEquals("e1", reader.nextElementName());
+      reader.endElement();
+
+      reader.beginElement(); // <bar> element
+      reader.skipRemainingElement(); // skip <bar>
+
+      Assert.assertEquals("TextAfterSkippedElement", reader.nextTextContent());
+
+      reader.beginElement();
+      Assert.assertEquals("element", reader.nextElementName());
+      reader.endElement();
+
+      reader.endElement(); // end <foo>
+
+    } finally {
+      reader.close();
+    }
+  }
+
+
+  @Test
+  public void skipRemainingElementUnclosed() throws IOException {
+    String xml = "<foo><e1></e1><bar a='1' b='2'>TextContent<child a='1'>Child text Value<other b='123'>Text<inline /></other></child> <![CDATA[some <cdata></> &]]>";
+    XmlReader reader = readerFrom(xml);
+
+    try {
+      Assert.assertTrue(reader.hasElement());
+      reader.beginElement();
+      Assert.assertEquals("foo", reader.nextElementName());
+
+      reader.beginElement();
+      Assert.assertEquals("e1", reader.nextElementName());
+      reader.endElement();
+
+      reader.beginElement(); // <bar> element
+      exception.expect(IOException.class);
+      reader.skipRemainingElement(); // skip <bar>
+
+    } finally {
+      reader.close();
+    }
+  }
+
+  @Test
+  public void callingSkipRemainingElementInWrongPlace() throws IOException {
+    String xml = "<foo><e1></e1><bar a='1' b='2'>TextContent<child a='1'>Child text Value<other b='123'>Text<inline /></other></child> <![CDATA[some <cdata></> &]]> </bar>TextAfterSkippedElement<element></element></foo>";
+    XmlReader reader = readerFrom(xml);
+
+    try {
+      Assert.assertTrue(reader.hasElement());
+      reader.beginElement();
+      Assert.assertEquals("foo", reader.nextElementName());
+
+      reader.beginElement();
+      Assert.assertEquals("e1", reader.nextElementName());
+      reader.endElement();
+
+      exception.expect(AssertionError.class);
+      exception.expectMessage("This method can only be invoked after having consumed the opening element via beginElement()");
+      reader.skipRemainingElement(); // Forgot to call beginElement() before
+
+    } finally {
+      reader.close();
+    }
+  }
+
 }
