@@ -530,4 +530,35 @@ public class XmlReaderTest {
       reader.close();
     }
   }
+
+
+  @Test
+  public void skipCDATA() throws IOException {
+    String cdata = "< hello <> & cdata</foo>";
+    String xml = "<foo>NormalValue<![CDATA[" + cdata + "]]>nextvalue</foo>";
+    XmlReader reader = readerFrom(xml);
+
+    try {
+      Assert.assertTrue(reader.hasElement());
+      reader.beginElement();
+      Assert.assertEquals("foo", reader.nextElementName());
+
+      Assert.assertFalse(reader.hasAttribute());
+
+      Assert.assertTrue(reader.hasTextContent());
+      Assert.assertEquals("NormalValue", reader.nextTextContent());
+
+      Assert.assertTrue(reader.hasTextContent()); // CDATA
+      reader.skipTextContent();
+
+      Assert.assertTrue(reader.hasTextContent());
+      Assert.assertEquals("nextvalue", reader.nextTextContent());
+
+      reader.endElement();
+      Assert.assertFalse(reader.hasElement());
+
+    } finally {
+      reader.close();
+    }
+  }
 }
