@@ -595,7 +595,7 @@ public class XmlReaderTest {
 
   @Test
   public void skipRemainingElementUnclosed() throws IOException {
-    String xml = "<foo><e1></e1><bar a='1' b='2'>TextContent<child a='1'>Child text Value<other b='123'>Text<inline /></other></child> <![CDATA[some <cdata></> &]]>";
+    String xml = "<foo><e1></e1><bar a='1' b='2'>TextContent<child a='1'>Child text Value<other b='123'>Text<inline /></other> <![CDATA[some <cdata></> &]]>";
     XmlReader reader = readerFrom(xml);
 
     try {
@@ -609,6 +609,7 @@ public class XmlReaderTest {
 
       reader.beginElement(); // <bar> element
       exception.expect(IOException.class);
+      exception.expectMessage("Unexpected end of input at path /foo/bar/child/text()");
       reader.skipRemainingElement(); // skip <bar>
 
     } finally {

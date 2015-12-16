@@ -70,7 +70,9 @@ final class XmlScope {
           result.append('/');
           if (pathNames[i] != null) {
             result.append(pathNames[i]);
-            result.append("/text()");
+            if (i == stackSize - 1) {
+              result.append("/text()");
+            }
           }
           break;
 
