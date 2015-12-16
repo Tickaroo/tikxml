@@ -305,15 +305,7 @@ public class XmlReader implements Closeable {
    */
   private boolean isCDATA() throws IOException {
 
-    boolean preData = fillBuffer(9);
-    if (preData) {
-      char[] opening = new char[9];
-      for (int i = 0; i < 9; i++) {
-        opening[i] = (char) buffer.getByte(i);
-      }
-    }
-
-    boolean isCData = fillBuffer(9)
+    return fillBuffer(9)
         && buffer.getByte(0) == '<'
         && buffer.getByte(1) == '!'
         && buffer.getByte(2) == '['
@@ -323,9 +315,7 @@ public class XmlReader implements Closeable {
         && buffer.getByte(6) == 'T'
         && buffer.getByte(7) == 'A'
         && buffer.getByte(8) == '[';
-
-
-    return isCData;
+    
   }
 
   /**
