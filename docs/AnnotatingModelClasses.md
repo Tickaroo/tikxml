@@ -477,3 +477,55 @@ class Shop {
 It will also take that "virtual" nodes into account when writing xml.
 
 Please note that this is not **XPath**. It looks similar to XPath, but XPath is not supported by `TikXml`.
+
+## Text Content
+In XML the content of an xml element can be a mix of text and child elements:
+```xml
+<book>
+  <title>Effective Java</title>
+  <author>
+    <name>Joshua Bloch</name>
+  </author>
+  This book talks about tips and tricks and best practices for java developers
+</book>
+```
+
+This is valid XML. We have an description text directly embedded `<book></book>`. But how do we read that description text? 
+In that use case we can use `@TextContent` for reading and writing such xml:
+
+```java
+@Xml
+class Book {
+
+  @PropertyElement
+  String title;
+  
+  @ChildElement
+  Author author;
+  
+  @TextContent
+  String description; // Contains the text "This book talks about ..."
+}
+```
+
+You can think of `@TextContent` as some kind of inline `@PropertyElement`. `@TextContent` 
+reads the whole text content of a XML element even if there are other xml elements in between:
+
+```xml
+<book>
+
+  This book talks 
+  
+  <title>Effective Java</title>
+  
+  about tips and tricks
+  
+  <author>
+    <name>Joshua Bloch</name>
+  </author>
+ 
+  and best practices for java developers
+  
+</book>
+```
+
