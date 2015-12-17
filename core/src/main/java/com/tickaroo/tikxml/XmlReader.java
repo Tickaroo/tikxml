@@ -921,7 +921,7 @@ public class XmlReader implements Closeable {
           break;
 
         default:
-          new AssertionError("Oops, there is something not implemented correctly internally. Please fill an issue on https://github.com/Tickaroo/tikxml/issues . Please include stacktrace and the model class you try to parse");
+          throw new AssertionError("Oops, there is something not implemented correctly internally. Please fill an issue on https://github.com/Tickaroo/tikxml/issues . Please include stacktrace and the model class you try to parse");
 
       }
       peeked = PEEKED_NONE;
