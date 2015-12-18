@@ -658,10 +658,10 @@ public class XmlReader implements Closeable {
       }
 
       buffer.skip(p - 1);
-      if (c == '<' && fillBuffer(4) && !isCDATA()) {
+      if (c == '<' && !isCDATA()) {
 
         byte peek = buffer.getByte(1);
-        if (peek == '!') {
+        if (peek == '!' && fillBuffer(4)) {
           // skip xml comments <!-- comment -->
           // consume opening comment chars
           buffer.readByte(); // '<'
@@ -676,6 +676,19 @@ public class XmlReader implements Closeable {
           buffer.readByte(); // '-'
           buffer.readByte(); // '-'
           buffer.readByte(); // '>'
+          p = 0;
+          continue;
+        } else if (peek == '?') {
+          // Opening xml declaration processing instruction <?xml version="1.0" encoding="UTF-8" ?>
+          buffer.readByte(); // consume <
+          buffer.readByte(); // consume ?
+
+          if (!skipTo("?>")) {
+            throw syntaxError("Unterminated xml declaration or processing instruction \"<?\"");
+          }
+
+          buffer.readByte(); // consume ?
+          buffer.readByte(); // consume >
           p = 0;
           continue;
         }

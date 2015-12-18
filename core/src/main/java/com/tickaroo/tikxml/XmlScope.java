@@ -29,22 +29,26 @@ final class XmlScope {
   /** A document at least one object */
   static final int NONEMPTY_DOCUMENT = 1;
 
+  // /** XML declaration like {@code <?xml version="1.0" encoding="UTF-8"?>} */
+  // static final int XML_DECLARATION = 2;
+
   /** We are in the opening xml tag like {@code <element>} */
-  static final int ELEMENT_OPENING = 2;
+  static final int ELEMENT_OPENING = 3;
 
   /** We are in the scope of reading attributes of a given element */
-  static final int ELEMENT_ATTRIBUTE = 3;
+  static final int ELEMENT_ATTRIBUTE = 4;
 
   /**
    * We are in an elment's content (between opening and closing xml element tag) like {@code
    * <element>HERE WE ARE</element>}
    */
-  static final int ELEMENT_CONTENT = 4;
+  static final int ELEMENT_CONTENT = 5;
+
 
   /**
    * A document that's been closed and cannot be accessed.
    */
-  static final int CLOSED = 8;
+  static final int CLOSED = 6;
 
 
   /**
