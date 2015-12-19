@@ -392,7 +392,7 @@ public class Book {
 ```
 
 The parser can't know whether `<author>` maps to `writer1` or `writer2`. 
-We are aware of this limitation and might fix that in a future version. However, we think that this 
+We are aware of this limitation and might fix that in a future version (i.e. we could add `@TypeMatcher` support for xml attributes to determine the java type). However, we think that this 
 is not a common use case. Usually you deal with multiple elements in form of a list.
 
 
