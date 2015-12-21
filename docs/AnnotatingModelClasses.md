@@ -30,7 +30,7 @@ Since the generated serializer / deserializer will be in the same package as the
 To mark a class as serializeable / deserializeable by `TikXml` you have to annotate your model class with `@Xml`.
 
 ```java
-@Xml(name = "book") // name is optional. Per default we use class name in lowercase
+@Xml(nameAsRoot = "book") // name is optional. Per default we use class name in lowercase
 public class Book {
 
   String id; 
@@ -39,7 +39,7 @@ public class Book {
 
 Please ignore reading (parsing) xml for a moment. This paragraph is about writing xml. If `Book` is the root object of an xml document 
 we have to specify a name for that root xml element. Per default we use the class name in lowercase, 
-but you can customize it within the `@Xml( name = "foo")` annotation.
+but you can customize it within the `@Xml( nameAsRoot = "foo")` annotation.
 
 
 ## XML Element attributes
@@ -96,7 +96,7 @@ public class MyDateConverter implements Converter<Date> {
 }
 ```
 
-Your custom `Converter` must provide an empty (parameterless) constructor).
+Your custom `Converter` must provide an empty (parameter less) constructor).
 As you see, you can specify a custom converter for each field with `@Attribute(converter = MyConverter.class)`. 
 Additionally, you can set default converter for all your xml feeds directly in `TikXml`. 
 
@@ -146,9 +146,9 @@ Also, a default converter set with `tikXml.setConverter(Date.class, new MyDateCo
 ## Child Elements
 In XML you can nest child element in elements. You have already seen that in `@PropertyElement`. 
 However, property elements are there read just the text content of an element and meant to be used 
-for primitives like `int`, `double`, `String` etc. (eventually other "simple" data types like `Date` via custom converter).
+for primitives like `int`, `double`, `String` etc. (eventually other "simple" data types like `Date` via custom `TypeConverter`).
 
-If you want to parse or write child elements (or child objects) then `@ChildElement` is the annotation you are looking for:
+If you want to parse or write child elements (or child objects) then `@Element` is the annotation you are looking for:
 
 ```xml
 <book id="123">
@@ -170,7 +170,7 @@ public class Book {
   @PropertyElement
   String title;
  
-  @ChildElement(name = "author") // name is optional, field name will be used as default value
+  @Element(name = "author") // name is optional, field name will be used as default value
   Author author;
 }
 
@@ -231,16 +231,16 @@ public class Book {
   @PropertyElement
   String title;
  
-  @ChildElement(
+  @Element(
     name = "author", // optional, otherwise field name will be used
-    types = @TypMatcher( elementName = "journalist", type = Journalist.class)
+    typesByElement = @ElementNameMatcher( elementName = "journalist", type = Journalist.class)
   )
   Author author;
 }
 ```
 
-So`@ChildElement(polymorphism = @TypMatcher)` is where we have to define how we determine polymorphism while reading xml.
-With `@TypMatcher(elementName = "journalist", type = Author.class)` we define that, if the xml element name is `journalist` we are going to parse an `Journalist` object.
+So`@Element(typesByElement = @ElementNameMatcher)` is where we have to define how we determine polymorphism while reading xml.
+With `@ElementNameMatcher(elementName = "journalist", type = Author.class)` we define that, if the xml element name is `journalist` we are going to parse an `Journalist` object.
 
 ```xml
 <book id="111">
@@ -253,8 +253,8 @@ With `@TypMatcher(elementName = "journalist", type = Author.class)` we define th
 </book>
 ```
 
-On the other hand, if we want to parse an `Author` we expect an xml element with the name `author` 
-because the normal `@ChildElement(name="author")` definition will apply.
+Otherwise, if we want to parse an `Author` we expect an xml element with the name `author` 
+because the normal `@Element(name="author")` definition will apply.
 
 ```xml
 <book id="123">
@@ -309,10 +309,10 @@ public class Book {
   @PropertyElement
   String title;
  
-  @ChildElement(
-    types = {
-      @TypMatcher( elementName = "author", type = Author.class),
-      @TypMatcher( elementName = "organization", type = Organization.class),
+  @Element(
+    typesByElement = {
+      @ElementNameMatcher( elementName = "author", type = Author.class),
+      @ElementNameMatcher( elementName = "organization", type = Organization.class),
     }
   )
   Writer writer;
@@ -342,7 +342,7 @@ and
 </book>
 ```
 
-As you see, you can define arbitrary many `@TypeMatcher` to resolve polymorphism. 
+As you see, you can define arbitrary many `@ElementNameMatcher` to resolve polymorphism. 
 Since resolution of polymorphism is done by **checking the xml element name** the `<book>` can only have 
 one single `<author />` tag, because we can't use xml element's name as property anymore (as we did with `@PropertyElement`).
 
@@ -358,16 +358,16 @@ public class Book {
   @PropertyElement
   String title;
  
-  @ChildElement(
-    types = {
+  @Element(
+    typesByElement = {
       @TypMatcher( elementName = "author", type = Author.class),
       @TypMatcher( elementName = "organization", type = Organization.class),
     }
   )
   Writer writer1;
   
-  @ChildElement(
-      types = {
+  @Element(
+      typesByElement = {
         @TypMatcher( elementName = "author", type = Author.class),
         @TypMatcher( elementName = "organization", type = Organization.class),
       }
@@ -397,13 +397,13 @@ is not a common use case. Usually you deal with multiple elements in form of a l
 
 
 ## List of elements
-If we want to have a List of child elements we use `@ChildElementList`:
+If we want to have a List of child elements we use `@Element` on `java.util.List`:
 
 ```java
 @Xml
 class Catalogue {
 
-  @ChildElementList(name = books) // optional name of xml element, otherwise field name is used
+  @Element(name = "books") // optional name of xml element, otherwise field name is used
   List<Book> books;
 
 }
@@ -421,11 +421,11 @@ which will read and write the following xml:
 </catalog>
 ```
 
-With `@ChildElementList( types = @TypeMatcher() )` you can deal with polymorphism the same way as shown above with `@ChildElement`.
+With `@Element( typesByElement = @ElementNameMatcher() )` you can deal with polymorphism for lists the same way as shown above.
 
 ## Inline list of elements
 As you have seen in the section before our xml includes an extra `<books>` tag, 
-where the list of `<book>` element is in. We can remove this surrounding tag with `@ChildElementList(inline = true)` option.
+where the list of `<book>` element is in. We can remove this surrounding tag with the additional `@InlineList` annotation.
 This will result in a flatten list like this:
 
 ```xml
@@ -435,6 +435,19 @@ This will result in a flatten list like this:
     <book id="3">...</book>
 </catalog>
 ```
+
+
+```java
+@Xml
+class Catalogue {
+
+  @InlineList
+  @Element
+  List<Book> books;
+
+}
+```
+
 
 ## Paths 
 Have a look at the following example: Imagine we have a xml representation of a bookstore with only one single book and one single newspaper:
@@ -463,11 +476,11 @@ class Shop {
   String name
   
   @Path("bookstore/inventory")  //  '/' indicates child element
-  @ChildElement
+  @Element
   Book book;
   
   @Path("bookstore/inventory")
-  @ChildElement
+  @Element
   Newspaper newspaper;
     
 }
@@ -500,7 +513,7 @@ class Book {
   @PropertyElement
   String title;
   
-  @ChildElement
+  @Element
   Author author;
   
   @TextContent
@@ -528,4 +541,30 @@ reads the whole text content of a XML element even if there are other xml elemen
   
 </book>
 ```
+
+## Scan Modes
+As you see there are quite some annotations. Usually programmers are lazy people. Therefore we provide two modes.
+ 1. **ANNOTATION_ONLY**: This means that only fields with annotations like `@Attribute`, `@Element`, `@PropertyElement`, `@TextContent` will be used. Any other fields are not be taken into account when scanning for xml mappings.
+ 2. **COMMON_CASE**: The "common case" means all primitive java data types (like int, double, string) are mapped to xml attributes (is equal to
+annotating class fields with `@Attribute`. All non primitive types (in other words objects) are mapped to child objects (is equal to annotating class fields with {@link
+  Example: 
+ 
+  ```xml
+   <book id="123" title="Effective java"> `
+    <author>...</author> 
+   </book> ``
+  ```
+  By using COMMON_CASE you don't have to write much annotations:
+  
+  ```java
+  @Xml(mode = ScanMode.COMMON_CASE) 
+  class Book { 
+    int id;          // Doesn't need an @Attribute
+    String title;    // Doesn't need an @Attribute 
+    Author author;   // Doesn't need an @Element
+    
+    @IgnoreXml
+    double calculatedPrice; // Will be ignored
+  }
+  ```
 
