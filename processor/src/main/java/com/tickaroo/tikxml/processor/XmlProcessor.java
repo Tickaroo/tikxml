@@ -18,9 +18,11 @@ package com.tickaroo.tikxml.processor;
 
 import com.google.auto.service.AutoService;
 import com.tickaroo.tikxml.annotation.Xml;
+import com.tickaroo.tikxml.processor.model.AnnotatedClass;
 import java.util.HashSet;
 import java.util.Set;
 import javax.annotation.processing.AbstractProcessor;
+import javax.annotation.processing.Filer;
 import javax.annotation.processing.Messager;
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.annotation.processing.Processor;
@@ -28,21 +30,31 @@ import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.TypeElement;
+import javax.lang.model.util.Elements;
+import javax.lang.model.util.Types;
 import javax.tools.Diagnostic;
 
 /**
+ * Annotation processor for @Xml annotated images
+ *
  * @author Hannes Dorfmann
+ * @since 1.0
  */
-
 @AutoService(Processor.class)
 public class XmlProcessor extends AbstractProcessor {
 
   private Messager messager;
+  private Filer filer;
+  private Elements elementUtils;
+  private Types typeUtils;
 
   @Override
   public synchronized void init(ProcessingEnvironment processingEnv) {
     super.init(processingEnv);
     messager = processingEnv.getMessager();
+    filer = processingEnv.getFiler();
+    elementUtils = processingEnv.getElementUtils();
+    typeUtils = processingEnv.getTypeUtils();
   }
 
   @Override
@@ -62,9 +74,25 @@ public class XmlProcessor extends AbstractProcessor {
 
     Set<? extends Element> elementsAnnotatedWith = roundEnv.getElementsAnnotatedWith(Xml.class);
 
-    for (Element elemenet : elementsAnnotatedWith) {
-      messager.printMessage(Diagnostic.Kind.ERROR, "Found element " + elemenet.toString());
+    try {
+      for (Element element : elementsAnnotatedWith) {
+       new AnnotatedClass(element);
+      }
+
+    }catch (ProcessingException e){
+      printError(e);
     }
+
+
     return false;
+  }
+
+
+  /**
+   * Prints the error message
+   * @param exception The exception that has caused an error
+   */
+  private void printError(ProcessingException exception) {
+    messager.printMessage(Diagnostic.Kind.ERROR, exception.getMessage(), exception.getElement());
   }
 }
