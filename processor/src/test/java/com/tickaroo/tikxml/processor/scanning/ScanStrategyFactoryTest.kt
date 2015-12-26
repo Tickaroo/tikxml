@@ -16,21 +16,23 @@
  *
  */
 
-package com.tickaroo.tikxml.reading;
+package com.tickaroo.tikxml.processor.scanning
+
+import com.tickaroo.tikxml.annotation.ScanMode
+import org.junit.Test
+import kotlin.test.assertTrue
 
 /**
+ *
  * @author Hannes Dorfmann
  */
-// @Xml
-public class Book {
+class ScanStrategyFactoryTest {
 
-  // @Attribute (converter string -> object)
-  String id;
 
-  // @PropertyElement(name = xml-node-name)
-  String author;
-  String title;
-  String genre;
-  double price;
-  String description;
+    @Test
+    fun useDefaultStrategy() {
+        val annotatedClass = MockAnnotatedClass(ScanMode.DEFAULT)
+        assertTrue(ScanStrategyFactory.getStrategy(annotatedClass, ScanMode.COMMON_CASE) is CommonCaseScanStrategy)
+        assertTrue(ScanStrategyFactory.getStrategy(annotatedClass, ScanMode.ANNOTATIONS_ONLY) is AnnotationOnlyScanStrategy)
+    }
 }

@@ -16,21 +16,12 @@
  *
  */
 
-package com.tickaroo.tikxml.reading;
+package com.tickaroo.tikxml.processor.scanning
 
 /**
+ * A [ScanStrategy] that scans the element only for annotations
  * @author Hannes Dorfmann
  */
-// @Xml
-public class Book {
+class AnnotationOnlyScanStrategy : ScanStrategy() {
 
-  // @Attribute (converter string -> object)
-  String id;
-
-  // @PropertyElement(name = xml-node-name)
-  String author;
-  String title;
-  String genre;
-  double price;
-  String description;
 }

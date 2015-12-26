@@ -9,16 +9,22 @@
  *        http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and limitations under the License.
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  *
  */
 
 package com.tickaroo.tikxml.processor;
 
 import com.google.auto.service.AutoService;
+import com.tickaroo.tikxml.annotation.ScanMode;
 import com.tickaroo.tikxml.annotation.Xml;
 import com.tickaroo.tikxml.processor.model.AnnotatedClass;
+import com.tickaroo.tikxml.processor.model.AnnotatedClassImpl;
+import com.tickaroo.tikxml.processor.scanning.ScanStrategy;
+import com.tickaroo.tikxml.processor.scanning.ScanStrategyFactory;
 import java.util.HashSet;
 import java.util.Set;
 import javax.annotation.processing.AbstractProcessor;
@@ -43,6 +49,11 @@ import javax.tools.Diagnostic;
 @AutoService(Processor.class)
 public class XmlProcessor extends AbstractProcessor {
 
+  /**
+   * The default scan mode
+   */
+  private static final String OPTION_DEFAULT_SCAN_MODE = "defaultScanMode";
+
   private Messager messager;
   private Filer filer;
   private Elements elementUtils;
@@ -65,6 +76,13 @@ public class XmlProcessor extends AbstractProcessor {
   }
 
   @Override
+  public Set<String> getSupportedOptions() {
+    Set<String> options = new HashSet<>();
+    options.add(OPTION_DEFAULT_SCAN_MODE);
+    return options;
+  }
+
+  @Override
   public SourceVersion getSupportedSourceVersion() {
     return SourceVersion.latestSupported();
   }
@@ -72,14 +90,35 @@ public class XmlProcessor extends AbstractProcessor {
   @Override
   public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
 
-    Set<? extends Element> elementsAnnotatedWith = roundEnv.getElementsAnnotatedWith(Xml.class);
-
     try {
-      for (Element element : elementsAnnotatedWith) {
-       new AnnotatedClass(element);
+
+      // Read options
+      String optionScanAsString = processingEnv.getOptions().get(OPTION_DEFAULT_SCAN_MODE);
+      ScanMode defaultScanMode;
+      if (optionScanAsString == null || optionScanAsString.length() == 0) {
+        defaultScanMode = ScanMode.COMMON_CASE;
+      } else {
+        defaultScanMode = ScanMode.valueOf(optionScanAsString);
       }
 
-    }catch (ProcessingException e){
+      if (defaultScanMode == ScanMode.DEFAULT) {
+        throw new ProcessingException(null, "The option '%s' is not allowed. Must either be %s or %s",
+            OPTION_DEFAULT_SCAN_MODE, optionScanAsString, ScanMode.ANNOTATIONS_ONLY.toString(),
+            ScanMode.COMMON_CASE.toString());
+      }
+
+
+      Set<? extends Element> elementsAnnotatedWith = roundEnv.getElementsAnnotatedWith(Xml.class);
+
+      for (Element element : elementsAnnotatedWith) {
+        AnnotatedClass clazz = new AnnotatedClassImpl(element);
+
+        // Scan class
+        ScanStrategy strategy = ScanStrategyFactory.INSTANCE.getStrategy(clazz, defaultScanMode);
+        strategy.scan(clazz);
+      }
+
+    } catch (ProcessingException e) {
       printError(e);
     }
 
@@ -90,6 +129,7 @@ public class XmlProcessor extends AbstractProcessor {
 
   /**
    * Prints the error message
+   *
    * @param exception The exception that has caused an error
    */
   private void printError(ProcessingException exception) {

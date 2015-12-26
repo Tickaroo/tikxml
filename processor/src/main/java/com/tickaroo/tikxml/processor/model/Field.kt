@@ -16,21 +16,15 @@
  *
  */
 
-package com.tickaroo.tikxml.reading;
+package com.tickaroo.tikxml.processor.model
 
 /**
+ * Represents a field where we want to parse xml data into or write xml data from.
+ *
  * @author Hannes Dorfmann
  */
-// @Xml
-public class Book {
+interface Field {
 
-  // @Attribute (converter string -> object)
-  String id;
-
-  // @PropertyElement(name = xml-node-name)
-  String author;
-  String title;
-  String genre;
-  double price;
-  String description;
+    val name: String
+    val required: Boolean
 }

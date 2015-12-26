@@ -10,5 +10,5 @@ import com.tickaroo.tikxml.annotation.Xml;
 
   @Attribute int id;
   @Attribute String name;
-
 }
+
