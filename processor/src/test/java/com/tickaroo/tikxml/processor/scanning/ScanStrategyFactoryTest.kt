@@ -20,6 +20,9 @@ package com.tickaroo.tikxml.processor.scanning
 
 import com.tickaroo.tikxml.annotation.ScanMode
 import org.junit.Test
+import org.mockito.Mockito
+import javax.lang.model.util.Elements
+import javax.lang.model.util.Types
 import kotlin.test.assertTrue
 
 /**
@@ -31,8 +34,9 @@ class ScanStrategyFactoryTest {
 
     @Test
     fun useDefaultStrategy() {
+        val scanStrategyFactory = ScanStrategyFactory(Mockito.mock(Elements::class.java), Mockito.mock(Types::class.java))
         val annotatedClass = MockAnnotatedClass(ScanMode.DEFAULT)
-        assertTrue(ScanStrategyFactory.getStrategy(annotatedClass, ScanMode.COMMON_CASE) is CommonCaseScanStrategy)
-        assertTrue(ScanStrategyFactory.getStrategy(annotatedClass, ScanMode.ANNOTATIONS_ONLY) is AnnotationOnlyScanStrategy)
+        assertTrue(scanStrategyFactory.getStrategy(annotatedClass, ScanMode.COMMON_CASE) is CommonCaseScanStrategy)
+        assertTrue(scanStrategyFactory.getStrategy(annotatedClass, ScanMode.ANNOTATIONS_ONLY) is AnnotationOnlyScanStrategy)
     }
 }

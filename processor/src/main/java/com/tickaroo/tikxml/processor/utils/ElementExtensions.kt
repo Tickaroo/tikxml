@@ -22,13 +22,27 @@ import javax.lang.model.element.Element
 import javax.lang.model.element.ElementKind
 import javax.lang.model.element.ExecutableElement
 import javax.lang.model.element.Modifier
+import javax.lang.model.util.Elements
+import javax.lang.model.util.Types
+import kotlin.text.startsWith
 
 
 /**
  * Checks whether a given element has at least "package" visibility which means, that it is not private nor protected
  */
-fun Element.hasMinimumPackageVisibility() =
-        !modifiers.contains(Modifier.PRIVATE) && modifiers.contains(Modifier.PROTECTED)
+fun Element.hasMinimumPackageVisibilityModifiers() =
+        !isProtected() && !isPrivate()
+
+fun Element.isSamePackageAs(other: Element, utils: Elements) = utils.getPackageOf(this) == utils.getPackageOf(other)
+
+/**
+ * Checks if a element contains a private modifier
+ */
+fun Element.isPrivate() = modifiers.contains(Modifier.PRIVATE)
+/**
+ * Checks if a element has a protected modifier
+ */
+fun Element.isProtected() = modifiers.contains(Modifier.PROTECTED)
 
 /**
  * Checks if a given element is static
@@ -64,4 +78,30 @@ fun Element.isEmptyConstructor() =
 /**
  * Checks if a given element is empty constructor with minimum package visibility
  */
-fun Element.isEmptyConstructorWithMinimumPackageVisibility() = isEmptyConstructor() && hasMinimumPackageVisibility()
+fun Element.isEmptyConstructorWithMinimumPackageVisibility() = isEmptyConstructor() && hasMinimumPackageVisibilityModifiers()
+
+/**
+ * Checks if a given Element is a method with minimum package visibility
+ */
+fun Element.isMethodWithMinimumPackageVisibility() = isMethod() && hasMinimumPackageVisibilityModifiers()
+
+/**
+ * Checks if a given Element is a getter method (prefix = "get" or prefix = "is") with at least one package visibility
+ */
+fun Element.isGetterMethodWithMinimumPackageVisibility() = isMethodWithMinimumPackageVisibility() && simpleName.startsWith("get") || simpleName.startsWith("is")
+
+/**
+ * Checks if a given Element is a setted method (prefix = "set") with at least one package visibility
+ */
+fun Element.isSetterMethodWithMinimumPackageVisibility() = isMethodWithMinimumPackageVisibility() && simpleName.startsWith("set")
+
+/**
+ * Checks if a given Element is a setter and has excactly one parameter of the given type
+ */
+fun Element.isMethodWithOneParameterOfType(typeUtils: Types) =
+        isMethod() && (this as ExecutableElement).parameters.size == 1 && typeUtils.isAssignable(parameters[0].asType(), this.asType())
+
+/**
+ * Checks if a given Element is a parameterless method
+ */
+fun Element.isParameterlessMethod() = isMethod() && (this as ExecutableElement).parameters.isEmpty()

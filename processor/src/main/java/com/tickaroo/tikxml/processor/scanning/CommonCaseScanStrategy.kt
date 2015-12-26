@@ -18,10 +18,18 @@
 
 package com.tickaroo.tikxml.processor.scanning
 
+import com.tickaroo.tikxml.processor.model.Field
+import javax.lang.model.element.VariableElement
+import javax.lang.model.util.Elements
+import javax.lang.model.util.Types
+
 /**
  *
  * @author Hannes Dorfmann
  */
-class CommonCaseScanStrategy : ScanStrategy(){
+class CommonCaseScanStrategy(elementUtils: Elements, typeUtils: Types) : ScanStrategy(elementUtils, typeUtils) {
+    override fun isXmlField(element: VariableElement): Field? {
+        throw UnsupportedOperationException()
+    }
 
 }

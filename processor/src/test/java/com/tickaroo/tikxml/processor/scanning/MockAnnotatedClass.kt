@@ -33,5 +33,5 @@ class MockAnnotatedClass(override val element: TypeElement, override val scanMod
 
     constructor(scanMode: ScanMode) : this(Mockito.mock(TypeElement::class.java) as TypeElement, scanMode)
 
-    override val fields: Map<String, Field> = HashMap()
+    override val fields = HashMap<String, Field>()
 }

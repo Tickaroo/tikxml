@@ -16,20 +16,12 @@
  *
  */
 
-package com.tickaroo.tikxml.processor.scanning
-
-import com.tickaroo.tikxml.processor.model.Field
-import javax.lang.model.element.VariableElement
-import javax.lang.model.util.Elements
-import javax.lang.model.util.Types
+package com.tickaroo.tikxml.processor.model.access
 
 /**
- * A [ScanStrategy] that scans the element only for annotations
+ * Represents a xml field that can be accessed directly (no getters or setters are required)
  * @author Hannes Dorfmann
  */
-class AnnotationOnlyScanStrategy(elementUtils: Elements, typeUtils: Types) : ScanStrategy(elementUtils, typeUtils) {
-    override fun isXmlField(element: VariableElement): Field? {
-        throw UnsupportedOperationException()
-    }
+class MinPackageVisibilityFieldAccessPolicy : FieldAccessPolicy() {
 
 }

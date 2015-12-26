@@ -20,16 +20,18 @@ package com.tickaroo.tikxml.processor.scanning
 
 import com.tickaroo.tikxml.annotation.ScanMode
 import com.tickaroo.tikxml.processor.model.AnnotatedClass
+import javax.lang.model.util.Elements
+import javax.lang.model.util.Types
 
 /**
  * Detects and instantiates the concrete [ScanStrategy]
  * @author Hannes Dorfmann
  */
-object ScanStrategyFactory {
+class ScanStrategyFactory(private val elementUtils: Elements, private val typeUtils: Types) {
 
     // Visible for testing
-    private val commonCaseScanStrategy = CommonCaseScanStrategy()
-    private val annotationOnlyScanStrategy = AnnotationOnlyScanStrategy()
+    private val commonCaseScanStrategy = CommonCaseScanStrategy(elementUtils, typeUtils)
+    private val annotationOnlyScanStrategy = AnnotationOnlyScanStrategy(elementUtils, typeUtils)
 
     /**
      * Get the strategy or use the default one

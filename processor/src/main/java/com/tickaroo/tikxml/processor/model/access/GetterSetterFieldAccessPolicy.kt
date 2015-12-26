@@ -16,20 +16,14 @@
  *
  */
 
-package com.tickaroo.tikxml.processor.scanning
+package com.tickaroo.tikxml.processor.model.access
 
-import com.tickaroo.tikxml.processor.model.Field
-import javax.lang.model.element.VariableElement
-import javax.lang.model.util.Elements
-import javax.lang.model.util.Types
+import javax.lang.model.element.ExecutableElement
 
 /**
- * A [ScanStrategy] that scans the element only for annotations
+ * Represents a private xml field which has setter and getter methods to workaround this visibility issue
  * @author Hannes Dorfmann
  */
-class AnnotationOnlyScanStrategy(elementUtils: Elements, typeUtils: Types) : ScanStrategy(elementUtils, typeUtils) {
-    override fun isXmlField(element: VariableElement): Field? {
-        throw UnsupportedOperationException()
-    }
+class GetterSetterFieldAccessPolicy(val getter: ExecutableElement, val setter: ExecutableElement) : FieldAccessPolicy() {
 
 }

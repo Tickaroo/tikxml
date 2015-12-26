@@ -33,7 +33,7 @@ import javax.lang.model.element.TypeElement
 interface AnnotatedClass {
 
     val element: TypeElement
-    val fields: Map<String, Field>
+    val fields: MutableMap<String, Field>
     val scanMode: ScanMode
     val inheritance: Boolean
     val nameAsRoot: String

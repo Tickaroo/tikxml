@@ -58,6 +58,7 @@ public class XmlProcessor extends AbstractProcessor {
   private Filer filer;
   private Elements elementUtils;
   private Types typeUtils;
+  private ScanStrategyFactory scanStrategyFactory;
 
   @Override
   public synchronized void init(ProcessingEnvironment processingEnv) {
@@ -66,6 +67,7 @@ public class XmlProcessor extends AbstractProcessor {
     filer = processingEnv.getFiler();
     elementUtils = processingEnv.getElementUtils();
     typeUtils = processingEnv.getTypeUtils();
+    scanStrategyFactory = new ScanStrategyFactory(elementUtils, typeUtils);
   }
 
   @Override
@@ -114,7 +116,7 @@ public class XmlProcessor extends AbstractProcessor {
         AnnotatedClass clazz = new AnnotatedClassImpl(element);
 
         // Scan class
-        ScanStrategy strategy = ScanStrategyFactory.INSTANCE.getStrategy(clazz, defaultScanMode);
+        ScanStrategy strategy = scanStrategyFactory.getStrategy(clazz, defaultScanMode);
         strategy.scan(clazz);
       }
 
