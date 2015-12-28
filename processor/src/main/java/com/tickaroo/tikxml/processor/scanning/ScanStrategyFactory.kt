@@ -27,17 +27,20 @@ import javax.lang.model.util.Types
  * Detects and instantiates the concrete [ScanStrategy]
  * @author Hannes Dorfmann
  */
-class ScanStrategyFactory(private val elementUtils: Elements, private val typeUtils: Types) {
+class ScanStrategyFactory(private val elementUtils: Elements, private val typeUtils: Types, private val requiredDetector: RequiredDetector) {
 
     // Visible for testing
-    private val commonCaseScanStrategy = CommonCaseScanStrategy(elementUtils, typeUtils)
-    private val annotationOnlyScanStrategy = AnnotationOnlyScanStrategy(elementUtils, typeUtils)
+    private val commonCaseScanStrategy = CommonCaseScanStrategy(elementUtils, typeUtils, requiredDetector)
+    private val annotationOnlyScanStrategy = AnnotationOnlyScanStrategy(elementUtils, typeUtils, requiredDetector)
 
     /**
      * Get the strategy or use the default one
      */
     fun getStrategy(annotatedClass: AnnotatedClass, defaultScanMode: ScanMode = ScanMode.COMMON_CASE) =
-            if (annotatedClass.scanMode == ScanMode.DEFAULT) strategyForScanMode(defaultScanMode) else strategyForScanMode(annotatedClass.scanMode)
+            if (annotatedClass.scanMode == ScanMode.DEFAULT)
+                strategyForScanMode(defaultScanMode)
+            else
+                strategyForScanMode(annotatedClass.scanMode)
 
     /**
      * Maps the [ScanMode] to a [ScanStrategy]

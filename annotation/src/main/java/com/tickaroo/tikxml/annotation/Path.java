@@ -18,6 +18,12 @@
 
 package com.tickaroo.tikxml.annotation;
 
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
 /**
  * With this annotation we can "emulate a virtual node". This allows to add some memory
  * optimizations, because we don't have to instantiate extra wrapper java objects.
@@ -58,6 +64,9 @@ package com.tickaroo.tikxml.annotation;
  * @author Hannes Dorfmann
  * @since 1.0
  */
+@Documented
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.FIELD)
 public @interface Path {
   /**
    * The path. A slash ("/") is used to construct sub paths. A name in square brackets means the

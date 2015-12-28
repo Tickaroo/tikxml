@@ -16,14 +16,27 @@
  *
  */
 
-package com.tickaroo.tikxml.processor.model.access
+package com.tickaroo.tikxml.processor.converter;
 
-import javax.lang.model.element.VariableElement
+import com.tickaroo.tikxml.annotation.TypeConverter;
 
 /**
- * Represents a xml field that can be accessed directly (no getters or setters are required)
  * @author Hannes Dorfmann
  */
-class MinPackageVisibilityFieldAccessPolicy(val element: VariableElement) : FieldAccessPolicy() {
+public class NoParameterLessConstructorTypeConverter implements TypeConverter<Object> {
+
+  public NoParameterLessConstructorTypeConverter(int a){
+
+  }
+
+  @Override
+  public Object read(String value) throws Exception {
+    return null;
+  }
+
+  @Override
+  public String write(Object value) throws Exception {
+    return null;
+  }
 
 }

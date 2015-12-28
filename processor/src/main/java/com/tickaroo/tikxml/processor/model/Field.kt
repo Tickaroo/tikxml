@@ -26,10 +26,10 @@ import javax.lang.model.element.VariableElement
  *
  * @author Hannes Dorfmann
  */
-class Field(
+open class Field(
         val element: VariableElement,
         val name: String,
-        val required: Boolean) {
+        val required: Boolean?) { // required == null means take default value of TikXml
 
     lateinit var accessPolicy: FieldAccessPolicy
 

@@ -28,6 +28,7 @@ import java.util.*
 import javax.lang.model.element.ExecutableElement
 import javax.lang.model.element.TypeElement
 import javax.lang.model.element.VariableElement
+import javax.lang.model.type.TypeKind
 import javax.lang.model.util.Elements
 import javax.lang.model.util.Types
 import kotlin.collections.forEach
@@ -38,7 +39,7 @@ import kotlin.text.*
  * @author Hannes Dorfmann
  * @since 1.0
  */
-abstract class ScanStrategy(private val elementUtils: Elements, private val typeUtils: Types) {
+abstract class ScanStrategy(private val elementUtils: Elements, private val typeUtils: Types, val requiredDetector: RequiredDetector) {
 
     /**
      * Scans the child element of the passed [AnnotatedClass] to find [com.tickaroo.tikxml.processor.model.Field]
@@ -47,143 +48,155 @@ abstract class ScanStrategy(private val elementUtils: Elements, private val type
     fun scan(annotatedClass: AnnotatedClass) {
 
         var constructorFound = false
-        val fieldWithMethodAccessRequired = ArrayList<Field>()
-        val methodsMap = HashMap<String, ExecutableElement>()
 
         // TODO inheritance
         var currentElement = annotatedClass.element
 
-        currentElement.enclosedElements.forEach {
+        while (true) {
+            val fieldWithMethodAccessRequired = ArrayList<Field>()
+            val methodsMap = HashMap<String, ExecutableElement>()
 
-            if (it.isEmptyConstructorWithMinimumPackageVisibility()) {
-                constructorFound = true
-            } else if (it.isGetterMethodWithMinimumPackageVisibility() || it.isSetterMethodWithMinimumPackageVisibility()) {
-                val method = it as ExecutableElement
-                methodsMap.put(method.simpleName.toString(), method)
-            } else if (it.isField()) {
-                val field: Field? = isXmlField(it as VariableElement)
-                if (field != null) {
+            currentElement.enclosedElements.forEach {
 
-                    // check for conflicts
-                    val existingField: Field? = annotatedClass.fields[field.name]
-                    if (existingField != null) {
-                        val conflictingField = existingField.element
-                        throw ProcessingException(it, "Conflict: The field '${it.toString()}' "
-                                + "in class ${currentElement.qualifiedName} has the same XML "
-                                + "name as the field '${conflictingField.simpleName}' in "
-                                + "${(conflictingField.enclosingElement as TypeElement).qualifiedName}. "
-                                + "You can specify another name annotations.")
+                if (it.isEmptyConstructorWithMinimumPackageVisibility()) {
+                    constructorFound = true
+                } else if (it.isGetterMethodWithMinimumPackageVisibility() || it.isSetterMethodWithMinimumPackageVisibility()) {
+                    val method = it as ExecutableElement
+                    methodsMap.put(method.simpleName.toString(), method)
+                } else if (it.isField()) {
+                    val field: Field? = isXmlField(it as VariableElement)
+                    if (field != null) {
+
+                        // check for conflicts
+                        val existingField: Field? = annotatedClass.fields[field.name]
+                        if (existingField != null) {
+                            val conflictingField = existingField.element
+                            throw ProcessingException(it, "Conflict: The field '${it.toString()}' "
+                                    + "in class ${currentElement.qualifiedName} has the same XML "
+                                    + "name as the field '${conflictingField.simpleName}' in "
+                                    + "${(conflictingField.enclosingElement as TypeElement).qualifiedName}. "
+                                    + "You can specify another name annotations.")
+                        }
+
+                        // needs setter and getter?
+                        if (it.hasMinimumPackageVisibilityModifiers()) {
+                            field.accessPolicy = MinPackageVisibilityFieldAccessPolicy(field.element)
+                            annotatedClass.fields.put(field.name, field)
+                        } else {
+                            fieldWithMethodAccessRequired.add(field) // processed afterwards
+                        }
+
                     }
-
-                    // needs setter and getter?
-                    if (it.hasMinimumPackageVisibilityModifiers()) {
-                        field.accessPolicy = MinPackageVisibilityFieldAccessPolicy()
-                        annotatedClass.fields.put(field.name, field)
-                    } else {
-                        fieldWithMethodAccessRequired.add(field) // processed afterwards
-                    }
-
-                }
-            }
-        }
-
-
-        if (!constructorFound) {
-            throw ProcessingException(annotatedClass.element, "${annotatedClass.qualifiedClassName} " +
-                    "must provide an empty (parameterless) constructor with minimum default (package) visibility")
-        }
-
-        // Search for getters and setters
-        fieldWithMethodAccessRequired.forEach {
-
-            val element = it.element
-            val elementName: String = element.simpleName.toString()
-            val nameWithoutHungarian = getFieldNameWithoutHungarianNotation(element)
-
-            var getter = findMethodForField(nameWithoutHungarian, "get", methodsMap)
-            if (getter == null) {
-                getter = findMethodForHungarianField(elementName, "get", methodsMap)
-                if (getter == null) {
-                    getter = findMethodForHungarianFieldUpperCase(elementName, "get", methodsMap)
                 }
             }
 
-            // Test with "is" prefix
-            // TODO only run this if boolean type
-            if (getter == null) {
-                var getter = findMethodForField(nameWithoutHungarian, "is", methodsMap)
+
+            if (!constructorFound) {
+                throw ProcessingException(annotatedClass.element, "${annotatedClass.qualifiedClassName} " +
+                        "must provide an empty (parameterless) constructor with minimum default (package) visibility")
+            }
+
+            // Search for getters and setters
+            fieldWithMethodAccessRequired.forEach {
+
+                val element = it.element
+                val elementName: String = element.simpleName.toString()
+                val nameWithoutHungarian = getFieldNameWithoutHungarianNotation(element)
+
+                var getter = findMethodForField(nameWithoutHungarian, "get", methodsMap)
                 if (getter == null) {
-                    getter = findMethodForHungarianField(elementName, "is", methodsMap)
+                    getter = findMethodForHungarianField(elementName, "get", methodsMap)
                     if (getter == null) {
-                        getter = findMethodForHungarianFieldUpperCase(elementName, "is", methodsMap)
+                        getter = findMethodForHungarianFieldUpperCase(elementName, "get", methodsMap)
                     }
                 }
-            }
 
-            if (getter == null) {
-                throw ProcessingException(element, "The field '${element.simpleName.toString()}'"
-                        + "in class ${(element.enclosingElement as TypeElement).qualifiedName.toString()} "
-                        + "has private or protected visibility. Hence a corresponding getter method must be provided "
-                        + " with the name ${bestMethodName(elementName, "get")} or ${bestMethodName(elementName, "is")} "
-                        + "in case of a boolean. Unfortunately, there is no such getter method. Please provide one!")
-            }
-
-            if (!getter.isParameterlessMethod()) {
-                throw ProcessingException(element, "The getter method '${getter.toString()}' for field '${element.simpleName.toString()}'"
-                        + "in class ${(element.enclosingElement as TypeElement).qualifiedName.toString()} "
-                        + "must be parameterless (zero parameters).")
-            }
-
-            if (!getter.isProtected() && (!getter.isPrivate() || getter.isSamePackageAs(element, elementUtils))) {
-                throw ProcessingException(element, "The getter method '${getter.toString()}' for field '${element.simpleName.toString()}'"
-                        + "in class ${(element.enclosingElement as TypeElement).qualifiedName.toString()} "
-                        + "must have minimum package visibility (or public visibility if this is a super class in a different package)")
-
-            }
-
-            // Setter method
-            var setter = findMethodForField(nameWithoutHungarian, "set", methodsMap)
-            if (setter == null) {
-                setter = findMethodForHungarianField(elementName, "set", methodsMap)
-                if (setter == null) {
-                    setter = findMethodForHungarianFieldUpperCase(elementName, "set", methodsMap)
+                // Test with "is" prefix
+                // TODO only run this if boolean type
+                if (getter == null) {
+                    var getter = findMethodForField(nameWithoutHungarian, "is", methodsMap)
+                    if (getter == null) {
+                        getter = findMethodForHungarianField(elementName, "is", methodsMap)
+                        if (getter == null) {
+                            getter = findMethodForHungarianFieldUpperCase(elementName, "is", methodsMap)
+                        }
+                    }
                 }
+
+                if (getter == null) {
+                    throw ProcessingException(element, "The field '${element.simpleName.toString()}'"
+                            + "in class ${(element.enclosingElement as TypeElement).qualifiedName.toString()} "
+                            + "has private or protected visibility. Hence a corresponding getter method must be provided "
+                            + " with the name ${bestMethodName(elementName, "get")} or ${bestMethodName(elementName, "is")} "
+                            + "in case of a boolean. Unfortunately, there is no such getter method. Please provide one!")
+                }
+
+                if (!getter.isParameterlessMethod()) {
+                    throw ProcessingException(element, "The getter method '${getter.toString()}' for field '${element.simpleName.toString()}'"
+                            + "in class ${(element.enclosingElement as TypeElement).qualifiedName.toString()} "
+                            + "must be parameterless (zero parameters).")
+                }
+
+                if (!getter.isProtected() && (!getter.isPrivate() || getter.isSamePackageAs(element, elementUtils))) {
+                    throw ProcessingException(element, "The getter method '${getter.toString()}' for field '${element.simpleName.toString()}'"
+                            + "in class ${(element.enclosingElement as TypeElement).qualifiedName.toString()} "
+                            + "must have minimum package visibility (or public visibility if this is a super class in a different package)")
+
+                }
+
+                // Setter method
+                var setter = findMethodForField(nameWithoutHungarian, "set", methodsMap)
+                if (setter == null) {
+                    setter = findMethodForHungarianField(elementName, "set", methodsMap)
+                    if (setter == null) {
+                        setter = findMethodForHungarianFieldUpperCase(elementName, "set", methodsMap)
+                    }
+                }
+
+                if (setter == null) {
+                    throw ProcessingException(element, "The field '${element.simpleName.toString()}'"
+                            + "in class ${(element.enclosingElement as TypeElement).qualifiedName.toString()} "
+                            + "has private or protected visibility. Hence a corresponding setter method must be provided "
+                            + " with the name ${bestMethodName(elementName, "set")}() "
+                            + "Unfortunately, there is no such setter method. Please provide one!")
+                }
+
+                if (!setter.isMethodWithOneParameterOfType(typeUtils)) {
+                    throw ProcessingException(element, "The setter method '${setter.toString()}' for field '${element.simpleName.toString()}'"
+                            + "in class ${(element.enclosingElement as TypeElement).qualifiedName.toString()} "
+                            + "must be parameterless (zero parameters).")
+                }
+
+                if (!setter.isProtected() && (!setter.isPrivate() || setter.isSamePackageAs(element, elementUtils))) {
+                    throw ProcessingException(element, "The setter method '${setter.toString()}' for field '${element.simpleName.toString()}'"
+                            + "in class ${(element.enclosingElement as TypeElement).qualifiedName.toString()} "
+                            + "must have minimum package visibility (or public visibility if this is a super class in a different package)")
+
+                }
+
+                val conflictingField = annotatedClass.fields[it.name]
+                if (conflictingField != null) {
+                    throw ProcessingException(element, "Conflict: The field '${element.toString()}' "
+                            + "in class ${currentElement.qualifiedName} has the same XML "
+                            + "name as the field '${conflictingField.element.simpleName}' in "
+                            + "${(conflictingField.element.enclosingElement as TypeElement).qualifiedName}. "
+                            + "You can specify another name annotations.")
+                }
+
+
+                it.accessPolicy = GetterSetterFieldAccessPolicy(getter, setter)
+                annotatedClass.fields.put(it.name, it)
             }
 
-            if (setter == null) {
-                throw ProcessingException(element, "The field '${element.simpleName.toString()}'"
-                        + "in class ${(element.enclosingElement as TypeElement).qualifiedName.toString()} "
-                        + "has private or protected visibility. Hence a corresponding setter method must be provided "
-                        + " with the name ${bestMethodName(elementName, "set")}() "
-                        + "Unfortunately, there is no such setter method. Please provide one!")
+            // check inheritance
+            if (!annotatedClass.inheritance || currentElement.superclass.kind == TypeKind.NONE) {
+                // java.lang.object reached
+                break
+            } else {
+                currentElement = typeUtils.asElement(currentElement.superclass) as TypeElement
             }
 
-            if (!setter.isMethodWithOneParameterOfType(typeUtils)) {
-                throw ProcessingException(element, "The setter method '${setter.toString()}' for field '${element.simpleName.toString()}'"
-                        + "in class ${(element.enclosingElement as TypeElement).qualifiedName.toString()} "
-                        + "must be parameterless (zero parameters).")
-            }
-
-            if (!setter.isProtected() && (!setter.isPrivate() || setter.isSamePackageAs(element, elementUtils))) {
-                throw ProcessingException(element, "The setter method '${setter.toString()}' for field '${element.simpleName.toString()}'"
-                        + "in class ${(element.enclosingElement as TypeElement).qualifiedName.toString()} "
-                        + "must have minimum package visibility (or public visibility if this is a super class in a different package)")
-
-            }
-
-            val conflictingField = annotatedClass.fields[it.name]
-            if (conflictingField != null) {
-                throw ProcessingException(element, "Conflict: The field '${element.toString()}' "
-                        + "in class ${currentElement.qualifiedName} has the same XML "
-                        + "name as the field '${conflictingField.element.simpleName}' in "
-                        + "${(conflictingField.element.enclosingElement as TypeElement).qualifiedName}. "
-                        + "You can specify another name annotations.")
-            }
-
-
-            it.accessPolicy = GetterSetterFieldAccessPolicy(getter, setter)
-            annotatedClass.fields.put(it.name, it)
-        }
+        } // End inheritance while loop
     }
 
     /**

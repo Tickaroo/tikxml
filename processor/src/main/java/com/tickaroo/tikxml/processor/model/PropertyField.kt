@@ -16,14 +16,15 @@
  *
  */
 
-package com.tickaroo.tikxml.processor.model.access
+package com.tickaroo.tikxml.processor.model
 
 import javax.lang.model.element.VariableElement
 
 /**
- * Represents a xml field that can be accessed directly (no getters or setters are required)
+ * This class represents a field annotated with [com.tickaroo.tikxml.annotation.PropertyElement]
  * @author Hannes Dorfmann
  */
-class MinPackageVisibilityFieldAccessPolicy(val element: VariableElement) : FieldAccessPolicy() {
+class PropertyField(element: VariableElement, name: String, required: Boolean?) : Field(element, name, required) {
+
 
 }

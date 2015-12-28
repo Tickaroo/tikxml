@@ -22,6 +22,9 @@ import com.google.common.truth.Truth
 import com.google.testing.compile.JavaFileObjects
 import com.google.testing.compile.JavaSourceSubjectFactory
 import com.google.testing.compile.JavaSourcesSubject
+import com.tickaroo.tikxml.annotation.Attribute
+import com.tickaroo.tikxml.annotation.Element
+import com.tickaroo.tikxml.annotation.PropertyElement
 import com.tickaroo.tikxml.annotation.Xml
 import org.junit.Test
 import javax.tools.JavaFileObject
@@ -64,5 +67,97 @@ class XmlProcessorTest {
                 .withErrorContaining("Only classes can be annotated with")
     }
 
+    @Test
+    fun multipleAnnotationOnField1() {
+        val componentFile = JavaFileObjects.forSourceLines("test.MultipleAnnotations1",
+                "package test;",
+                "",
+                "import ${Xml::class.java.canonicalName};",
+                "import ${Attribute::class.java.canonicalName};",
+                "import ${Element::class.java.canonicalName};",
+                "import ${PropertyElement::class.java.canonicalName};",
+                "",
+                "@${Xml::class.java.simpleName}",
+                "class MultipleAnnotations1 {",
+                "   @${Attribute::class.java.simpleName}",
+                "   @${Element::class.java.simpleName}",
+                "   String aField;",
+                "}")
+
+        Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
+                .that(componentFile).processedWith(XmlProcessor())
+                .failsToCompile()
+                .withErrorContaining("Fields can ONLY be annotated with one of the following")
+    }
+
+    @Test
+    fun multipleAnnotationOnField2() {
+        val componentFile = JavaFileObjects.forSourceLines("test.MultipleAnnotations2",
+                "package test;",
+                "",
+                "import ${Xml::class.java.canonicalName};",
+                "import ${Attribute::class.java.canonicalName};",
+                "import ${Element::class.java.canonicalName};",
+                "import ${PropertyElement::class.java.canonicalName};",
+                "",
+                "@${Xml::class.java.simpleName}",
+                "class MultipleAnnotations2 {",
+                "   @${Element::class.java.simpleName}",
+                "   @${PropertyElement::class.java.simpleName}",
+                "   String aField;",
+                "}")
+
+        Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
+                .that(componentFile).processedWith(XmlProcessor())
+                .failsToCompile()
+                .withErrorContaining("Fields can ONLY be annotated with one of the following")
+    }
+
+    @Test
+    fun multipleAnnotationOnField3() {
+        val componentFile = JavaFileObjects.forSourceLines("test.MultipleAnnotations3",
+                "package test;",
+                "",
+                "import ${Xml::class.java.canonicalName};",
+                "import ${Attribute::class.java.canonicalName};",
+                "import ${Element::class.java.canonicalName};",
+                "import ${PropertyElement::class.java.canonicalName};",
+                "",
+                "@${Xml::class.java.simpleName}",
+                "class MultipleAnnotations3 {",
+                "   @${PropertyElement::class.java.simpleName}",
+                "   @${Attribute::class.java.simpleName}",
+                "   String aField;",
+                "}")
+
+        Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
+                .that(componentFile).processedWith(XmlProcessor())
+                .failsToCompile()
+                .withErrorContaining("Fields can ONLY be annotated with one of the following")
+    }
+
+    @Test
+    fun multipleAnnotationOnField4() {
+        val componentFile = JavaFileObjects.forSourceLines("test.MultipleAnnotations4",
+                "package test;",
+                "",
+                "import ${Xml::class.java.canonicalName};",
+                "import ${Attribute::class.java.canonicalName};",
+                "import ${Element::class.java.canonicalName};",
+                "import ${PropertyElement::class.java.canonicalName};",
+                "",
+                "@${Xml::class.java.simpleName}",
+                "class MultipleAnnotations4 {",
+                "   @${Attribute::class.java.simpleName}",
+                "   @${PropertyElement::class.java.simpleName}",
+                "   @${Element::class.java.simpleName}",
+                "   String aField;",
+                "}")
+
+        Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
+                .that(componentFile).processedWith(XmlProcessor())
+                .failsToCompile()
+                .withErrorContaining("Fields can ONLY be annotated with one of the following")
+    }
 
 }

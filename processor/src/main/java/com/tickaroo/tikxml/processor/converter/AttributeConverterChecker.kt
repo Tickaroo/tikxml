@@ -16,14 +16,19 @@
  *
  */
 
-package com.tickaroo.tikxml.processor.model.access
+package com.tickaroo.tikxml.processor.converter
 
-import javax.lang.model.element.VariableElement
+import com.tickaroo.tikxml.annotation.Attribute
+import com.tickaroo.tikxml.annotation.TypeConverter
+import kotlin.reflect.KClass
 
 /**
- * Represents a xml field that can be accessed directly (no getters or setters are required)
+ * A ConverterChecker for [Attribute] annotations
  * @author Hannes Dorfmann
  */
-class MinPackageVisibilityFieldAccessPolicy(val element: VariableElement) : FieldAccessPolicy() {
+class AttributeConverterChecker : ConverterChecker<Attribute>() {
 
+    override fun getConverterFromAnnotation(annotation: Attribute): KClass<out TypeConverter<Any>> {
+        return annotation.converter
+    }
 }

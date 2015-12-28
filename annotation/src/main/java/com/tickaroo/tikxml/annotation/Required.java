@@ -16,14 +16,24 @@
  *
  */
 
-package com.tickaroo.tikxml.processor.model.access
+package com.tickaroo.tikxml.annotation;
 
-import javax.lang.model.element.VariableElement
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
- * Represents a xml field that can be accessed directly (no getters or setters are required)
+ * This annotation indicates whether or not a xml element or xml attribute is required. If there is
+ * a mapping missing from XML document to java class an exception will be thrown.
+ *
  * @author Hannes Dorfmann
+ * @since 1.0
  */
-class MinPackageVisibilityFieldAccessPolicy(val element: VariableElement) : FieldAccessPolicy() {
-
+@Documented
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.FIELD)
+public @interface Required {
+  boolean value() default true;
 }

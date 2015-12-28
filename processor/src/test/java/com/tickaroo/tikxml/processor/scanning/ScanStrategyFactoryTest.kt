@@ -34,7 +34,7 @@ class ScanStrategyFactoryTest {
 
     @Test
     fun useDefaultStrategy() {
-        val scanStrategyFactory = ScanStrategyFactory(Mockito.mock(Elements::class.java), Mockito.mock(Types::class.java))
+        val scanStrategyFactory = ScanStrategyFactory(Mockito.mock(Elements::class.java), Mockito.mock(Types::class.java), AnnotationBasedRequiredDetector())
         val annotatedClass = MockAnnotatedClass(ScanMode.DEFAULT)
         assertTrue(scanStrategyFactory.getStrategy(annotatedClass, ScanMode.COMMON_CASE) is CommonCaseScanStrategy)
         assertTrue(scanStrategyFactory.getStrategy(annotatedClass, ScanMode.ANNOTATIONS_ONLY) is AnnotationOnlyScanStrategy)

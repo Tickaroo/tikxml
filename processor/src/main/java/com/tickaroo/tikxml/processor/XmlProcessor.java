@@ -23,6 +23,7 @@ import com.tickaroo.tikxml.annotation.ScanMode;
 import com.tickaroo.tikxml.annotation.Xml;
 import com.tickaroo.tikxml.processor.model.AnnotatedClass;
 import com.tickaroo.tikxml.processor.model.AnnotatedClassImpl;
+import com.tickaroo.tikxml.processor.scanning.AnnotationBasedRequiredDetector;
 import com.tickaroo.tikxml.processor.scanning.ScanStrategy;
 import com.tickaroo.tikxml.processor.scanning.ScanStrategyFactory;
 import java.util.HashSet;
@@ -67,7 +68,7 @@ public class XmlProcessor extends AbstractProcessor {
     filer = processingEnv.getFiler();
     elementUtils = processingEnv.getElementUtils();
     typeUtils = processingEnv.getTypeUtils();
-    scanStrategyFactory = new ScanStrategyFactory(elementUtils, typeUtils);
+    scanStrategyFactory = new ScanStrategyFactory(elementUtils, typeUtils, new AnnotationBasedRequiredDetector());
   }
 
   @Override

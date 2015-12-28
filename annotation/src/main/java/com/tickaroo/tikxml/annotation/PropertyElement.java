@@ -18,6 +18,12 @@
 
 package com.tickaroo.tikxml.annotation;
 
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
 /**
  * A PropertyElement is a special {@link Element} that maps a xml element content to one java
  * primitive type (like int, double, string, etc.)
@@ -55,6 +61,9 @@ package com.tickaroo.tikxml.annotation;
  * @author Hannes Dorfmann
  * @since 1.0
  */
+@Documented
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.FIELD)
 public @interface PropertyElement {
 
 
