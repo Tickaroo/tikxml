@@ -47,7 +47,7 @@ class ConverterCheckerByTypeMirrorTest {
         val element = Mockito.mock(VariableElement::class.java)
         val annotation = Mockito.mock(Attribute::class.java)
 
-        for (kind in TypeKind.values) {
+        for (kind in TypeKind.values()) {
 
             if (kind == TypeKind.DECLARED)
                 continue // Skip declared, because declared is the expected behaviour
@@ -77,7 +77,7 @@ class ConverterCheckerByTypeMirrorTest {
         val element = Mockito.mock(VariableElement::class.java)
         val annotation = Mockito.mock(Attribute::class.java)
 
-        for (kind in ElementKind.values) {
+        for (kind in ElementKind.values()) {
             if (kind == ElementKind.CLASS) {
                 continue
             }
