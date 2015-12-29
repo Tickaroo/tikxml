@@ -33,7 +33,7 @@ import kotlin.test.fail
  *
  * @author Hannes Dorfmann
  */
-class ConverterCheckerTest {
+class ConverterCheckerByClassTest {
 
     @Test
     fun interfaceConverter() {
@@ -99,7 +99,7 @@ class ConverterCheckerTest {
             attributeConverterChecker.getQualifiedConverterName(element, annotation)
             fail("Processing Exception expected")
         } catch(e: ProcessingException) {
-            assertEquals("TypeConverter class com.tickaroo.tikxml.processor.converter.ConverterCheckerTest.PrivateVisibilityTypeConverter must be a public class!", e.message)
+            assertEquals("TypeConverter class com.tickaroo.tikxml.processor.converter.ConverterCheckerByClassTest.PrivateVisibilityTypeConverter must be a public class!", e.message)
         }
     }
 

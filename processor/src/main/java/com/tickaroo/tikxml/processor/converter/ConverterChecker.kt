@@ -97,11 +97,11 @@ abstract class ConverterChecker<in T : Annotation> {
             val typeConverterElement = typeConverterType.asElement()
 
             if (typeConverterElement.kind != ElementKind.CLASS) {
-                throw ProcessingException(element, "TypeConverter $typeConverterElement must be a public class!")
+                throw ProcessingException(element, "TypeConverter ${typeConverterElement} must be a public class!")
             }
 
             if (!typeConverterElement.modifiers.contains(javax.lang.model.element.Modifier.PUBLIC)) {
-                throw ProcessingException(element, "TypeConverter class is not public!")
+                throw ProcessingException(element, "TypeConverter ${typeConverterElement} class is not public!")
             }
 
             // Check empty constructor
@@ -115,7 +115,7 @@ abstract class ConverterChecker<in T : Annotation> {
                 }
             }
 
-            throw ProcessingException(element, "TypeConverter class ${typeMirror.toString()} must provide an empty (parameter-less) public constructor")
+            throw ProcessingException(element, "TypeConverter class ${typeMirror} must provide an empty (parameter-less) public constructor")
         }
 
     }
