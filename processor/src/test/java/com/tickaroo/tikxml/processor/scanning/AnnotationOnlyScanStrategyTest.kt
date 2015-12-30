@@ -421,6 +421,27 @@ class AnnotationOnlyScanStrategyTest {
     }
 
     @Test
+    fun polymorphicBlankXmlName() {
+        val componentFile = JavaFileObjects.forSourceLines("test.PolymorphicBlankXmlName",
+                "package test;",
+                "",
+                "@${Xml::class.java.canonicalName}(scanMode = ${ScanMode::class.qualifiedName}.${ScanMode.ANNOTATIONS_ONLY})",
+                "class PolymorphicBlankXmlName {",
+                "   @${Element::class.java.canonicalName}(",
+                "       typesByElement = @${ElementNameMatcher::class.qualifiedName}(elementName=\"    \" , type=InnerClass.class)",
+                "    )",
+                "   Object aField;",
+                "",
+                " public class InnerClass {}",
+                "}")
+
+        Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
+                .that(componentFile).processedWith(XmlProcessor())
+                .failsToCompile()
+                .withErrorContaining("The xml element name in @${ElementNameMatcher::class.simpleName} cannot be empty")
+    }
+
+    @Test
     fun polymorphicElementNameInConflict() {
         val componentFile = JavaFileObjects.forSourceLines("test.PolymorphicElementNameInConflict",
                 "package test;",

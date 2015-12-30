@@ -34,6 +34,7 @@ import javax.lang.model.type.TypeMirror
 import javax.lang.model.util.Elements
 import javax.lang.model.util.Types
 import kotlin.collections.isEmpty
+import kotlin.text.isBlank
 import kotlin.text.isEmpty
 
 /**
@@ -168,20 +169,17 @@ open class AnnotationOnlyScanStrategy(elementUtils: Elements, typeUtils: Types, 
         return typeUtils.isAssignable(element.asType(), listTypeMirror)
     }
 
-    protected fun getPolymorphicTypes(element: VariableElement, matcherAnnotations: Array<ElementNameMatcher>): List<PolymorphicTypeElementNameMatcher> {
+    private fun getPolymorphicTypes(element: VariableElement, matcherAnnotations: Array<ElementNameMatcher>): List<PolymorphicTypeElementNameMatcher> {
 
         if (matcherAnnotations.isEmpty()) {
             throw ProcessingException(element, "No @${ElementNameMatcher::class.simpleName} specified to resolve polymorphism")
         }
 
-        var polymorphismMatcher = ArrayList<PolymorphicTypeElementNameMatcher>(matcherAnnotations.size)
         val namingMap = HashMap<String, PolymorphicTypeElementNameMatcher>()
-
-
 
         for (matcher in matcherAnnotations) {
             val xmlElementName = matcher.elementName
-            if (xmlElementName.isEmpty()) {
+            if (xmlElementName.isBlank()) {
                 throw ProcessingException(element, "The xml element name in @${ElementNameMatcher::class.simpleName} cannot be empty")
             }
 
@@ -198,8 +196,6 @@ open class AnnotationOnlyScanStrategy(elementUtils: Elements, typeUtils: Types, 
                 } else {
                     namingMap.put(xmlElementName, PolymorphicTypeElementNameMatcher(xmlElementName, typeElement.asType()))
                 }
-
-
 
             } catch(mte: MirroredTypeException) {
 
