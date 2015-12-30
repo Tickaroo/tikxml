@@ -22,14 +22,18 @@ import com.tickaroo.tikxml.annotation.*
 import com.tickaroo.tikxml.processor.ProcessingException
 import com.tickaroo.tikxml.processor.converter.AttributeConverterChecker
 import com.tickaroo.tikxml.processor.converter.PropertyElementConverterChecker
-import com.tickaroo.tikxml.processor.model.AttributeField
-import com.tickaroo.tikxml.processor.model.Field
-import com.tickaroo.tikxml.processor.model.PropertyField
+import com.tickaroo.tikxml.processor.model.*
+import com.tickaroo.tikxml.processor.utils.*
+import java.util.*
 import javax.lang.model.element.TypeElement
 import javax.lang.model.element.VariableElement
+import javax.lang.model.type.DeclaredType
+import javax.lang.model.type.MirroredTypeException
+import javax.lang.model.type.TypeKind
 import javax.lang.model.type.TypeMirror
 import javax.lang.model.util.Elements
 import javax.lang.model.util.Types
+import kotlin.collections.arrayListOf
 import kotlin.collections.isEmpty
 import kotlin.text.isEmpty
 
@@ -122,6 +126,11 @@ open class AnnotationOnlyScanStrategy(elementUtils: Elements, typeUtils: Types, 
                         throw ProcessingException(element, "The annotation @${InlineList::class.simpleName} is only allowed on java.util.List types, but the field '${element.simpleName}' in class ${(element.enclosingElement as TypeElement).qualifiedName} is of type ${element.asType()}")
                     }
 
+                    return ElementField(
+                            element,
+                            nameFromAnnotationOrFieldName(elementAnnotation.name, element),
+                            requiredDetector.isRequired(element)
+                    )
                 }
             } else {
                 // polymorphism
@@ -132,6 +141,14 @@ open class AnnotationOnlyScanStrategy(elementUtils: Elements, typeUtils: Types, 
                     if (inlineListAnnotation != null) {
                         throw ProcessingException(element, "The annotation @${InlineList::class.simpleName} is only allowed on java.util.List types, but the field '${element.simpleName}' in class ${(element.enclosingElement as TypeElement).qualifiedName} is of type ${element.asType()}")
                     }
+
+                    return PolymorphicElementField(
+                            element,
+                            nameFromAnnotationOrFieldName(elementAnnotation.name, element),
+                            requiredDetector.isRequired(element),
+                            getPolymorphicTypes(element, nameMatchers)
+                    )
+
 
                 }
             }
@@ -152,8 +169,85 @@ open class AnnotationOnlyScanStrategy(elementUtils: Elements, typeUtils: Types, 
         return typeUtils.isAssignable(element.asType(), listTypeMirror)
     }
 
+    protected fun getPolymorphicTypes(element: VariableElement, matcherAnnotations: Array<ElementNameMatcher>): List<PolymorphicTypeElementNameMatcher> {
+
+        if (matcherAnnotations.isEmpty()) {
+            throw ProcessingException(element, "No @${ElementNameMatcher::class.simpleName} specified to resolve polymorphism")
+        }
+
+        var polymorphismMatcher = ArrayList<PolymorphicTypeElementNameMatcher>(matcherAnnotations.size)
+        val namingMap = HashMap<String, PolymorphicTypeElementNameMatcher>()
+        val typeMap = HashMap<String, PolymorphicTypeElementNameMatcher>()
+
+
+
+        for (matcher in matcherAnnotations) {
+
+            try {
+                val name = matcher.elementName
+
+                val typeClass = matcher.type
+                val typeElement = elementUtils.getTypeElement(typeClass.qualifiedName)
+                val typeMirror = typeElement.asType()
+
+                checkPublicClassWithEmptyConstructor(element, typeElement)
+
+
+            } catch(mte: MirroredTypeException) {
+
+                val typeMirror = mte.typeMirror
+                if (typeMirror.kind != TypeKind.DECLARED) {
+                    throw ProcessingException(element, "Only classes can be specified as type in @${ElementNameMatcher::class.simpleName}")
+                }
+
+                val typeElement = (typeMirror as DeclaredType).asElement() as TypeElement
+
+                checkPublicClassWithEmptyConstructor(element, typeElement)
+
+            }
+
+        }
+
+        return arrayListOf()
+    }
+
     /**
-     *
+     * Checks if a the typeElement is a public class (or default package visibility if in same package as variableElement)
+     */
+    private fun checkPublicClassWithEmptyConstructor(variableElement: VariableElement, typeElement: TypeElement) {
+
+        if (!typeElement.isClass()){
+            throw ProcessingException(variableElement, "@${ElementNameMatcher::class.simpleName} only allows classes. $typeElement is a not a class!")
+        }
+
+        if (typeElement.isPrivate()) {
+            throw ProcessingException(variableElement, "@${ElementNameMatcher::class.simpleName} does not allow private classes. $typeElement is a private class!")
+        }
+
+        if (typeElement.isProtected()) {
+            throw ProcessingException(variableElement, "@${ElementNameMatcher::class.simpleName} does not allow protected classes. $typeElement is a protected class!")
+        }
+
+        if (!typeElement.isPublic() && !typeElement.isSamePackageAs(variableElement.enclosingElement, elementUtils)) {
+            throw ProcessingException(variableElement, "@${ElementNameMatcher::class.simpleName} does not allow package visiblity on classes outside of this package. Make $typeElement is a public class or move this class into the same package")
+        }
+
+        for (method in typeElement.enclosedElements) {
+            if (typeElement.isSamePackageAs(variableElement, elementUtils) && method.isEmptyConstructorWithMinimumPackageVisibility()) {
+                return
+            }
+
+            if (typeElement.isPublic() && typeElement.isEmptyConstructor()) {
+                return
+            }
+        }
+
+
+        throw ProcessingException(variableElement, "Class $typeElement used in @${ElementNameMatcher::class.simpleName} must provide an public empty (parameter-less) constructor")
+    }
+
+    /**
+     * Get the name of a annotated field from annotation or use the field name if no name set
      */
     protected fun nameFromAnnotationOrFieldName(name: String, element: VariableElement) =
             if (name.isEmpty()) {

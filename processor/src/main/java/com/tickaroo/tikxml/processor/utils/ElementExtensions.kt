@@ -39,10 +39,17 @@ fun Element.isSamePackageAs(other: Element, utils: Elements) = utils.getPackageO
  * Checks if a element contains a private modifier
  */
 fun Element.isPrivate() = modifiers.contains(Modifier.PRIVATE)
+
 /**
  * Checks if a element has a protected modifier
  */
 fun Element.isProtected() = modifiers.contains(Modifier.PROTECTED)
+
+/**
+ * Checks if a element has a protected modifier
+ */
+fun Element.isPublic() = modifiers.contains(Modifier.PUBLIC)
+
 
 /**
  * Checks if a given element is static
@@ -58,6 +65,11 @@ fun Element.isFinal() = modifiers.contains(Modifier.FINAL);
  * Checks if a given element is a field
  */
 fun Element.isField() = kind == ElementKind.FIELD
+
+/**
+ * Checks if a given element is a class
+ */
+fun Element.isClass() = kind == ElementKind.CLASS
 
 /**
  * Checks if a given element is a method

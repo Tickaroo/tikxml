@@ -18,13 +18,17 @@
 
 package com.tickaroo.tikxml.processor.model
 
-import com.tickaroo.tikxml.annotation.Element
 import javax.lang.model.element.VariableElement
+import javax.lang.model.type.TypeMirror
 
 /**
  * Represents a Field with [com.tickaroo.tikxml.annotation.Element] annotation
  * @author Hannes Dorfmann
  */
-class PolymorphicElementField(element: VariableElement, name: String, required: Boolean?, annotation: Element) : ElementField(element, name, required, annotation) {
+class PolymorphicElementField(element: VariableElement, name: String, required: Boolean?, private val typeElementNameMatcher: List<PolymorphicTypeElementNameMatcher>) : ElementField(element, name, required) {
 
 }
+
+data class PolymorphicTypeElementNameMatcher(val xmlElementName: String, val type: TypeMirror)
+
+

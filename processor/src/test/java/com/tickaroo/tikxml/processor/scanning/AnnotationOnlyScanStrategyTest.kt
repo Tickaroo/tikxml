@@ -210,4 +210,152 @@ class AnnotationOnlyScanStrategyTest {
                 .that(componentFile).processedWith(XmlProcessor())
                 .compilesWithoutError()
     }
+
+    @Test
+    fun inlineListOnLinkedListType() {
+        val componentFile = JavaFileObjects.forSourceLines("test.InlineListOnLinkedListType",
+                "package test;",
+                "",
+                "@${Xml::class.java.canonicalName}(scanMode = ${ScanMode::class.qualifiedName}.${ScanMode.ANNOTATIONS_ONLY})",
+                "class InlineListOnLinkedListType {",
+                "   @${InlineList::class.java.canonicalName}",
+                "   @${Element::class.java.canonicalName}",
+                "   java.util.LinkedList<String> aList;",
+                "}")
+
+        Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
+                .that(componentFile).processedWith(XmlProcessor())
+                .compilesWithoutError()
+    }
+
+    @Test
+    fun polymorphicTypeIsPrivateClass() {
+        val componentFile = JavaFileObjects.forSourceLines("test.PolymorphicClassIsPrivate",
+                "package test;",
+                "",
+                "@${Xml::class.java.canonicalName}(scanMode = ${ScanMode::class.qualifiedName}.${ScanMode.ANNOTATIONS_ONLY})",
+                "class PolymorphicClassIsPrivate {",
+                "   @${Element::class.java.canonicalName}(",
+                "       typesByElement = @${ElementNameMatcher::class.qualifiedName}(elementName=\"foo\" , type=InnerPrivateClass.class)",
+                "    )",
+                "   Object aField;",
+                "",
+                "private class InnerPrivateClass {}",
+                "}")
+
+        Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
+                .that(componentFile).processedWith(XmlProcessor())
+                .failsToCompile()
+                .withErrorContaining("@${ElementNameMatcher::class.simpleName} does not allow private classes. test.PolymorphicClassIsPrivate.InnerPrivateClass is a private class!")
+    }
+
+    @Test
+    fun polymorphicTypeIsProtectedClass() {
+        val componentFile = JavaFileObjects.forSourceLines("test.PolymorphicClassIsProtected",
+                "package test;",
+                "",
+                "@${Xml::class.java.canonicalName}(scanMode = ${ScanMode::class.qualifiedName}.${ScanMode.ANNOTATIONS_ONLY})",
+                "class PolymorphicClassIsProtected {",
+                "   @${Element::class.java.canonicalName}(",
+                "       typesByElement = @${ElementNameMatcher::class.qualifiedName}(elementName=\"foo\" , type=InnerProtectedClass.class)",
+                "    )",
+                "   Object aField;",
+                "",
+                "protected class InnerProtectedClass {}",
+                "}")
+
+        Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
+                .that(componentFile).processedWith(XmlProcessor())
+                .failsToCompile()
+                .withErrorContaining("@${ElementNameMatcher::class.simpleName} does not allow protected classes. test.PolymorphicClassIsProtected.InnerProtectedClass is a protected class!")
+    }
+
+    @Test
+    fun polymorphicTypeHasNoPublicConstructor() {
+        val componentFile = JavaFileObjects.forSourceLines("test.PolymorphicClassHasNoPublicConstructor",
+                "package test;",
+                "",
+                "@${Xml::class.java.canonicalName}(scanMode = ${ScanMode::class.qualifiedName}.${ScanMode.ANNOTATIONS_ONLY})",
+                "class PolymorphicClassHasNoPublicConstructor {",
+                "   @${Element::class.java.canonicalName}(",
+                "       typesByElement = @${ElementNameMatcher::class.qualifiedName}(elementName=\"foo\" , type=InnerClass.class)",
+                "    )",
+                "   Object aField;",
+                "",
+                " public class InnerClass {",
+                "    private InnerClass() {}",
+                " }",
+                "}")
+
+        Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
+                .that(componentFile).processedWith(XmlProcessor())
+                .failsToCompile()
+                .withErrorContaining("Class test.PolymorphicClassHasNoPublicConstructor.InnerClass used in @${ElementNameMatcher::class.simpleName} must provide an public empty (parameter-less) constructor")
+    }
+
+
+    @Test
+    fun polymorphicTypeHasNoEmptyConstructor() {
+        val componentFile = JavaFileObjects.forSourceLines("test.PolymorphicClassHasNoEmptyConstructor",
+                "package test;",
+                "",
+                "@${Xml::class.java.canonicalName}(scanMode = ${ScanMode::class.qualifiedName}.${ScanMode.ANNOTATIONS_ONLY})",
+                "class PolymorphicClassHasNoEmptyConstructor {",
+                "   @${Element::class.java.canonicalName}(",
+                "       typesByElement = @${ElementNameMatcher::class.qualifiedName}(elementName=\"foo\" , type=InnerClass.class)",
+                "    )",
+                "   Object aField;",
+                "",
+                " public class InnerClass {",
+                "    public InnerClass(int a) {}",
+                " }",
+                "}")
+
+        Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
+                .that(componentFile).processedWith(XmlProcessor())
+                .failsToCompile()
+                .withErrorContaining("Class test.PolymorphicClassHasNoEmptyConstructor.InnerClass used in @${ElementNameMatcher::class.simpleName} must provide an public empty (parameter-less) constructor")
+    }
+
+    @Test
+    fun polymorphicTypeIsInterface() {
+        val componentFile = JavaFileObjects.forSourceLines("test.PolymorphicTypeIsInterface",
+                "package test;",
+                "",
+                "@${Xml::class.java.canonicalName}(scanMode = ${ScanMode::class.qualifiedName}.${ScanMode.ANNOTATIONS_ONLY})",
+                "class PolymorphicTypeIsInterface {",
+                "   @${Element::class.java.canonicalName}(",
+                "       typesByElement = @${ElementNameMatcher::class.qualifiedName}(elementName=\"foo\" , type=InnerClass.class)",
+                "    )",
+                "   Object aField;",
+                "",
+                " public interface InnerClass {}",
+                "}")
+
+        Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
+                .that(componentFile).processedWith(XmlProcessor())
+                .failsToCompile()
+                .withErrorContaining("@${ElementNameMatcher::class.simpleName} only allows classes. test.PolymorphicTypeIsInterface.InnerClass is a not a class!")
+    }
+
+    @Test
+    fun polymorphicTypeIsEnum() {
+        val componentFile = JavaFileObjects.forSourceLines("test.PolymorphicTypeIsEnum",
+                "package test;",
+                "",
+                "@${Xml::class.java.canonicalName}(scanMode = ${ScanMode::class.qualifiedName}.${ScanMode.ANNOTATIONS_ONLY})",
+                "class PolymorphicTypeIsEnum {",
+                "   @${Element::class.java.canonicalName}(",
+                "       typesByElement = @${ElementNameMatcher::class.qualifiedName}(elementName=\"foo\" , type=InnerClass.class)",
+                "    )",
+                "   Object aField;",
+                "",
+                " public enum InnerClass {}",
+                "}")
+
+        Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
+                .that(componentFile).processedWith(XmlProcessor())
+                .failsToCompile()
+                .withErrorContaining("@${ElementNameMatcher::class.simpleName} only allows classes. test.PolymorphicTypeIsEnum.InnerClass is a not a class!")
+    }
 }
