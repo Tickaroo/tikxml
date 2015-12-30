@@ -18,20 +18,73 @@
 
 package com.tickaroo.tikxml.processor.scanning
 
+import com.tickaroo.tikxml.annotation.InlineList
+import com.tickaroo.tikxml.processor.ProcessingException
+import com.tickaroo.tikxml.processor.model.AttributeField
+import com.tickaroo.tikxml.processor.model.ElementField
+import com.tickaroo.tikxml.processor.model.Field
+import com.tickaroo.tikxml.processor.model.ListElementField
+import com.tickaroo.tikxml.processor.utils.getSurroundingClassQualifiedName
+import com.tickaroo.tikxml.processor.utils.isPrimitive
+import javax.lang.model.element.VariableElement
+import javax.lang.model.type.TypeKind
 import javax.lang.model.util.Elements
 import javax.lang.model.util.Types
 
 /**
- *
+ * The common case strategy is described in [com.tickaroo.tikxml.annotation.ScanMode]
  * @author Hannes Dorfmann
  */
 class CommonCaseScanStrategy(elementUtils: Elements, typeUtils: Types, requiredDetector: RequiredDetector) : AnnotationOnlyScanStrategy(elementUtils, typeUtils, requiredDetector) {
 
-    // TODO implement
-    /*
     override fun isXmlField(element: VariableElement): Field? {
-        throw UnsupportedOperationException()
+
+        if (ignoreField(element)) {
+            return null
+        }
+
+        val field = super.isXmlField(element)
+        if (field != null) {
+            return field
+        }
+
+        // fields are treated as attributes
+        if (element.asType().isPrimitive()) {
+            return AttributeField(
+                    element,
+                    element.simpleName.toString(),
+                    requiredDetector.isRequired(element),
+                    null
+            )
+        }
+
+        // Objects are treated as Element
+        if (element.asType().kind == TypeKind.DECLARED) {
+
+            val inlineList = element.getAnnotation(InlineList::class.java) != null
+
+            if (isList(element)) {
+                return ListElementField(
+                        element,
+                        element.simpleName.toString(),
+                        requiredDetector.isRequired(element),
+                        getGenericTypeFromList(element),
+                        inlineList
+                )
+            }
+
+            if (inlineList) {
+                throw ProcessingException(element, "@${InlineList::class.simpleName} is only allowed on fields of type java.util.List but field '${element.simpleName}' in class ${element.getSurroundingClassQualifiedName()} is not a List");
+            }
+
+            return ElementField(
+                    element,
+                    element.simpleName.toString(),
+                    requiredDetector.isRequired(element)
+            )
+        }
+
+        return null
     }
-    */
 
 }

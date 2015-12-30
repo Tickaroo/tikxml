@@ -47,17 +47,20 @@ open class AnnotationOnlyScanStrategy(elementUtils: Elements, typeUtils: Types, 
         listTypeMirror = typeUtils.erasure(elementUtils.getTypeElement("java.util.List").asType())
     }
 
-    override fun isXmlField(element: VariableElement): Field? {
-
-        var annotationFound = 0;
-
-
+    protected fun ignoreField(element: VariableElement): Boolean {
         val ignoreAnnotation = element.getAnnotation(IgnoreXml::class.java)
 
         // Ignore xml
-        if (ignoreAnnotation != null)
-            return null
+        return ignoreAnnotation != null
+    }
 
+    override fun isXmlField(element: VariableElement): Field? {
+
+        if (ignoreField(element)){
+            return null
+        }
+
+        var annotationFound = 0;
 
         // MAIN ANNOTATIONS
         val attributeAnnotation = element.getAnnotation(Attribute::class.java)
@@ -291,7 +294,10 @@ open class AnnotationOnlyScanStrategy(elementUtils: Elements, typeUtils: Types, 
         throw ProcessingException(variableElement, "Class $typeElement used in @${ElementNameMatcher::class.simpleName} must provide an public empty (parameter-less) constructor")
     }
 
-    private fun getGenericTypeFromList(listVariableElement: VariableElement): TypeMirror {
+    /**
+     * Get the genric type of a List
+     */
+    protected  fun getGenericTypeFromList(listVariableElement: VariableElement): TypeMirror {
 
         if (listVariableElement.asType().kind != TypeKind.DECLARED) {
             throw ProcessingException(listVariableElement, "Element must be of type java.util.List");

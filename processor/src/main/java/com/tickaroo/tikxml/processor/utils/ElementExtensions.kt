@@ -18,10 +18,7 @@
 
 package com.tickaroo.tikxml.processor.utils
 
-import javax.lang.model.element.Element
-import javax.lang.model.element.ElementKind
-import javax.lang.model.element.ExecutableElement
-import javax.lang.model.element.Modifier
+import javax.lang.model.element.*
 import javax.lang.model.util.Elements
 import javax.lang.model.util.Types
 import kotlin.text.startsWith
@@ -50,12 +47,10 @@ fun Element.isProtected() = modifiers.contains(Modifier.PROTECTED)
  */
 fun Element.isPublic() = modifiers.contains(Modifier.PUBLIC)
 
-
 /**
  * Checks if a element has a protected modifier
  */
 fun Element.isAbstract() = modifiers.contains(Modifier.ABSTRACT)
-
 
 /**
  * Checks if a given element is static
@@ -123,3 +118,7 @@ fun Element.isMethodWithOneParameterOfType(typeUtils: Types) =
  * Checks if a given Element is a parameterless method
  */
 fun Element.isParameterlessMethod() = isMethod() && (this as ExecutableElement).parameters.isEmpty()
+
+fun VariableElement.getSurroundingClass() = enclosingElement as TypeElement
+
+fun VariableElement.getSurroundingClassQualifiedName() = getSurroundingClass().qualifiedName.toString()

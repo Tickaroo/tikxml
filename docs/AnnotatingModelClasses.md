@@ -287,6 +287,7 @@ class Author implements Writer {
 
 }
 
+@Xml
 class Organization implements Writer {
 
   @PropertyElement
