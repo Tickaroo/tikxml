@@ -52,6 +52,12 @@ fun Element.isPublic() = modifiers.contains(Modifier.PUBLIC)
 
 
 /**
+ * Checks if a element has a protected modifier
+ */
+fun Element.isAbstract() = modifiers.contains(Modifier.ABSTRACT)
+
+
+/**
  * Checks if a given element is static
  */
 fun Element.isStatic() = modifiers.contains(Modifier.STATIC)

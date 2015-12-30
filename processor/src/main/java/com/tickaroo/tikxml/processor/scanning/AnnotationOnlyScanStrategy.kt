@@ -25,6 +25,7 @@ import com.tickaroo.tikxml.processor.converter.PropertyElementConverterChecker
 import com.tickaroo.tikxml.processor.model.*
 import com.tickaroo.tikxml.processor.utils.*
 import java.util.*
+import javax.lang.model.element.ElementKind
 import javax.lang.model.element.TypeElement
 import javax.lang.model.element.VariableElement
 import javax.lang.model.type.DeclaredType
@@ -112,17 +113,41 @@ open class AnnotationOnlyScanStrategy(elementUtils: Elements, typeUtils: Types, 
 
 
         if (elementAnnotation != null) {
-
             val nameMatchers = elementAnnotation.typesByElement
             val inlineListAnnotation = element.getAnnotation(InlineList::class.java)
+            val inlineList = inlineListAnnotation != null;
+
+            // Check for primitives
+            if (element.asType().kind != TypeKind.DECLARED) {
+                throw ProcessingException(element, "The type of field '${element.simpleName}' in class ${element.enclosingElement} is not a class nor a interface. Only classes or interfaces can be annotated with @${Element::class.simpleName} annotation. If you try to annotate primitives than @${PropertyElement::class.simpleName}")
+            }
+
 
             if (nameMatchers.isEmpty()) {
                 // No polymorphism
                 if (isList(element)) {
 
+                    return ListElementField(
+                            element,
+                            nameFromAnnotationOrFieldName(elementAnnotation.name, element),
+                            requiredDetector.isRequired(element),
+                            getGenericTypeFromList(element),
+                            inlineList
+                    )
+
                 } else {
 
-                    if (inlineListAnnotation != null) {
+                    // Interfaces not allowed with no name matchers to resolve polymorphism
+                    if ( typeUtils.asElement(element.asType()).kind == ElementKind.INTERFACE ) {
+                        throw ProcessingException(element, "The type of field '${element.simpleName}' in class ${element.enclosingElement} is an interface. Since interfaces cannot be instantiated you have to specify which class should be instantiated (resolve polymorphism) manually by @${Element::class.simpleName}( typesByElement = ... )")
+                    }
+
+                    // abstract classes not allowed with no name matchers to resolve polymorphism
+                    if (typeUtils.asElement(element.asType()).isAbstract()) {
+                        throw ProcessingException(element, "The type of field '${element.simpleName}' in class ${element.enclosingElement} is an abstract class. Since abstract classes cannot no be instantiated you have to specify which class should be instantiated (resolve polymorphism) manually by @${Element::class.simpleName}( typesByElement = ... )")
+                    }
+
+                    if (inlineList) {
                         throw ProcessingException(element, "The annotation @${InlineList::class.simpleName} is only allowed on java.util.List types, but the field '${element.simpleName}' in class ${(element.enclosingElement as TypeElement).qualifiedName} is of type ${element.asType()}")
                     }
 
@@ -135,10 +160,17 @@ open class AnnotationOnlyScanStrategy(elementUtils: Elements, typeUtils: Types, 
             } else {
                 // polymorphism
                 if (isList(element)) {
+                    return PolymorphicListElementField(
+                            element,
+                            nameFromAnnotationOrFieldName(elementAnnotation.name, element),
+                            requiredDetector.isRequired(element),
+                            getPolymorphicTypes(element, nameMatchers),
+                            inlineList
+                    )
 
                 } else {
 
-                    if (inlineListAnnotation != null) {
+                    if (inlineList) {
                         throw ProcessingException(element, "The annotation @${InlineList::class.simpleName} is only allowed on java.util.List types, but the field '${element.simpleName}' in class ${(element.enclosingElement as TypeElement).qualifiedName} is of type ${element.asType()}")
                     }
 
@@ -157,9 +189,8 @@ open class AnnotationOnlyScanStrategy(elementUtils: Elements, typeUtils: Types, 
 
 
 
-        // TODO thow exception
-        //   throw ProcessingException(element, "Unknown annotation!")
-        return null
+        throw ProcessingException(element, "Unknown annotation detected! I'm sorry, this should not happen. Please file an issue on github https://github.com/Tickaroo/tikxml/issues ")
+
     }
 
     /**
@@ -242,9 +273,11 @@ open class AnnotationOnlyScanStrategy(elementUtils: Elements, typeUtils: Types, 
             throw ProcessingException(variableElement, "@${ElementNameMatcher::class.simpleName} does not allow package visiblity on classes outside of this package. Make $typeElement is a public class or move this class into the same package")
         }
 
-        // Must be a subtype
-        if (!typeUtils.isAssignable(typeElement.asType(), variableElement.asType())) {
-            throw ProcessingException(variableElement, "The type $typeElement must be a sub type of ${variableElement.asType()}. Otherwise this type cannot be used in @${ElementNameMatcher::class.simpleName} to resolve polymorphism");
+
+        // Check for subtype
+        val variableType = if (isList(variableElement)) getGenericTypeFromList(variableElement) else variableElement.asType()
+        if (!typeUtils.isAssignable(typeElement.asType(), variableType)) {
+            throw ProcessingException(variableElement, "The type $typeElement must be a sub type of ${variableType}. Otherwise this type cannot be used in @${ElementNameMatcher::class.simpleName} to resolve polymorphism");
         }
 
         for (method in typeElement.enclosedElements) {
@@ -259,6 +292,20 @@ open class AnnotationOnlyScanStrategy(elementUtils: Elements, typeUtils: Types, 
 
 
         throw ProcessingException(variableElement, "Class $typeElement used in @${ElementNameMatcher::class.simpleName} must provide an public empty (parameter-less) constructor")
+    }
+
+    private fun getGenericTypeFromList(listVariableElement: VariableElement): TypeMirror {
+
+        if (listVariableElement.asType().kind != TypeKind.DECLARED) {
+            throw ProcessingException(listVariableElement, "Element must be of type java.util.List");
+        }
+
+        val typeMirror = listVariableElement.asType() as DeclaredType
+        when (typeMirror.typeArguments.size) {
+            0 -> return elementUtils.getTypeElement("java.lang.Object").asType()
+            1 -> return typeMirror.typeArguments[0]
+            else -> throw ProcessingException(listVariableElement, "Seems that you have annotated a List with more than one generic argument? How is this possible?")
+        }
     }
 
     /**

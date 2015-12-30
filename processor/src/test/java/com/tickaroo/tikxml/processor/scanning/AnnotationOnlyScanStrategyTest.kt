@@ -487,4 +487,270 @@ class AnnotationOnlyScanStrategyTest {
                 .that(componentFile).processedWith(XmlProcessor())
                 .compilesWithoutError()
     }
+
+    @Test
+    fun elementDeclarationOnPrimitive() {
+        val componentFile = JavaFileObjects.forSourceLines("test.ElementDeclarationOnPrimitive",
+                "package test;",
+                "",
+                "@${Xml::class.java.canonicalName}(scanMode = ${ScanMode::class.qualifiedName}.${ScanMode.ANNOTATIONS_ONLY})",
+                "class ElementDeclarationOnPrimitive {",
+                "   @${Element::class.java.canonicalName}(",
+                "       typesByElement = {",
+                "       @${ElementNameMatcher::class.qualifiedName}(elementName=\"foo\" , type=InnerClass1.class),",
+                "       @${ElementNameMatcher::class.qualifiedName}(elementName=\"bar\" , type=InnerClass2.class),",
+                "    })",
+                "   int aField;",
+                "",
+                " public class InnerClass1 {}",
+                " public class InnerClass2 {}",
+                "}")
+
+        Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
+                .that(componentFile).processedWith(XmlProcessor())
+                .failsToCompile()
+                .withErrorContaining("The type of field 'aField' in class test.ElementDeclarationOnPrimitive is not a class nor a interface. Only classes or interfaces can be annotated with @${Element::class.simpleName} annotation")
+    }
+
+    @Test
+    fun elementOnInterfaceWithoutPolymorphism() {
+        val componentFile = JavaFileObjects.forSourceLines("test.ElementOnInterfaceWithoutPolymorphism",
+                "package test;",
+                "",
+                "@${Xml::class.java.canonicalName}(scanMode = ${ScanMode::class.qualifiedName}.${ScanMode.ANNOTATIONS_ONLY})",
+                "class ElementOnInterfaceWithoutPolymorphism {",
+                "   @${Element::class.java.canonicalName}",
+                "   MyInterface aField;",
+                "",
+                " public interface MyInterface {}",
+                "}")
+
+        Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
+                .that(componentFile).processedWith(XmlProcessor())
+                .failsToCompile()
+                .withErrorContaining("The type of field 'aField' in class test.ElementOnInterfaceWithoutPolymorphism is an interface. Since interfaces cannot be instantiated you have to specify which class should be instantiated (resolve polymorphism) manually by @${Element::class.simpleName}( typesByElement = ... )")
+    }
+
+    @Test
+    fun elementOnInterfaceWithPolymorphism() {
+        val componentFile = JavaFileObjects.forSourceLines("test.ElementOnInterfaceWithPolymorphism",
+                "package test;",
+                "",
+                "@${Xml::class.java.canonicalName}(scanMode = ${ScanMode::class.qualifiedName}.${ScanMode.ANNOTATIONS_ONLY})",
+                "class ElementOnInterfaceWithPolymorphism {",
+                "   @${Element::class.java.canonicalName}(",
+                "       typesByElement = {",
+                "       @${ElementNameMatcher::class.qualifiedName}(elementName=\"foo\" , type=InnerClass1.class),",
+                "       @${ElementNameMatcher::class.qualifiedName}(elementName=\"bar\" , type=InnerClass2.class),",
+                "    })",
+                "   MyInterface aField;",
+                "",
+                " public interface MyInterface {}",
+                " public class InnerClass1 implements MyInterface{}",
+                " public class InnerClass2 implements MyInterface{}",
+                "}")
+
+        Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
+                .that(componentFile).processedWith(XmlProcessor())
+                .compilesWithoutError()
+
+    }
+
+    @Test
+    fun elementOnInterfaceWithPolymorphismWrong() {
+        val componentFile = JavaFileObjects.forSourceLines("test.ElementOnInterfaceWithoutPolymorphismWrong",
+                "package test;",
+                "",
+                "@${Xml::class.java.canonicalName}(scanMode = ${ScanMode::class.qualifiedName}.${ScanMode.ANNOTATIONS_ONLY})",
+                "class ElementOnInterfaceWithoutPolymorphismWrong {",
+                "   @${Element::class.java.canonicalName}(",
+                "       typesByElement = {",
+                "       @${ElementNameMatcher::class.qualifiedName}(elementName=\"foo\" , type=InnerClass1.class),",
+                "       @${ElementNameMatcher::class.qualifiedName}(elementName=\"bar\" , type=InnerClass2.class),",
+                "    })",
+                "   MyInterface aField;",
+                "",
+                " public interface MyInterface {}",
+                " public class InnerClass1 implements MyInterface{}",
+                " public class InnerClass2 {}",
+                "}")
+
+        Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
+                .that(componentFile).processedWith(XmlProcessor())
+                .failsToCompile()
+                .withErrorContaining("The type test.ElementOnInterfaceWithoutPolymorphismWrong.InnerClass2 must be a sub type of test.ElementOnInterfaceWithoutPolymorphismWrong.MyInterface. Otherwise this type cannot be used in @${ElementNameMatcher::class.simpleName} to resolve polymorphism")
+
+    }
+
+    @Test
+    fun elementOnAbstractClassWithoutPolymorphism() {
+        val componentFile = JavaFileObjects.forSourceLines("test.ElementOnAbstractClassWithoutPolymorphism",
+                "package test;",
+                "",
+                "@${Xml::class.java.canonicalName}(scanMode = ${ScanMode::class.qualifiedName}.${ScanMode.ANNOTATIONS_ONLY})",
+                "class ElementOnAbstractClassWithoutPolymorphism {",
+                "   @${Element::class.java.canonicalName}",
+                "   MyClass aField;",
+                "",
+                " public abstract class MyClass {}",
+                "}")
+
+        Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
+                .that(componentFile).processedWith(XmlProcessor())
+                .failsToCompile()
+                .withErrorContaining("The type of field 'aField' in class test.ElementOnAbstractClassWithoutPolymorphism is an abstract class. Since abstract classes cannot no be instantiated you have to specify which class should be instantiated (resolve polymorphism) manually by @${Element::class.simpleName}( typesByElement = ... )")
+    }
+
+    @Test
+    fun elementOnAbstractClassWithPolymorphism() {
+        val componentFile = JavaFileObjects.forSourceLines("test.ElementOnAbstractClassWithPolymorphism",
+                "package test;",
+                "",
+                "@${Xml::class.java.canonicalName}(scanMode = ${ScanMode::class.qualifiedName}.${ScanMode.ANNOTATIONS_ONLY})",
+                "class ElementOnInterfaceWithPolymorphism {",
+                "   @${Element::class.java.canonicalName}(",
+                "       typesByElement = {",
+                "       @${ElementNameMatcher::class.qualifiedName}(elementName=\"foo\" , type=InnerClass1.class),",
+                "       @${ElementNameMatcher::class.qualifiedName}(elementName=\"bar\" , type=InnerClass2.class),",
+                "    })",
+                "   MyClass aField;",
+                "",
+                " public abstract class MyClass {}",
+                " public class InnerClass1 extends MyClass{}",
+                " public class InnerClass2 extends MyClass{}",
+                "}")
+
+        Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
+                .that(componentFile).processedWith(XmlProcessor())
+                .compilesWithoutError()
+
+    }
+
+    @Test
+    fun elementOnAbstractWithPolymorphismWrong() {
+        val componentFile = JavaFileObjects.forSourceLines("test.ElementOnAbstractClassWithPolymorphismWrong",
+                "package test;",
+                "",
+                "@${Xml::class.java.canonicalName}(scanMode = ${ScanMode::class.qualifiedName}.${ScanMode.ANNOTATIONS_ONLY})",
+                "class ElementOnAbstractClassWithPolymorphismWrong {",
+                "   @${Element::class.java.canonicalName}(",
+                "       typesByElement = {",
+                "       @${ElementNameMatcher::class.qualifiedName}(elementName=\"foo\" , type=InnerClass1.class),",
+                "       @${ElementNameMatcher::class.qualifiedName}(elementName=\"bar\" , type=InnerClass2.class),",
+                "    })",
+                "   MyClass aField;",
+                "",
+                " public abstract class MyClass {}",
+                " public class InnerClass1 extends MyClass{}",
+                " public class InnerClass2 {}",
+                "}")
+
+        Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
+                .that(componentFile).processedWith(XmlProcessor())
+                .failsToCompile()
+                .withErrorContaining("The type test.ElementOnAbstractClassWithPolymorphismWrong.InnerClass2 must be a sub type of test.ElementOnAbstractClassWithPolymorphismWrong.MyClass. Otherwise this type cannot be used in @${ElementNameMatcher::class.simpleName} to resolve polymorphism")
+    }
+
+
+    @Test
+    fun elementListAbstractClassWithPolymorphism() {
+        val componentFile = JavaFileObjects.forSourceLines("test.ElementOnAbstractClassWithPolymorphism",
+                "package test;",
+                "",
+                "@${Xml::class.java.canonicalName}(scanMode = ${ScanMode::class.qualifiedName}.${ScanMode.ANNOTATIONS_ONLY})",
+                "class ElementOnInterfaceWithPolymorphism {",
+                "   @${Element::class.java.canonicalName}(",
+                "       typesByElement = {",
+                "       @${ElementNameMatcher::class.qualifiedName}(elementName=\"foo\" , type=InnerClass1.class),",
+                "       @${ElementNameMatcher::class.qualifiedName}(elementName=\"bar\" , type=InnerClass2.class),",
+                "    })",
+                "   java.util.List<MyClass> aField;",
+                "",
+                " public abstract class MyClass {}",
+                " public class InnerClass1 extends MyClass{}",
+                " public class InnerClass2 extends MyClass{}",
+                "}")
+
+        Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
+                .that(componentFile).processedWith(XmlProcessor())
+                .compilesWithoutError()
+
+    }
+
+    @Test
+    fun elementListInterfaceWithPolymorphism() {
+        val componentFile = JavaFileObjects.forSourceLines("test.ElementOnAbstractClassWithPolymorphism",
+                "package test;",
+                "",
+                "@${Xml::class.java.canonicalName}(scanMode = ${ScanMode::class.qualifiedName}.${ScanMode.ANNOTATIONS_ONLY})",
+                "class ElementOnInterfaceWithPolymorphism {",
+                "   @${Element::class.java.canonicalName}(",
+                "       typesByElement = {",
+                "       @${ElementNameMatcher::class.qualifiedName}(elementName=\"foo\" , type=InnerClass1.class),",
+                "       @${ElementNameMatcher::class.qualifiedName}(elementName=\"bar\" , type=InnerClass2.class),",
+                "    })",
+                "   java.util.List<MyInterface> aField;",
+                "",
+                " public interface MyInterface {}",
+                " public class InnerClass1 implements MyInterface{}",
+                " public class InnerClass2 implements MyInterface{}",
+                "}")
+
+        Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
+                .that(componentFile).processedWith(XmlProcessor())
+                .compilesWithoutError()
+
+    }
+
+
+    @Test
+    fun elementListRawAbstractClassWithPolymorphism() {
+        val componentFile = JavaFileObjects.forSourceLines("test.ElementListRawAbstractClassWithPolymorphism",
+                "package test;",
+                "",
+                "@${Xml::class.java.canonicalName}(scanMode = ${ScanMode::class.qualifiedName}.${ScanMode.ANNOTATIONS_ONLY})",
+                "class ElementListRawAbstractClassWithPolymorphism {",
+                "   @${Element::class.java.canonicalName}(",
+                "       typesByElement = {",
+                "       @${ElementNameMatcher::class.qualifiedName}(elementName=\"foo\" , type=InnerClass1.class),",
+                "       @${ElementNameMatcher::class.qualifiedName}(elementName=\"bar\" , type=InnerClass2.class),",
+                "    })",
+                "   java.util.List aField;",
+                "",
+                " public abstract class MyClass {}",
+                " public class InnerClass1 extends MyClass{}",
+                " public class InnerClass2 extends MyClass{}",
+                "}")
+
+        Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
+                .that(componentFile).processedWith(XmlProcessor())
+                .compilesWithoutError()
+
+    }
+
+    @Test
+    fun elementListRawInterfaceWithPolymorphism() {
+        val componentFile = JavaFileObjects.forSourceLines("test.ElementListRawInterfaceWithPolymorphism",
+                "package test;",
+                "",
+                "@${Xml::class.java.canonicalName}(scanMode = ${ScanMode::class.qualifiedName}.${ScanMode.ANNOTATIONS_ONLY})",
+                "class ElementListRawInterfaceWithPolymorphism {",
+                "   @${Element::class.java.canonicalName}(",
+                "       typesByElement = {",
+                "       @${ElementNameMatcher::class.qualifiedName}(elementName=\"foo\" , type=InnerClass1.class),",
+                "       @${ElementNameMatcher::class.qualifiedName}(elementName=\"bar\" , type=InnerClass2.class),",
+                "    })",
+                "   java.util.List aField;",
+                "",
+                " public interface MyInterface {}",
+                " public class InnerClass1 implements MyInterface{}",
+                " public class InnerClass2 implements MyInterface{}",
+                "}")
+
+        Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
+                .that(componentFile).processedWith(XmlProcessor())
+                .compilesWithoutError()
+
+    }
+
 }

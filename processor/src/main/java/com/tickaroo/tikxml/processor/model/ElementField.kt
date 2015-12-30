@@ -19,6 +19,7 @@
 package com.tickaroo.tikxml.processor.model
 
 import javax.lang.model.element.VariableElement
+import javax.lang.model.type.TypeMirror
 
 /**
  * Represents a Field with [com.tickaroo.tikxml.annotation.Element] annotation
@@ -27,3 +28,5 @@ import javax.lang.model.element.VariableElement
 open class ElementField(element: VariableElement, name: String, required: Boolean?) : Field(element, name, required) {
 
 }
+
+class ListElementField(element: VariableElement, name: String, required: Boolean?, val listType: TypeMirror, val inlineList: Boolean) : ElementField(element, name, required)

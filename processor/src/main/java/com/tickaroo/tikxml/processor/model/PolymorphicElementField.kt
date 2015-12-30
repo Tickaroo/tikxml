@@ -25,9 +25,11 @@ import javax.lang.model.type.TypeMirror
  * Represents a Field with [com.tickaroo.tikxml.annotation.Element] annotation
  * @author Hannes Dorfmann
  */
-class PolymorphicElementField(element: VariableElement, name: String, required: Boolean?, private val typeElementNameMatcher: List<PolymorphicTypeElementNameMatcher>) : ElementField(element, name, required) {
+open class PolymorphicElementField(element: VariableElement, name: String, required: Boolean?, protected val typeElementNameMatcher: List<PolymorphicTypeElementNameMatcher>) : ElementField(element, name, required) {
 
 }
+
+class PolymorphicListElementField(element: VariableElement, name: String, required: Boolean?, typeElementNameMatcher: List<PolymorphicTypeElementNameMatcher>, private val inlineList: Boolean) : PolymorphicElementField(element, name, required, typeElementNameMatcher)
 
 data class PolymorphicTypeElementNameMatcher(val xmlElementName: String, val type: TypeMirror)
 
