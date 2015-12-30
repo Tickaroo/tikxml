@@ -216,7 +216,7 @@ open class AnnotationOnlyScanStrategy(elementUtils: Elements, typeUtils: Types, 
      */
     private fun checkPublicClassWithEmptyConstructor(variableElement: VariableElement, typeElement: TypeElement) {
 
-        if (!typeElement.isClass()){
+        if (!typeElement.isClass()) {
             throw ProcessingException(variableElement, "@${ElementNameMatcher::class.simpleName} only allows classes. $typeElement is a not a class!")
         }
 
@@ -230,6 +230,11 @@ open class AnnotationOnlyScanStrategy(elementUtils: Elements, typeUtils: Types, 
 
         if (!typeElement.isPublic() && !typeElement.isSamePackageAs(variableElement.enclosingElement, elementUtils)) {
             throw ProcessingException(variableElement, "@${ElementNameMatcher::class.simpleName} does not allow package visiblity on classes outside of this package. Make $typeElement is a public class or move this class into the same package")
+        }
+
+        // Must be a subtype
+        if (!typeUtils.isAssignable(typeElement.asType(), variableElement.asType())) {
+            throw ProcessingException(variableElement, "The type $typeElement must be a sub type of ${variableElement.asType()}. Otherwise this type cannot be used in @${ElementNameMatcher::class.simpleName} to resolve polymorphism");
         }
 
         for (method in typeElement.enclosedElements) {

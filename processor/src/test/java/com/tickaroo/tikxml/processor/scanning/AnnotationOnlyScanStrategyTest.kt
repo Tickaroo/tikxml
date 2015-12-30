@@ -293,7 +293,6 @@ class AnnotationOnlyScanStrategyTest {
                 .withErrorContaining("Class test.PolymorphicClassHasNoPublicConstructor.InnerClass used in @${ElementNameMatcher::class.simpleName} must provide an public empty (parameter-less) constructor")
     }
 
-
     @Test
     fun polymorphicTypeHasNoEmptyConstructor() {
         val componentFile = JavaFileObjects.forSourceLines("test.PolymorphicClassHasNoEmptyConstructor",
@@ -357,5 +356,46 @@ class AnnotationOnlyScanStrategyTest {
                 .that(componentFile).processedWith(XmlProcessor())
                 .failsToCompile()
                 .withErrorContaining("@${ElementNameMatcher::class.simpleName} only allows classes. test.PolymorphicTypeIsEnum.InnerClass is a not a class!")
+    }
+
+    @Test
+    fun polymorphicTypeIsNotSubType() {
+        val componentFile = JavaFileObjects.forSourceLines("test.PolymorphicTypeIsNotSubType",
+                "package test;",
+                "",
+                "@${Xml::class.java.canonicalName}(scanMode = ${ScanMode::class.qualifiedName}.${ScanMode.ANNOTATIONS_ONLY})",
+                "class PolymorphicTypeIsNotSubType {",
+                "   @${Element::class.java.canonicalName}(",
+                "       typesByElement = @${ElementNameMatcher::class.qualifiedName}(elementName=\"foo\" , type=InnerClass.class)",
+                "    )",
+                "   String aField;",
+                "",
+                " public class InnerClass {}",
+                "}")
+
+        Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
+                .that(componentFile).processedWith(XmlProcessor())
+                .failsToCompile()
+                .withErrorContaining("The type test.PolymorphicTypeIsNotSubType.InnerClass must be a sub type of java.lang.String. Otherwise this type cannot be used in @${ElementNameMatcher::class.simpleName} to resolve polymorphis")
+    }
+
+    @Test
+    fun polymorphicTypeIsSubType() {
+        val componentFile = JavaFileObjects.forSourceLines("test.PolymorphicTypeIsSubType",
+                "package test;",
+                "",
+                "@${Xml::class.java.canonicalName}(scanMode = ${ScanMode::class.qualifiedName}.${ScanMode.ANNOTATIONS_ONLY})",
+                "class PolymorphicTypeIsSubType {",
+                "   @${Element::class.java.canonicalName}(",
+                "       typesByElement = @${ElementNameMatcher::class.qualifiedName}(elementName=\"foo\" , type=InnerClass.class)",
+                "    )",
+                "   Object aField;",
+                "",
+                " public class InnerClass {}",
+                "}")
+
+        Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
+                .that(componentFile).processedWith(XmlProcessor())
+                .compilesWithoutError()
     }
 }
