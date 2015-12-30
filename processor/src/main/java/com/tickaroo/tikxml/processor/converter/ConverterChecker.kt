@@ -89,6 +89,10 @@ abstract class ConverterChecker<in T : Annotation> {
             // Not compiled class
             val typeMirror = mte.typeMirror
 
+            if (typeMirror.toString() == TypeConverter.NoneTypeConverter::class.qualifiedName) {
+                return null
+            }
+
             if (typeMirror.kind != TypeKind.DECLARED) {
                 throw ProcessingException(element, "TypeConverter must be a class")
             }

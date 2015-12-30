@@ -71,9 +71,9 @@ abstract class ScanStrategy(protected val elementUtils: Elements, protected val 
                             val conflictingField = existingField.element
                             throw ProcessingException(it, "Conflict: The field '${it.toString()}' "
                                     + "in class ${currentElement.qualifiedName} has the same XML "
-                                    + "name as the field '${conflictingField.simpleName}' in "
+                                    + "name '${field.name}' as the field '${conflictingField.simpleName}' in class "
                                     + "${(conflictingField.enclosingElement as TypeElement).qualifiedName}. "
-                                    + "You can specify another name annotations.")
+                                    + "You can specify another name via annotations.")
                         }
 
                         // needs setter and getter?
@@ -176,9 +176,9 @@ abstract class ScanStrategy(protected val elementUtils: Elements, protected val 
                 if (conflictingField != null) {
                     throw ProcessingException(element, "Conflict: The field '${element.toString()}' "
                             + "in class ${currentElement.qualifiedName} has the same XML "
-                            + "name as the field '${conflictingField.element.simpleName}' in "
+                            + "name '${it.name}' as the field '${conflictingField.element.simpleName}' in class "
                             + "${(conflictingField.element.enclosingElement as TypeElement).qualifiedName}. "
-                            + "You can specify another name annotations.")
+                            + "You can specify another name via annotations.")
                 }
 
 

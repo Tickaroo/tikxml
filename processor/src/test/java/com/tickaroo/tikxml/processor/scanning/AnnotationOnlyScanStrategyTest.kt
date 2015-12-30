@@ -877,7 +877,160 @@ class AnnotationOnlyScanStrategyTest {
         Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
                 .that(componentFile).processedWith(XmlProcessor())
                 .compilesWithoutError()
-
     }
 
+    @Test
+    fun nameConflict1() {
+        val componentFile = JavaFileObjects.forSourceLines("test.NameConflict1",
+                "package test;",
+                "",
+                "@${Xml::class.java.canonicalName}(scanMode = ${ScanMode::class.qualifiedName}.${ScanMode.ANNOTATIONS_ONLY})",
+                "class NameConflict1 {",
+                "   @${PropertyElement::class.java.canonicalName}( name =\"foo\" )",
+                "   int a;",
+                "",
+                "   @${Attribute::class.java.canonicalName}( name =\"foo\" )",
+                "   int b;",
+                "}")
+
+        Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
+                .that(componentFile).processedWith(XmlProcessor())
+                .failsToCompile()
+                .withErrorContaining("The field 'b' in class test.NameConflict1 has the same XML name 'foo' as the field 'a' in class test.NameConflict1. You can specify another name via annotations.")
+    }
+
+    @Test
+    fun nameConflict2() {
+        val componentFile = JavaFileObjects.forSourceLines("test.NameConflict2",
+                "package test;",
+                "",
+                "@${Xml::class.java.canonicalName}(scanMode = ${ScanMode::class.qualifiedName}.${ScanMode.ANNOTATIONS_ONLY})",
+                "class NameConflict2 {",
+                "   @${PropertyElement::class.java.canonicalName}( name =\"foo\" )",
+                "   int a;",
+                "",
+                "   @${Element::class.java.canonicalName}( name =\"foo\" )",
+                "   Other b;",
+                "   public class Other {}",
+                "}")
+
+        Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
+                .that(componentFile).processedWith(XmlProcessor())
+                .failsToCompile()
+                .withErrorContaining("Conflict: The field 'b' in class test.NameConflict2 has the same XML name 'foo' as the field 'a' in class test.NameConflict2. You can specify another name via annotations.")
+    }
+
+    @Test
+    fun nameConflict3() {
+        val componentFile = JavaFileObjects.forSourceLines("test.NameConflict3",
+                "package test;",
+                "",
+                "@${Xml::class.java.canonicalName}(scanMode = ${ScanMode::class.qualifiedName}.${ScanMode.ANNOTATIONS_ONLY})",
+                "class NameConflict3 {",
+                "   @${Attribute::class.java.canonicalName}( name =\"foo\" )",
+                "   int a;",
+                "",
+                "   @${Element::class.java.canonicalName}( name =\"foo\" )",
+                "   Other b;",
+                "   public class Other {}",
+                "}")
+
+        Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
+                .that(componentFile).processedWith(XmlProcessor())
+                .failsToCompile()
+                .withErrorContaining("Conflict: The field 'b' in class test.NameConflict3 has the same XML name 'foo' as the field 'a' in class test.NameConflict3. You can specify another name via annotations.")
+    }
+
+    @Test
+    fun nameConflictInheritance1() {
+        val componentFile = JavaFileObjects.forSourceLines("test.NameConflictInheritance1",
+                "package test;",
+                "",
+                "@${Xml::class.java.canonicalName}(scanMode = ${ScanMode::class.qualifiedName}.${ScanMode.ANNOTATIONS_ONLY})",
+                "class NameConflictInheritance1 extends Parent {",
+                "   @${Attribute::class.java.canonicalName}( name =\"foo\" )",
+                "   int a;",
+                "",
+                "}",
+                "",
+                "class Parent {",
+                "   @${Element::class.java.canonicalName}( name =\"foo\" )",
+                "   Other b;",
+                "   class Other {}",
+                "}")
+
+        Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
+                .that(componentFile).processedWith(XmlProcessor())
+                .failsToCompile()
+                .withErrorContaining("Conflict: The field 'b' in class test.Parent has the same XML name 'foo' as the field 'a' in class test.NameConflictInheritance1. You can specify another name via annotations.")
+    }
+
+    @Test
+    fun nameConflictInheritance2() {
+        val componentFile = JavaFileObjects.forSourceLines("test.NameConflictInheritance2",
+                "package test;",
+                "",
+                "@${Xml::class.java.canonicalName}(scanMode = ${ScanMode::class.qualifiedName}.${ScanMode.ANNOTATIONS_ONLY})",
+                "class NameConflictInheritance2 extends Parent {",
+                "   @${PropertyElement::class.java.canonicalName}( name =\"foo\" )",
+                "   int a;",
+                "",
+                "}",
+                "",
+                "class Parent {",
+                "   @${Element::class.java.canonicalName}( name =\"foo\" )",
+                "   Other b;",
+                "   class Other {}",
+                "}")
+
+        Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
+                .that(componentFile).processedWith(XmlProcessor())
+                .failsToCompile()
+                .withErrorContaining("Conflict: The field 'b' in class test.Parent has the same XML name 'foo' as the field 'a' in class test.NameConflictInheritance2. You can specify another name via annotations.")
+    }
+
+    @Test
+    fun nameConflictInheritance3() {
+        val componentFile = JavaFileObjects.forSourceLines("test.NameConflictInheritance3",
+                "package test;",
+                "",
+                "@${Xml::class.java.canonicalName}(scanMode = ${ScanMode::class.qualifiedName}.${ScanMode.ANNOTATIONS_ONLY})",
+                "class NameConflictInheritance3 extends Parent {",
+                "   @${Attribute::class.java.canonicalName}( name =\"foo\" )",
+                "   int a;",
+                "",
+                "}",
+                "",
+                "class Parent {",
+                "   @${PropertyElement::class.java.canonicalName}( name =\"foo\" )",
+                "   String b;",
+                "}")
+
+        Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
+                .that(componentFile).processedWith(XmlProcessor())
+                .failsToCompile()
+                .withErrorContaining("Conflict: The field 'b' in class test.Parent has the same XML name 'foo' as the field 'a' in class test.NameConflictInheritance3. You can specify another name via annotations.")
+    }
+
+    @Test
+    fun nameConflictInheritanceOff() {
+        val componentFile = JavaFileObjects.forSourceLines("test.NameConflictInheritance3",
+                "package test;",
+                "",
+                "@${Xml::class.java.canonicalName}(inheritance = false, scanMode = ${ScanMode::class.qualifiedName}.${ScanMode.ANNOTATIONS_ONLY})",
+                "class NameConflictInheritance3 extends Parent {",
+                "   @${Attribute::class.java.canonicalName}( name =\"foo\" )",
+                "   int a;",
+                "",
+                "}",
+                "",
+                "class Parent {",
+                "   @${PropertyElement::class.java.canonicalName}( name =\"foo\" )",
+                "   String b;",
+                "}")
+
+        Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
+                .that(componentFile).processedWith(XmlProcessor())
+                .compilesWithoutError()
+    }
 }
