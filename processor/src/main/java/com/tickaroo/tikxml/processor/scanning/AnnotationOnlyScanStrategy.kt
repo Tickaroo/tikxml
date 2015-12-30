@@ -28,10 +28,7 @@ import java.util.*
 import javax.lang.model.element.ElementKind
 import javax.lang.model.element.TypeElement
 import javax.lang.model.element.VariableElement
-import javax.lang.model.type.DeclaredType
-import javax.lang.model.type.MirroredTypeException
-import javax.lang.model.type.TypeKind
-import javax.lang.model.type.TypeMirror
+import javax.lang.model.type.*
 import javax.lang.model.util.Elements
 import javax.lang.model.util.Types
 import kotlin.collections.isEmpty
@@ -302,8 +299,17 @@ open class AnnotationOnlyScanStrategy(elementUtils: Elements, typeUtils: Types, 
 
         val typeMirror = listVariableElement.asType() as DeclaredType
         when (typeMirror.typeArguments.size) {
-            0 -> return elementUtils.getTypeElement("java.lang.Object").asType()
-            1 -> return typeMirror.typeArguments[0]
+            0 -> return elementUtils.getTypeElement("java.lang.Object").asType() // Raw types
+
+            1 -> if (typeMirror.typeArguments[0].kind == TypeKind.WILDCARD) {
+                val wildCardMirror = typeMirror.typeArguments[0] as WildcardType
+                return if (wildCardMirror.extendsBound != null)
+                    wildCardMirror.extendsBound
+                else if (wildCardMirror.superBound != null)
+                    wildCardMirror.superBound
+                else elementUtils.getTypeElement("java.lang.Object").asType() // in case of List<?>
+            } else return typeMirror.typeArguments[0]
+
             else -> throw ProcessingException(listVariableElement, "Seems that you have annotated a List with more than one generic argument? How is this possible?")
         }
     }

@@ -753,4 +753,81 @@ class AnnotationOnlyScanStrategyTest {
 
     }
 
+
+    @Test
+    fun elementListWildcardExtendsInterfaceWithPolymorphism() {
+        val componentFile = JavaFileObjects.forSourceLines("test.ElementListWildcardInterfaceWithPolymorphism",
+                "package test;",
+                "",
+                "@${Xml::class.java.canonicalName}(scanMode = ${ScanMode::class.qualifiedName}.${ScanMode.ANNOTATIONS_ONLY})",
+                "class ElementListWildcardInterfaceWithPolymorphism {",
+                "   @${Element::class.java.canonicalName}(",
+                "       typesByElement = {",
+                "       @${ElementNameMatcher::class.qualifiedName}(elementName=\"foo\" , type=InnerClass1.class),",
+                "       @${ElementNameMatcher::class.qualifiedName}(elementName=\"bar\" , type=InnerClass2.class),",
+                "    })",
+                "   java.util.List<? extends MyInterface> aField;",
+                "",
+                " public interface MyInterface {}",
+                " public class InnerClass1 implements MyInterface{}",
+                " public class InnerClass2 implements MyInterface{}",
+                "}")
+
+        Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
+                .that(componentFile).processedWith(XmlProcessor())
+                .compilesWithoutError()
+
+    }
+
+    @Test
+    fun elementListWildcardSuperInterfaceWithPolymorphism() {
+        val componentFile = JavaFileObjects.forSourceLines("test.ElementListWildcardInterfaceWithPolymorphism",
+                "package test;",
+                "",
+                "@${Xml::class.java.canonicalName}(scanMode = ${ScanMode::class.qualifiedName}.${ScanMode.ANNOTATIONS_ONLY})",
+                "class ElementListWildcardInterfaceWithPolymorphism {",
+                "   @${Element::class.java.canonicalName}(",
+                "       typesByElement = {",
+                "       @${ElementNameMatcher::class.qualifiedName}(elementName=\"foo\" , type=GrandParent.class),",
+                "       @${ElementNameMatcher::class.qualifiedName}(elementName=\"bar\" , type=Parent.class),",
+                "    })",
+                "   java.util.List<? super GrandParent> aField;",
+                "",
+                " public class GrandParent {}",
+                " public class Parent extends GrandParent {}",
+                " public class Child extends Parent {}",
+                "}")
+
+        Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
+                .that(componentFile).processedWith(XmlProcessor())
+                .compilesWithoutError()
+
+    }
+
+
+    @Test
+    fun elementListWildcardInterfaceWithPolymorphism() {
+        val componentFile = JavaFileObjects.forSourceLines("test.ElementListWildcardInterfaceWithPolymorphism",
+                "package test;",
+                "",
+                "@${Xml::class.java.canonicalName}(scanMode = ${ScanMode::class.qualifiedName}.${ScanMode.ANNOTATIONS_ONLY})",
+                "class ElementListWildcardInterfaceWithPolymorphism {",
+                "   @${Element::class.java.canonicalName}(",
+                "       typesByElement = {",
+                "       @${ElementNameMatcher::class.qualifiedName}(elementName=\"foo\" , type=InnerClass1.class),",
+                "       @${ElementNameMatcher::class.qualifiedName}(elementName=\"bar\" , type=InnerClass2.class),",
+                "    })",
+                "   java.util.List<?> aField;",
+                "",
+                " public interface MyInterface {}",
+                " public class InnerClass1 implements MyInterface{}",
+                " public class InnerClass2 implements MyInterface{}",
+                "}")
+
+        Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
+                .that(componentFile).processedWith(XmlProcessor())
+                .compilesWithoutError()
+
+    }
+
 }
