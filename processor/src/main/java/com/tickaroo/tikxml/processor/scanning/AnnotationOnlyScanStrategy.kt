@@ -33,7 +33,6 @@ import javax.lang.model.type.TypeKind
 import javax.lang.model.type.TypeMirror
 import javax.lang.model.util.Elements
 import javax.lang.model.util.Types
-import kotlin.collections.arrayListOf
 import kotlin.collections.isEmpty
 import kotlin.text.isEmpty
 
@@ -177,20 +176,29 @@ open class AnnotationOnlyScanStrategy(elementUtils: Elements, typeUtils: Types, 
 
         var polymorphismMatcher = ArrayList<PolymorphicTypeElementNameMatcher>(matcherAnnotations.size)
         val namingMap = HashMap<String, PolymorphicTypeElementNameMatcher>()
-        val typeMap = HashMap<String, PolymorphicTypeElementNameMatcher>()
 
 
 
         for (matcher in matcherAnnotations) {
+            val xmlElementName = matcher.elementName
+            if (xmlElementName.isEmpty()) {
+                throw ProcessingException(element, "The xml element name in @${ElementNameMatcher::class.simpleName} cannot be empty")
+            }
 
             try {
-                val name = matcher.elementName
 
                 val typeClass = matcher.type
                 val typeElement = elementUtils.getTypeElement(typeClass.qualifiedName)
-                val typeMirror = typeElement.asType()
 
                 checkPublicClassWithEmptyConstructor(element, typeElement)
+
+                val typeMatcher = namingMap[xmlElementName]
+                if (typeMatcher != null) {
+                    throw ProcessingException(element, "Conflict: A @${ElementNameMatcher::class.simpleName} with the name \"$xmlElementName\" is already mapped to the type ${typeMatcher.type} to resolve polymorphism. Hence it cannot be mapped to $typeElement as well.")
+                } else {
+                    namingMap.put(xmlElementName, PolymorphicTypeElementNameMatcher(xmlElementName, typeElement.asType()))
+                }
+
 
 
             } catch(mte: MirroredTypeException) {
@@ -204,11 +212,17 @@ open class AnnotationOnlyScanStrategy(elementUtils: Elements, typeUtils: Types, 
 
                 checkPublicClassWithEmptyConstructor(element, typeElement)
 
+                val typeMatcher = namingMap[xmlElementName]
+                if (typeMatcher != null) {
+                    throw ProcessingException(element, "Conflict: A @${ElementNameMatcher::class.simpleName} with the name \"$xmlElementName\" is already mapped to the type ${typeMatcher.type} to resolve polymorphism. Hence it cannot be mapped to $typeElement as well.")
+                } else {
+                    namingMap.put(xmlElementName, PolymorphicTypeElementNameMatcher(xmlElementName, typeElement.asType()))
+                }
             }
 
         }
 
-        return arrayListOf()
+        return ArrayList(namingMap.values)
     }
 
     /**
