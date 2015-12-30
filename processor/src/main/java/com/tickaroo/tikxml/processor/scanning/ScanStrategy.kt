@@ -39,7 +39,7 @@ import kotlin.text.*
  * @author Hannes Dorfmann
  * @since 1.0
  */
-abstract class ScanStrategy(private val elementUtils: Elements, private val typeUtils: Types, val requiredDetector: RequiredDetector) {
+abstract class ScanStrategy(protected val elementUtils: Elements, protected val typeUtils: Types, protected val requiredDetector: RequiredDetector) {
 
     /**
      * Scans the child element of the passed [AnnotatedClass] to find [com.tickaroo.tikxml.processor.model.Field]
@@ -48,8 +48,6 @@ abstract class ScanStrategy(private val elementUtils: Elements, private val type
     fun scan(annotatedClass: AnnotatedClass) {
 
         var constructorFound = false
-
-        // TODO inheritance
         var currentElement = annotatedClass.element
 
         while (true) {

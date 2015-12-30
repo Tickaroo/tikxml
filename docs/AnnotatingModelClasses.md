@@ -568,3 +568,99 @@ annotating class fields with `@Attribute`. All non primitive types (in other wor
   }
   ```
 
+Per default **COMMON_CASE** will be used. You can specify default Scan Mode globally for all your `@Xml` annotated classes by setting up the annotation processor option like this:
+```groovy 
+apt {
+  arguments {
+    defaultScanMode ANNOTATION_ONLY  // or COMMON_CASE
+  }
+}
+```
+
+## Required mapping
+Per default a mapping from XML to java class is required. That means, if you have the following java class:
+
+```java
+@Xml 
+class Book {
+  @PropertyElement 
+  String title;
+}
+```
+
+but are reading the following xml
+
+```xml
+<book id="123">  <!-- id is not defined in Book.java -->
+  <title>Android for Dummies</title>
+</book>
+```
+
+The parser will throw an exception because there is no mapping from xml attribute `id` to a java field in `Book` class.
+If you have a specified a field in java class but the property is missing in xml document, then an exception will be thrown as well:
+
+```java
+@Xml 
+class Book {
+
+  @Attribute
+  int id;
+  
+  @PropertyElement 
+  String title;
+}
+```
+
+```xml
+<book>  <!-- No attribute id  -->
+  <title>Android for Dummies</title>
+</book>
+```
+
+Usually you want an exception to be thrown because usually you need all data from xml field. But there might be scenarios where this is not the desired behaviour. Hence, you can configure that a mapping is required in `TikXml`:
+
+```java
+TikXml tikXml = TikXml.Builder()
+                      .throwExceptionOnMissingMapping(true) // set this to false if you don't want that an exception is thrown
+                      .build();
+```
+
+Additionally, you can always annotate a field with `@Required` annotation like this:
+```java
+@Xml 
+class Book {
+
+  @Required     // is equivalent to @Required(true)
+  @Attribute
+  int id;
+  
+  @Required(false)  // Don't throw an exception if mapping is missing
+  @PropertyElement 
+  String title;
+}
+```
+
+So `@Required(false)` means "optional". Please note that the `@Required` annotation has higher priority then the default value specified in `throwExceptionOnMissingMapping()`.
+
+So if you say
+
+```java
+TikXml tikXml = TikXml.Builder()
+                      .throwExceptionOnMissingMapping(true) // throw exception if mapping is missing
+                      .build();
+```
+
+and then mark an element with `Required(false)` like this
+
+```java
+@Xml 
+class Book {
+
+  @Attribute
+  int id;           // Throws an exception if mapping is missing because default value is .throwExceptionOnMissingMapping(true)
+  
+  @Required(false)  // Don't throw an exception if mapping is missing
+  @PropertyElement 
+  String title;
+}
+```

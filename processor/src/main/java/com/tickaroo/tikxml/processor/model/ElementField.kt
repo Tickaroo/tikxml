@@ -18,12 +18,13 @@
 
 package com.tickaroo.tikxml.processor.model
 
+import com.tickaroo.tikxml.annotation.Element
 import javax.lang.model.element.VariableElement
 
 /**
- * This class represents a field annotated with [com.tickaroo.tikxml.annotation.PropertyElement]
+ * Represents a Field with [com.tickaroo.tikxml.annotation.Element] annotation
  * @author Hannes Dorfmann
  */
-class PropertyField(element: VariableElement, name: String, required: Boolean?, private val converterQualifiedName: String? = null) : Field(element, name, required) {
+open class ElementField(element: VariableElement, name: String, required: Boolean?, annotation: Element) : Field(element, name, required) {
 
 }

@@ -55,6 +55,12 @@
             <version>${kotlin.version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>com.squareup</groupId>
+            <artifactId>javapoet</artifactId>
+            <version>1.4.0</version>
+        </dependency>
+
         <!-- Testing -->
         <dependency>
             <groupId>com.google.testing.compile</groupId>

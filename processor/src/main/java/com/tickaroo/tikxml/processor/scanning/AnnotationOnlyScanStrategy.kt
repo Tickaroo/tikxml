@@ -20,13 +20,17 @@ package com.tickaroo.tikxml.processor.scanning
 
 import com.tickaroo.tikxml.annotation.*
 import com.tickaroo.tikxml.processor.ProcessingException
+import com.tickaroo.tikxml.processor.converter.AttributeConverterChecker
+import com.tickaroo.tikxml.processor.converter.PropertyElementConverterChecker
 import com.tickaroo.tikxml.processor.model.AttributeField
 import com.tickaroo.tikxml.processor.model.Field
 import com.tickaroo.tikxml.processor.model.PropertyField
 import javax.lang.model.element.TypeElement
 import javax.lang.model.element.VariableElement
+import javax.lang.model.type.TypeMirror
 import javax.lang.model.util.Elements
 import javax.lang.model.util.Types
+import kotlin.collections.isEmpty
 import kotlin.text.isEmpty
 
 /**
@@ -34,6 +38,13 @@ import kotlin.text.isEmpty
  * @author Hannes Dorfmann
  */
 open class AnnotationOnlyScanStrategy(elementUtils: Elements, typeUtils: Types, requiredDetector: RequiredDetector) : ScanStrategy(elementUtils, typeUtils, requiredDetector) {
+
+    val listTypeMirror: TypeMirror
+
+    init {
+        listTypeMirror = typeUtils.erasure(elementUtils.getTypeElement("java.util.List").asType())
+    }
+
     override fun isXmlField(element: VariableElement): Field? {
 
         var annotationFound = 0;
@@ -80,27 +91,65 @@ open class AnnotationOnlyScanStrategy(elementUtils: Elements, typeUtils: Types, 
 
         if (attributeAnnotation != null) {
 
+            val converterChecker = AttributeConverterChecker()
             return AttributeField(element,
                     nameFromAnnotationOrFieldName(attributeAnnotation.name, element),
-                    requiredDetector.isRequired(element))
+                    requiredDetector.isRequired(element),
+                    converterChecker.getQualifiedConverterName(element, attributeAnnotation))
         }
 
         if (propertyAnnotation != null) {
+            val converterChecker = PropertyElementConverterChecker()
             return PropertyField(element,
                     nameFromAnnotationOrFieldName(propertyAnnotation.name, element),
-                    requiredDetector.isRequired(element))
+                    requiredDetector.isRequired(element),
+                    converterChecker.getQualifiedConverterName(element, propertyAnnotation))
         }
 
 
-        val inlineList = element.getAnnotation(InlineList::class.java)
+        if (elementAnnotation != null) {
+
+            val nameMatchers = elementAnnotation.typesByElement
+            val inlineListAnnotation = element.getAnnotation(InlineList::class.java)
+
+            if (nameMatchers.isEmpty()) {
+                // No polymorphism
+                if (isList(element)) {
+
+                } else {
+
+                    if (inlineListAnnotation != null) {
+                        throw ProcessingException(element, "The annotation @${InlineList::class.simpleName} is only allowed on java.util.List types, but the field '${element.simpleName}' in class ${(element.enclosingElement as TypeElement).qualifiedName} is of type ${element.asType()}")
+                    }
+
+                }
+            } else {
+                // polymorphism
+                if (isList(element)) {
+
+                } else {
+
+                    if (inlineListAnnotation != null) {
+                        throw ProcessingException(element, "The annotation @${InlineList::class.simpleName} is only allowed on java.util.List types, but the field '${element.simpleName}' in class ${(element.enclosingElement as TypeElement).qualifiedName} is of type ${element.asType()}")
+                    }
+
+                }
+            }
+
+        }
 
 
 
-        throw ProcessingException(element, "Unknown annotation!")
+        // TODO thow exception
+        //   throw ProcessingException(element, "Unknown annotation!")
+        return null
     }
 
-    protected fun nameToLowerCase(name: String) {
-
+    /**
+     * Checks whether or not thy element is of type (or subtype) java.util.List
+     */
+    protected fun isList(element: VariableElement): Boolean {
+        return typeUtils.isAssignable(element.asType(), listTypeMirror)
     }
 
     /**

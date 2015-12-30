@@ -23,7 +23,6 @@ import com.google.testing.compile.JavaFileObjects
 import com.google.testing.compile.JavaSourceSubjectFactory
 import com.google.testing.compile.JavaSourcesSubject
 import com.tickaroo.tikxml.annotation.Xml
-import org.junit.Ignore
 import org.junit.Test
 import javax.tools.JavaFileObject
 
@@ -66,8 +65,6 @@ class XmlProcessorWithDefaultScanStrategyTest {
     }
 
     @Test
-    @Ignore
-            // TODO enable once code generation works
     fun defaultVisibilityConstructor() {
         val componentFile = JavaFileObjects.forSourceLines("test.DefaultConstTest",
                 "package test;",
@@ -86,8 +83,6 @@ class XmlProcessorWithDefaultScanStrategyTest {
     }
 
     @Test
-    @Ignore
-            // TODO enable once code generation works
     fun publicVisibilityConstructor() {
         val componentFile = JavaFileObjects.forSourceLines("test.PublicConstTest",
                 "package test;",

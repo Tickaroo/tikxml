@@ -24,5 +24,8 @@ import javax.lang.model.element.VariableElement
  * Represents an field which value is represented by an xml element's attribute
  * @author Hannes Dorfmann
  */
-class AttributeField(element: VariableElement, name: String, required: Boolean?) : Field(element, name, required) {
+class AttributeField(element: VariableElement, name: String, required: Boolean?,
+                     private val converterQualifiedName: String? = null) : Field(element, name, required) {
+
+
 }
