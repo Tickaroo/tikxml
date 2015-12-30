@@ -651,7 +651,6 @@ class AnnotationOnlyScanStrategyTest {
                 .withErrorContaining("The type test.ElementOnAbstractClassWithPolymorphismWrong.InnerClass2 must be a sub type of test.ElementOnAbstractClassWithPolymorphismWrong.MyClass. Otherwise this type cannot be used in @${ElementNameMatcher::class.simpleName} to resolve polymorphism")
     }
 
-
     @Test
     fun elementListAbstractClassWithPolymorphism() {
         val componentFile = JavaFileObjects.forSourceLines("test.ElementOnAbstractClassWithPolymorphism",
@@ -701,7 +700,6 @@ class AnnotationOnlyScanStrategyTest {
                 .compilesWithoutError()
 
     }
-
 
     @Test
     fun elementListRawAbstractClassWithPolymorphism() {
@@ -753,7 +751,6 @@ class AnnotationOnlyScanStrategyTest {
 
     }
 
-
     @Test
     fun elementListWildcardExtendsInterfaceWithPolymorphism() {
         val componentFile = JavaFileObjects.forSourceLines("test.ElementListWildcardInterfaceWithPolymorphism",
@@ -780,6 +777,32 @@ class AnnotationOnlyScanStrategyTest {
     }
 
     @Test
+    fun elementListWildcardExtendsInterfaceWithPolymorphismWrong() {
+        val componentFile = JavaFileObjects.forSourceLines("test.ElementListWildcardExtendsInterfaceWithPolymorphismWrong",
+                "package test;",
+                "",
+                "@${Xml::class.java.canonicalName}(scanMode = ${ScanMode::class.qualifiedName}.${ScanMode.ANNOTATIONS_ONLY})",
+                "class ElementListWildcardExtendsInterfaceWithPolymorphismWrong {",
+                "   @${Element::class.java.canonicalName}(",
+                "       typesByElement = {",
+                "       @${ElementNameMatcher::class.qualifiedName}(elementName=\"foo\" , type=InnerClass1.class),",
+                "       @${ElementNameMatcher::class.qualifiedName}(elementName=\"bar\" , type=InnerClass2.class),",
+                "    })",
+                "   java.util.List<? extends MyInterface> aField;",
+                "",
+                " public interface MyInterface {}",
+                " public class InnerClass1 implements MyInterface{}",
+                " public class InnerClass2 {}",
+                "}")
+
+        Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
+                .that(componentFile).processedWith(XmlProcessor())
+                .failsToCompile()
+                .withErrorContaining("The type test.ElementListWildcardExtendsInterfaceWithPolymorphismWrong.InnerClass2 must be a sub type of test.ElementListWildcardExtendsInterfaceWithPolymorphismWrong.MyInterface. Otherwise this type cannot be used in @${ElementNameMatcher::class.simpleName} to resolve polymorphism")
+
+    }
+
+    @Test
     fun elementListWildcardSuperInterfaceWithPolymorphism() {
         val componentFile = JavaFileObjects.forSourceLines("test.ElementListWildcardInterfaceWithPolymorphism",
                 "package test;",
@@ -798,12 +821,39 @@ class AnnotationOnlyScanStrategyTest {
                 " public class Child extends Parent {}",
                 "}")
 
+
         Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
                 .that(componentFile).processedWith(XmlProcessor())
                 .compilesWithoutError()
 
     }
 
+    @Test
+    fun elementListWildcardSuperInterfaceWithPolymorphismWrong() {
+        val componentFile = JavaFileObjects.forSourceLines("test.ElementListWildcardSuperInterfaceWithPolymorphismWrong",
+                "package test;",
+                "",
+                "@${Xml::class.java.canonicalName}(scanMode = ${ScanMode::class.qualifiedName}.${ScanMode.ANNOTATIONS_ONLY})",
+                "class ElementListWildcardSuperInterfaceWithPolymorphismWrong {",
+                "   @${Element::class.java.canonicalName}(",
+                "       typesByElement = {",
+                "       @${ElementNameMatcher::class.qualifiedName}(elementName=\"foo\" , type=GrandParent.class),",
+                "       @${ElementNameMatcher::class.qualifiedName}(elementName=\"bar\" , type=Parent.class),",
+                "    })",
+                "   java.util.List<? super GrandParent> aField;",
+                "",
+                " public class GrandParent {}",
+                " public class Parent {}",
+                " public class Child extends Parent {}",
+                "}")
+
+
+        Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
+                .that(componentFile).processedWith(XmlProcessor())
+                .failsToCompile()
+                .withErrorContaining("The type test.ElementListWildcardSuperInterfaceWithPolymorphismWrong.Parent must be a sub type of test.ElementListWildcardSuperInterfaceWithPolymorphismWrong.GrandParent. Otherwise this type cannot be used in @${ElementNameMatcher::class.simpleName} to resolve polymorphism")
+
+    }
 
     @Test
     fun elementListWildcardInterfaceWithPolymorphism() {
@@ -821,7 +871,7 @@ class AnnotationOnlyScanStrategyTest {
                 "",
                 " public interface MyInterface {}",
                 " public class InnerClass1 implements MyInterface{}",
-                " public class InnerClass2 implements MyInterface{}",
+                " public class InnerClass2 {}",
                 "}")
 
         Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
