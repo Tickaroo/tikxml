@@ -31,7 +31,7 @@ import kotlin.test.assertTrue
  *
  * @author Hannes Dorfmann
  */
-class ScanStrategyFactoryTest {
+class FieldDetectorStrategyFactoryTest {
 
 
     @Test
@@ -47,10 +47,9 @@ class ScanStrategyFactoryTest {
         Mockito.doReturn(mockElement).`when`(elements).getTypeElement("java.util.List")
         Mockito.doReturn(listTypeMirror).`when`(mockElement).asType()
 
-        val scanStrategyFactory = ScanStrategyFactory(elements, types, AnnotationBasedRequiredDetector())
+        val scanStrategyFactory = FieldDetectorStrategyFactory(elements, types, AnnotationBasedRequiredDetector())
 
-        val annotatedClass = MockAnnotatedClass(ScanMode.DEFAULT)
-        assertTrue(scanStrategyFactory.getStrategy(annotatedClass, ScanMode.COMMON_CASE) is CommonCaseScanStrategy)
-        assertTrue(scanStrategyFactory.getStrategy(annotatedClass, ScanMode.ANNOTATIONS_ONLY) is AnnotationOnlyScanStrategy)
+        assertTrue(scanStrategyFactory.getStrategy(ScanMode.DEFAULT, ScanMode.COMMON_CASE) is CommonCaseFieldDetectorStrategy)
+        assertTrue(scanStrategyFactory.getStrategy(ScanMode.DEFAULT, ScanMode.ANNOTATIONS_ONLY) is AnnotationOnlyFieldDetectorStrategy)
     }
 }

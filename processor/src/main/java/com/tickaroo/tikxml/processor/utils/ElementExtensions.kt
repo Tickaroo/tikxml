@@ -18,7 +18,10 @@
 
 package com.tickaroo.tikxml.processor.utils
 
+import java.util.*
 import javax.lang.model.element.*
+import javax.lang.model.type.TypeKind
+import javax.lang.model.type.TypeMirror
 import javax.lang.model.util.Elements
 import javax.lang.model.util.Types
 import kotlin.text.startsWith
@@ -30,6 +33,9 @@ import kotlin.text.startsWith
 fun Element.hasMinimumPackageVisibilityModifiers() =
         !isProtected() && !isPrivate()
 
+/**
+ * Checks if a method is in the same package as the other
+ */
 fun Element.isSamePackageAs(other: Element, utils: Elements) = utils.getPackageOf(this) == utils.getPackageOf(other)
 
 /**
@@ -46,6 +52,11 @@ fun Element.isProtected() = modifiers.contains(Modifier.PROTECTED)
  * Checks if a element has a protected modifier
  */
 fun Element.isPublic() = modifiers.contains(Modifier.PUBLIC)
+
+/**
+ * Checks if an element has "default" (package) visibility
+ */
+fun Element.isDefaultVisibility() = !isPrivate() && !isProtected() && !isPublic()
 
 /**
  * Checks if a element has a protected modifier
@@ -111,8 +122,10 @@ fun Element.isSetterMethodWithMinimumPackageVisibility() = isMethodWithMinimumPa
 /**
  * Checks if a given Element is a setter and has excactly one parameter of the given type
  */
-fun Element.isMethodWithOneParameterOfType(typeUtils: Types) =
-        isMethod() && (this as ExecutableElement).parameters.size == 1 && typeUtils.isAssignable(parameters[0].asType(), this.asType())
+fun Element.isMethodWithOneParameterOfType(type: TypeMirror, typeUtils: Types) =
+        isMethod()
+                && (this as ExecutableElement).parameters.size == 1
+                && typeUtils.isAssignable(parameters[0].asType(), type)
 
 /**
  * Checks if a given Element is a parameterless method
@@ -122,3 +135,22 @@ fun Element.isParameterlessMethod() = isMethod() && (this as ExecutableElement).
 fun VariableElement.getSurroundingClass() = enclosingElement as TypeElement
 
 fun VariableElement.getSurroundingClassQualifiedName() = getSurroundingClass().qualifiedName.toString()
+
+/**
+ * Returns true if the element has a super class (breaks if java.lang.Object is the only remaining one.
+ */
+fun TypeElement.hasSuperClass() = superclass.kind != TypeKind.NONE
+
+/**
+ * Get a list of all super classes (exclusive java.lang.Object) by scanning inheritance tree from bottom to top
+ */
+fun TypeElement.getSuperClasses(typeUtils: Types): List<TypeElement> {
+
+    val superClasses = ArrayList<TypeElement>()
+    var current = this
+    while (current.hasSuperClass()) {
+        current = typeUtils.asElement(current.superclass) as TypeElement
+        superClasses.add(current)
+    }
+    return superClasses
+}

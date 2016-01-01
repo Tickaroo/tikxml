@@ -35,7 +35,7 @@ import javax.lang.model.util.Types
  * The common case strategy is described in [com.tickaroo.tikxml.annotation.ScanMode]
  * @author Hannes Dorfmann
  */
-class CommonCaseScanStrategy(elementUtils: Elements, typeUtils: Types, requiredDetector: RequiredDetector) : AnnotationOnlyScanStrategy(elementUtils, typeUtils, requiredDetector) {
+class CommonCaseFieldDetectorStrategy(elementUtils: Elements, typeUtils: Types, requiredDetector: RequiredDetector) : AnnotationOnlyFieldDetectorStrategy(elementUtils, typeUtils, requiredDetector) {
 
     override fun isXmlField(element: VariableElement): Field? {
 

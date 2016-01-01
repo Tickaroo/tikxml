@@ -19,31 +19,30 @@
 package com.tickaroo.tikxml.processor.scanning
 
 import com.tickaroo.tikxml.annotation.ScanMode
-import com.tickaroo.tikxml.processor.model.AnnotatedClass
 import javax.lang.model.util.Elements
 import javax.lang.model.util.Types
 
 /**
- * Detects and instantiates the concrete [ScanStrategy]
+ * Detects and instantiates the concrete [FieldScanner]
  * @author Hannes Dorfmann
  */
-class ScanStrategyFactory(private val elementUtils: Elements, private val typeUtils: Types, private val requiredDetector: RequiredDetector) {
+class FieldDetectorStrategyFactory(private val elementUtils: Elements, private val typeUtils: Types, private val requiredDetector: RequiredDetector) {
 
     // Visible for testing
-    private val commonCaseScanStrategy = CommonCaseScanStrategy(elementUtils, typeUtils, requiredDetector)
-    private val annotationOnlyScanStrategy = AnnotationOnlyScanStrategy(elementUtils, typeUtils, requiredDetector)
+    private val commonCaseScanStrategy = CommonCaseFieldDetectorStrategy(elementUtils, typeUtils, requiredDetector)
+    private val annotationOnlyScanStrategy = AnnotationOnlyFieldDetectorStrategy(elementUtils, typeUtils, requiredDetector)
 
     /**
      * Get the strategy or use the default one
      */
-    fun getStrategy(annotatedClass: AnnotatedClass, defaultScanMode: ScanMode = ScanMode.COMMON_CASE) =
-            if (annotatedClass.scanMode == ScanMode.DEFAULT)
+    fun getStrategy(scanMode: ScanMode, defaultScanMode: ScanMode = ScanMode.COMMON_CASE) =
+            if (scanMode == ScanMode.DEFAULT)
                 strategyForScanMode(defaultScanMode)
             else
-                strategyForScanMode(annotatedClass.scanMode)
+                strategyForScanMode(scanMode)
 
     /**
-     * Maps the [ScanMode] to a [ScanStrategy]
+     * Maps the [ScanMode] to a [FieldScanner]
      */
     private fun strategyForScanMode(scanMode: ScanMode) = when (scanMode) {
         ScanMode.COMMON_CASE -> commonCaseScanStrategy

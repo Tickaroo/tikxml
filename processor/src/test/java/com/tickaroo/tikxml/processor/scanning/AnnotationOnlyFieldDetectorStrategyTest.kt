@@ -31,7 +31,7 @@ import javax.tools.JavaFileObject
  *
  * @author Hannes Dorfmann
  */
-class AnnotationOnlyScanStrategyTest {
+class AnnotationOnlyFieldDetectorStrategyTest {
 
 
     @Test
@@ -240,6 +240,7 @@ class AnnotationOnlyScanStrategyTest {
                 "    )",
                 "   Object aField;",
                 "",
+                "@${Xml::class.java.canonicalName}(scanMode = ${ScanMode::class.qualifiedName}.${ScanMode.ANNOTATIONS_ONLY})",
                 "private class InnerPrivateClass {}",
                 "}")
 
@@ -261,6 +262,7 @@ class AnnotationOnlyScanStrategyTest {
                 "    )",
                 "   Object aField;",
                 "",
+                "@${Xml::class.java.canonicalName}(scanMode = ${ScanMode::class.qualifiedName}.${ScanMode.ANNOTATIONS_ONLY})",
                 "protected class InnerProtectedClass {}",
                 "}")
 
@@ -282,6 +284,7 @@ class AnnotationOnlyScanStrategyTest {
                 "    )",
                 "   Object aField;",
                 "",
+                "@${Xml::class.java.canonicalName}(scanMode = ${ScanMode::class.qualifiedName}.${ScanMode.ANNOTATIONS_ONLY})",
                 " public class InnerClass {",
                 "    private InnerClass() {}",
                 " }",
@@ -305,6 +308,7 @@ class AnnotationOnlyScanStrategyTest {
                 "    )",
                 "   Object aField;",
                 "",
+                "@${Xml::class.java.canonicalName}(scanMode = ${ScanMode::class.qualifiedName}.${ScanMode.ANNOTATIONS_ONLY})",
                 " public class InnerClass {",
                 "    public InnerClass(int a) {}",
                 " }",
@@ -370,6 +374,7 @@ class AnnotationOnlyScanStrategyTest {
                 "    )",
                 "   String aField;",
                 "",
+                "@${Xml::class.java.canonicalName}(scanMode = ${ScanMode::class.qualifiedName}.${ScanMode.ANNOTATIONS_ONLY})",
                 " public class InnerClass {}",
                 "}")
 
@@ -391,6 +396,7 @@ class AnnotationOnlyScanStrategyTest {
                 "    )",
                 "   Object aField;",
                 "",
+                "@${Xml::class.java.canonicalName}(scanMode = ${ScanMode::class.qualifiedName}.${ScanMode.ANNOTATIONS_ONLY})",
                 " public class InnerClass {}",
                 "}")
 
@@ -411,6 +417,7 @@ class AnnotationOnlyScanStrategyTest {
                 "    )",
                 "   Object aField;",
                 "",
+                "@${Xml::class.java.canonicalName}(scanMode = ${ScanMode::class.qualifiedName}.${ScanMode.ANNOTATIONS_ONLY})",
                 " public class InnerClass {}",
                 "}")
 
@@ -432,6 +439,7 @@ class AnnotationOnlyScanStrategyTest {
                 "    )",
                 "   Object aField;",
                 "",
+                "@${Xml::class.java.canonicalName}(scanMode = ${ScanMode::class.qualifiedName}.${ScanMode.ANNOTATIONS_ONLY})",
                 " public class InnerClass {}",
                 "}")
 
@@ -455,7 +463,9 @@ class AnnotationOnlyScanStrategyTest {
                 "    })",
                 "   Object aField;",
                 "",
+                "@${Xml::class.java.canonicalName}(scanMode = ${ScanMode::class.qualifiedName}.${ScanMode.ANNOTATIONS_ONLY})",
                 " public class InnerClass1 {}",
+                "@${Xml::class.java.canonicalName}(scanMode = ${ScanMode::class.qualifiedName}.${ScanMode.ANNOTATIONS_ONLY})",
                 " public class InnerClass2 {}",
                 "}")
 
@@ -479,7 +489,9 @@ class AnnotationOnlyScanStrategyTest {
                 "    })",
                 "   Object aField;",
                 "",
+                "@${Xml::class.java.canonicalName}(scanMode = ${ScanMode::class.qualifiedName}.${ScanMode.ANNOTATIONS_ONLY})",
                 " public class InnerClass1 {}",
+                "@${Xml::class.java.canonicalName}(scanMode = ${ScanMode::class.qualifiedName}.${ScanMode.ANNOTATIONS_ONLY})",
                 " public class InnerClass2 {}",
                 "}")
 
@@ -502,7 +514,9 @@ class AnnotationOnlyScanStrategyTest {
                 "    })",
                 "   int aField;",
                 "",
+                "@${Xml::class.java.canonicalName}(scanMode = ${ScanMode::class.qualifiedName}.${ScanMode.ANNOTATIONS_ONLY})",
                 " public class InnerClass1 {}",
+                "@${Xml::class.java.canonicalName}(scanMode = ${ScanMode::class.qualifiedName}.${ScanMode.ANNOTATIONS_ONLY})",
                 " public class InnerClass2 {}",
                 "}")
 
@@ -546,7 +560,9 @@ class AnnotationOnlyScanStrategyTest {
                 "   MyInterface aField;",
                 "",
                 " public interface MyInterface {}",
+                "@${Xml::class.java.canonicalName}(scanMode = ${ScanMode::class.qualifiedName}.${ScanMode.ANNOTATIONS_ONLY})",
                 " public class InnerClass1 implements MyInterface{}",
+                "@${Xml::class.java.canonicalName}(scanMode = ${ScanMode::class.qualifiedName}.${ScanMode.ANNOTATIONS_ONLY})",
                 " public class InnerClass2 implements MyInterface{}",
                 "}")
 
@@ -571,7 +587,9 @@ class AnnotationOnlyScanStrategyTest {
                 "   MyInterface aField;",
                 "",
                 " public interface MyInterface {}",
+                "@${Xml::class.java.canonicalName}(scanMode = ${ScanMode::class.qualifiedName}.${ScanMode.ANNOTATIONS_ONLY})",
                 " public class InnerClass1 implements MyInterface{}",
+                "@${Xml::class.java.canonicalName}(scanMode = ${ScanMode::class.qualifiedName}.${ScanMode.ANNOTATIONS_ONLY})",
                 " public class InnerClass2 {}",
                 "}")
 
@@ -592,6 +610,7 @@ class AnnotationOnlyScanStrategyTest {
                 "   @${Element::class.java.canonicalName}",
                 "   MyClass aField;",
                 "",
+                "@${Xml::class.java.canonicalName}(scanMode = ${ScanMode::class.qualifiedName}.${ScanMode.ANNOTATIONS_ONLY})",
                 " public abstract class MyClass {}",
                 "}")
 
@@ -616,7 +635,9 @@ class AnnotationOnlyScanStrategyTest {
                 "   MyClass aField;",
                 "",
                 " public abstract class MyClass {}",
+                "@${Xml::class.java.canonicalName}(scanMode = ${ScanMode::class.qualifiedName}.${ScanMode.ANNOTATIONS_ONLY})",
                 " public class InnerClass1 extends MyClass{}",
+                "@${Xml::class.java.canonicalName}(scanMode = ${ScanMode::class.qualifiedName}.${ScanMode.ANNOTATIONS_ONLY})",
                 " public class InnerClass2 extends MyClass{}",
                 "}")
 
@@ -641,7 +662,9 @@ class AnnotationOnlyScanStrategyTest {
                 "   MyClass aField;",
                 "",
                 " public abstract class MyClass {}",
+                "@${Xml::class.java.canonicalName}(scanMode = ${ScanMode::class.qualifiedName}.${ScanMode.ANNOTATIONS_ONLY})",
                 " public class InnerClass1 extends MyClass{}",
+                "@${Xml::class.java.canonicalName}(scanMode = ${ScanMode::class.qualifiedName}.${ScanMode.ANNOTATIONS_ONLY})",
                 " public class InnerClass2 {}",
                 "}")
 
@@ -666,7 +689,9 @@ class AnnotationOnlyScanStrategyTest {
                 "   java.util.List<MyClass> aField;",
                 "",
                 " public abstract class MyClass {}",
+                "@${Xml::class.java.canonicalName}(scanMode = ${ScanMode::class.qualifiedName}.${ScanMode.ANNOTATIONS_ONLY})",
                 " public class InnerClass1 extends MyClass{}",
+                "@${Xml::class.java.canonicalName}(scanMode = ${ScanMode::class.qualifiedName}.${ScanMode.ANNOTATIONS_ONLY})",
                 " public class InnerClass2 extends MyClass{}",
                 "}")
 
@@ -691,7 +716,9 @@ class AnnotationOnlyScanStrategyTest {
                 "   java.util.List<MyInterface> aField;",
                 "",
                 " public interface MyInterface {}",
+                "@${Xml::class.java.canonicalName}(scanMode = ${ScanMode::class.qualifiedName}.${ScanMode.ANNOTATIONS_ONLY})",
                 " public class InnerClass1 implements MyInterface{}",
+                "@${Xml::class.java.canonicalName}(scanMode = ${ScanMode::class.qualifiedName}.${ScanMode.ANNOTATIONS_ONLY})",
                 " public class InnerClass2 implements MyInterface{}",
                 "}")
 
@@ -716,7 +743,9 @@ class AnnotationOnlyScanStrategyTest {
                 "   java.util.List aField;",
                 "",
                 " public abstract class MyClass {}",
+                "@${Xml::class.java.canonicalName}(scanMode = ${ScanMode::class.qualifiedName}.${ScanMode.ANNOTATIONS_ONLY})",
                 " public class InnerClass1 extends MyClass{}",
+                "@${Xml::class.java.canonicalName}(scanMode = ${ScanMode::class.qualifiedName}.${ScanMode.ANNOTATIONS_ONLY})",
                 " public class InnerClass2 extends MyClass{}",
                 "}")
 
@@ -741,7 +770,9 @@ class AnnotationOnlyScanStrategyTest {
                 "   java.util.List aField;",
                 "",
                 " public interface MyInterface {}",
+                "@${Xml::class.java.canonicalName}(scanMode = ${ScanMode::class.qualifiedName}.${ScanMode.ANNOTATIONS_ONLY})",
                 " public class InnerClass1 implements MyInterface{}",
+                "@${Xml::class.java.canonicalName}(scanMode = ${ScanMode::class.qualifiedName}.${ScanMode.ANNOTATIONS_ONLY})",
                 " public class InnerClass2 implements MyInterface{}",
                 "}")
 
@@ -766,7 +797,9 @@ class AnnotationOnlyScanStrategyTest {
                 "   java.util.List<? extends MyInterface> aField;",
                 "",
                 " public interface MyInterface {}",
+                "@${Xml::class.java.canonicalName}(scanMode = ${ScanMode::class.qualifiedName}.${ScanMode.ANNOTATIONS_ONLY})",
                 " public class InnerClass1 implements MyInterface{}",
+                "@${Xml::class.java.canonicalName}(scanMode = ${ScanMode::class.qualifiedName}.${ScanMode.ANNOTATIONS_ONLY})",
                 " public class InnerClass2 implements MyInterface{}",
                 "}")
 
@@ -791,7 +824,9 @@ class AnnotationOnlyScanStrategyTest {
                 "   java.util.List<? extends MyInterface> aField;",
                 "",
                 " public interface MyInterface {}",
+                "@${Xml::class.java.canonicalName}(scanMode = ${ScanMode::class.qualifiedName}.${ScanMode.ANNOTATIONS_ONLY})",
                 " public class InnerClass1 implements MyInterface{}",
+                "@${Xml::class.java.canonicalName}(scanMode = ${ScanMode::class.qualifiedName}.${ScanMode.ANNOTATIONS_ONLY})",
                 " public class InnerClass2 {}",
                 "}")
 
@@ -816,8 +851,11 @@ class AnnotationOnlyScanStrategyTest {
                 "    })",
                 "   java.util.List<? super GrandParent> aField;",
                 "",
+                "@${Xml::class.java.canonicalName}(scanMode = ${ScanMode::class.qualifiedName}.${ScanMode.ANNOTATIONS_ONLY})",
                 " public class GrandParent {}",
+                "@${Xml::class.java.canonicalName}(scanMode = ${ScanMode::class.qualifiedName}.${ScanMode.ANNOTATIONS_ONLY})",
                 " public class Parent extends GrandParent {}",
+                "@${Xml::class.java.canonicalName}(scanMode = ${ScanMode::class.qualifiedName}.${ScanMode.ANNOTATIONS_ONLY})",
                 " public class Child extends Parent {}",
                 "}")
 
@@ -842,8 +880,11 @@ class AnnotationOnlyScanStrategyTest {
                 "    })",
                 "   java.util.List<? super GrandParent> aField;",
                 "",
+                "@${Xml::class.java.canonicalName}(scanMode = ${ScanMode::class.qualifiedName}.${ScanMode.ANNOTATIONS_ONLY})",
                 " public class GrandParent {}",
+                "@${Xml::class.java.canonicalName}(scanMode = ${ScanMode::class.qualifiedName}.${ScanMode.ANNOTATIONS_ONLY})",
                 " public class Parent {}",
+                "@${Xml::class.java.canonicalName}(scanMode = ${ScanMode::class.qualifiedName}.${ScanMode.ANNOTATIONS_ONLY})",
                 " public class Child extends Parent {}",
                 "}")
 
@@ -870,7 +911,9 @@ class AnnotationOnlyScanStrategyTest {
                 "   java.util.List<?> aField;",
                 "",
                 " public interface MyInterface {}",
+                "@${Xml::class.java.canonicalName}(scanMode = ${ScanMode::class.qualifiedName}.${ScanMode.ANNOTATIONS_ONLY})",
                 " public class InnerClass1 implements MyInterface{}",
+                "@${Xml::class.java.canonicalName}(scanMode = ${ScanMode::class.qualifiedName}.${ScanMode.ANNOTATIONS_ONLY})",
                 " public class InnerClass2 {}",
                 "}")
 
@@ -911,6 +954,7 @@ class AnnotationOnlyScanStrategyTest {
                 "",
                 "   @${Element::class.java.canonicalName}( name =\"foo\" )",
                 "   Other b;",
+                "   @${Xml::class.java.canonicalName}(scanMode = ${ScanMode::class.qualifiedName}.${ScanMode.ANNOTATIONS_ONLY})",
                 "   public class Other {}",
                 "}")
 
@@ -932,6 +976,7 @@ class AnnotationOnlyScanStrategyTest {
                 "",
                 "   @${Element::class.java.canonicalName}( name =\"foo\" )",
                 "   Other b;",
+                "   @${Xml::class.java.canonicalName}(scanMode = ${ScanMode::class.qualifiedName}.${ScanMode.ANNOTATIONS_ONLY})",
                 "   public class Other {}",
                 "}")
 
@@ -953,6 +998,7 @@ class AnnotationOnlyScanStrategyTest {
                 "",
                 "}",
                 "",
+                "@${Xml::class.java.canonicalName}(scanMode = ${ScanMode::class.qualifiedName}.${ScanMode.ANNOTATIONS_ONLY})",
                 "class Parent {",
                 "   @${Element::class.java.canonicalName}( name =\"foo\" )",
                 "   Other b;",
@@ -977,9 +1023,11 @@ class AnnotationOnlyScanStrategyTest {
                 "",
                 "}",
                 "",
+                "@${Xml::class.java.canonicalName}(scanMode = ${ScanMode::class.qualifiedName}.${ScanMode.ANNOTATIONS_ONLY})",
                 "class Parent {",
                 "   @${Element::class.java.canonicalName}( name =\"foo\" )",
                 "   Other b;",
+                "   @${Xml::class.java.canonicalName}(scanMode = ${ScanMode::class.qualifiedName}.${ScanMode.ANNOTATIONS_ONLY})",
                 "   class Other {}",
                 "}")
 
@@ -1001,6 +1049,7 @@ class AnnotationOnlyScanStrategyTest {
                 "",
                 "}",
                 "",
+                "@${Xml::class.java.canonicalName}(scanMode = ${ScanMode::class.qualifiedName}.${ScanMode.ANNOTATIONS_ONLY})",
                 "class Parent {",
                 "   @${PropertyElement::class.java.canonicalName}( name =\"foo\" )",
                 "   String b;",
@@ -1024,6 +1073,7 @@ class AnnotationOnlyScanStrategyTest {
                 "",
                 "}",
                 "",
+                "@${Xml::class.java.canonicalName}(scanMode = ${ScanMode::class.qualifiedName}.${ScanMode.ANNOTATIONS_ONLY})",
                 "class Parent {",
                 "   @${PropertyElement::class.java.canonicalName}( name =\"foo\" )",
                 "   String b;",
@@ -1033,4 +1083,28 @@ class AnnotationOnlyScanStrategyTest {
                 .that(componentFile).processedWith(XmlProcessor())
                 .compilesWithoutError()
     }
+
+    @Test
+    fun nameConflictIgnoreAnnotation() {
+        val componentFile = JavaFileObjects.forSourceLines("test.NameConflictIgnoreAnnotation",
+                "package test;",
+                "",
+                "@${Xml::class.java.canonicalName}(scanMode = ${ScanMode::class.qualifiedName}.${ScanMode.ANNOTATIONS_ONLY})",
+                "class NameConflictIgnoreAnnotation extends Parent {",
+                "   int a;",
+                "",
+                "}",
+                "",
+                "@${Xml::class.java.canonicalName}(scanMode = ${ScanMode::class.qualifiedName}.${ScanMode.ANNOTATIONS_ONLY})",
+                "class Parent {",
+                "   @${IgnoreXml::class.qualifiedName}",
+                "   @${Attribute::class.qualifiedName}",
+                "   String a;",
+                "}")
+
+        Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
+                .that(componentFile).processedWith(XmlProcessor())
+                .compilesWithoutError()
+    }
+
 }

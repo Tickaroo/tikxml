@@ -27,8 +27,8 @@ import com.tickaroo.tikxml.annotation.Xml;
 import com.tickaroo.tikxml.processor.model.AnnotatedClass;
 import com.tickaroo.tikxml.processor.model.AnnotatedClassImpl;
 import com.tickaroo.tikxml.processor.scanning.AnnotationBasedRequiredDetector;
-import com.tickaroo.tikxml.processor.scanning.ScanStrategy;
-import com.tickaroo.tikxml.processor.scanning.ScanStrategyFactory;
+import com.tickaroo.tikxml.processor.scanning.FieldDetectorStrategyFactory;
+import com.tickaroo.tikxml.processor.scanning.FieldScanner;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
@@ -64,7 +64,7 @@ public class XmlProcessor extends AbstractProcessor {
   private Filer filer;
   private Elements elementUtils;
   private Types typeUtils;
-  private ScanStrategyFactory scanStrategyFactory;
+  private FieldDetectorStrategyFactory fieldDetectorStrategyFactory;
 
   @Override
   public synchronized void init(ProcessingEnvironment processingEnv) {
@@ -73,7 +73,7 @@ public class XmlProcessor extends AbstractProcessor {
     filer = processingEnv.getFiler();
     elementUtils = processingEnv.getElementUtils();
     typeUtils = processingEnv.getTypeUtils();
-    scanStrategyFactory = new ScanStrategyFactory(elementUtils, typeUtils, new AnnotationBasedRequiredDetector());
+    fieldDetectorStrategyFactory = new FieldDetectorStrategyFactory(elementUtils, typeUtils, new AnnotationBasedRequiredDetector());
   }
 
   @Override
@@ -116,14 +116,14 @@ public class XmlProcessor extends AbstractProcessor {
       }
 
 
+      FieldScanner scanner = new FieldScanner(elementUtils, typeUtils, fieldDetectorStrategyFactory);
       Set<? extends Element> elementsAnnotatedWith = roundEnv.getElementsAnnotatedWith(Xml.class);
 
       for (Element element : elementsAnnotatedWith) {
         AnnotatedClass clazz = new AnnotatedClassImpl(element);
 
         // Scan class
-        ScanStrategy strategy = scanStrategyFactory.getStrategy(clazz, defaultScanMode);
-        strategy.scan(clazz);
+        scanner.scan(clazz);
 
         generateCode(clazz);
       }

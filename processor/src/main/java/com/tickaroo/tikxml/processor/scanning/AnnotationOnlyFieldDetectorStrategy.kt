@@ -36,10 +36,10 @@ import kotlin.text.isBlank
 import kotlin.text.isEmpty
 
 /**
- * A [ScanStrategy] that scans the element only for annotations
+ * A [FieldScanner] that scans the element only for annotations
  * @author Hannes Dorfmann
  */
-open class AnnotationOnlyScanStrategy(elementUtils: Elements, typeUtils: Types, requiredDetector: RequiredDetector) : ScanStrategy(elementUtils, typeUtils, requiredDetector) {
+open class AnnotationOnlyFieldDetectorStrategy(protected val elementUtils: Elements, protected val  typeUtils: Types, protected val requiredDetector: RequiredDetector) : FieldDetectorStrategy {
 
     val listTypeMirror: TypeMirror
 
@@ -56,7 +56,7 @@ open class AnnotationOnlyScanStrategy(elementUtils: Elements, typeUtils: Types, 
 
     override fun isXmlField(element: VariableElement): Field? {
 
-        if (ignoreField(element)){
+        if (ignoreField(element)) {
             return null
         }
 
@@ -297,7 +297,7 @@ open class AnnotationOnlyScanStrategy(elementUtils: Elements, typeUtils: Types, 
     /**
      * Get the genric type of a List
      */
-    protected  fun getGenericTypeFromList(listVariableElement: VariableElement): TypeMirror {
+    protected fun getGenericTypeFromList(listVariableElement: VariableElement): TypeMirror {
 
         if (listVariableElement.asType().kind != TypeKind.DECLARED) {
             throw ProcessingException(listVariableElement, "Element must be of type java.util.List");
