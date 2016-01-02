@@ -120,6 +120,12 @@ public class XmlProcessor extends AbstractProcessor {
       Set<? extends Element> elementsAnnotatedWith = roundEnv.getElementsAnnotatedWith(Xml.class);
 
       for (Element element : elementsAnnotatedWith) {
+
+        // Skip abstract classes
+        if (element.getModifiers().contains(Modifier.ABSTRACT)) {
+          continue;
+        }
+
         AnnotatedClass clazz = new AnnotatedClassImpl(element);
 
         // Scan class

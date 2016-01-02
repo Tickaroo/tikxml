@@ -63,4 +63,17 @@ class XmlProcessorTest {
                 .failsToCompile()
                 .withErrorContaining("Only classes can be annotated with")
     }
+
+    @Test
+    fun abstractClass() {
+        val componentFile = JavaFileObjects.forSourceLines("test.AbstractClass",
+                "package test;",
+                "",
+                "@${Xml::class.qualifiedName}",
+                "abstract class AbstractClass {}")
+
+        Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
+                .that(componentFile).processedWith(XmlProcessor())
+                .compilesWithoutError()
+    }
 }
