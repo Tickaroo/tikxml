@@ -1186,6 +1186,24 @@ class AnnotationOnlyFieldDetectorStrategyTest {
     }
 
     @Test
+    fun textContent() {
+        val componentFile = JavaFileObjects.forSourceLines("test.TextContent",
+                "package test;",
+                "",
+                "@${Xml::class.java.canonicalName}(scanMode = ${ScanMode::class.qualifiedName}.${ScanMode.ANNOTATIONS_ONLY})",
+                "class TextContent {",
+                "   @${TextContent::class.qualifiedName}",
+                "   String foo;",
+                "",
+                "}"
+        )
+
+        Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
+                .that(componentFile).processedWith(XmlProcessor())
+                .compilesWithoutError()
+    }
+
+    @Test
     fun multipleTextContentInInheritance() {
         val componentFile = JavaFileObjects.forSourceLines("test.MultipleTextContentOnInheritance",
                 "package test;",
