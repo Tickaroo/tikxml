@@ -54,7 +54,16 @@ open class AnnotationOnlyFieldDetectorStrategy(protected val elementUtils: Eleme
         return ignoreAnnotation != null
     }
 
-    override fun isXmlField(element: VariableElement): Field? {
+    override fun isXmlTextContent(element: VariableElement): TextContentField? =
+            if (ignoreField(element)) null
+            else {
+                if (element.getAnnotation(TextContent::class.java) != null)
+                    TextContentField(element, requiredDetector.isRequired(element))
+                else
+                    null
+            }
+
+    override fun isXmlField(element: VariableElement): NamedField? {
 
         if (ignoreField(element)) {
             return null

@@ -20,10 +20,7 @@ package com.tickaroo.tikxml.processor.scanning
 
 import com.tickaroo.tikxml.annotation.InlineList
 import com.tickaroo.tikxml.processor.ProcessingException
-import com.tickaroo.tikxml.processor.model.AttributeField
-import com.tickaroo.tikxml.processor.model.ElementField
-import com.tickaroo.tikxml.processor.model.Field
-import com.tickaroo.tikxml.processor.model.ListElementField
+import com.tickaroo.tikxml.processor.model.*
 import com.tickaroo.tikxml.processor.utils.getSurroundingClassQualifiedName
 import com.tickaroo.tikxml.processor.utils.isPrimitive
 import javax.lang.model.element.VariableElement
@@ -37,7 +34,7 @@ import javax.lang.model.util.Types
  */
 class CommonCaseFieldDetectorStrategy(elementUtils: Elements, typeUtils: Types, requiredDetector: RequiredDetector) : AnnotationOnlyFieldDetectorStrategy(elementUtils, typeUtils, requiredDetector) {
 
-    override fun isXmlField(element: VariableElement): Field? {
+    override fun isXmlField(element: VariableElement): NamedField? {
 
         if (ignoreField(element)) {
             return null

@@ -22,27 +22,11 @@ import com.tickaroo.tikxml.processor.model.access.FieldAccessPolicy
 import javax.lang.model.element.VariableElement
 
 /**
- * Represents a field where we want to parse xml data into or write xml data from.
  *
  * @author Hannes Dorfmann
  */
-open class Field(
-        val element: VariableElement,
-        val name: String,
-        val required: Boolean?) { // required == null means take default value of TikXml
+open class Field(val element: VariableElement, val required: Boolean?) {
 
     lateinit var accessPolicy: FieldAccessPolicy
 
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (other !is Field) return false
-
-        if (name != other.name) return false
-
-        return true
-    }
-
-    override fun hashCode(): Int {
-        return name.hashCode()
-    }
 }

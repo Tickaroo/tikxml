@@ -21,9 +21,13 @@ package com.tickaroo.tikxml.processor.model
 import javax.lang.model.element.VariableElement
 
 /**
- * This class represents a field annotated with [com.tickaroo.tikxml.annotation.PropertyElement]
+ * Represents a field where we want to parse xml data into or write xml data from.
+ *
  * @author Hannes Dorfmann
  */
-class PropertyField(element: VariableElement, name: String, required: Boolean?, private val converterQualifiedName: String? = null) : NamedField(element, name, required) {
+open class NamedField(
+        element: VariableElement,
+        val name: String,
+        required: Boolean?) : Field(element, required){ // required == null means take default value of TikXml
 
 }

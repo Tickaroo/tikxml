@@ -18,7 +18,8 @@
 
 package com.tickaroo.tikxml.processor.scanning
 
-import com.tickaroo.tikxml.processor.model.Field
+import com.tickaroo.tikxml.processor.model.NamedField
+import com.tickaroo.tikxml.processor.model.TextContentField
 import javax.lang.model.element.VariableElement
 
 /**
@@ -28,7 +29,14 @@ import javax.lang.model.element.VariableElement
 interface FieldDetectorStrategy {
 
     /**
-     * Checks if the given field should be mapped from xml document (write as xml or read from xml input)
+     * Checks if the given field should be mapped from xml document (write as xml or read from xml input),
+     * Don't check for [com.tickaroo.tikxml.annotation.TextContent] annotation in this call.
+     * @see isXmlTextContent
      */
-    fun isXmlField(element: VariableElement): Field?
+    fun isXmlField(element: VariableElement): NamedField?
+
+    /**
+     * Is the field an [com.tickaroo.tikxml.annotation.TextContent] field?
+     */
+    fun isXmlTextContent(element: VariableElement): TextContentField?
 }

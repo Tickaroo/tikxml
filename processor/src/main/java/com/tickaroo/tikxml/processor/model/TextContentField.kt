@@ -21,9 +21,8 @@ package com.tickaroo.tikxml.processor.model
 import javax.lang.model.element.VariableElement
 
 /**
- * This class represents a field annotated with [com.tickaroo.tikxml.annotation.PropertyElement]
+ * Represents a field annotated with [com.tickaroo.tikxml.annotation.TextContent] annotation
  * @author Hannes Dorfmann
  */
-class PropertyField(element: VariableElement, name: String, required: Boolean?, private val converterQualifiedName: String? = null) : NamedField(element, name, required) {
-
+class TextContentField(element: VariableElement, required: Boolean?) : Field(element, required) {
 }

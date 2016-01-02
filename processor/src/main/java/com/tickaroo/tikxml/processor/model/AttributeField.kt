@@ -25,7 +25,7 @@ import javax.lang.model.element.VariableElement
  * @author Hannes Dorfmann
  */
 class AttributeField(element: VariableElement, name: String, required: Boolean?,
-                     private val converterQualifiedName: String? = null) : Field(element, name, required) {
+                     private val converterQualifiedName: String? = null) : NamedField(element, name, required) {
 
 
 }

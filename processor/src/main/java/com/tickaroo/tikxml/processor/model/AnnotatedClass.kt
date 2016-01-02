@@ -33,12 +33,14 @@ import javax.lang.model.element.TypeElement
 interface AnnotatedClass {
 
     val element: TypeElement
-    val fields: MutableMap<String, Field>
+    val fields: MutableMap<String, NamedField>
     val scanMode: ScanMode
     val inheritance: Boolean
     val nameAsRoot: String
     val simpleClassName: String
     val qualifiedClassName: String
+
+    var textContentField: TextContentField?
 
 }
 
@@ -50,7 +52,7 @@ class AnnotatedClassImpl
 @Throws(ProcessingException::class) constructor(e: Element) : AnnotatedClass {
 
     override val element: TypeElement
-    override val fields = HashMap<String, Field>()
+    override val fields = HashMap<String, NamedField>()
 
     override val scanMode: ScanMode
     override val inheritance: Boolean
@@ -58,6 +60,7 @@ class AnnotatedClassImpl
     override val simpleClassName: String
     override val qualifiedClassName: String
 
+    override var textContentField: TextContentField? = null
 
     init {
         checkValidClass(e)

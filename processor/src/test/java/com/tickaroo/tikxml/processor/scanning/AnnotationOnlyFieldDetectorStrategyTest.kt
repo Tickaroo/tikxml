@@ -128,6 +128,84 @@ class AnnotationOnlyFieldDetectorStrategyTest {
     }
 
     @Test
+    fun multipleAnnotationOnField5() {
+        val componentFile = JavaFileObjects.forSourceLines("test.MultipleAnnotations4",
+                "package test;",
+                "",
+                "",
+                "@${Xml::class.qualifiedName}(scanMode = ${ScanMode::class.qualifiedName}.${ScanMode.ANNOTATIONS_ONLY})",
+                "class MultipleAnnotations4 {",
+                "   @${Attribute::class.qualifiedName}",
+                "   @${PropertyElement::class.qualifiedName}",
+                "   @${Element::class.qualifiedName}",
+                "   @${TextContent::class.qualifiedName}",
+                "   String aField;",
+                "}")
+
+        Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
+                .that(componentFile).processedWith(XmlProcessor())
+                .failsToCompile()
+                .withErrorContaining("Fields can ONLY be annotated with one of the following")
+    }
+
+    @Test
+    fun multipleAnnotationOnField6() {
+        val componentFile = JavaFileObjects.forSourceLines("test.MultipleAnnotations4",
+                "package test;",
+                "",
+                "",
+                "@${Xml::class.qualifiedName}(scanMode = ${ScanMode::class.qualifiedName}.${ScanMode.ANNOTATIONS_ONLY})",
+                "class MultipleAnnotations4 {",
+                "   @${Attribute::class.qualifiedName}",
+                "   @${TextContent::class.qualifiedName}",
+                "   String aField;",
+                "}")
+
+        Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
+                .that(componentFile).processedWith(XmlProcessor())
+                .failsToCompile()
+                .withErrorContaining("Field 'aField' is marked as TextContent and another xml element like @Attribute, @PropertyElement or @Element at the same time which is not allowed. A field can only be exactly one of those types.")
+    }
+
+    @Test
+    fun multipleAnnotationOnField7() {
+        val componentFile = JavaFileObjects.forSourceLines("test.MultipleAnnotations4",
+                "package test;",
+                "",
+                "",
+                "@${Xml::class.qualifiedName}(scanMode = ${ScanMode::class.qualifiedName}.${ScanMode.ANNOTATIONS_ONLY})",
+                "class MultipleAnnotations4 {",
+                "   @${PropertyElement::class.qualifiedName}",
+                "   @${TextContent::class.qualifiedName}",
+                "   String aField;",
+                "}")
+
+        Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
+                .that(componentFile).processedWith(XmlProcessor())
+                .failsToCompile()
+                .withErrorContaining("Field 'aField' is marked as TextContent and another xml element like @Attribute, @PropertyElement or @Element at the same time which is not allowed. A field can only be exactly one of those types.")
+    }
+
+    @Test
+    fun multipleAnnotationOnField8() {
+        val componentFile = JavaFileObjects.forSourceLines("test.MultipleAnnotations4",
+                "package test;",
+                "",
+                "",
+                "@${Xml::class.qualifiedName}(scanMode = ${ScanMode::class.qualifiedName}.${ScanMode.ANNOTATIONS_ONLY})",
+                "class MultipleAnnotations4 {",
+                "   @${Element::class.qualifiedName}",
+                "   @${TextContent::class.qualifiedName}",
+                "   String aField;",
+                "}")
+
+        Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
+                .that(componentFile).processedWith(XmlProcessor())
+                .failsToCompile()
+                .withErrorContaining("Field 'aField' is marked as TextContent and another xml element like @Attribute, @PropertyElement or @Element at the same time which is not allowed. A field can only be exactly one of those types.")
+    }
+
+    @Test
     fun inlineListOnNotListType() {
         val componentFile = JavaFileObjects.forSourceLines("test.InlineListOnNotListType",
                 "package test;",
@@ -1100,6 +1178,29 @@ class AnnotationOnlyFieldDetectorStrategyTest {
                 "   @${IgnoreXml::class.qualifiedName}",
                 "   @${Attribute::class.qualifiedName}",
                 "   String a;",
+                "}")
+
+        Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
+                .that(componentFile).processedWith(XmlProcessor())
+                .compilesWithoutError()
+    }
+
+    @Test
+    fun multipleTextContentInInheritance() {
+        val componentFile = JavaFileObjects.forSourceLines("test.MultipleTextContentOnInheritance",
+                "package test;",
+                "",
+                "@${Xml::class.java.canonicalName}(scanMode = ${ScanMode::class.qualifiedName}.${ScanMode.ANNOTATIONS_ONLY})",
+                "class MultipleTextContentOnInheritance extends Parent {",
+                "   @${TextContent::class.qualifiedName}",
+                "   String foo;",
+                "",
+                "}",
+                "",
+                "@${Xml::class.java.canonicalName}(scanMode = ${ScanMode::class.qualifiedName}.${ScanMode.ANNOTATIONS_ONLY})",
+                "class Parent {",
+                "   @${TextContent::class.qualifiedName}",
+                "   String bar;",
                 "}")
 
         Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())

@@ -543,6 +543,29 @@ reads the whole text content of a XML element even if there are other xml elemen
 </book>
 ```
 
+If you have multiple `@TextContent` annotations along your inheritance hierarchy, only the `@TextContent` annotated field in the "leaf class"
+```java
+@Xml
+class Person {
+
+  @Attribute
+  String id;
+
+  @TextContent
+  String description;
+
+}
+
+@Xml
+class Author extends Person {
+
+  @TextContent
+  String authorDescription;
+}
+```
+
+If we parse an `Author` from a XML document then the text content will be parsed only into `Author.authorDescription`.
+
 ## Scan Modes
 As you see there are quite some annotations. Usually programmers are lazy people. Therefore we provide two modes.
  1. **ANNOTATION_ONLY**: This means that only fields with annotations like `@Attribute`, `@Element`, `@PropertyElement`, `@TextContent` will be used. Any other fields are not be taken into account when scanning for xml mappings.

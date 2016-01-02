@@ -25,7 +25,7 @@ import javax.lang.model.type.TypeMirror
  * Represents a Field with [com.tickaroo.tikxml.annotation.Element] annotation
  * @author Hannes Dorfmann
  */
-open class ElementField(element: VariableElement, name: String, required: Boolean?) : Field(element, name, required) {
+open class ElementField(element: VariableElement, name: String, required: Boolean?) : NamedField(element, name, required) {
 
 }
 

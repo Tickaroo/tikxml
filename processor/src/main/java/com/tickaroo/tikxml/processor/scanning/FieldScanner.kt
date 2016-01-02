@@ -18,10 +18,13 @@
 
 package com.tickaroo.tikxml.processor.scanning
 
+import com.tickaroo.tikxml.annotation.Attribute
+import com.tickaroo.tikxml.annotation.Element
+import com.tickaroo.tikxml.annotation.PropertyElement
 import com.tickaroo.tikxml.annotation.Xml
 import com.tickaroo.tikxml.processor.ProcessingException
 import com.tickaroo.tikxml.processor.model.AnnotatedClass
-import com.tickaroo.tikxml.processor.model.Field
+import com.tickaroo.tikxml.processor.model.NamedField
 import com.tickaroo.tikxml.processor.model.access.GetterSetterFieldAccessPolicy
 import com.tickaroo.tikxml.processor.model.access.MinPackageVisibilityFieldAccessPolicy
 import com.tickaroo.tikxml.processor.utils.*
@@ -43,7 +46,7 @@ import kotlin.text.*
 class FieldScanner(protected val elementUtils: Elements, protected val typeUtils: Types, private val fieldDetectorStrategyFactory: FieldDetectorStrategyFactory) {
 
     /**
-     * Scans the child element of the passed [AnnotatedClass] to find [com.tickaroo.tikxml.processor.model.Field]
+     * Scans the child element of the passed [AnnotatedClass] to find [com.tickaroo.tikxml.processor.model.NamedField]
      */
     @Throws(ProcessingException::class)
     fun scan(annotatedClass: AnnotatedClass) {
@@ -65,7 +68,7 @@ class FieldScanner(protected val elementUtils: Elements, protected val typeUtils
 
     private fun doScan(annotatedClass: AnnotatedClass, currentElement: TypeElement) {
 
-        val fieldWithMethodAccessRequired = ArrayList<Field>()
+        val fieldWithMethodAccessRequired = ArrayList<NamedField>()
         val methodsMap = HashMap<String, ExecutableElement>()
         var constructorFound = false
 
@@ -83,11 +86,23 @@ class FieldScanner(protected val elementUtils: Elements, protected val typeUtils
 
                 val fieldDetectorStratefy = fieldDetectorStrategyFactory.getStrategy(xmlAnnotation.scanMode)
 
-                val field: Field? = fieldDetectorStratefy.isXmlField(it as VariableElement)
+                val textContentField = fieldDetectorStratefy.isXmlTextContent(it as VariableElement)
+
+                if (annotatedClass.textContentField == null && textContentField != null) {
+                    // Only take the first @TextContent field if there are multiple in the inheritance tree
+                    annotatedClass.textContentField = textContentField
+                }
+
+                val field: NamedField? = fieldDetectorStratefy.isXmlField(it)
                 if (field != null) {
 
+                    if (textContentField != null) {
+                        // @TextContent annotation and @Attribute, @PropertyElement or @Element at the same time
+                        throw ProcessingException(it, "Field '$it' is marked as TextContent and another xml element like @${Attribute::class.simpleName}, @${PropertyElement::class.simpleName} or @${Element::class.simpleName} at the same time which is not allowed. A field can only be exactly one of those types.")
+                    }
+
                     // check for conflicts
-                    val existingField: Field? = annotatedClass.fields[field.name]
+                    val existingField: NamedField? = annotatedClass.fields[field.name]
                     if (existingField != null) {
                         val conflictingField = existingField.element
                         throw ProcessingException(it, "Conflict: The field '${it.toString()}' "
