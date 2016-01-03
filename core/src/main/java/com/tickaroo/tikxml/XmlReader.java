@@ -1,6 +1,8 @@
 /*
  * Copyright (C) 2015 Hannes Dorfmann
  * Copyright (C) 2015 Tickaroo, Inc.
+ * Copyright (C) 2015 Square, Inc.
+ * Copyright (C) 2010 Google Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.

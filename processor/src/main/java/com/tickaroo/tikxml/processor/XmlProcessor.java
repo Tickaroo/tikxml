@@ -40,6 +40,7 @@ import javax.annotation.processing.Processor;
 import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.Element;
+import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.util.Elements;
@@ -122,7 +123,7 @@ public class XmlProcessor extends AbstractProcessor {
       for (Element element : elementsAnnotatedWith) {
 
         // Skip abstract classes
-        if (element.getModifiers().contains(Modifier.ABSTRACT)) {
+        if (element.getKind() == ElementKind.CLASS && element.getModifiers().contains(Modifier.ABSTRACT)) {
           continue;
         }
 

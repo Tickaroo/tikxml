@@ -34,6 +34,11 @@ public class XmlReaderTest {
   @Rule
   public ExpectedException exception = ExpectedException.none();
 
+  public void nullBuffer(){
+    exception.expect(NullPointerException.class);
+    XmlReader.of(null);
+  }
+
   @Test
   public void readObjectWithAttributes() throws IOException {
 
