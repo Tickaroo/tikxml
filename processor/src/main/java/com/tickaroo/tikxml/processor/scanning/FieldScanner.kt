@@ -146,7 +146,7 @@ class FieldScanner(protected val elementUtils: Elements, protected val typeUtils
             }
 
             // Test with "is" prefix
-            // TODO only run this if boolean type
+            // TODO only run this tests if boolean type
             if (getter == null) {
                 var getter = findMethodForField(nameWithoutHungarian, "is", methodsMap)
                 if (getter == null) {
