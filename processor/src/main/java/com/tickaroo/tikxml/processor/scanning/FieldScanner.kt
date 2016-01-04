@@ -24,6 +24,7 @@ import com.tickaroo.tikxml.annotation.PropertyElement
 import com.tickaroo.tikxml.annotation.Xml
 import com.tickaroo.tikxml.processor.ProcessingException
 import com.tickaroo.tikxml.processor.model.AnnotatedClass
+import com.tickaroo.tikxml.processor.model.Field
 import com.tickaroo.tikxml.processor.model.NamedField
 import com.tickaroo.tikxml.processor.model.access.GetterSetterFieldAccessPolicy
 import com.tickaroo.tikxml.processor.model.access.MinPackageVisibilityFieldAccessPolicy
@@ -68,10 +69,20 @@ class FieldScanner(protected val elementUtils: Elements, protected val typeUtils
 
     private fun doScan(annotatedClass: AnnotatedClass, currentElement: TypeElement) {
 
-        val fieldWithMethodAccessRequired = ArrayList<NamedField>()
+        val fieldWithMethodAccessRequired = ArrayList<Field>()
         val methodsMap = HashMap<String, ExecutableElement>()
         var constructorFound = false
 
+        // Function to
+        fun checkAccessPolicyOrDeferGetterSetterCheck(element: VariableElement, field: Field): Boolean {
+            if (element.hasMinimumPackageVisibilityModifiers()) {
+                field.accessPolicy = MinPackageVisibilityFieldAccessPolicy(field.element)
+                return true
+            } else {
+                fieldWithMethodAccessRequired.add(field) // processed afterwards
+                return false
+            }
+        }
 
         currentElement.enclosedElements.forEach {
 
@@ -91,6 +102,7 @@ class FieldScanner(protected val elementUtils: Elements, protected val typeUtils
                 if (annotatedClass.textContentField == null && textContentField != null) {
                     // Only take the first @TextContent field if there are multiple in the inheritance tree
                     annotatedClass.textContentField = textContentField
+                    checkAccessPolicyOrDeferGetterSetterCheck(it, textContentField)
                 }
 
                 val field: NamedField? = fieldDetectorStrategy.isXmlField(it)
@@ -113,11 +125,8 @@ class FieldScanner(protected val elementUtils: Elements, protected val typeUtils
                     }
 
                     // needs setter and getter?
-                    if (it.hasMinimumPackageVisibilityModifiers()) {
-                        field.accessPolicy = MinPackageVisibilityFieldAccessPolicy(field.element)
+                    if (checkAccessPolicyOrDeferGetterSetterCheck(it, field)) {
                         annotatedClass.fields.put(field.name, field)
-                    } else {
-                        fieldWithMethodAccessRequired.add(field) // processed afterwards
                     }
 
                 }
@@ -210,18 +219,22 @@ class FieldScanner(protected val elementUtils: Elements, protected val typeUtils
 
             }
 
-            val conflictingField = annotatedClass.fields[it.name]
-            if (conflictingField != null) {
-                throw ProcessingException(element, "Conflict: The field '${element.toString()}' "
-                        + "in class ${currentElement.qualifiedName} has the same XML "
-                        + "name '${it.name}' as the field '${conflictingField.element.simpleName}' in class "
-                        + "${(conflictingField.element.enclosingElement as TypeElement).qualifiedName}. "
-                        + "You can specify another name via annotations.")
+            if (it is NamedField) {
+                val conflictingField = annotatedClass.fields[it.name]
+                if (conflictingField != null) {
+                    throw ProcessingException(element, "Conflict: The field '${element.toString()}' "
+                            + "in class ${currentElement.qualifiedName} has the same XML "
+                            + "name '${it.name}' as the field '${conflictingField.element.simpleName}' in class "
+                            + "${(conflictingField.element.enclosingElement as TypeElement).qualifiedName}. "
+                            + "You can specify another name via annotations.")
+                }
+
+
+                annotatedClass.fields.put(it.name, it)
             }
 
-
+            // Set access policy
             it.accessPolicy = GetterSetterFieldAccessPolicy(getter, setter)
-            annotatedClass.fields.put(it.name, it)
         }
     }
 

@@ -23,6 +23,7 @@ import com.google.testing.compile.JavaFileObjects
 import com.google.testing.compile.JavaSourceSubjectFactory
 import com.google.testing.compile.JavaSourcesSubject
 import com.tickaroo.tikxml.annotation.Attribute
+import com.tickaroo.tikxml.annotation.TextContent
 import com.tickaroo.tikxml.annotation.Xml
 import com.tickaroo.tikxml.processor.XmlProcessor
 import org.junit.Test
@@ -121,7 +122,6 @@ class FieldScannerTest {
                 .failsToCompile()
                 .withErrorContaining("The field 'a' in class test.NoPublicGetter has private or protected visibility. Hence a corresponding getter method must be provided with minimum package visibility (or public visibility if this is a super class in a different package) with the name getA() or isA() in case of a boolean. Unfortunately, there is no such getter method. Please provide one!")
     }
-
 
     @Test
     fun noPublicSetter() {
@@ -230,7 +230,7 @@ class FieldScannerTest {
                 "}")
         Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
                 .that(componentFile).processedWith(XmlProcessor())
-               .compilesWithoutError()
+                .compilesWithoutError()
     }
 
     @Test
@@ -249,5 +249,143 @@ class FieldScannerTest {
                 .that(componentFile).processedWith(XmlProcessor())
                 .compilesWithoutError()
     }
+
+    @Test
+    fun privateTextContent() {
+        val componentFile = JavaFileObjects.forSourceLines("test.PrivateTextContent",
+                "package test;",
+                "",
+                "@${Xml::class.java.canonicalName}",
+                "class PrivateTextContent {",
+                "   @${TextContent::class.qualifiedName}",
+                "   private String a;",
+                "}")
+        Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
+                .that(componentFile).processedWith(XmlProcessor())
+                .failsToCompile()
+                .withErrorContaining("The field 'a' in class test.PrivateTextContent has private or protected visibility. Hence a corresponding getter method must be provided with minimum package visibility (or public visibility if this is a super class in a different package) with the name getA() or isA() in case of a boolean. Unfortunately, there is no such getter method. Please provide one!")
+    }
+
+    @Test
+    fun protectedTextContent() {
+        val componentFile = JavaFileObjects.forSourceLines("test.ProtectedTextContent",
+                "package test;",
+                "",
+                "@${Xml::class.java.canonicalName}",
+                "class ProtectedTextContent {",
+                "   @${TextContent::class.qualifiedName}",
+                "   private String a;",
+                "}")
+        Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
+                .that(componentFile).processedWith(XmlProcessor())
+                .failsToCompile()
+                .withErrorContaining("The field 'a' in class test.ProtectedTextContent has private or protected visibility. Hence a corresponding getter method must be provided with minimum package visibility (or public visibility if this is a super class in a different package) with the name getA() or isA() in case of a boolean. Unfortunately, there is no such getter method. Please provide one!")
+    }
+
+    @Test
+    fun privateGetterTextContent() {
+        val componentFile = JavaFileObjects.forSourceLines("test.TextContent",
+                "package test;",
+                "",
+                "@${Xml::class.java.canonicalName}",
+                "class TextContent {",
+                "   @${TextContent::class.qualifiedName}",
+                "   private String a;",
+                "   private int getA(){ return a;}",
+                "}")
+        Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
+                .that(componentFile).processedWith(XmlProcessor())
+                .failsToCompile()
+                .withErrorContaining("The field 'a' in class test.TextContent has private or protected visibility. Hence a corresponding getter method must be provided with minimum package visibility (or public visibility if this is a super class in a different package) with the name getA() or isA() in case of a boolean. Unfortunately, there is no such getter method. Please provide one!")
+    }
+
+    @Test
+    fun protectedGetterTextContent() {
+        val componentFile = JavaFileObjects.forSourceLines("test.TextContent",
+                "package test;",
+                "",
+                "@${Xml::class.java.canonicalName}",
+                "class TextContent {",
+                "   @${TextContent::class.qualifiedName}",
+                "   private String a;",
+                "   protected int getA(){ return a;}",
+                "}")
+        Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
+                .that(componentFile).processedWith(XmlProcessor())
+                .failsToCompile()
+                .withErrorContaining("The field 'a' in class test.TextContent has private or protected visibility. Hence a corresponding getter method must be provided with minimum package visibility (or public visibility if this is a super class in a different package) with the name getA() or isA() in case of a boolean. Unfortunately, there is no such getter method. Please provide one!")
+    }
+
+    @Test
+    fun NoSetterTextContent() {
+        val componentFile = JavaFileObjects.forSourceLines("test.TextContent",
+                "package test;",
+                "",
+                "@${Xml::class.java.canonicalName}",
+                "class TextContent {",
+                "   @${TextContent::class.qualifiedName}",
+                "   private String a;",
+                "   int getA(){ return a;}",
+                "}")
+        Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
+                .that(componentFile).processedWith(XmlProcessor())
+                .failsToCompile()
+                .withErrorContaining("The field 'a' in class test.TextContent has private or protected visibility. Hence a corresponding setter method must be provided  with the name setA(java.lang.String) and minimum package visibility (or public visibility if this is a super class in a different package)Unfortunately, there is no such setter method. Please provide one!")
+
+    }
+
+    @Test
+    fun privateSetterTextContent() {
+        val componentFile = JavaFileObjects.forSourceLines("test.TextContent",
+                "package test;",
+                "",
+                "@${Xml::class.java.canonicalName}",
+                "class TextContent {",
+                "   @${TextContent::class.qualifiedName}",
+                "   private String a;",
+                "   String getA(){ return a;}",
+                "   private void setA(String a){}",
+                "}")
+        Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
+                .that(componentFile).processedWith(XmlProcessor())
+                .failsToCompile()
+                .withErrorContaining("The field 'a' in class test.TextContent has private or protected visibility. Hence a corresponding setter method must be provided  with the name setA(java.lang.String) and minimum package visibility (or public visibility if this is a super class in a different package)Unfortunately, there is no such setter method. Please provide one!")
+
+    }
+
+    @Test
+    fun GetterSetterTextContent() {
+        val componentFile = JavaFileObjects.forSourceLines("test.TextContent",
+                "package test;",
+                "",
+                "@${Xml::class.java.canonicalName}",
+                "class TextContent {",
+                "   @${TextContent::class.qualifiedName}",
+                "   private String a;",
+                "   String getA(){ return a;}",
+                "   void setA(String a){}",
+                "}")
+        Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
+                .that(componentFile).processedWith(XmlProcessor())
+                .compilesWithoutError()
+    }
+
+    @Test
+    fun PublicGetterSetterTextContent() {
+        val componentFile = JavaFileObjects.forSourceLines("test.TextContent",
+                "package test;",
+                "",
+                "@${Xml::class.java.canonicalName}",
+                "class TextContent {",
+                "   @${TextContent::class.qualifiedName}",
+                "   private String a;",
+                "   public String getA(){ return a;}",
+                "   public void setA(String a){}",
+                "}")
+        Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
+                .that(componentFile).processedWith(XmlProcessor())
+                .compilesWithoutError()
+    }
+    
 
 }

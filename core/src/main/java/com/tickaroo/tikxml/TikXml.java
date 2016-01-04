@@ -36,16 +36,17 @@ public class TikXml {
   public static class Builder {
 
 
-
+    public Builder throwExceptionOnMissingMapping(boolean throwException) {
+      return this;
+    }
 
 
   }
 
 
-  private TikXml(){
+  private TikXml() {
 
   }
-
 
 
 }
