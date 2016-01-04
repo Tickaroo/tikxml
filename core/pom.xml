@@ -30,6 +30,7 @@
     <artifactId>core</artifactId>
 
     <dependencies>
+
         <dependency>
             <groupId>com.squareup.okio</groupId>
             <artifactId>okio</artifactId>

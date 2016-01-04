@@ -16,27 +16,36 @@
  *
  */
 
-package com.tickaroo.tikxml.processor.converter;
-
-import com.tickaroo.tikxml.TypeConverter;
+package com.tickaroo.tikxml;
 
 /**
+ * The main facade class to write or read xml. Use {@link TikXml.Builder} to instantiate a new
+ * instance
+ *
  * @author Hannes Dorfmann
+ * @since 1.0
  */
-public class PrivateConstructorTypeConverter implements TypeConverter<Object> {
+public class TikXml {
 
-  private PrivateConstructorTypeConverter(){
+  /**
+   * A builder to create and configure an instance of a {@link TikXml}
+   *
+   * @author Hannes Dorfmann
+   * @since 1.0
+   */
+  public static class Builder {
+
+
+
+
 
   }
 
-  @Override
-  public Object read(String value) throws Exception {
-    return null;
+
+  private TikXml(){
+
   }
 
-  @Override
-  public String write(Object value) throws Exception {
-    return null;
-  }
+
 
 }

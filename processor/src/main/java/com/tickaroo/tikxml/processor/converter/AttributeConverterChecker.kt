@@ -18,8 +18,8 @@
 
 package com.tickaroo.tikxml.processor.converter
 
+import com.tickaroo.tikxml.TypeConverter
 import com.tickaroo.tikxml.annotation.Attribute
-import com.tickaroo.tikxml.annotation.TypeConverter
 import kotlin.reflect.KClass
 
 /**

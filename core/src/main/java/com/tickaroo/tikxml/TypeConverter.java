@@ -16,12 +16,12 @@
  *
  */
 
-package com.tickaroo.tikxml.annotation;
+package com.tickaroo.tikxml;
 
 /**
- * With a type converter you can specify how to convert a String value to a concrete object. This
- * can be used with {@link Attribute} and {@link PropertyElement} to read and write "primitive"
- * datatypes from and to xml.
+ * With a type converter you can specify how to convert a String value to a concrete java object and vice versa. This
+ * can be used with @Attribute and @PropertyElement to read and write "primitive" (not complex java objects)
+ * data types from and to xml.
  *
  * <pre> Example: {@code
  *
@@ -43,6 +43,7 @@ package com.tickaroo.tikxml.annotation;
  *
  * </pre>
  *
+ * @author Hannes Dorfmann
  * @since 1.0
  */
 public interface TypeConverter<T> {
@@ -65,7 +66,7 @@ public interface TypeConverter<T> {
 
 
   /**
-   * This class is just there to represent the default case for the annotations (where none {@link
+   * This class is just there to represent the default case for the annotations (where no {@link
    * TypeConverter} should be used).
    *
    * @author Hannes Dorfmann

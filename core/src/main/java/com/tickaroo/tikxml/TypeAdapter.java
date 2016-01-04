@@ -16,27 +16,28 @@
  *
  */
 
-package com.tickaroo.tikxml.processor.converter;
-
-import com.tickaroo.tikxml.TypeConverter;
+package com.tickaroo.tikxml;
 
 /**
+ * As the name already suggests, a type adapter is responsible to convert a xml element to a java
+ * object and vice versa.
+ *
  * @author Hannes Dorfmann
+ * @since 1.0
  */
-public class PrivateConstructorTypeConverter implements TypeConverter<Object> {
+public interface TypeAdapter<T> {
 
-  private PrivateConstructorTypeConverter(){
+  /**
+   * Read a java object from xml document
+   * @param reader The {@link XmlReader} to read the xml document
+   * @return The instantiated java object of type T
+   */
+  public T fromXml(XmlReader reader);
 
-  }
-
-  @Override
-  public Object read(String value) throws Exception {
-    return null;
-  }
-
-  @Override
-  public String write(Object value) throws Exception {
-    return null;
-  }
-
+  /**
+   *
+   * @param writer
+   * @param value
+   */
+  public void toXml(XmlWriter writer, T value);
 }

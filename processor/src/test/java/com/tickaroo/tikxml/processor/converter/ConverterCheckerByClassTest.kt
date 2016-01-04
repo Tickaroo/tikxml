@@ -18,9 +18,9 @@
 
 package com.tickaroo.tikxml.processor.converter
 
+import com.tickaroo.tikxml.TypeConverter
 import com.tickaroo.tikxml.annotation.Attribute
 import com.tickaroo.tikxml.annotation.PropertyElement
-import com.tickaroo.tikxml.annotation.TypeConverter
 import com.tickaroo.tikxml.processor.ProcessingException
 import org.junit.Test
 import org.mockito.Mockito

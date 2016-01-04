@@ -18,7 +18,7 @@
 
 package com.tickaroo.tikxml.processor.converter;
 
-import com.tickaroo.tikxml.annotation.TypeConverter;
+import com.tickaroo.tikxml.TypeConverter;
 
 /**
  * @author Hannes Dorfmann

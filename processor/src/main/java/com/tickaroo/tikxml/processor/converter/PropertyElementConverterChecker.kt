@@ -18,13 +18,14 @@
 
 package com.tickaroo.tikxml.processor.converter
 
+import com.tickaroo.tikxml.TypeConverter
 import com.tickaroo.tikxml.annotation.PropertyElement
-import com.tickaroo.tikxml.annotation.TypeConverter
 import kotlin.reflect.KClass
 
 /**
- *
+ * A checker that reads [PropertyElement] annotations converter
  * @author Hannes Dorfmann
+ * @since 1.0
  */
 class PropertyElementConverterChecker : ConverterChecker<PropertyElement>() {
     override fun getConverterFromAnnotation(annotation: PropertyElement): KClass<out TypeConverter<Any>> {

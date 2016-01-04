@@ -84,16 +84,16 @@ class FieldScanner(protected val elementUtils: Elements, protected val typeUtils
 
                 val xmlAnnotation = currentElement.getAnnotation(Xml::class.java) ?: throw ProcessingException(currentElement, "The class ${annotatedClass.qualifiedClassName} should be annotated with @${Xml::class.simpleName}. This is an internal error. Please file an issue on github: https://github.com/Tickaroo/tikxml/issues") // Should be impossible
 
-                val fieldDetectorStratefy = fieldDetectorStrategyFactory.getStrategy(xmlAnnotation.scanMode)
+                val fieldDetectorStrategy = fieldDetectorStrategyFactory.getStrategy(xmlAnnotation.scanMode)
 
-                val textContentField = fieldDetectorStratefy.isXmlTextContent(it as VariableElement)
+                val textContentField = fieldDetectorStrategy.isXmlTextContent(it as VariableElement)
 
                 if (annotatedClass.textContentField == null && textContentField != null) {
                     // Only take the first @TextContent field if there are multiple in the inheritance tree
                     annotatedClass.textContentField = textContentField
                 }
 
-                val field: NamedField? = fieldDetectorStratefy.isXmlField(it)
+                val field: NamedField? = fieldDetectorStrategy.isXmlField(it)
                 if (field != null) {
 
                     if (textContentField != null) {

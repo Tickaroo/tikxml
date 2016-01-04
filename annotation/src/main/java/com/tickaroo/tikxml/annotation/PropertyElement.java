@@ -18,6 +18,7 @@
 
 package com.tickaroo.tikxml.annotation;
 
+import com.tickaroo.tikxml.TypeConverter;
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

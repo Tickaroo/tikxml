@@ -16,27 +16,11 @@
  *
  */
 
-package com.tickaroo.tikxml.processor.converter;
-
-import com.tickaroo.tikxml.TypeConverter;
+package com.tickaroo.tikxml;
 
 /**
  * @author Hannes Dorfmann
+ * @since 1.0
  */
-public class PrivateConstructorTypeConverter implements TypeConverter<Object> {
-
-  private PrivateConstructorTypeConverter(){
-
-  }
-
-  @Override
-  public Object read(String value) throws Exception {
-    return null;
-  }
-
-  @Override
-  public String write(Object value) throws Exception {
-    return null;
-  }
-
+public class XmlWriter {
 }
