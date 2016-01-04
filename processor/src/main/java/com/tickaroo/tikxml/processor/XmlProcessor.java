@@ -135,7 +135,6 @@ public class XmlProcessor extends AbstractProcessor {
         generateCode(clazz);
       }
 
-
     } catch (ProcessingException e) {
       printError(e);
     }

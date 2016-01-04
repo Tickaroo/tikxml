@@ -325,7 +325,7 @@ class FieldScannerTest {
                 "class TextContent {",
                 "   @${TextContent::class.qualifiedName}",
                 "   private String a;",
-                "   int getA(){ return a;}",
+                "   String getA(){ return a;}",
                 "}")
         Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
                 .that(componentFile).processedWith(XmlProcessor())
@@ -448,6 +448,24 @@ class FieldScannerTest {
         Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
                 .that(componentFile).processedWith(XmlProcessor())
                 .compilesWithoutError()
+    }
+
+    @Test
+    fun wrongReturnType() {
+        val componentFile = JavaFileObjects.forSourceLines("test.WrongMethodReturnType",
+
+                "@${Xml::class.qualifiedName}",
+                "class WrongMethodReturnType {",
+                "   @${Attribute::class.qualifiedName}",
+                "   private String foo;",
+                "   int getFoo(){return 2; }", // correct getter name, wrong type
+                "   void setFoo(String a) {}",
+                "}")
+        Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
+                .that(componentFile)
+                .processedWith(XmlProcessor())
+                .failsToCompile()
+                .withErrorContaining("The field 'foo' in class WrongMethodReturnType has private or protected visibility. Hence a corresponding getter method must be provided with minimum package visibility (or public visibility if this is a super class in a different package) with the name getFoo() or isFoo() in case of a boolean. Unfortunately, there is no such getter method. Please provide one!")
     }
 
 }

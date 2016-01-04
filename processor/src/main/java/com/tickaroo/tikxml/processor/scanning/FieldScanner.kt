@@ -146,21 +146,21 @@ class FieldScanner(protected val elementUtils: Elements, protected val typeUtils
             val elementName: String = element.simpleName.toString()
             val nameWithoutHungarian = getFieldNameWithoutHungarianNotation(element)
 
-            var getter = findMethodForField(nameWithoutHungarian, "get", methodsMap)
+            var getter = findGetterForField(element, nameWithoutHungarian, "get", methodsMap)
             if (getter == null) {
-                getter = findMethodForHungarianField(elementName, "get", methodsMap)
+                getter = findGetterForHungarianField(element, elementName, "get", methodsMap)
                 if (getter == null) {
-                    getter = findMethodForHungarianFieldUpperCase(elementName, "get", methodsMap)
+                    getter = findGetterForHungarianFieldUpperCase(element, elementName, "get", methodsMap)
                 }
             }
 
             // Test with "is" prefix
             if (getter == null && element.asType().isBoolean()) {
-                getter = findMethodForField(nameWithoutHungarian, "is", methodsMap)
+                getter = findGetterForField(element, nameWithoutHungarian, "is", methodsMap)
                 if (getter == null) {
-                    getter = findMethodForHungarianField(elementName, "is", methodsMap)
+                    getter = findGetterForHungarianField(element, elementName, "is", methodsMap)
                     if (getter == null) {
-                        getter = findMethodForHungarianFieldUpperCase(elementName, "is", methodsMap)
+                        getter = findGetterForHungarianFieldUpperCase(element, elementName, "is", methodsMap)
                     }
                 }
             }
@@ -241,11 +241,14 @@ class FieldScanner(protected val elementUtils: Elements, protected val typeUtils
      * Finds a method for a field. Removes hungarion notation. If field name was mFoo this method checks for a method called setFoo()
      */
     private fun findMethodForField(fieldName: String, methodNamePrefix: String, setterAndGetters: Map<String, ExecutableElement>): ExecutableElement? {
-
-
         val methodName = bestMethodName(fieldName, methodNamePrefix)
         return setterAndGetters[methodName]
+    }
 
+    private fun findGetterForField(fieldElement: VariableElement, fieldName: String, methodNamePrefix: String, setterAndGetters: Map<String, ExecutableElement>): ExecutableElement? {
+
+        val method = findMethodForField(fieldName, methodNamePrefix, setterAndGetters) ?: return null
+        return if (typeUtils.isSameType(method.returnType, fieldElement.asType())) method else null
     }
 
     private fun bestMethodName(fieldName: String, methodNamePrefix: String): String {
@@ -275,6 +278,11 @@ class FieldScanner(protected val elementUtils: Elements, protected val typeUtils
         return null;
     }
 
+    private fun findGetterForHungarianField(fieldElement: VariableElement, fieldName: String, methodNamePrefix: String, setterAndGetters: Map<String, ExecutableElement>): ExecutableElement? {
+        val method = findMethodForHungarianField(fieldName, methodNamePrefix, setterAndGetters) ?: return null
+        return if (typeUtils.isSameType(method.returnType, fieldElement.asType())) method else null
+    }
+
     /**
      * If field name was mFoo this method checks for a method called setMFoo()
      */
@@ -289,6 +297,12 @@ class FieldScanner(protected val elementUtils: Elements, protected val typeUtils
         }
 
         return null
+    }
+
+    private fun findGetterForHungarianFieldUpperCase(fieldElement: VariableElement, fieldName: String, methodNamePrefix: String, setterAndGetters: Map<String, ExecutableElement>): ExecutableElement? {
+
+        val method = findMethodForHungarianFieldUpperCase(fieldName, methodNamePrefix, setterAndGetters) ?: return null
+        return if (typeUtils.isSameType(method.returnType, fieldElement.asType())) method else null
     }
 
     private fun getFieldNameWithoutHungarianNotation(element: VariableElement): String {
