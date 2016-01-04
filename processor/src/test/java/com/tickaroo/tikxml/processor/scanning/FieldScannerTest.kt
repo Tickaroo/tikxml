@@ -386,6 +386,68 @@ class FieldScannerTest {
                 .that(componentFile).processedWith(XmlProcessor())
                 .compilesWithoutError()
     }
-    
+
+    @Test
+    fun privateBooleanField() {
+        val componentFile = JavaFileObjects.forSourceLines("test.BooleanField",
+                "package test;",
+                "",
+                "@${Xml::class.java.canonicalName}",
+                "class BooleanField {",
+                "   @${Attribute::class.qualifiedName}",
+                "   private boolean a;",
+                "}")
+        Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
+                .that(componentFile).processedWith(XmlProcessor())
+                .failsToCompile().withErrorContaining("The field 'a' in class test.BooleanField has private or protected visibility. Hence a corresponding getter method must be provided with minimum package visibility (or public visibility if this is a super class in a different package) with the name getA() or isA() in case of a boolean. Unfortunately, there is no such getter method. Please provide one!")
+    }
+
+    @Test
+    fun booleanField() {
+        val componentFile = JavaFileObjects.forSourceLines("test.BooleanField",
+
+                "@${Xml::class.java.canonicalName}",
+                "class BooleanField {",
+                "   @${Attribute::class.qualifiedName}",
+                "   private boolean a;",
+                "   boolean isA(){return a; }",
+                "   void setA(boolean a) {}",
+                "}")
+        Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
+                .that(componentFile).processedWith(XmlProcessor())
+                .compilesWithoutError()
+    }
+
+    @Test
+    fun booleanHungarianField() {
+        val componentFile = JavaFileObjects.forSourceLines("test.BooleanField",
+
+                "@${Xml::class.java.canonicalName}",
+                "class BooleanField {",
+                "   @${Attribute::class.qualifiedName}",
+                "   private boolean mA;",
+                "   boolean ismA(){return mA; }",
+                "   void setmA(boolean a) {}",
+                "}")
+        Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
+                .that(componentFile).processedWith(XmlProcessor())
+                .compilesWithoutError()
+    }
+
+    @Test
+    fun booleanHungarianUpperCaseField() {
+        val componentFile = JavaFileObjects.forSourceLines("test.BooleanField",
+
+                "@${Xml::class.java.canonicalName}",
+                "class BooleanField {",
+                "   @${Attribute::class.qualifiedName}",
+                "   private boolean mA;",
+                "   boolean isMA(){return mA; }",
+                "   void setMA(boolean a) {}",
+                "}")
+        Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
+                .that(componentFile).processedWith(XmlProcessor())
+                .compilesWithoutError()
+    }
 
 }

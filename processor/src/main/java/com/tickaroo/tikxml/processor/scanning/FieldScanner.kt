@@ -155,9 +155,8 @@ class FieldScanner(protected val elementUtils: Elements, protected val typeUtils
             }
 
             // Test with "is" prefix
-            // TODO only run this tests if boolean type
-            if (getter == null) {
-                var getter = findMethodForField(nameWithoutHungarian, "is", methodsMap)
+            if (getter == null && element.asType().isBoolean()) {
+                getter = findMethodForField(nameWithoutHungarian, "is", methodsMap)
                 if (getter == null) {
                     getter = findMethodForHungarianField(elementName, "is", methodsMap)
                     if (getter == null) {
@@ -285,7 +284,7 @@ class FieldScanner(protected val elementUtils: Elements, protected val typeUtils
         if (fieldName.length > 1 && fieldName.matches(Regex("m[A-Z].*"))) {
 
             // M in upper case
-            val hungarianMethodName = "set" + Character.toUpperCase(fieldName[0]) + fieldName.substring(1)
+            val hungarianMethodName = methodNamePrefix + Character.toUpperCase(fieldName[0]) + fieldName.substring(1)
             return setterAndGetters[hungarianMethodName]
         }
 

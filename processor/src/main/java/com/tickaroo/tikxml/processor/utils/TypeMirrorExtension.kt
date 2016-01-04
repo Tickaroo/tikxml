@@ -42,3 +42,9 @@ fun TypeMirror.isPrimitive() = when (kind) {
         else -> false
     }
 }
+
+fun TypeMirror.isBoolean() =
+        if (kind == TypeKind.BOOLEAN) true
+        else if (toString() == "java.lang.Boolean" )
+            true
+        else false
