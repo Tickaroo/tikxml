@@ -48,3 +48,10 @@ fun TypeMirror.isBoolean() =
         else if (toString() == "java.lang.Boolean" )
             true
         else false
+
+fun TypeMirror.isString() = when (toString()) {
+    "java.lang.String" -> true
+    "kotlin.String" -> true
+    else -> false
+
+}

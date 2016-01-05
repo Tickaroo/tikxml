@@ -59,9 +59,12 @@ open class AnnotationOnlyFieldDetectorStrategy(protected val elementUtils: Eleme
     override fun isXmlTextContent(element: VariableElement): TextContentField? =
             if (ignoreField(element)) null
             else {
-                if (isTextContentAnnotated(element))
+                if (isTextContentAnnotated(element)) {
+                    if (!element.asType().isString()) {
+                        throw ProcessingException(element, "Only type String is supported for @${TextContent::class.simpleName} but field '$element' in class ${element.getSurroundingClassQualifiedName()} is not of type String")
+                    }
                     TextContentField(element, requiredDetector.isRequired(element))
-                else
+                } else
                     null
             }
 

@@ -1226,4 +1226,23 @@ class AnnotationOnlyFieldDetectorStrategyTest {
                 .compilesWithoutError()
     }
 
+    @Test
+    fun textContentOnNotStringField() {
+        val componentFile = JavaFileObjects.forSourceLines("test.TextContentOnNotString",
+                "package test;",
+                "",
+                "@${Xml::class.java.canonicalName}(scanMode = ${ScanMode::class.qualifiedName}.${ScanMode.ANNOTATIONS_ONLY})",
+                "class TextContentOnNotString {",
+                "   @${TextContent::class.qualifiedName}",
+                "   int foo;",
+                "",
+                "}"
+        )
+
+
+        Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
+                .that(componentFile).processedWith(XmlProcessor())
+                .failsToCompile()
+        .withErrorContaining("Only type String is supported for @TextContent but field 'foo' in class test.TextContentOnNotString is not of type String")
+    }
 }

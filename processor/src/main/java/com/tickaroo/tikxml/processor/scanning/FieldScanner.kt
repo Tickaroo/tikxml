@@ -99,7 +99,9 @@ class FieldScanner(protected val elementUtils: Elements, protected val typeUtils
 
                 val textContentField = fieldDetectorStrategy.isXmlTextContent(it as VariableElement)
 
+                // TextContent Field
                 if (annotatedClass.textContentField == null && textContentField != null) {
+
                     // Only take the first @TextContent field if there are multiple in the inheritance tree
                     annotatedClass.textContentField = textContentField
                     checkAccessPolicyOrDeferGetterSetterCheck(it, textContentField)

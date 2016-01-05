@@ -23,6 +23,9 @@ package com.tickaroo.tikxml;
  * object and vice versa. For simple "primitive alike" data classes like "java.util.Date" you can
  * use {@link TypeConverter}
  *
+ * <p> {@link TypeAdapter}s might be instantiated via reflections {@code class.newInstance()} call.
+ * Therefore, {@link TypeAdapter} must provide an empty constructor (parameter-less) </p>
+ *
  * @author Hannes Dorfmann
  * @see TypeConverter
  * @since 1.0
