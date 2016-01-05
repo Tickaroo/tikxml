@@ -20,24 +20,35 @@ package com.tickaroo.tikxml;
 
 /**
  * As the name already suggests, a type adapter is responsible to convert a xml element to a java
- * object and vice versa.
+ * object and vice versa. For simple "primitive alike" data classes like "java.util.Date" you can
+ * use {@link TypeConverter}
  *
  * @author Hannes Dorfmann
+ * @see TypeConverter
  * @since 1.0
  */
 public interface TypeAdapter<T> {
 
-  /**
-   * Read a java object from xml document
-   * @param reader The {@link XmlReader} to read the xml document
-   * @return The instantiated java object of type T
-   */
-  public T fromXml(XmlReader reader);
 
   /**
-   *
-   * @param writer
-   * @param value
+   * This name will be used as class suffix for the generated TypeAdapter by annotation processing
    */
-  public void toXml(XmlWriter writer, T value);
+  static final String GENERATED_CLASS_SUFFIX = "$TikXmlTypeAdapter";
+
+
+  /**
+   * Read a java object from xml document
+   *
+   * @param reader The {@link XmlReader} to read the xml document
+   * @param config The {@link TikXmlConfig} where you can access {@link TypeConverter} etc.
+   * @return The instantiated java object of type T
+   */
+  public T fromXml(XmlReader reader, TikXmlConfig config);
+
+  /**
+   * @param writer The {@link XmlWriter} to write xml
+   * @param config The {@link TikXmlConfig} where you can access {@link TypeConverter} etc.
+   * @param value The value to write as xml
+   */
+  public void toXml(XmlWriter writer, TikXmlConfig config, T value);
 }

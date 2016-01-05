@@ -25,7 +25,7 @@ package com.tickaroo.tikxml;
  * @author Hannes Dorfmann
  * @since 1.0
  */
-public class TikXml {
+public final class TikXml {
 
   /**
    * A builder to create and configure an instance of a {@link TikXml}
@@ -33,19 +33,53 @@ public class TikXml {
    * @author Hannes Dorfmann
    * @since 1.0
    */
-  public static class Builder {
+  public static final class Builder {
+
+    private TikXmlConfig config = new TikXmlConfig();
 
 
     public Builder throwExceptionOnMissingMapping(boolean throwException) {
+      config.throwExceptionOnMissingMapping = throwException;
+      return this;
+    }
+
+    /**
+     * Adds an type converter for the given class
+     *
+     * @param clazz The class you want to register a TypeConverter for
+     * @param converterForClass The converter for this class
+     * @return The Builder itself
+     */
+    public <T> Builder addTypeConverter(Class<T> clazz, TypeConverter<T> converterForClass) {
+      config.typeConverters.add(clazz, converterForClass);
+      return this;
+    }
+
+    /**
+     * Add / register a {@link TypeAdapter} for the given class
+     *
+     * @param clazz The class you want to register a type adapter for
+     * @param adapterForClass The {@link TypeAdapter} for the given class
+     * @return The builder itself
+     */
+    public <T> Builder addTypeAdapter(Class<T> clazz, TypeAdapter<T> adapterForClass) {
+      config.typeAdapters.add(clazz, adapterForClass);
       return this;
     }
 
 
+    public TikXml build() {
+      return new TikXml(config);
+    }
+
   }
 
 
-  private TikXml() {
+  // Visible for testing
+  final TikXmlConfig config;
 
+  private TikXml(TikXmlConfig config) {
+    this.config = config;
   }
 
 

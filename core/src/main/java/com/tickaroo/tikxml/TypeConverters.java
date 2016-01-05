@@ -18,11 +18,51 @@
 
 package com.tickaroo.tikxml;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
- * This class is internally responsible to manage
+ * This class is internally responsible to manage {@link TypeConverter}
  *
  * @author Hannes Dorfmann
  * @since 1.0
  */
-class TypeConverters {
+final class TypeConverters {
+
+  private final Map<Class<?>, TypeConverter<?>> cache = new HashMap<Class<?>, TypeConverter<?>>();
+
+
+  TypeConverters() {
+  } // package visibility
+
+  /**
+   * Adds an type converter for the given class
+   *
+   * @param clazz The class you want to register a TypeConverter for
+   * @param converter The converter for this class
+   * @param <T> The generics type
+   * @return The typeConverters itself
+   */
+  <T> TypeConverters add(Class<T> clazz, TypeConverter<T> converter) {
+    cache.put(clazz, converter);
+    return this;
+  }
+
+  /**
+   * Get a type converter for the given class
+   *
+   * @param clazz The class we want to get a type converter for
+   * @param <T> The type of the type converter
+   * @return The TypeConverter
+   */
+  public <T> TypeConverter<T> get(Class<T> clazz) throws TypeConverterNotFoundException {
+    TypeConverter<T> converter = (TypeConverter<T>) cache.get(clazz);
+    if (converter == null) {
+      throw new TypeConverterNotFoundException("No " + TypeConverter.class.getSimpleName() + " found for class " + clazz.getCanonicalName() + ". " +
+          "You have to add one via " + TikXml.class.getSimpleName() + "." + TikXml.Builder.class.getSimpleName() + "().");
+    }
+    return converter;
+  }
+
+
 }

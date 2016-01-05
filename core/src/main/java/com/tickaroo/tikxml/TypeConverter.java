@@ -19,9 +19,10 @@
 package com.tickaroo.tikxml;
 
 /**
- * With a type converter you can specify how to convert a String value to a concrete java object and vice versa. This
- * can be used with @Attribute and @PropertyElement to read and write "primitive" (not complex java objects)
- * data types from and to xml.
+ * With a type converter you can specify how to convert a String value to a concrete java object and
+ * vice versa. This can be used with @Attribute and @PropertyElement to read and write "primitive"
+ * (not complex java objects like a class {@code Person}; use {@link TypeAdapter} for mapping xml to
+ * java classes) data types from and to xml.
  *
  * <pre> Example: {@code
  *
@@ -44,6 +45,7 @@ package com.tickaroo.tikxml;
  * </pre>
  *
  * @author Hannes Dorfmann
+ * @see TypeAdapter
  * @since 1.0
  */
 public interface TypeConverter<T> {
