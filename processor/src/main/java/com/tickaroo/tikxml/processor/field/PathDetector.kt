@@ -24,8 +24,9 @@ import com.tickaroo.tikxml.processor.utils.getSurroundingClassQualifiedName
 import javax.lang.model.element.VariableElement
 import kotlin.collections.emptyList
 import kotlin.collections.forEachIndexed
-import kotlin.text.contains
+import kotlin.text.Regex
 import kotlin.text.isEmpty
+import kotlin.text.matches
 import kotlin.text.split
 
 /**
@@ -35,15 +36,17 @@ import kotlin.text.split
  */
 object PathDetector {
 
+    private val PATH_SEGMENT_DIVIDER = '/'
+    private val SEGMENT_REGEX = Regex("\\w+")
+
 
     fun extractPathSegments(element: VariableElement, pathAsString: String): List<String> {
-        val PATH_SEGMENT_DIVIDER = '/'
 
         val segments = pathAsString.split(PATH_SEGMENT_DIVIDER)
 
         segments.forEachIndexed { index, it ->
-            if (it.isEmpty() || it.contains(' ')) {
-                throw ProcessingException(element, "The field '$element' in class ${element.getSurroundingClassQualifiedName()} annotated with @${Path::class.simpleName}(\"$pathAsString\") has an illegal path: Error in path segment '$it' (index = $index)")
+            if (!it.matches(SEGMENT_REGEX)) {
+                throw ProcessingException(element, "The field '$element' in class ${element.getSurroundingClassQualifiedName()} annotated with @${Path::class.simpleName}(\"$pathAsString\") has an illegal path: Error in path segment '$it' (segment index = $index)")
             }
         }
 

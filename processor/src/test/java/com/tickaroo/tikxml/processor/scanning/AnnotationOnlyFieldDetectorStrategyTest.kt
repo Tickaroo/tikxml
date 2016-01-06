@@ -1243,6 +1243,110 @@ class AnnotationOnlyFieldDetectorStrategyTest {
         Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
                 .that(componentFile).processedWith(XmlProcessor())
                 .failsToCompile()
-        .withErrorContaining("Only type String is supported for @TextContent but field 'foo' in class test.TextContentOnNotString is not of type String")
+                .withErrorContaining("Only type String is supported for @TextContent but field 'foo' in class test.TextContentOnNotString is not of type String")
+    }
+
+    @Test
+    fun incorrectPathAnnotation() {
+        val componentFile = JavaFileObjects.forSourceLines("test.PathAnnotation",
+                "package test;",
+                "",
+                "@${Xml::class.java.canonicalName}(scanMode = ${ScanMode::class.qualifiedName}.${ScanMode.ANNOTATIONS_ONLY})",
+                "class PathAnnotation {",
+                "   @${Path::class.qualifiedName}(\"\")",
+                "   @${Attribute::class.qualifiedName}",
+                "   int foo;",
+                "",
+                "}"
+        )
+
+
+        Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
+                .that(componentFile).processedWith(XmlProcessor())
+                .failsToCompile()
+                .withErrorContaining("The field 'foo' in class test.PathAnnotation annotated with @Path(\"\") has an illegal path: Error in path segment '' (segment index = 0)")
+    }
+
+    @Test
+    fun incorrectPathAnnotation2() {
+        val componentFile = JavaFileObjects.forSourceLines("test.PathAnnotation",
+                "package test;",
+                "",
+                "@${Xml::class.java.canonicalName}(scanMode = ${ScanMode::class.qualifiedName}.${ScanMode.ANNOTATIONS_ONLY})",
+                "class PathAnnotation {",
+                "   @${Path::class.qualifiedName}(\"asd/\")",
+                "   @${Attribute::class.qualifiedName}",
+                "   int foo;",
+                "",
+                "}"
+        )
+
+
+        Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
+                .that(componentFile).processedWith(XmlProcessor())
+                .failsToCompile()
+                .withErrorContaining("The field 'foo' in class test.PathAnnotation annotated with @Path(\"asd/\") has an illegal path: Error in path segment '' (segment index = 1)")
+    }
+
+    @Test
+    fun incorrectPathAnnotation3() {
+        val componentFile = JavaFileObjects.forSourceLines("test.PathAnnotation",
+                "package test;",
+                "",
+                "@${Xml::class.java.canonicalName}(scanMode = ${ScanMode::class.qualifiedName}.${ScanMode.ANNOTATIONS_ONLY})",
+                "class PathAnnotation {",
+                "   @${Path::class.qualifiedName}(\"asd/foo/\")",
+                "   @${Attribute::class.qualifiedName}",
+                "   int foo;",
+                "",
+                "}"
+        )
+
+
+        Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
+                .that(componentFile).processedWith(XmlProcessor())
+                .failsToCompile()
+                .withErrorContaining("The field 'foo' in class test.PathAnnotation annotated with @Path(\"asd/foo/\") has an illegal path: Error in path segment '' (segment index = 2)")
+    }
+
+    @Test
+    fun incorrectPathAnnotation4() {
+        val componentFile = JavaFileObjects.forSourceLines("test.PathAnnotation",
+                "package test;",
+                "",
+                "@${Xml::class.java.canonicalName}(scanMode = ${ScanMode::class.qualifiedName}.${ScanMode.ANNOTATIONS_ONLY})",
+                "class PathAnnotation {",
+                "   @${Path::class.qualifiedName}(\"asd/f oo\")",
+                "   @${Attribute::class.qualifiedName}",
+                "   int foo;",
+                "",
+                "}"
+        )
+
+
+        Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
+                .that(componentFile).processedWith(XmlProcessor())
+                .failsToCompile()
+                .withErrorContaining("The field 'foo' in class test.PathAnnotation annotated with @Path(\"asd/f oo\") has an illegal path: Error in path segment 'f oo' (segment index = 1)")
+    }
+
+    @Test
+    fun correctPathAnnotation() {
+        val componentFile = JavaFileObjects.forSourceLines("test.PathAnnotation",
+                "package test;",
+                "",
+                "@${Xml::class.java.canonicalName}(scanMode = ${ScanMode::class.qualifiedName}.${ScanMode.ANNOTATIONS_ONLY})",
+                "class PathAnnotation {",
+                "   @${Path::class.qualifiedName}(\"foo/bar\")",
+                "   @${Attribute::class.qualifiedName}",
+                "   int foo;",
+                "",
+                "}"
+        )
+
+
+        Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
+                .that(componentFile).processedWith(XmlProcessor())
+                .compilesWithoutError()
     }
 }
