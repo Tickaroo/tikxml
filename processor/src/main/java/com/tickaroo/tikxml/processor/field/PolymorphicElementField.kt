@@ -16,7 +16,7 @@
  *
  */
 
-package com.tickaroo.tikxml.processor.model
+package com.tickaroo.tikxml.processor.field
 
 import javax.lang.model.element.VariableElement
 import javax.lang.model.type.TypeMirror

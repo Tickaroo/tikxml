@@ -22,7 +22,7 @@ import com.tickaroo.tikxml.annotation.*
 import com.tickaroo.tikxml.processor.ProcessingException
 import com.tickaroo.tikxml.processor.converter.AttributeConverterChecker
 import com.tickaroo.tikxml.processor.converter.PropertyElementConverterChecker
-import com.tickaroo.tikxml.processor.model.*
+import com.tickaroo.tikxml.processor.field.*
 import com.tickaroo.tikxml.processor.utils.*
 import java.util.*
 import javax.lang.model.element.ElementKind

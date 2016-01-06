@@ -16,7 +16,7 @@
  *
  */
 
-package com.tickaroo.tikxml.processor.model
+package com.tickaroo.tikxml.processor.field
 
 import com.tickaroo.tikxml.annotation.ScanMode
 import com.tickaroo.tikxml.annotation.Xml

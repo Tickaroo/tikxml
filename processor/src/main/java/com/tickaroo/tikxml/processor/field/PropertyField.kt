@@ -16,11 +16,14 @@
  *
  */
 
-package com.tickaroo.tikxml.processor.model.access
+package com.tickaroo.tikxml.processor.field
+
+import javax.lang.model.element.VariableElement
 
 /**
- * Base class. This class just stores info about how to set / read a a field from annotation processing generated code.
- * (via getter-setter or same field is directly visible)
+ * This class represents a field annotated with [com.tickaroo.tikxml.annotation.PropertyElement]
  * @author Hannes Dorfmann
  */
-abstract class FieldAccessPolicy
+class PropertyField(element: VariableElement, name: String, required: Boolean?, private val converterQualifiedName: String? = null) : NamedField(element, name, required) {
+
+}

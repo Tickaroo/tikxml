@@ -16,15 +16,16 @@
  *
  */
 
-package com.tickaroo.tikxml.processor.model
+package com.tickaroo.tikxml.processor.field
 
 import com.tickaroo.tikxml.annotation.Path
 import com.tickaroo.tikxml.processor.ProcessingException
 import com.tickaroo.tikxml.processor.utils.getSurroundingClassQualifiedName
 import javax.lang.model.element.VariableElement
-import kotlin.collections.all
 import kotlin.collections.emptyList
-import kotlin.text.isNotEmpty
+import kotlin.collections.forEachIndexed
+import kotlin.text.contains
+import kotlin.text.isEmpty
 import kotlin.text.split
 
 /**
@@ -40,11 +41,9 @@ object PathDetector {
 
         val segments = pathAsString.split(PATH_SEGMENT_DIVIDER)
 
-        segments.all {
-            if (it.isNotEmpty()) {
-                true
-            } else {
-                throw ProcessingException(element, "The field '$element' in class ${element.getSurroundingClassQualifiedName()} annotated with @${Path::class.simpleName} has an illegal path: Error in path segment '$it'")
+        segments.forEachIndexed { index, it ->
+            if (it.isEmpty() || it.contains(' ')) {
+                throw ProcessingException(element, "The field '$element' in class ${element.getSurroundingClassQualifiedName()} annotated with @${Path::class.simpleName}(\"$pathAsString\") has an illegal path: Error in path segment '$it' (index = $index)")
             }
         }
 

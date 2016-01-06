@@ -19,9 +19,9 @@
 package com.tickaroo.tikxml.processor.scanning
 
 import com.tickaroo.tikxml.annotation.ScanMode
-import com.tickaroo.tikxml.processor.model.AnnotatedClass
-import com.tickaroo.tikxml.processor.model.NamedField
-import com.tickaroo.tikxml.processor.model.TextContentField
+import com.tickaroo.tikxml.processor.field.AnnotatedClass
+import com.tickaroo.tikxml.processor.field.NamedField
+import com.tickaroo.tikxml.processor.field.TextContentField
 import org.mockito.Mockito
 import java.util.*
 import javax.lang.model.element.TypeElement

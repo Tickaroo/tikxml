@@ -16,14 +16,17 @@
  *
  */
 
-package com.tickaroo.tikxml.processor.model.access
+package com.tickaroo.tikxml.processor.field
 
-import javax.lang.model.element.ExecutableElement
+import javax.lang.model.element.VariableElement
+import javax.lang.model.type.TypeMirror
 
 /**
- * Represents a private xml field which has setter and getter methods to workaround this visibility issue
+ * Represents a Field with [com.tickaroo.tikxml.annotation.Element] annotation
  * @author Hannes Dorfmann
  */
-class GetterSetterFieldAccessPolicy(val getter: ExecutableElement, val setter: ExecutableElement) : FieldAccessPolicy() {
+open class ElementField(element: VariableElement, name: String, required: Boolean?) : NamedField(element, name, required) {
 
 }
+
+class ListElementField(element: VariableElement, name: String, required: Boolean?, val listType: TypeMirror, val inlineList: Boolean) : ElementField(element, name, required)

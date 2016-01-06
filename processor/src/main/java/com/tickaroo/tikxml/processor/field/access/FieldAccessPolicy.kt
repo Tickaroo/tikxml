@@ -16,18 +16,11 @@
  *
  */
 
-package com.tickaroo.tikxml.processor.model
-
-import javax.lang.model.element.VariableElement
+package com.tickaroo.tikxml.processor.field.access
 
 /**
- * Represents a field where we want to parse xml data into or write xml data from.
- *
+ * Base class. This class just stores info about how to set / read a a field from annotation processing generated code.
+ * (via getter-setter or same field is directly visible)
  * @author Hannes Dorfmann
  */
-open class NamedField(
-        element: VariableElement,
-        val name: String,
-        required: Boolean?) : Field(element, required){ // required == null means take default value of TikXml
-
-}
+abstract class FieldAccessPolicy

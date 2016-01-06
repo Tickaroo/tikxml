@@ -23,11 +23,11 @@ import com.tickaroo.tikxml.annotation.Element
 import com.tickaroo.tikxml.annotation.PropertyElement
 import com.tickaroo.tikxml.annotation.Xml
 import com.tickaroo.tikxml.processor.ProcessingException
-import com.tickaroo.tikxml.processor.model.AnnotatedClass
-import com.tickaroo.tikxml.processor.model.Field
-import com.tickaroo.tikxml.processor.model.NamedField
-import com.tickaroo.tikxml.processor.model.access.GetterSetterFieldAccessPolicy
-import com.tickaroo.tikxml.processor.model.access.MinPackageVisibilityFieldAccessPolicy
+import com.tickaroo.tikxml.processor.field.AnnotatedClass
+import com.tickaroo.tikxml.processor.field.Field
+import com.tickaroo.tikxml.processor.field.NamedField
+import com.tickaroo.tikxml.processor.field.access.GetterSetterFieldAccessPolicy
+import com.tickaroo.tikxml.processor.field.access.MinPackageVisibilityFieldAccessPolicy
 import com.tickaroo.tikxml.processor.utils.*
 import java.util.*
 import javax.lang.model.element.ExecutableElement
@@ -47,7 +47,7 @@ import kotlin.text.*
 class FieldScanner(protected val elementUtils: Elements, protected val typeUtils: Types, private val fieldDetectorStrategyFactory: FieldDetectorStrategyFactory) {
 
     /**
-     * Scans the child element of the passed [AnnotatedClass] to find [com.tickaroo.tikxml.processor.model.NamedField]
+     * Scans the child element of the passed [AnnotatedClass] to find [com.tickaroo.tikxml.processor.field.NamedField]
      */
     @Throws(ProcessingException::class)
     fun scan(annotatedClass: AnnotatedClass) {

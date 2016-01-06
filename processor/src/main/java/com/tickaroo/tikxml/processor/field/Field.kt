@@ -16,14 +16,17 @@
  *
  */
 
-package com.tickaroo.tikxml.processor.model.access
+package com.tickaroo.tikxml.processor.field
 
+import com.tickaroo.tikxml.processor.field.access.FieldAccessPolicy
 import javax.lang.model.element.VariableElement
 
 /**
- * Represents a xml field that can be accessed directly (no getters or setters are required)
+ * Represents a java class field that is mapped to xml
  * @author Hannes Dorfmann
  */
-class MinPackageVisibilityFieldAccessPolicy(val element: VariableElement) : FieldAccessPolicy() {
+open class Field(val element: VariableElement, val required: Boolean?) {
 
+    lateinit var accessPolicy: FieldAccessPolicy
+    val pathSegments = PathDetector.getSegments(element)
 }

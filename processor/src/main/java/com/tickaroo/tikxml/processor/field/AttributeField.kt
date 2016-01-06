@@ -16,13 +16,16 @@
  *
  */
 
-package com.tickaroo.tikxml.processor.model
+package com.tickaroo.tikxml.processor.field
 
 import javax.lang.model.element.VariableElement
 
 /**
- * Represents a field annotated with [com.tickaroo.tikxml.annotation.TextContent] annotation
+ * Represents an field which value is represented by an xml element's attribute
  * @author Hannes Dorfmann
  */
-class TextContentField(element: VariableElement, required: Boolean?) : Field(element, required) {
+class AttributeField(element: VariableElement, name: String, required: Boolean?,
+                     private val converterQualifiedName: String? = null) : NamedField(element, name, required) {
+
+
 }

@@ -18,8 +18,8 @@
 
 package com.tickaroo.tikxml.processor.scanning
 
-import com.tickaroo.tikxml.processor.model.NamedField
-import com.tickaroo.tikxml.processor.model.TextContentField
+import com.tickaroo.tikxml.processor.field.NamedField
+import com.tickaroo.tikxml.processor.field.TextContentField
 import javax.lang.model.element.VariableElement
 
 /**

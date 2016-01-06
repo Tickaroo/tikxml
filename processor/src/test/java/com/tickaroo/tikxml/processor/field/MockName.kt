@@ -16,17 +16,22 @@
  *
  */
 
-package com.tickaroo.tikxml.processor.model
+package com.tickaroo.tikxml.processor.field
 
-import com.tickaroo.tikxml.processor.model.access.FieldAccessPolicy
-import javax.lang.model.element.VariableElement
+import javax.lang.model.element.Name
+import kotlin.text.contentEquals
 
 /**
- * Represents a java class field that is mapped to xml
+ *
  * @author Hannes Dorfmann
  */
-open class Field(val element: VariableElement, val required: Boolean?) {
+class MockName(val name: String) : Name {
 
-    lateinit var accessPolicy: FieldAccessPolicy
-    val pathSegments = PathDetector.getSegments(element)
+    override val length = name.length
+
+    override fun get(index: Int) = name.get(index)
+
+    override fun subSequence(start: Int, end: Int) = name.subSequence(start, end)
+
+    override fun contentEquals(cs: CharSequence?) = if ( cs == null) false else name.contentEquals(cs)
 }
