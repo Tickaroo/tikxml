@@ -19,6 +19,7 @@
 package com.tickaroo.tikxml;
 
 import java.io.IOException;
+import okio.BufferedSink;
 import okio.BufferedSource;
 
 /**
@@ -86,8 +87,22 @@ public final class TikXml {
   }
 
   public <T> T read(BufferedSource source, Class<T> clazz) throws IOException {
+
     XmlReader reader = XmlReader.of(source);
-    return config.getTypeAdapter(clazz).fromXml(reader, config);
+
+    reader.beginElement();
+    reader.nextElementName(); // We don't care about the name of the root tag
+
+    T value = config.getTypeAdapter(clazz).fromXml(reader, config);
+
+    reader.endElement();
+    
+    return value;
+  }
+
+
+  public <T> void write(BufferedSink sink, T valueToWrite) throws IOException {
+
   }
 
 

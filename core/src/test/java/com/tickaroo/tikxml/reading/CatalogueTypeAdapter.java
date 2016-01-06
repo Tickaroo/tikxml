@@ -33,9 +33,6 @@ public class CatalogueTypeAdapter implements TypeAdapter<Catalogue> {
 
   @Override
   public Catalogue fromXml(XmlReader reader, TikXmlConfig config) throws IOException {
-    reader.beginElement();
-    if (!reader.nextElementName().equals("catalog"))
-      throw new IOException("<catalogue> expected at Path " + reader.getPath());
 
     Catalogue catalogue = new Catalogue();
     catalogue.books = new ArrayList<>();
@@ -47,8 +44,6 @@ public class CatalogueTypeAdapter implements TypeAdapter<Catalogue> {
       }
       reader.endElement();
     }
-
-    reader.endElement();
 
     return catalogue;
   }
