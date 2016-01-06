@@ -22,11 +22,11 @@ import com.tickaroo.tikxml.processor.model.access.FieldAccessPolicy
 import javax.lang.model.element.VariableElement
 
 /**
- *
+ * Represents a java class field that is mapped to xml
  * @author Hannes Dorfmann
  */
 open class Field(val element: VariableElement, val required: Boolean?) {
 
     lateinit var accessPolicy: FieldAccessPolicy
-
+    val pathSegments = PathDetector.getSegments(element)
 }

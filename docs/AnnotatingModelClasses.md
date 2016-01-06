@@ -466,13 +466,13 @@ Have a look at the following example: Imagine we have a xml representation of a 
 To parse that into java classes we would have to add a `Bookstore` class and a `Inventory` 
 class to be able to parse that kind of blown up xml. This isn't really memory efficient because we 
 have to instantiate `Bookstore` and `Inventory` to access `<book>` and `<newspaper>`.
-With `@Path` We can do that **emulate** this xml nodes:
+With `@Path` we can **emulate** this xml nodes:
 
 ```java
 @Xml
 class Shop {
 
-  @Path("bookstore[name]") // attributes name between '[' and ']'
+  @Path("bookstore") // means <bookstore name="value" />
   @Attribute
   String name
   
@@ -488,7 +488,7 @@ class Shop {
 ```
 
 `TikXml` will read `<bookstore>` and `<inventory>` without the extra cost of allocating such an object.
-It will also take that "virtual" nodes into account when writing xml.
+It will also take that "virtual emulated" nodes into account when writing xml.
 
 Please note that this is not **XPath**. It looks similar to XPath, but XPath is not supported by `TikXml`.
 

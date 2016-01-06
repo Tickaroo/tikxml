@@ -26,7 +26,7 @@ import kotlin.text.format
  * @author Hannes Dorfmann
  * @since 1.0
  */
-class ProcessingException(val element: Element, msg: String) : Exception(msg) {
+class ProcessingException(val element: Element?, msg: String) : Exception(msg) {
 
     constructor(element: Element, msg: String, vararg params: Any) : this(element, msg.format(params))
 }
