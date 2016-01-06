@@ -18,16 +18,20 @@
 
 package com.tickaroo.tikxml.reading;
 
+import com.tickaroo.tikxml.TikXmlConfig;
+import com.tickaroo.tikxml.TypeAdapter;
 import com.tickaroo.tikxml.XmlReader;
+import com.tickaroo.tikxml.XmlWriter;
 import java.io.IOException;
 
 /**
  * @author Hannes Dorfmann
  */
-public class BooksReader implements XmlParser<Book> {
+public class BookTypeAdapter implements TypeAdapter<Book> {
+
 
   @Override
-  public Book read(XmlReader reader) throws IOException {
+  public Book fromXml(XmlReader reader, TikXmlConfig config) throws IOException {
 
     Book book = new Book();
     while (reader.hasAttribute()) {
@@ -64,6 +68,10 @@ public class BooksReader implements XmlParser<Book> {
 
     return book;
 
+  }
+
+  @Override
+  public void toXml(XmlWriter writer, TikXmlConfig config, Book value) throws IOException {
 
   }
 }

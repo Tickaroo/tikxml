@@ -19,8 +19,9 @@
 package com.tickaroo.tikxml.reading;
 
 import com.tickaroo.tikxml.TestUtils;
-import com.tickaroo.tikxml.XmlReader;
+import com.tickaroo.tikxml.TikXml;
 import java.io.IOException;
+import okio.BufferedSource;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -32,9 +33,16 @@ public class BooksReaderTest {
 
   @Test
   public void read() throws IOException {
-    XmlReader reader = TestUtils.readerFromFile("books.xml");
+    BufferedSource input = TestUtils.sourceForFile("books.xml");
 
-    Catalogue catalogue = new CatalogueReader().read(reader);
+    TikXml tikXml = new TikXml.Builder()
+        .addTypeAdapter(Book.class, new BookTypeAdapter())
+        .addTypeAdapter(Catalogue.class, new CatalogueTypeAdapter())
+        .build();
+
+
+    Catalogue catalogue = tikXml.read(input, Catalogue.class);
+
 
     Assert.assertEquals(12, catalogue.books.size());
 

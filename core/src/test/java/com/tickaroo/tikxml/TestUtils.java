@@ -22,6 +22,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import okio.Buffer;
+import okio.BufferedSource;
 import okio.Okio;
 import org.junit.Assert;
 
@@ -41,6 +42,10 @@ public class TestUtils {
 
   public static XmlReader readerFromFile(String filePath) throws IOException {
     return XmlReader.of(Okio.buffer(Okio.source(new File(getResourcePath(filePath)))));
+  }
+
+  public static BufferedSource sourceForFile(String filePath) throws IOException {
+    return Okio.buffer(Okio.source(new File(getResourcePath(filePath))));
   }
 
 

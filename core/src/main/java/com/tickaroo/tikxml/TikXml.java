@@ -18,6 +18,9 @@
 
 package com.tickaroo.tikxml;
 
+import java.io.IOException;
+import okio.BufferedSource;
+
 /**
  * The main facade class to write or read xml. Use {@link TikXml.Builder} to instantiate a new
  * instance
@@ -80,6 +83,11 @@ public final class TikXml {
 
   private TikXml(TikXmlConfig config) {
     this.config = config;
+  }
+
+  public <T> T read(BufferedSource source, Class<T> clazz) throws IOException {
+    XmlReader reader = XmlReader.of(source);
+    return config.getTypeAdapter(clazz).fromXml(reader, config);
   }
 
 

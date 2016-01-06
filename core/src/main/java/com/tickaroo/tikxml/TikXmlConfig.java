@@ -18,15 +18,13 @@
 
 package com.tickaroo.tikxml;
 
-import java.io.IOException;
-
 /**
  * Holds the config for parsing and writing xml via {@link TikXml}
  *
  * @author Hannes Dorfmann
  * @since 1.0
  */
-final class TikXmlConfig {
+public final class TikXmlConfig {
 
   boolean throwExceptionOnMissingMapping = true;
   TypeConverters typeConverters = new TypeConverters();
@@ -47,14 +45,29 @@ final class TikXmlConfig {
 
   /**
    * Query a {@link TypeConverter} for a given class
+   *
    * @param clazz The class you want a type converter for
    * @param <T> The type of the TypeConverter
    * @return The TypeConverter or throws an Exception
-   * @throws IOException Thrown if no TypeConverter has been found for the given class
+   * @throws TypeConverterNotFoundException Thrown if no TypeConverter has been found for the given
+   * class
    */
-  public <T> TypeConverter<T> getTypeConverter(Class<T> clazz) throws IOException {
+  public <T> TypeConverter<T> getTypeConverter(Class<T> clazz) throws TypeConverterNotFoundException {
     return typeConverters.get(clazz);
   }
 
+
+  /**
+   * Get the {@link TypeAdapter} for a given class
+   *
+   * @param clazz The class you want a {@link TypeAdapter}for
+   * @param <T> The type of the TypeAdapter
+   * @return The {@link TypeAdapter} for the given type
+   * @throws TypeAdapterNotFoundException Thrown if no {@link TypeAdapter} has been found for the
+   * given class
+   */
+  public <T> TypeAdapter<T> getTypeAdapter(Class<T> clazz) throws TypeAdapterNotFoundException {
+    return typeAdapters.get(clazz);
+  }
 
 }

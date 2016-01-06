@@ -18,20 +18,21 @@
 
 package com.tickaroo.tikxml.reading;
 
+import com.tickaroo.tikxml.TikXmlConfig;
+import com.tickaroo.tikxml.TypeAdapter;
 import com.tickaroo.tikxml.XmlReader;
+import com.tickaroo.tikxml.XmlWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 
 /**
  * @author Hannes Dorfmann
  */
-public class CatalogueReader implements XmlParser<Catalogue> {
+public class CatalogueTypeAdapter implements TypeAdapter<Catalogue> {
 
-  BooksReader booksReader = new BooksReader();
 
   @Override
-  public Catalogue read(XmlReader reader) throws IOException {
-
+  public Catalogue fromXml(XmlReader reader, TikXmlConfig config) throws IOException {
     reader.beginElement();
     if (!reader.nextElementName().equals("catalog"))
       throw new IOException("<catalogue> expected at Path " + reader.getPath());
@@ -39,10 +40,10 @@ public class CatalogueReader implements XmlParser<Catalogue> {
     Catalogue catalogue = new Catalogue();
     catalogue.books = new ArrayList<>();
 
-    while (reader.hasElement()){
+    while (reader.hasElement()) {
       reader.beginElement();
-      if (reader.nextElementName().equals("book")){
-        catalogue.books.add(booksReader.read(reader));
+      if (reader.nextElementName().equals("book")) {
+        catalogue.books.add(config.getTypeAdapter(Book.class).fromXml(reader, config));
       }
       reader.endElement();
     }
@@ -50,5 +51,10 @@ public class CatalogueReader implements XmlParser<Catalogue> {
     reader.endElement();
 
     return catalogue;
+  }
+
+  @Override
+  public void toXml(XmlWriter writer, TikXmlConfig config, Catalogue value) throws IOException {
+
   }
 }
