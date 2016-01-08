@@ -26,6 +26,7 @@ import com.tickaroo.tikxml.annotation.ScanMode;
 import com.tickaroo.tikxml.annotation.Xml;
 import com.tickaroo.tikxml.processor.field.AnnotatedClass;
 import com.tickaroo.tikxml.processor.field.AnnotatedClassImpl;
+import com.tickaroo.tikxml.processor.generator.TypeAdapterCodeGenerator;
 import com.tickaroo.tikxml.processor.scanning.AnnotationBasedRequiredDetector;
 import com.tickaroo.tikxml.processor.scanning.FieldDetectorStrategyFactory;
 import com.tickaroo.tikxml.processor.scanning.FieldScanner;
@@ -66,6 +67,7 @@ public class XmlProcessor extends AbstractProcessor {
   private Elements elementUtils;
   private Types typeUtils;
   private FieldDetectorStrategyFactory fieldDetectorStrategyFactory;
+  private TypeAdapterCodeGenerator generator;
 
   @Override
   public synchronized void init(ProcessingEnvironment processingEnv) {
@@ -75,6 +77,7 @@ public class XmlProcessor extends AbstractProcessor {
     elementUtils = processingEnv.getElementUtils();
     typeUtils = processingEnv.getTypeUtils();
     fieldDetectorStrategyFactory = new FieldDetectorStrategyFactory(elementUtils, typeUtils, new AnnotationBasedRequiredDetector());
+    generator = new TypeAdapterCodeGenerator(filer, elementUtils);
   }
 
   @Override
@@ -132,7 +135,7 @@ public class XmlProcessor extends AbstractProcessor {
         // Scan class
         scanner.scan(clazz);
 
-        generateCode(clazz);
+        generator.generateCode(clazz);
       }
 
     } catch (ProcessingException e) {

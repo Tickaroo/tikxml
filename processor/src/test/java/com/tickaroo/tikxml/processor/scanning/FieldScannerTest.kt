@@ -405,7 +405,7 @@ class FieldScannerTest {
     @Test
     fun booleanField() {
         val componentFile = JavaFileObjects.forSourceLines("test.BooleanField",
-
+                "package test;",
                 "@${Xml::class.java.canonicalName}",
                 "class BooleanField {",
                 "   @${Attribute::class.qualifiedName}",
@@ -421,7 +421,7 @@ class FieldScannerTest {
     @Test
     fun booleanHungarianField() {
         val componentFile = JavaFileObjects.forSourceLines("test.BooleanField",
-
+                "package test;",
                 "@${Xml::class.java.canonicalName}",
                 "class BooleanField {",
                 "   @${Attribute::class.qualifiedName}",
@@ -437,7 +437,7 @@ class FieldScannerTest {
     @Test
     fun booleanHungarianUpperCaseField() {
         val componentFile = JavaFileObjects.forSourceLines("test.BooleanField",
-
+                "package test;",
                 "@${Xml::class.java.canonicalName}",
                 "class BooleanField {",
                 "   @${Attribute::class.qualifiedName}",

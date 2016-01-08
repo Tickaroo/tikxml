@@ -47,9 +47,9 @@ public class TypeAdaptersTest {
   @Test
   public void instantiateOverReflections() throws IOException {
     TypeAdapters adapters = new TypeAdapters();
-    TypeAdapter<TestClassAccessTypeAdapterOverReflections> adapter = adapters.get(TestClassAccessTypeAdapterOverReflections.class);
-    Assert.assertTrue(adapter instanceof TestClassAccessTypeAdapterOverReflections.TikXmlTypeAdapter);
-    Assert.assertSame(adapter, adapters.get(TestClassAccessTypeAdapterOverReflections.class));
+    TypeAdapter<SampleClass> adapter = adapters.get(SampleClass.class);
+    Assert.assertTrue(adapter instanceof SampleClass.$TypeAdapter);
+    Assert.assertSame(adapter, adapters.get(SampleClass.class));
   }
 
 

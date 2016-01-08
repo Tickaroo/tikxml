@@ -62,19 +62,31 @@ final class TypeAdapters {
       return adapter;
     } else {
       // try to load TypeAdapter via reflections
+      StringBuilder qualifiedTypeAdapterClassName = new StringBuilder();
       try {
-        String qualifiedTypeAdapterClassName = clazz.getCanonicalName() + TypeAdapter.GENERATED_CLASS_SUFFIX;
-        Class<TypeAdapter<T>> adapterClass = (Class<TypeAdapter<T>>) Class.forName(qualifiedTypeAdapterClassName);
+        Package packageElement = clazz.getPackage();
+        if (packageElement != null) {
+          String packageName = packageElement.getName();
+          if (packageName != null && packageName.length() > 0) {
+            qualifiedTypeAdapterClassName.append(packageElement.getName());
+            qualifiedTypeAdapterClassName.append('.');
+          }
+        }
+
+        qualifiedTypeAdapterClassName.append(clazz.getSimpleName());
+        qualifiedTypeAdapterClassName.append(TypeAdapter.GENERATED_CLASS_SUFFIX);
+
+        Class<TypeAdapter<T>> adapterClass = (Class<TypeAdapter<T>>) Class.forName(qualifiedTypeAdapterClassName.toString());
         TypeAdapter<T> adapterInstance = adapterClass.newInstance();
         adaptersCache.put(clazz, adapterInstance);
         return adapterInstance;
 
       } catch (ClassNotFoundException e) {
-        throw new TypeAdapterNotFoundException("No TypeAdapter for class " + clazz.getCanonicalName() + " found.", e);
+        throw new TypeAdapterNotFoundException("No TypeAdapter for class " + clazz.getCanonicalName() + " found. Expected name of the type adapter is " + qualifiedTypeAdapterClassName.toString(), e);
       } catch (InstantiationException e) {
-        throw new TypeAdapterNotFoundException("No TypeAdapter for class " + clazz.getCanonicalName() + " found.", e);
+        throw new TypeAdapterNotFoundException("No TypeAdapter for class " + clazz.getCanonicalName() + " found. Expected name of the type adapter is " + qualifiedTypeAdapterClassName.toString(), e);
       } catch (IllegalAccessException e) {
-        throw new TypeAdapterNotFoundException("No TypeAdapter for class " + clazz.getCanonicalName() + " found.", e);
+        throw new TypeAdapterNotFoundException("No TypeAdapter for class " + clazz.getCanonicalName() + " found. Expected name of the type adapter is " + qualifiedTypeAdapterClassName.toString(), e);
       }
     }
   }

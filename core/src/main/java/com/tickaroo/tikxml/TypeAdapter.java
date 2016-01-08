@@ -38,7 +38,7 @@ public interface TypeAdapter<T> {
   /**
    * This name will be used as class suffix for the generated TypeAdapter by annotation processing
    */
-  static final String GENERATED_CLASS_SUFFIX = "$TikXmlTypeAdapter";
+  static final String GENERATED_CLASS_SUFFIX = "$$TypeAdapter";
 
 
   /**

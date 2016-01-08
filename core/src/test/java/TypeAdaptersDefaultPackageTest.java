@@ -16,30 +16,21 @@
  *
  */
 
-package com.tickaroo.tikxml;
+import com.tickaroo.tikxml.DefaultPackageClassTestAccessor;
+import com.tickaroo.tikxml.TypeAdapter;
+import java.io.IOException;
+import org.junit.Assert;
+import org.junit.Test;
 
 /**
  * @author Hannes Dorfmann
  */
-public class TestClassAccessTypeAdapterOverReflections {
+public class TypeAdaptersDefaultPackageTest {
 
-  int anInt;
-  String aString;
-
-
-  public static class TikXmlTypeAdapter implements TypeAdapter<TestClassAccessTypeAdapterOverReflections>{
-
-    public TikXmlTypeAdapter() {
-    }
-
-    @Override
-    public TestClassAccessTypeAdapterOverReflections fromXml(XmlReader reader, TikXmlConfig config) {
-      return null;
-    }
-
-    @Override
-    public void toXml(XmlWriter writer, TikXmlConfig config, TestClassAccessTypeAdapterOverReflections value) {
-
-    }
+  @Test
+  public void instantiateOverReflectionsDefaultPackage() throws IOException {
+    TypeAdapter<DefaultPackageClass> adapter = DefaultPackageClassTestAccessor.getTypeAdapter(DefaultPackageClass.class);
+    Assert.assertTrue(adapter instanceof DefaultPackageClass.$TypeAdapter);
+    Assert.assertSame(adapter, DefaultPackageClassTestAccessor.getTypeAdapter(DefaultPackageClass.class));
   }
 }
