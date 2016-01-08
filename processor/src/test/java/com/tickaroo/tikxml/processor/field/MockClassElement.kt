@@ -21,11 +21,14 @@ package com.tickaroo.tikxml.processor.field
 import javax.lang.model.element.*
 import javax.lang.model.type.TypeMirror
 
+interface Java8Support {
+    fun <T : Annotation> getAnnotationsByType(annotationClass: Class<T>): Array<T>
+}
 /**
  *
  * @author Hannes Dorfmann
  */
-class MockClassElement : TypeElement {
+class MockClassElement : TypeElement, Java8Support{
 
     override fun getSimpleName(): Name? {
         throw UnsupportedOperationException()
@@ -83,8 +86,8 @@ class MockClassElement : TypeElement {
         throw UnsupportedOperationException()
     }
 
-    fun <T : Annotation> getAnnotationsByType(annotationClass: Class<T>): Array<T> {
-        return null!!
+    override fun <T : Annotation> getAnnotationsByType(annotationClass: Class<T>): Array<T> {
+        throw UnsupportedOperationException()
     }
 
     override fun toString() = qualifiedName.toString()

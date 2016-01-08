@@ -25,7 +25,7 @@ import javax.lang.model.type.TypeMirror
  *
  * @author Hannes Dorfmann
  */
-class MockVariableElement : VariableElement {
+class MockVariableElement : VariableElement, Java8Support {
 
     override fun getModifiers(): MutableSet<Modifier>? {
         throw UnsupportedOperationException()
@@ -60,6 +60,10 @@ class MockVariableElement : VariableElement {
     }
 
     override fun getConstantValue(): Any? {
+        throw UnsupportedOperationException()
+    }
+
+    override fun <T : Annotation> getAnnotationsByType(annotationClass: Class<T>): Array<T> {
         throw UnsupportedOperationException()
     }
 
