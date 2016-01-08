@@ -43,6 +43,18 @@ public class CompanySimpleTypeAdapter extends SimpleTypeAdapter<Company> {
       }
     });
 
+    attributeBinders.put("name", new AttributeBinder<Company>() {
+      @Override
+      public void fromXml(XmlReader reader, TikXmlConfig config, Company value) throws IOException {
+        value.name = reader.nextAttributeValue();
+      }
+
+      @Override
+      public void toXml(XmlWriter writer, TikXmlConfig config, Company value) throws IOException {
+
+      }
+    });
+
   }
 
 

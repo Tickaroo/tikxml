@@ -63,7 +63,7 @@ public abstract class SimpleTypeAdapter<T> implements TypeAdapter<T> {
         attributeBinder.fromXml(reader, config, value);
       } else {
         if (config.throwsExceptionOnMissingMapping()) {
-          throw new IOException("No binding found for xml element's attribute with the name '" + attributeName + "'");
+          throw new IOException("Could not map the xml attribute with the name '" + attributeName + "' to java class. Have you annotated such a field in your java class to map this xml attribute?");
         } else {
           reader.skipAttributeValue();
         }

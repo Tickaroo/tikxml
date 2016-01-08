@@ -23,4 +23,5 @@ package com.tickaroo.tikxml.typeadapter;
  */
 public class Company {
   int id;
+  String name;
 }

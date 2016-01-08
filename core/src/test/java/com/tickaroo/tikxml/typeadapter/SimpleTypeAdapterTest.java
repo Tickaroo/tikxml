@@ -18,16 +18,72 @@
 
 package com.tickaroo.tikxml.typeadapter;
 
+import com.tickaroo.tikxml.TestUtils;
 import com.tickaroo.tikxml.TikXml;
+import java.io.IOException;
+import okio.BufferedSource;
+import org.junit.Assert;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 /**
  * @author Hannes Dorfmann
  */
 public class SimpleTypeAdapterTest {
 
+  @Rule
+  public ExpectedException exception = ExpectedException.none();
+
   @Test
-  public void readTest(){
-    TikXml tikXml = new TikXml.Builder().build();
+  public void readTest() throws IOException {
+    TikXml tikXml = new TikXml.Builder().
+        addTypeAdapter(Company.class, new CompanySimpleTypeAdapter())
+        .build();
+
+    BufferedSource source = TestUtils.sourceForFile("simple_typeadapater_test.xml");
+
+    Company company = tikXml.read(source, Company.class);
+
+    Assert.assertEquals(123, company.id);
+    Assert.assertEquals("Foo Inc.", company.name);
+
+  }
+
+  @Test
+  public void failUnmappedAttribute() throws IOException {
+    TikXml tikXml = new TikXml.Builder()
+        .throwExceptionOnMissingMapping(true)
+        .addTypeAdapter(Company.class, new CompanySimpleTypeAdapterWithoutNameAttribute())
+        .build();
+
+
+    BufferedSource source = TestUtils.sourceForFile("simple_typeadapater_test.xml");
+
+    exception.expect(IOException.class);
+    exception.expectMessage("Could not map the xml attribute with the name 'id' to java class. Have you annotated such a field in your java class to map this xml attribute?");
+    Company company = tikXml.read(source, Company.class);
+
+
+  }
+
+
+  @Test
+  public void ignoreUnmappedAttribute() throws IOException {
+    TikXml tikXml = new TikXml.Builder()
+        .throwExceptionOnMissingMapping(false)
+        .addTypeAdapter(Company.class, new CompanySimpleTypeAdapterWithoutNameAttribute())
+        .build();
+
+
+    BufferedSource source = TestUtils.sourceForFile("simple_typeadapater_test.xml");
+
+    Company company = tikXml.read(source, Company.class);
+
+
+    Assert.assertEquals(123, company.id);
+    Assert.assertNull(company.name);
+
+
   }
 }
