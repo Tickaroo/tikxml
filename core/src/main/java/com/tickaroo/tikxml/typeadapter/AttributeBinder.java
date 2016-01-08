@@ -24,12 +24,32 @@ import com.tickaroo.tikxml.XmlWriter;
 import java.io.IOException;
 
 /**
- * @param <T> the type of the
+ * This binder is used with {@link SimpleTypeAdapter} to delegate the work of reading and writing an
+ * xml attribute.
+ *
+ * @param <T> the type of the parents object
  * @author Hannes Dorfmann
  * @since 1.0
  */
 public abstract class AttributeBinder<T> {
 
+  /**
+   * Reads an attribute value from xml and assigns it to the objects value. A trivial implementation
+   * to read an xml attribute as integer may look like this:
+   * <pre>
+   *   {@code
+   *    class AgeAttributeBinder extends AttributeBinder<Person> {
+   *
+   *      public fromXml(XmlReader reader, TikXmlConfig config, Person value){
+   *        value.age = reader.nextAttributeValueAsInt();
+   *      }
+   *    }
+   *   }
+   * </pre>
+   *
+   * @param reader The {@link XmlReader}
+   * @throws IOException
+   */
   public abstract void fromXml(XmlReader reader, TikXmlConfig config, T value) throws IOException;
 
   public abstract void toXml(XmlWriter writer, TikXmlConfig config, T value) throws IOException;

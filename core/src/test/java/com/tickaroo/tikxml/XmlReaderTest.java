@@ -722,4 +722,80 @@ public class XmlReaderTest {
     }
   }
 
+
+  @Test
+  public void readTextContentAsPrimitiveValues() throws IOException {
+
+    String xml = "<foo>" +
+        "   <aString>a very short string</aString>" +
+        "   <intMax>" + Integer.MAX_VALUE + "</intMax>" +
+        "   <intMin>" + Integer.MIN_VALUE + "</intMin>" +
+        "   <longMax>" + Long.MAX_VALUE + "</longMax>" +
+        "   <longMin>" + Long.MIN_VALUE + "</longMin>" +
+        "   <doubleMax>" + Double.MAX_VALUE + "</doubleMax>" +
+        "   <doubleMin>" + Double.MIN_VALUE + "</doubleMin>" +
+        "   <boolTrue>true</boolTrue>" +
+        "   <boolFalse>false</boolFalse>" +
+        "</foo>";
+    XmlReader reader = readerFrom(xml);
+
+
+    try {
+      Assert.assertTrue(reader.hasElement());
+      reader.beginElement();
+      Assert.assertEquals("foo", reader.nextElementName());
+
+      reader.beginElement();
+      Assert.assertEquals("aString", reader.nextElementName());
+      Assert.assertEquals("a very short string", reader.nextTextContent());
+      reader.endElement();
+
+      reader.beginElement();
+      Assert.assertEquals("intMax", reader.nextElementName());
+      Assert.assertEquals(Integer.MAX_VALUE, reader.nextTextContentAsInt());
+      reader.endElement();
+
+      reader.beginElement();
+      Assert.assertEquals("intMin", reader.nextElementName());
+      Assert.assertEquals(Integer.MIN_VALUE, reader.nextTextContentAsInt());
+      reader.endElement();
+
+
+      reader.beginElement();
+      Assert.assertEquals("longMax", reader.nextElementName());
+      Assert.assertEquals(Long.MAX_VALUE, reader.nextTextContentAsLong());
+      reader.endElement();
+
+      reader.beginElement();
+      Assert.assertEquals("longMin", reader.nextElementName());
+      Assert.assertEquals(Long.MIN_VALUE, reader.nextTextContentAsLong());
+      reader.endElement();
+
+
+      reader.beginElement();
+      Assert.assertEquals("doubleMax", reader.nextElementName());
+      Assert.assertEquals(Double.MAX_VALUE, reader.nextTextContentAsDouble(), 0);
+      reader.endElement();
+
+      reader.beginElement();
+      Assert.assertEquals("doubleMin", reader.nextElementName());
+      Assert.assertEquals(Double.MIN_VALUE, reader.nextTextContentAsDouble(), 0);
+      reader.endElement();
+
+      reader.beginElement();
+      Assert.assertEquals("boolTrue", reader.nextElementName());
+      Assert.assertTrue(reader.nextTextContentAsBoolean());
+      reader.endElement();
+
+      reader.beginElement();
+      Assert.assertEquals("boolFalse", reader.nextElementName());
+      Assert.assertFalse(reader.nextTextContentAsBoolean());
+      reader.endElement();
+
+      reader.endElement();
+    } finally {
+      reader.close();
+    }
+  }
+
 }

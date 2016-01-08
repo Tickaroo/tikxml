@@ -61,7 +61,7 @@ public class SimpleTypeAdapterTest {
     BufferedSource source = TestUtils.sourceForFile("simple_typeadapater_test.xml");
 
     exception.expect(IOException.class);
-    exception.expectMessage("Could not map the xml attribute with the name 'id' to java class. Have you annotated such a field in your java class to map this xml attribute?");
+    exception.expectMessage("Could not map the xml attribute with the name 'name' to java class. Have you annotated such a field in your java class to map this xml attribute?");
     Company company = tikXml.read(source, Company.class);
 
 

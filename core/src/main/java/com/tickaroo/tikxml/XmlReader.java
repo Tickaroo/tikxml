@@ -552,6 +552,56 @@ public class XmlReader implements Closeable {
   }
 
   /**
+   * Get the next text content of an xml element as integer. Text content is {@code
+   * <element>123</element>}
+   *
+   * @return The xml element's text content as integer
+   * @throws IOException
+   */
+  public int nextTextContentAsInt() throws IOException {
+    // TODO natively support
+    return Integer.parseInt(nextTextContent());
+  }
+
+
+  /**
+   * Get the next text content of an xml element as long. Text content is {@code
+   * <element>123</element>}
+   *
+   * @return The xml element's text content as long
+   * @throws IOException
+   */
+  public long nextTextContentAsLong() throws IOException {
+    // TODO natively support
+    return Long.parseLong(nextTextContent());
+  }
+
+
+  /**
+   * Get the next text content of an xml element as double. Text content is {@code
+   * <element>123</element>}
+   *
+   * @return The xml element's text content as double
+   * @throws IOException
+   */
+  public double nextTextContentAsDouble() throws IOException {
+    // TODO natively support
+    return Double.parseDouble(nextTextContent());
+  }
+
+  /**
+   * Get the next text content of an xml element as boolean. Text content is {@code
+   * <element>123</element>}
+   *
+   * @return The xml element's text content as boolean
+   * @throws IOException
+   */
+  public boolean nextTextContentAsBoolean() throws IOException {
+    // TODO natively support
+    return Boolean.parseBoolean(nextTextContent());
+  }
+
+  /**
    * Returns the index of the last character before starting the CDATA closing tag "{@code ]]>}".
    * This method does not consume the closing CDATA tag.
    *
