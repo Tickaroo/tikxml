@@ -83,5 +83,11 @@ class MockClassElement : TypeElement {
         throw UnsupportedOperationException()
     }
 
+    // Required by Java 8
+    public fun <A : kotlin.Annotation> getAnnotationsByType(p0: java.lang.Class<A>): kotlin.Array<out A>?{
+        return null
+    }
+
     override fun toString() = qualifiedName.toString()
+
 }
