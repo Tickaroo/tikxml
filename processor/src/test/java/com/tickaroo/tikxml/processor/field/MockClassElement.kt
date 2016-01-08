@@ -21,14 +21,21 @@ package com.tickaroo.tikxml.processor.field
 import javax.lang.model.element.*
 import javax.lang.model.type.TypeMirror
 
-interface Java8Support {
+/**
+ * Tricky workaround since Java8 has introduced a new method called getAnnotationsByType()
+ * which Java7 has not. Hence compiling with Java 8 will fail
+ *
+ * https://docs.oracle.com/javase/8/docs/api/java/lang/reflect/AnnotatedElement.html#getAnnotationsByType-java.lang.Class-
+ */
+interface Java8AnnotatedElement {
     fun <T : Annotation> getAnnotationsByType(annotationClass: Class<T>): Array<T>
 }
+
 /**
  *
  * @author Hannes Dorfmann
  */
-class MockClassElement : TypeElement, Java8Support{
+class MockClassElement : TypeElement, Java8AnnotatedElement {
 
     override fun getSimpleName(): Name? {
         throw UnsupportedOperationException()

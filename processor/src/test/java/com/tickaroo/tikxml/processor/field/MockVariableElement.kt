@@ -25,7 +25,7 @@ import javax.lang.model.type.TypeMirror
  *
  * @author Hannes Dorfmann
  */
-class MockVariableElement : VariableElement, Java8Support {
+class MockVariableElement : VariableElement, Java8AnnotatedElement {
 
     override fun getModifiers(): MutableSet<Modifier>? {
         throw UnsupportedOperationException()
