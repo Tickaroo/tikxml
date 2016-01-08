@@ -22,7 +22,7 @@ import com.squareup.javapoet.ClassName
 import com.squareup.javapoet.JavaFile
 import com.squareup.javapoet.ParameterizedTypeName
 import com.squareup.javapoet.TypeSpec
-import com.tickaroo.tikxml.TypeAdapter
+import com.tickaroo.tikxml.typeadapter.TypeAdapter
 import com.tickaroo.tikxml.processor.field.AnnotatedClass
 import javax.annotation.processing.Filer
 import javax.lang.model.element.Modifier

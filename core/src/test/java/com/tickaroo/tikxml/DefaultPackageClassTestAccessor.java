@@ -18,6 +18,8 @@
 
 package com.tickaroo.tikxml;
 
+import com.tickaroo.tikxml.typeadapter.TypeAdapter;
+
 /**
  * Since TypeAdapters has package visibilitly we have this little workaround for testing default
  * packages

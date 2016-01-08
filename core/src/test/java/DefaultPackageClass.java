@@ -17,7 +17,7 @@
  */
 
 import com.tickaroo.tikxml.TikXmlConfig;
-import com.tickaroo.tikxml.TypeAdapter;
+import com.tickaroo.tikxml.typeadapter.TypeAdapter;
 import com.tickaroo.tikxml.XmlReader;
 import com.tickaroo.tikxml.XmlWriter;
 import java.io.IOException;

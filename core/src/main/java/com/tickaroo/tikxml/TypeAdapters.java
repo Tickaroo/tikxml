@@ -18,6 +18,7 @@
 
 package com.tickaroo.tikxml;
 
+import com.tickaroo.tikxml.typeadapter.TypeAdapter;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;

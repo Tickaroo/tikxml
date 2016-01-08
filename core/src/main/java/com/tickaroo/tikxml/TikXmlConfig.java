@@ -18,6 +18,8 @@
 
 package com.tickaroo.tikxml;
 
+import com.tickaroo.tikxml.typeadapter.TypeAdapter;
+
 /**
  * Holds the config for parsing and writing xml via {@link TikXml}
  *

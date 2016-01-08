@@ -18,6 +18,7 @@
 
 package com.tickaroo.tikxml;
 
+import com.tickaroo.tikxml.typeadapter.TypeAdapter;
 import java.io.IOException;
 import okio.BufferedSink;
 import okio.BufferedSource;

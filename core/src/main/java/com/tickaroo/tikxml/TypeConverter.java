@@ -18,6 +18,8 @@
 
 package com.tickaroo.tikxml;
 
+import com.tickaroo.tikxml.typeadapter.TypeAdapter;
+
 /**
  * With a type converter you can specify how to convert a String value to a concrete java object and
  * vice versa. This can be used with @Attribute and @PropertyElement to read and write "primitive"

@@ -432,6 +432,47 @@ public class XmlReader implements Closeable {
 
   }
 
+  /**
+   * Consumes the next attribute's value and returns it as an integer. Assumes that {@link
+   * #nextAttributeName()} has been called before invoking this method
+   *
+   * @return the attributes value as an integer
+   * @throws IOException
+   */
+  public int nextAttributeValueAsInt() throws IOException {
+    // TODO natively support integer
+    return Integer.parseInt(nextAttributeValue());
+  }
+
+
+  /**
+   * Consumes the next attribute's value and returns it as long. Assumes that {@link
+   * #nextAttributeName()} has been called before invoking this method
+   *
+   * @return the attributes value as an long
+   * @throws IOException
+   */
+  public long nextAttributeValueAsLong() throws IOException {
+    // TODO natively support long
+    return Long.parseLong(nextAttributeValue());
+  }
+
+  /**
+   * Consumes the next attribute's value and returns it as boolean. Assumes that {@link
+   * #nextAttributeName()} has been called before invoking this method
+   *
+   * @return the attributes value as an boolean
+   * @throws IOException
+   */
+  public boolean nextAttributeValueAsBoolean() throws IOException {
+    // TODO natively support
+    return Boolean.parseBoolean(nextAttributeValue());
+  }
+
+  public double nextAttributeValueAsDouble() throws IOException {
+    // TODO natively support
+    return Double.parseDouble(nextAttributeValue());
+  }
 
   /**
    * Skip the value of an attribute if you don't want to read the value. {@link

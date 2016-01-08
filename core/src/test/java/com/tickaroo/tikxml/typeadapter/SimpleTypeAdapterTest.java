@@ -16,25 +16,18 @@
  *
  */
 
-package com.tickaroo.tikxml;
+package com.tickaroo.tikxml.typeadapter;
 
-import com.tickaroo.tikxml.typeadapter.TypeAdapter;
-import java.io.IOException;
+import com.tickaroo.tikxml.TikXml;
+import org.junit.Test;
 
 /**
- * This kind of exception will be thrown if {@link TypeAdapters} try to load an {@link TypeAdapter}
- * for a certain class, but no such {@link TypeAdapter} could be found
- *
  * @author Hannes Dorfmann
- * @since 1.0
  */
-public class TypeAdapterNotFoundException extends IOException {
+public class SimpleTypeAdapterTest {
 
-  public TypeAdapterNotFoundException(String message) {
-    super(message);
-  }
-
-  public TypeAdapterNotFoundException(String message, Throwable cause) {
-    super(message, cause);
+  @Test
+  public void readTest(){
+    TikXml tikXml = new TikXml.Builder().build();
   }
 }

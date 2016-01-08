@@ -18,6 +18,8 @@
 
 package com.tickaroo.tikxml;
 
+import com.tickaroo.tikxml.typeadapter.TypeAdapter;
+
 /**
  * @author Hannes Dorfmann
  */
@@ -27,7 +29,7 @@ public class SampleClass {
   String aString;
 
 
-  public static class $TypeAdapter implements TypeAdapter<SampleClass>{
+  public static class $TypeAdapter implements TypeAdapter<SampleClass> {
 
     @Override
     public SampleClass fromXml(XmlReader reader, TikXmlConfig config) {

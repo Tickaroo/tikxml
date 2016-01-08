@@ -16,25 +16,11 @@
  *
  */
 
-package com.tickaroo.tikxml;
-
-import com.tickaroo.tikxml.typeadapter.TypeAdapter;
-import java.io.IOException;
+package com.tickaroo.tikxml.typeadapter;
 
 /**
- * This kind of exception will be thrown if {@link TypeAdapters} try to load an {@link TypeAdapter}
- * for a certain class, but no such {@link TypeAdapter} could be found
- *
  * @author Hannes Dorfmann
- * @since 1.0
  */
-public class TypeAdapterNotFoundException extends IOException {
-
-  public TypeAdapterNotFoundException(String message) {
-    super(message);
-  }
-
-  public TypeAdapterNotFoundException(String message, Throwable cause) {
-    super(message, cause);
-  }
+public class Company {
+  int id;
 }

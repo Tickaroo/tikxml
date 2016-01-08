@@ -18,6 +18,7 @@
 
 package com.tickaroo.tikxml;
 
+import com.tickaroo.tikxml.typeadapter.TypeAdapter;
 import java.io.IOException;
 import org.junit.Assert;
 import org.junit.Rule;

@@ -16,40 +16,40 @@
  *
  */
 
-package com.tickaroo.tikxml.reading;
+package com.tickaroo.tikxml.typeadapter;
 
 import com.tickaroo.tikxml.TikXmlConfig;
-import com.tickaroo.tikxml.typeadapter.TypeAdapter;
 import com.tickaroo.tikxml.XmlReader;
 import com.tickaroo.tikxml.XmlWriter;
 import java.io.IOException;
-import java.util.ArrayList;
 
 /**
  * @author Hannes Dorfmann
  */
-public class CatalogueTypeAdapter implements TypeAdapter<Catalogue> {
+public class CompanySimpleTypeAdapter extends SimpleTypeAdapter<Company> {
 
 
-  @Override
-  public Catalogue fromXml(XmlReader reader, TikXmlConfig config) throws IOException {
+  public CompanySimpleTypeAdapter() {
 
-    Catalogue catalogue = new Catalogue();
-    catalogue.books = new ArrayList<>();
-
-    while (reader.hasElement()) {
-      reader.beginElement();
-      if (reader.nextElementName().equals("book")) {
-        catalogue.books.add(config.getTypeAdapter(Book.class).fromXml(reader, config));
+    attributeBinders.put("id", new AttributeBinder<Company>() {
+      @Override
+      public void fromXml(XmlReader reader, TikXmlConfig config, Company value) throws IOException {
+        value.id = reader.nextAttributeValueAsInt();
       }
-      reader.endElement();
-    }
 
-    return catalogue;
+      @Override
+      public void toXml(XmlWriter writer, TikXmlConfig config, Company value) throws IOException {
+
+      }
+    });
+
   }
+
 
   @Override
-  public void toXml(XmlWriter writer, TikXmlConfig config, Catalogue value) throws IOException {
-
+  protected Company newInstance() {
+    return new Company();
   }
+
+
 }

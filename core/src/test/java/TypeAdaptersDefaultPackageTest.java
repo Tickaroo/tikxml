@@ -17,7 +17,7 @@
  */
 
 import com.tickaroo.tikxml.DefaultPackageClassTestAccessor;
-import com.tickaroo.tikxml.TypeAdapter;
+import com.tickaroo.tikxml.typeadapter.TypeAdapter;
 import java.io.IOException;
 import org.junit.Assert;
 import org.junit.Test;

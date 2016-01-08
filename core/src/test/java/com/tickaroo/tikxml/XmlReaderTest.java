@@ -34,7 +34,7 @@ public class XmlReaderTest {
   @Rule
   public ExpectedException exception = ExpectedException.none();
 
-  public void nullBuffer(){
+  public void nullBuffer() {
     exception.expect(NullPointerException.class);
     XmlReader.of(null);
   }
@@ -658,6 +658,65 @@ public class XmlReaderTest {
       exception.expectMessage("This method can only be invoked after having consumed the opening element via beginElement()");
       reader.skipRemainingElement(); // Forgot to call beginElement() before
 
+    } finally {
+      reader.close();
+    }
+  }
+
+  @Test
+  public void readAttributeAsPrimitiveTypes() throws IOException {
+    long longMax = Long.MAX_VALUE;
+    int intMax = Integer.MAX_VALUE;
+    double doubleMax = Double.MAX_VALUE;
+
+    String xml = "<foo aString=\"a very short string\"  aString2='a very short string' anInt=\"" + intMax + "\" anInt2='" + intMax + "' aLong=\"" + longMax + "\"  aLong2='" + longMax + "' aBool=\"true\" aBool2=\"false\" aBool3='true' aBool4='false'  aDouble=\"" + doubleMax + "\" aDouble2='" + doubleMax + "' />";
+    XmlReader reader = readerFrom(xml);
+
+
+    try {
+      Assert.assertTrue(reader.hasElement());
+      reader.beginElement();
+      Assert.assertEquals("foo", reader.nextElementName());
+
+      Assert.assertEquals("aString", reader.nextAttributeName());
+      Assert.assertEquals("a very short string", reader.nextAttributeValue());
+
+      Assert.assertEquals("aString2", reader.nextAttributeName());
+      Assert.assertEquals("a very short string", reader.nextAttributeValue());
+
+      Assert.assertEquals("anInt", reader.nextAttributeName());
+      Assert.assertEquals(intMax, reader.nextAttributeValueAsInt());
+
+      Assert.assertEquals("anInt2", reader.nextAttributeName());
+      Assert.assertEquals(intMax, reader.nextAttributeValueAsInt());
+
+      Assert.assertEquals("aLong", reader.nextAttributeName());
+      Assert.assertEquals(longMax, reader.nextAttributeValueAsLong());
+
+      Assert.assertEquals("aLong2", reader.nextAttributeName());
+      Assert.assertEquals(longMax, reader.nextAttributeValueAsLong());
+
+      Assert.assertEquals("aBool", reader.nextAttributeName());
+      Assert.assertTrue(reader.nextAttributeValueAsBoolean());
+
+      Assert.assertEquals("aBool2", reader.nextAttributeName());
+      Assert.assertFalse(reader.nextAttributeValueAsBoolean());
+
+      Assert.assertEquals("aBool3", reader.nextAttributeName());
+      Assert.assertTrue(reader.nextAttributeValueAsBoolean());
+
+      Assert.assertEquals("aBool4", reader.nextAttributeName());
+      Assert.assertFalse(reader.nextAttributeValueAsBoolean());
+
+
+      Assert.assertEquals("aDouble", reader.nextAttributeName());
+      Assert.assertEquals(doubleMax, reader.nextAttributeValueAsDouble(), 0);
+
+
+      Assert.assertEquals("aDouble2", reader.nextAttributeName());
+      Assert.assertEquals(doubleMax, reader.nextAttributeValueAsDouble(), 0);
+
+      reader.endElement();
     } finally {
       reader.close();
     }

@@ -16,40 +16,22 @@
  *
  */
 
-package com.tickaroo.tikxml.reading;
+package com.tickaroo.tikxml.typeadapter;
 
 import com.tickaroo.tikxml.TikXmlConfig;
-import com.tickaroo.tikxml.typeadapter.TypeAdapter;
 import com.tickaroo.tikxml.XmlReader;
 import com.tickaroo.tikxml.XmlWriter;
 import java.io.IOException;
-import java.util.ArrayList;
 
 /**
+ * @param <T> the type of the
  * @author Hannes Dorfmann
+ * @since 1.0
  */
-public class CatalogueTypeAdapter implements TypeAdapter<Catalogue> {
+public abstract class AttributeBinder<T> {
 
+  public abstract void fromXml(XmlReader reader, TikXmlConfig config, T value) throws IOException;
 
-  @Override
-  public Catalogue fromXml(XmlReader reader, TikXmlConfig config) throws IOException {
+  public abstract void toXml(XmlWriter writer, TikXmlConfig config, T value) throws IOException;
 
-    Catalogue catalogue = new Catalogue();
-    catalogue.books = new ArrayList<>();
-
-    while (reader.hasElement()) {
-      reader.beginElement();
-      if (reader.nextElementName().equals("book")) {
-        catalogue.books.add(config.getTypeAdapter(Book.class).fromXml(reader, config));
-      }
-      reader.endElement();
-    }
-
-    return catalogue;
-  }
-
-  @Override
-  public void toXml(XmlWriter writer, TikXmlConfig config, Catalogue value) throws IOException {
-
-  }
 }
