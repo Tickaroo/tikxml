@@ -18,11 +18,16 @@
 
 package com.tickaroo.tikxml.typeadapter;
 
+import com.tickaroo.tikxml.TikXmlConfig;
+import com.tickaroo.tikxml.XmlReader;
+import java.io.IOException;
+
 /**
- *
+ * @param <T> the type of the parents object
  * @author Hannes Dorfmann
  * @since 1.0
- * @param <T> the type of the parents object
  */
-public class ChildElementBinder<T> {
+public abstract class ChildElementBinder<T> {
+
+  public abstract void fromXml(XmlReader reader, TikXmlConfig config, T value) throws IOException;
 }

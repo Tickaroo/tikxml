@@ -18,13 +18,11 @@
 
 package com.tickaroo.tikxml.processor.field
 
-import com.tickaroo.tikxml.processor.ProcessingException
+import com.tickaroo.tikxml.processor.expectException
+import com.tickaroo.tikxml.processor.mock.MockVariableElement
 import org.junit.Test
 import javax.lang.model.element.VariableElement
-import kotlin.collections.single
-import kotlin.reflect.KClass
 import kotlin.test.assertEquals
-import kotlin.test.fail
 
 /**
  *
@@ -34,67 +32,48 @@ class PathDetectorTest {
 
     val element: VariableElement = MockVariableElement()
 
-    fun expectException(clazz: KClass<out Exception>, errorMsg: String? = null, blockToExecute: () -> Unit) {
-        try {
-            blockToExecute()
-            fail("Expected exception of type $clazz but no Exception has been thrown")
-        } catch(t: Throwable) {
-
-            /*
-            if (clazz != t::class) {
-                fail("Expected an exception of type $clazz but got $t")
-            }
-
-            if (errorMsg != null && errorMsg != t.message) {
-                fail("Excpected a error message $errorMsg\nbut got: ${t.message}")
-            }
-
-            */
-        }
-    }
-
     @Test
     fun emptyPath() {
-        expectException(ProcessingException::class) {
+        expectException {
             PathDetector.extractPathSegments(element, "")
         }
     }
 
     @Test
     fun whiteSpace() {
-        expectException(ProcessingException::class) {
+        expectException {
             PathDetector.extractPathSegments(element, " ")
         }
 
-        expectException(ProcessingException::class) {
+        expectException {
             PathDetector.extractPathSegments(element, "  ")
         }
     }
 
     @Test
     fun whiteSpaceInSegment() {
-        expectException(ProcessingException::class) {
+        expectException {
             PathDetector.extractPathSegments(element, " /")
         }
     }
 
     @Test
     fun whiteSpaceInSegment2() {
-        expectException(ProcessingException::class) {
+        expectException {
             PathDetector.extractPathSegments(element, "asd/ ")
         }
     }
 
     @Test
     fun whiteSpaceInSegment3() {
-        expectException(ProcessingException::class) {
+        expectException {
             PathDetector.extractPathSegments(element, "asd /foo")
         }
     }
 
     @Test
     fun whiteSpaceInSegment4() {
-        expectException(ProcessingException::class) {
+        expectException {
             PathDetector.extractPathSegments(element, "asd/f oo")
         }
     }
@@ -121,21 +100,21 @@ class PathDetectorTest {
     }
 
     @Test fun tripplePathTrailingSlash() {
-        expectException(ProcessingException::class) {
+        expectException {
             PathDetector.extractPathSegments(element, "foo/bar/asd/")
         }
 
     }
 
     @Test fun tripplePathLeadingSlash() {
-        expectException(ProcessingException::class) {
+        expectException {
             PathDetector.extractPathSegments(element, "/foo/bar/asd")
         }
 
     }
 
     @Test fun tripplePathLeadingAndTrailingSlash() {
-        expectException(ProcessingException::class) {
+        expectException {
             PathDetector.extractPathSegments(element, "/foo/bar/asd/")
         }
 

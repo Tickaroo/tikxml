@@ -1,0 +1,155 @@
+/*
+ * Copyright (C) 2015 Hannes Dorfmann
+ * Copyright (C) 2015 Tickaroo, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *        http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ */
+
+package com.tickaroo.tikxml.processor.xml
+
+import com.tickaroo.tikxml.annotation.Element
+import com.tickaroo.tikxml.annotation.Path
+import com.tickaroo.tikxml.processor.ProcessingException
+import com.tickaroo.tikxml.processor.field.AttributeField
+import com.tickaroo.tikxml.processor.utils.getSurroundingClassQualifiedName
+
+/**
+ *
+ * @author Hannes Dorfmann
+ */
+interface XmlElement {
+
+
+    /**
+     * Immutable to the outside, however should be mutable for the inside
+     */
+    val attributes: Map<String, AttributeField>
+    val childElements: Map<String, XmlChildElement>
+
+    /**
+     * Can this [XmlElement] be merged with another [XmlElement] ?
+     * For instance a [PlaceholderXmlElement] can be merged with [com.tickaroo.tikxml.processor.field.PropertyField]
+     * because his xml child elements and xml attributes can be parse within the root elements TypeAdapter,
+     * whereas [com.tickaroo.tikxml.processor.field.ElementField] will be parsed in his own TypeAdapter
+     * and therefore the xml attributes and child elements are not parsed by the root elements TypeAdapter,
+     * but rather by the TypeAdapter generated for the corresponding [com.tickaroo.tikxml.processor.field.ElementField].
+     * Thus, [com.tickaroo.tikxml.processor.field.ElementField] is not mergeable.
+     */
+    fun isXmlElementMergeable(): Boolean
+
+    /**
+     * Get the element at the given path
+     */
+    fun getXmlElementForPath(path: List<String>): XmlElement {
+
+        var currentElement = this
+
+        for (segment in path) {
+            val childElement = currentElement.childElements[segment]
+
+            if (childElement == null) {
+
+                // Ugly hack! Can't think of a better alterniative right now
+                val placeholderElement = when (currentElement) {
+                    is XmlRootElement -> PlaceholderXmlElement(segment, null, currentElement.element)
+                    is XmlChildElement -> PlaceholderXmlElement(segment, currentElement.element, null)
+                    else -> throw UnsupportedOperationException("Oops this should never happen. Please fill an issue here: https://github.com/Tickaroo/tikxml/issues")
+                }
+
+                (currentElement.childElements as MutableMap).put(segment, placeholderElement)
+                currentElement = placeholderElement
+            } else {
+                currentElement = childElement
+            }
+        }
+
+        return currentElement
+    }
+
+    /**
+     * Add an Attribute to the given class
+     */
+    fun addAttribute(attributeField: AttributeField, path: List<String>) {
+
+        val currentElement = getXmlElementForPath(path)
+        if (!currentElement.isXmlElementMergeable()) {
+            throw ProcessingException(attributeField.element, "This kind of Element can't have attributes that are accessed from outside of the TypeAdapter that is generated from @${Element::class.simpleName} annotated class! Most likely the @${Path::class.simpleName} is in conflict with an @${Element::class.simpleName} annotation.")
+        }
+
+        val existingAttribute = currentElement.attributes[attributeField.name]
+
+        if (existingAttribute != null) {
+            val conflictingField = existingAttribute.element
+            val variableField = attributeField.element
+            throw ProcessingException(variableField, "Conflict: The field '${variableField.toString()}' "
+                    + "in class ${variableField.getSurroundingClassQualifiedName()} has the same xml attribute name "
+                    + "'${attributeField.name}' as the field '${conflictingField.simpleName}' in class "
+                    + "${conflictingField.getSurroundingClassQualifiedName()}. "
+                    + "You can specify another name via annotations.")
+        } else {
+            (currentElement.attributes as MutableMap).put(attributeField.name, attributeField);
+        }
+
+    }
+
+    /**
+     * Adds a child element at the given path
+     */
+    fun addChildElement(toInsert: XmlChildElement, path: List<String>) {
+
+        val currentElement = getXmlElementForPath(path)
+
+        val existingElement = currentElement.childElements[toInsert.name]
+        if (existingElement != null) {
+
+            if (toInsert.isXmlElementMergeable() && existingElement.isXmlElementMergeable() && existingElement is PlaceholderXmlElement) {
+                mergeXmlElements(currentElement, existingElement, toInsert)
+            } else {
+                // Conflict
+                val variableField = toInsert.element
+                throw ProcessingException(variableField, "Conflict: $toInsert is in conflict with $existingElement. You can specify another name via annotations.")
+            }
+
+        } else {
+            (currentElement.childElements as MutableMap).put(toInsert.name, toInsert)
+        }
+
+    }
+
+    private fun mergeXmlElements(parentElement: XmlElement, toMerge: XmlChildElement, into: XmlChildElement) {
+
+        // merge attributes
+        for ((name, attributeField) in toMerge.attributes) {
+            if (into.attributes[name] != null) {
+                val variableField = toMerge.element
+                throw ProcessingException(variableField, "Conflict: $toMerge is in conflict with $into . You can specify another name via annotations.")
+            }
+
+            (into.attributes as MutableMap).put(name, attributeField)
+        }
+
+        // merge child elements
+        for ((name, element) in toMerge.childElements) {
+            if (into.childElements[name] != null) {
+                val variableField = toMerge.element
+                throw ProcessingException(variableField, "Conflict: $toMerge is in conflict with $into . You can specify another name via annotations.")
+            }
+
+            (into.childElements as MutableMap).put(name, element)
+        }
+
+        (parentElement.childElements as MutableMap).put(into.name, into)
+    }
+
+}

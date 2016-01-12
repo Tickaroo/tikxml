@@ -35,9 +35,6 @@ import javax.lang.model.element.TypeElement
 import javax.lang.model.element.VariableElement
 import javax.lang.model.util.Elements
 import javax.lang.model.util.Types
-import kotlin.collections.filter
-import kotlin.collections.forEach
-import kotlin.text.*
 
 /**
  * Scans an [com.tickaroo.tikxml.annotation.Xml] annotated class and fulfills the  [AnnotatedClass]
@@ -115,6 +112,7 @@ class FieldScanner(protected val elementUtils: Elements, protected val typeUtils
                         throw ProcessingException(it, "Field '$it' is marked as TextContent and another xml element like @${Attribute::class.simpleName}, @${PropertyElement::class.simpleName} or @${Element::class.simpleName} at the same time which is not allowed. A field can only be exactly one of those types.")
                     }
 
+                    // TODO remove this
                     // check for conflicts
                     val existingField: NamedField? = annotatedClass.fields[field.name]
                     if (existingField != null) {

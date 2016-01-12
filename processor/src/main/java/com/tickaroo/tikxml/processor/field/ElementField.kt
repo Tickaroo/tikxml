@@ -18,6 +18,8 @@
 
 package com.tickaroo.tikxml.processor.field
 
+import com.tickaroo.tikxml.processor.xml.XmlChildElement
+import java.util.*
 import javax.lang.model.element.VariableElement
 import javax.lang.model.type.TypeMirror
 
@@ -25,8 +27,12 @@ import javax.lang.model.type.TypeMirror
  * Represents a Field with [com.tickaroo.tikxml.annotation.Element] annotation
  * @author Hannes Dorfmann
  */
-open class ElementField(element: VariableElement, name: String, required: Boolean?) : NamedField(element, name, required) {
+open class ElementField(element: VariableElement, name: String, required: Boolean? = null) : NamedField(element, name, required), XmlChildElement {
 
+    override val attributes = LinkedHashMap<String, AttributeField>()
+    override val childElements = LinkedHashMap<String, XmlChildElement>()
+
+    override fun isXmlElementMergeable() = false
 }
 
-class ListElementField(element: VariableElement, name: String, required: Boolean?, val listType: TypeMirror, val inlineList: Boolean) : ElementField(element, name, required)
+class ListElementField(element: VariableElement, name: String, required: Boolean? = null, val listType: TypeMirror, val inlineList: Boolean) : ElementField(element, name, required)

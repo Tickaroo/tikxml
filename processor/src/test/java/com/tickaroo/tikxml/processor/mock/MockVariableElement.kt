@@ -16,7 +16,7 @@
  *
  */
 
-package com.tickaroo.tikxml.processor.field
+package com.tickaroo.tikxml.processor.mock
 
 import javax.lang.model.element.*
 import javax.lang.model.type.TypeMirror
@@ -25,13 +25,14 @@ import javax.lang.model.type.TypeMirror
  *
  * @author Hannes Dorfmann
  */
-class MockVariableElement : VariableElement, Java8AnnotatedElement {
+class MockVariableElement(private val fieldName: String = "mockField") : VariableElement, Java8AnnotatedElement {
+
 
     override fun getModifiers(): MutableSet<Modifier>? {
         throw UnsupportedOperationException()
     }
 
-    override fun getSimpleName() = MockName("mockField")
+    override fun getSimpleName() = MockName(fieldName)
 
     override fun getKind(): ElementKind? {
         throw UnsupportedOperationException()

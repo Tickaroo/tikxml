@@ -16,22 +16,23 @@
  *
  */
 
-package com.tickaroo.tikxml.processor.field
+package com.tickaroo.tikxml.processor.mock
 
-import javax.lang.model.element.Name
-import kotlin.text.contentEquals
+import com.tickaroo.tikxml.processor.field.AttributeField
+import com.tickaroo.tikxml.processor.xml.XmlChildElement
+import com.tickaroo.tikxml.processor.xml.XmlRootElement
+import java.util.*
+import javax.lang.model.element.TypeElement
 
 /**
  *
  * @author Hannes Dorfmann
  */
-class MockName(val name: String) : Name {
+class MockXmlElement(override val nameAsRoo: String = "mockRoot", override val element: TypeElement = MockClassElement()) : XmlRootElement {
 
-    override val length = name.length
+    override val attributes = HashMap<String, AttributeField>()
+    override val childElements = HashMap<String, XmlChildElement>()
 
-    override fun get(index: Int) = name.get(index)
+    override fun isXmlElementMergeable() = true
 
-    override fun subSequence(start: Int, end: Int) = name.subSequence(start, end)
-
-    override fun contentEquals(cs: CharSequence?) = if ( cs == null) false else name.contentEquals(cs)
 }

@@ -457,7 +457,9 @@ Have a look at the following example: Imagine we have a xml representation of a 
   <bookstore name="Lukes bookstore">
     <inventory>
       <book title="Effective Java" />
-      <newspaper title="New York Times n. 192" />
+      <newspaper>
+          <title>New York Times n. 192</title>
+      </newspaper>
     </inventory>
   </bookstore>
 </shop>
@@ -491,6 +493,91 @@ class Shop {
 It will also take that "virtual emulated" nodes into account when writing xml.
 
 Please note that this is not **XPath**. It looks similar to XPath, but XPath is not supported by `TikXml`.
+
+However, with `@Path` you can't access xml attribute or child elements that belongs to another type, because for each type an own `TypeAdapter` will be generated who is responsible to read and write xml.
+Let's take a look at the same xml as shown before but change the structure we want to parse this data into:
+
+```xml
+<shop>
+  <bookstore name="Lukes bookstore">
+    <inventory>
+      <book title="Effective Java" />
+      <newspaper>
+        <title>New York Times n. 192</title>
+      </newspaper>
+    </inventory>
+  </bookstore>
+</shop>
+```
+
+```java
+@Xml
+class Shop {
+
+  @Path("bookstore") // ERROR: attribute name can't be accesses because belongs to TypeAdapter of BookStore and not to TypeAdapter of Shop
+  @Attribute
+  String name
+  
+  @Element
+  BookStore bookstore;
+    
+}
+
+@Xml
+class BookStore {
+
+   @Element
+   Inventory inventory;
+   
+   @Path("inventory")    // ERROR: Element can't be accessed because belongs to TypeAdapter of Inventory
+   @Element
+   Book book;
+   
+   
+   @Path("inventory")    // ERROR: Element can't be accessed because belongs to TypeAdapter of Inventory
+   @Element
+   Newspaper newspaper;
+
+}
+```
+
+Step by step explanation:
+`Shop` contains an `@Element BookStore`. `@Element` means that this is a child element. Therefore `TikXml` will generate a TypeAdapter (a xml reader/parser and xml writer) for `BookStore`. 
+When `TikXml` is reading the xml it will start with `ShopTypeAdapter`. Then when `<bookstore>` xml tag will be detected, the `ShopTypeAdapter` wont continue to parse this `<bookstore>` xml tag. 
+Rather he asks the `BookStoreTypeAdapter` to continue. Then the `BookStoreTypeAdapter` will continue parsing the `<bookstore>` xml tag. 
+Therefore the attribute name of `<bookstore name="Lukes bookstore">` will be consumed by `BookStoreTypeAdapter`. Thus, `ShopTypeAdapter` can't consume this attribute again because it's already consumed by `BookStoreTypeAdapter`.
+Exactly the same is true for `<inventory>` xml tag. As the field `Inventory inventory` in class `BookStore` is annotated with `@Element` `TikXml` will generate a `InventoryTypeAdapter` that consumes the whole `<inventory>` xml tag.
+
+**Basically the content of an xml tag that already maps to an java class field annoteted with `@Element` (incl. lists) can't be accessed via `@Path` from outside.**
+
+So when is `@Path` useful? As already described at the beginning of this section, with `@Path` we can't get rich of unnecessary object allocation for xml tags that just wraps the real data we are interested in.
+Performance with `@Path` is still the same as parsing each xml tag into its own java class.
+i.e parsing `<shop>` into Shop.class, `<bookstore>` into BookStore.class, `<inventory>` into Inventory.class, `<book>` into Book.class and `<newspaper>` into  Newspaper.class will have the same performance as pasing the same xml data into the following class annotated with `@Path`:
+
+```java
+@Xml
+class Shop {
+
+  @Path("bookstore")
+  @Attribute("name")   
+  String bookstoreName; //  "Lukes bookstore"
+  
+  @Path("bookstore/inventory/book")
+  @Attribute("title")
+  String bookName;     // "Effective Java"
+  
+  @Path("bookstore/inventory/newspaper")
+  @PropertyElement("title")
+  String newspaperTitle;     // "New York Times n. 192"
+    
+}
+```
+
+Instead of allocating an java objects for `Shop` `Bookstore`, `Inventory`, `Book` and `Newspaper` (5 objects)
+we are just allocating one `Shop` object. So the only reason `@Path` is useful is if you have memory concerns. Usually this should be fixed on backend side by providing a more flat xml document. Unfortunately, we have experienced that in practice this is not always possible for various reasons. `@Path` is exactly for such situations.
+
+Please note that the Shop example is a very dumb example. Usually you would prefer having an object `Book` and `Newspaper` (with more attributes etc.). This example is just to illustrate (exaggerated) when `@Path` could be useful (memory concerns when dealing with very very large xml documents with lot of "wrapper" xml tags).
+
 
 ## Text Content
 In XML the content of an xml element can be a mix of text and child elements:

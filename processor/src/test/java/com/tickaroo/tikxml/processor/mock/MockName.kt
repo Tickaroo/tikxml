@@ -16,21 +16,23 @@
  *
  */
 
-package com.tickaroo.tikxml.processor.field
+package com.tickaroo.tikxml.processor.mock
 
-import com.tickaroo.tikxml.processor.utils.getSurroundingClassQualifiedName
-import javax.lang.model.element.VariableElement
+import javax.lang.model.element.Name
 
 /**
- * Represents a field where we want to parse xml data into or write xml data from.
  *
  * @author Hannes Dorfmann
  */
-open class NamedField(
-        element: VariableElement,
-        val name: String,
-        required: Boolean? = null) : Field(element, required) { // required == null means take default value of TikXml
+class MockName(val name: String) : Name {
 
+    override val length = name.length
 
-    override fun toString() = "field '${element.simpleName}' in class ${element.getSurroundingClassQualifiedName()}"
+    override fun get(index: Int) = name.get(index)
+
+    override fun subSequence(start: Int, end: Int) = name.subSequence(start, end)
+
+    override fun contentEquals(cs: CharSequence?) = if ( cs == null) false else name.contentEquals(cs)
+
+    override fun toString(): String = name
 }

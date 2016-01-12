@@ -25,8 +25,7 @@ import javax.lang.model.element.VariableElement
  * Represents a java class field that is mapped to xml
  * @author Hannes Dorfmann
  */
-open class Field(val element: VariableElement, val required: Boolean?) {
+open class Field(val element: VariableElement, val required: Boolean? = null) {
 
     lateinit var accessPolicy: FieldAccessPolicy
-    val pathSegments = PathDetector.getSegments(element)
 }
