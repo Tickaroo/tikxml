@@ -81,7 +81,7 @@ interface XmlElement {
 
         val currentElement = getXmlElementForPath(path)
         if (!currentElement.isXmlElementAccessableFromOutsideTypeAdapter()) {
-            throw ProcessingException(attributeField.element, "This kind of Element can't have attributes that are accessed from outside of the TypeAdapter that is generated from @${Element::class.simpleName} annotated class! Most likely the @${Path::class.simpleName} is in conflict with an @${Element::class.simpleName} annotation.")
+            throw ProcessingException(currentElement.element, "Element $currentElement can't have attributes that are accessed from outside of the TypeAdapter that is generated from @${Element::class.simpleName} annotated class! Therefore attribute $attributeField can't be added. Most likely the @${Path::class.simpleName} is in conflict with an @${Element::class.simpleName} annotation.")
         }
 
         val existingAttribute = currentElement.attributes[attributeField.name]

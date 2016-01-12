@@ -1393,4 +1393,110 @@ class AnnotationOnlyFieldDetectorStrategyTest {
                 .that(componentFile).processedWith(XmlProcessor())
                 .compilesWithoutError()
     }
+
+    @Test
+    fun attributeAndPathConflict1() {
+        val componentFile = JavaFileObjects.forSourceLines("test.PathAnnotation",
+                "package test;",
+                "",
+                "@${Xml::class.java.canonicalName}(scanMode = ${ScanMode::class.qualifiedName}.${ScanMode.ANNOTATIONS_ONLY})",
+                "class PathAnnotation {",
+                "   @${Path::class.qualifiedName}(\"foo\")",
+                "   @${Attribute::class.qualifiedName}",
+                "   int bar;",
+                "",
+                "   @${Element::class.qualifiedName}",
+                "   Other foo;",
+                "",
+                "   @${Xml::class.java.canonicalName}(scanMode = ${ScanMode::class.qualifiedName}.${ScanMode.ANNOTATIONS_ONLY})",
+                "   public class Other {}",
+                "}"
+        )
+
+        Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
+                .that(componentFile).processedWith(XmlProcessor())
+                .failsToCompile()
+
+
+                .withErrorContaining("Conflict: field 'foo' in class test.PathAnnotation is in conflict with test.PathAnnotation. Maybe both have the same xml name 'foo' (you can change that via annotations) or @${Path::class.simpleName} is causing this conflict.")
+    }
+
+    @Test
+    fun attributeAndPathConflict2() {
+        val componentFile = JavaFileObjects.forSourceLines("test.PathAnnotation",
+                "package test;",
+                "",
+                "@${Xml::class.java.canonicalName}(scanMode = ${ScanMode::class.qualifiedName}.${ScanMode.ANNOTATIONS_ONLY})",
+                "class PathAnnotation {",
+                "   @${Element::class.qualifiedName}",
+                "   Other foo;",
+                "",
+                "   @${Path::class.qualifiedName}(\"foo\")",
+                "   @${Attribute::class.qualifiedName}",
+                "   int bar;",
+                "",
+                "   @${Xml::class.java.canonicalName}(scanMode = ${ScanMode::class.qualifiedName}.${ScanMode.ANNOTATIONS_ONLY})",
+                "   public class Other {}",
+                "}"
+        )
+
+        Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
+                .that(componentFile).processedWith(XmlProcessor())
+                .failsToCompile()
+                .withErrorContaining("Element field 'foo' in class test.PathAnnotation can't have attributes that are accessed from outside of the TypeAdapter that is generated from @${Element::class.simpleName} annotated class! Therefore attribute field 'bar' in class test.PathAnnotation can't be added. Most likely the @${Path::class.simpleName} is in conflict with an @${Element::class.simpleName} annotation.")
+    }
+
+    @Test
+    fun attributeAndPathConflictWithSubPath() {
+        val componentFile = JavaFileObjects.forSourceLines("test.PathAnnotation",
+                "package test;",
+                "",
+                "@${Xml::class.java.canonicalName}(scanMode = ${ScanMode::class.qualifiedName}.${ScanMode.ANNOTATIONS_ONLY})",
+                "class PathAnnotation {",
+                "   @${Path::class.qualifiedName}(\"asd\")",
+                "   @${Element::class.qualifiedName}",
+                "   Other foo;",
+                "",
+                "   @${Path::class.qualifiedName}(\"asd/foo\")",
+                "   @${Attribute::class.qualifiedName}",
+                "   int bar;",
+                "",
+                "   @${Xml::class.java.canonicalName}(scanMode = ${ScanMode::class.qualifiedName}.${ScanMode.ANNOTATIONS_ONLY})",
+                "   public class Other {}",
+                "}"
+        )
+
+        Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
+                .that(componentFile).processedWith(XmlProcessor())
+                .failsToCompile()
+                .withErrorContaining("Element field 'foo' in class test.PathAnnotation can't have attributes that are accessed from outside of the TypeAdapter that is generated from @${Element::class.simpleName} annotated class! Therefore attribute field 'bar' in class test.PathAnnotation can't be added. Most likely the @${Path::class.simpleName} is in conflict with an @${Element::class.simpleName} annotation.")
+    }
+
+    @Test
+    fun attributeAndPathConflictWithSubPath2() {
+        val componentFile = JavaFileObjects.forSourceLines("test.PathAnnotation",
+                "package test;",
+                "",
+                "@${Xml::class.java.canonicalName}(scanMode = ${ScanMode::class.qualifiedName}.${ScanMode.ANNOTATIONS_ONLY})",
+                "class PathAnnotation {",
+                "   @${Path::class.qualifiedName}(\"asd/foo\")",
+                "   @${Attribute::class.qualifiedName}",
+                "   int bar;",
+                "",
+                "   @${Path::class.qualifiedName}(\"asd\")",
+                "   @${Element::class.qualifiedName}",
+                "   Other foo;",
+                "",
+                "   @${Xml::class.java.canonicalName}(scanMode = ${ScanMode::class.qualifiedName}.${ScanMode.ANNOTATIONS_ONLY})",
+                "   public class Other {}",
+                "}"
+        )
+
+        Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
+                .that(componentFile).processedWith(XmlProcessor())
+                .failsToCompile()
+
+
+                .withErrorContaining("Conflict: field 'foo' in class test.PathAnnotation is in conflict with test.PathAnnotation. Maybe both have the same xml name 'foo' (you can change that via annotations) or @${Path::class.simpleName} is causing this conflict.")
+    }
 }

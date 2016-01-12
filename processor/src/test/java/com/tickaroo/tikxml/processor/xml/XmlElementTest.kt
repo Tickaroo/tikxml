@@ -209,7 +209,7 @@ class XmlElementTest {
 
 
         // Add attribute to foo node should fail
-        expectException("This kind of Element can't have attributes that are accessed from outside of the TypeAdapter that is generated from @Element annotated class! Most likely the @${Path::class.simpleName} is in conflict with an @${Element::class.simpleName} annotation.") {
+        expectException("Element field 'foo' in class mocked.MockedClass can't have attributes that are accessed from outside of the TypeAdapter that is generated from @${Element::class.simpleName} annotated class! Therefore attribute field 'attribute1' in class mocked.MockedClass can't be added. Most likely the @${Path::class.simpleName} is in conflict with an @${Element::class.simpleName} annotation.") {
             rootElement.addAttribute(attribute, attributePath)
         }
 
