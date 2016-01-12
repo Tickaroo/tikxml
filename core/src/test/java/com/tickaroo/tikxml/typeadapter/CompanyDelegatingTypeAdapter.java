@@ -26,10 +26,10 @@ import java.io.IOException;
 /**
  * @author Hannes Dorfmann
  */
-public class CompanySimpleTypeAdapter extends SimpleTypeAdapter<Company> {
+public class CompanyDelegatingTypeAdapter extends DelegatingTypeAdapter<Company> {
 
 
-  public CompanySimpleTypeAdapter() {
+  public CompanyDelegatingTypeAdapter() {
 
     attributeBinders.put("id", new AttributeBinder<Company>() {
       @Override

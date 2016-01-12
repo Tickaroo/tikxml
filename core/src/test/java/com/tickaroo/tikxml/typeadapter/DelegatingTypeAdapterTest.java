@@ -30,7 +30,7 @@ import org.junit.rules.ExpectedException;
 /**
  * @author Hannes Dorfmann
  */
-public class SimpleTypeAdapterTest {
+public class DelegatingTypeAdapterTest {
 
   @Rule
   public ExpectedException exception = ExpectedException.none();
@@ -38,7 +38,7 @@ public class SimpleTypeAdapterTest {
   @Test
   public void readTest() throws IOException {
     TikXml tikXml = new TikXml.Builder().
-        addTypeAdapter(Company.class, new CompanySimpleTypeAdapter())
+        addTypeAdapter(Company.class, new CompanyDelegatingTypeAdapter())
         .build();
 
     BufferedSource source = TestUtils.sourceForFile("simple_typeadapater_test.xml");
@@ -54,7 +54,7 @@ public class SimpleTypeAdapterTest {
   public void failUnmappedAttribute() throws IOException {
     TikXml tikXml = new TikXml.Builder()
         .throwExceptionOnMissingMapping(true)
-        .addTypeAdapter(Company.class, new CompanySimpleTypeAdapterWithoutNameAttribute())
+        .addTypeAdapter(Company.class, new CompanyDelegatingTypeAdapterWithoutNameAttribute())
         .build();
 
 
@@ -72,7 +72,7 @@ public class SimpleTypeAdapterTest {
   public void ignoreUnmappedAttribute() throws IOException {
     TikXml tikXml = new TikXml.Builder()
         .throwExceptionOnMissingMapping(false)
-        .addTypeAdapter(Company.class, new CompanySimpleTypeAdapterWithoutNameAttribute())
+        .addTypeAdapter(Company.class, new CompanyDelegatingTypeAdapterWithoutNameAttribute())
         .build();
 
 

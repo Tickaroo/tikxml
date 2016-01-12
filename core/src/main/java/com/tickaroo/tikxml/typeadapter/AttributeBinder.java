@@ -24,7 +24,7 @@ import com.tickaroo.tikxml.XmlWriter;
 import java.io.IOException;
 
 /**
- * This binder is used with {@link SimpleTypeAdapter} to delegate the work of reading and writing an
+ * This binder is used with {@link DelegatingTypeAdapter} to delegate the work of reading and writing an
  * xml attribute.
  *
  * @param <T> the type of the parents object
