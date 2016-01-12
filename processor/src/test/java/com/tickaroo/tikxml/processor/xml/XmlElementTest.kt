@@ -130,7 +130,7 @@ class XmlElementTest {
         rootElement.addChildElement(childElement1, path1)
         assertTrue(childElement1 == rootElement.getXmlElementForPath(path1).childElements["foo"])
 
-        expectException("Conflict: field 'foo' in class mocked.MockedClass is in conflict with field 'foo' in class mocked.MockedClass. You can specify another name via annotations.") {
+        expectException("Conflict: field 'foo' in class mocked.MockedClass is in conflict with field 'foo' in class mocked.MockedClass. Maybe both have the same xml name 'foo' (you can change that via annotations) or @${Path::class.simpleName} is causing this conflict.") {
             rootElement.addChildElement(childElement2, path2)
         }
     }
@@ -192,7 +192,7 @@ class XmlElementTest {
         rootElement.addAttribute(attribute, attributePath)
         assertTrue(rootElement.getXmlElementForPath(attributePath) is PlaceholderXmlElement)
 
-        expectException ("Conflict: field 'foo' in class mocked.MockedClass is in conflict with mocked.MockedClass. You can specify another name via annotations.") {
+        expectException ("Conflict: field 'foo' in class mocked.MockedClass is in conflict with mocked.MockedClass. Maybe both have the same xml name 'foo' (you can change that via annotations) or @${Path::class.simpleName} is causing this conflict.") {
             rootElement.addChildElement(childElement, emptyList()) // Add foo node
         }
     }

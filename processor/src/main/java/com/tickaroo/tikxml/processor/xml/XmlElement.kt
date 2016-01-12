@@ -30,6 +30,7 @@ import com.tickaroo.tikxml.processor.utils.getSurroundingClassQualifiedName
  */
 interface XmlElement {
 
+    val element: javax.lang.model.element.Element
 
     /**
      * Immutable to the outside, however should be mutable for the inside
@@ -46,7 +47,7 @@ interface XmlElement {
      * but rather by the TypeAdapter generated for the corresponding [com.tickaroo.tikxml.processor.field.ElementField].
      * Thus, [com.tickaroo.tikxml.processor.field.ElementField] is not mergeable.
      */
-    fun isXmlElementMergeable(): Boolean
+    fun isXmlElementAccessableFromOutsideTypeAdapter(): Boolean
 
     /**
      * Get the element at the given path
@@ -61,11 +62,7 @@ interface XmlElement {
             if (childElement == null) {
 
                 // Ugly hack! Can't think of a better alterniative right now
-                val placeholderElement = when (currentElement) {
-                    is XmlRootElement -> PlaceholderXmlElement(segment, null, currentElement.element)
-                    is XmlChildElement -> PlaceholderXmlElement(segment, currentElement.element, null)
-                    else -> throw UnsupportedOperationException("Oops this should never happen. Please fill an issue here: https://github.com/Tickaroo/tikxml/issues")
-                }
+                val placeholderElement = PlaceholderXmlElement(segment, currentElement.element)
 
                 (currentElement.childElements as MutableMap).put(segment, placeholderElement)
                 currentElement = placeholderElement
@@ -83,7 +80,7 @@ interface XmlElement {
     fun addAttribute(attributeField: AttributeField, path: List<String>) {
 
         val currentElement = getXmlElementForPath(path)
-        if (!currentElement.isXmlElementMergeable()) {
+        if (!currentElement.isXmlElementAccessableFromOutsideTypeAdapter()) {
             throw ProcessingException(attributeField.element, "This kind of Element can't have attributes that are accessed from outside of the TypeAdapter that is generated from @${Element::class.simpleName} annotated class! Most likely the @${Path::class.simpleName} is in conflict with an @${Element::class.simpleName} annotation.")
         }
 
@@ -113,12 +110,12 @@ interface XmlElement {
         val existingElement = currentElement.childElements[toInsert.name]
         if (existingElement != null) {
 
-            if (toInsert.isXmlElementMergeable() && existingElement.isXmlElementMergeable() && existingElement is PlaceholderXmlElement) {
+            if (toInsert.isXmlElementAccessableFromOutsideTypeAdapter() && existingElement.isXmlElementAccessableFromOutsideTypeAdapter() && existingElement is PlaceholderXmlElement) {
                 mergeXmlElements(currentElement, existingElement, toInsert)
             } else {
                 // Conflict
                 val variableField = toInsert.element
-                throw ProcessingException(variableField, "Conflict: $toInsert is in conflict with $existingElement. You can specify another name via annotations.")
+                throw ProcessingException(variableField, "Conflict: $toInsert is in conflict with $existingElement. Maybe both have the same xml name '${toInsert.name}' (you can change that via annotations) or @${Path::class.simpleName} is causing this conflict.")
             }
 
         } else {
@@ -133,7 +130,7 @@ interface XmlElement {
         for ((name, attributeField) in toMerge.attributes) {
             if (into.attributes[name] != null) {
                 val variableField = toMerge.element
-                throw ProcessingException(variableField, "Conflict: $toMerge is in conflict with $into . You can specify another name via annotations.")
+                throw ProcessingException(variableField, "Conflict: $toMerge has the same xml attribute name '$name' as $into . You can specify another name via annotations.")
             }
 
             (into.attributes as MutableMap).put(name, attributeField)
@@ -143,7 +140,7 @@ interface XmlElement {
         for ((name, element) in toMerge.childElements) {
             if (into.childElements[name] != null) {
                 val variableField = toMerge.element
-                throw ProcessingException(variableField, "Conflict: $toMerge is in conflict with $into . You can specify another name via annotations.")
+                throw ProcessingException(variableField, "Conflict: $toMerge is in conflict with $into. Maybe both have the same xml name '$name' (you can change that via annotations) or @${Path::class.simpleName} is causing this conflict.")
             }
 
             (into.childElements as MutableMap).put(name, element)

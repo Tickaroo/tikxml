@@ -1001,7 +1001,7 @@ class AnnotationOnlyFieldDetectorStrategyTest {
     }
 
     @Test
-    fun nameConflict1() {
+    fun noConflictBetweenAttributeAndPropertyElment() {
         val componentFile = JavaFileObjects.forSourceLines("test.NameConflict1",
                 "package test;",
                 "",
@@ -1016,12 +1016,11 @@ class AnnotationOnlyFieldDetectorStrategyTest {
 
         Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
                 .that(componentFile).processedWith(XmlProcessor())
-                .failsToCompile()
-                .withErrorContaining("The field 'b' in class test.NameConflict1 has the same XML name 'foo' as the field 'a' in class test.NameConflict1. You can specify another name via annotations.")
+                .compilesWithoutError()
     }
 
     @Test
-    fun nameConflict2() {
+    fun nameConflict() {
         val componentFile = JavaFileObjects.forSourceLines("test.NameConflict2",
                 "package test;",
                 "",
@@ -1039,21 +1038,44 @@ class AnnotationOnlyFieldDetectorStrategyTest {
         Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
                 .that(componentFile).processedWith(XmlProcessor())
                 .failsToCompile()
-                .withErrorContaining("Conflict: The field 'b' in class test.NameConflict2 has the same XML name 'foo' as the field 'a' in class test.NameConflict2. You can specify another name via annotations.")
+                .withErrorContaining("Conflict: field 'b' in class test.NameConflict2 is in conflict with field 'a' in class test.NameConflict2. Maybe both have the same xml name 'foo' (you can change that via annotations) or @${Path::class.simpleName} is causing this conflict.")
+    }
+
+    @Test
+    fun nameConflict2() {
+        val componentFile = JavaFileObjects.forSourceLines("test.NameConflict2",
+                "package test;",
+                "",
+                "@${Xml::class.java.canonicalName}(scanMode = ${ScanMode::class.qualifiedName}.${ScanMode.ANNOTATIONS_ONLY})",
+                "class NameConflict2 {",
+                "   @${Element::class.java.canonicalName}( name =\"foo\" )",
+                "   Other b;",
+                "   @${Xml::class.java.canonicalName}(scanMode = ${ScanMode::class.qualifiedName}.${ScanMode.ANNOTATIONS_ONLY})",
+                "   public class Other {}",
+                "",
+                "   @${PropertyElement::class.java.canonicalName}( name =\"foo\" )",
+                "   int a;",
+                "}")
+
+        Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
+                .that(componentFile).processedWith(XmlProcessor())
+                .failsToCompile()
+                .withErrorContaining("Conflict: field 'a' in class test.NameConflict2 is in conflict with field 'b' in class test.NameConflict2. Maybe both have the same xml name 'foo' (you can change that via annotations) or @${Path::class.simpleName} is causing this conflict.")
     }
 
     @Test
     fun nameConflict3() {
-        val componentFile = JavaFileObjects.forSourceLines("test.NameConflict3",
+        val componentFile = JavaFileObjects.forSourceLines("test.NameConflict2",
                 "package test;",
                 "",
                 "@${Xml::class.java.canonicalName}(scanMode = ${ScanMode::class.qualifiedName}.${ScanMode.ANNOTATIONS_ONLY})",
-                "class NameConflict3 {",
-                "   @${Attribute::class.java.canonicalName}( name =\"foo\" )",
-                "   int a;",
-                "",
+                "class NameConflict2 {",
                 "   @${Element::class.java.canonicalName}( name =\"foo\" )",
                 "   Other b;",
+                "",
+                "   @${Element::class.java.canonicalName}( name =\"foo\" )",
+                "   Other a;",
+                "",
                 "   @${Xml::class.java.canonicalName}(scanMode = ${ScanMode::class.qualifiedName}.${ScanMode.ANNOTATIONS_ONLY})",
                 "   public class Other {}",
                 "}")
@@ -1061,7 +1083,30 @@ class AnnotationOnlyFieldDetectorStrategyTest {
         Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
                 .that(componentFile).processedWith(XmlProcessor())
                 .failsToCompile()
-                .withErrorContaining("Conflict: The field 'b' in class test.NameConflict3 has the same XML name 'foo' as the field 'a' in class test.NameConflict3. You can specify another name via annotations.")
+                .withErrorContaining("Conflict: field 'a' in class test.NameConflict2 is in conflict with field 'b' in class test.NameConflict2. Maybe both have the same xml name 'foo' (you can change that via annotations) or @${Path::class.simpleName} is causing this conflict.")
+    }
+
+    @Test
+    fun nameConflict4() {
+        val componentFile = JavaFileObjects.forSourceLines("test.NameConflict2",
+                "package test;",
+                "",
+                "@${Xml::class.java.canonicalName}(scanMode = ${ScanMode::class.qualifiedName}.${ScanMode.ANNOTATIONS_ONLY})",
+                "class NameConflict2 {",
+                "   @${Element::class.java.canonicalName}( name =\"foo\" )",
+                "   Other a;",
+                "",
+                "   @${Element::class.java.canonicalName}( name =\"foo\" )",
+                "   Other b;",
+                "",
+                "   @${Xml::class.java.canonicalName}(scanMode = ${ScanMode::class.qualifiedName}.${ScanMode.ANNOTATIONS_ONLY})",
+                "   public class Other {}",
+                "}")
+
+        Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
+                .that(componentFile).processedWith(XmlProcessor())
+                .failsToCompile()
+                .withErrorContaining("Conflict: field 'b' in class test.NameConflict2 is in conflict with field 'a' in class test.NameConflict2. Maybe both have the same xml name 'foo' (you can change that via annotations) or @${Path::class.simpleName} is causing this conflict.")
     }
 
     @Test
@@ -1078,7 +1123,7 @@ class AnnotationOnlyFieldDetectorStrategyTest {
                 "",
                 "@${Xml::class.java.canonicalName}(scanMode = ${ScanMode::class.qualifiedName}.${ScanMode.ANNOTATIONS_ONLY})",
                 "class Parent {",
-                "   @${Element::class.java.canonicalName}( name =\"foo\" )",
+                "   @${Attribute::class.java.canonicalName}( name =\"foo\" )",
                 "   Other b;",
                 "   class Other {}",
                 "}")
@@ -1086,7 +1131,7 @@ class AnnotationOnlyFieldDetectorStrategyTest {
         Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
                 .that(componentFile).processedWith(XmlProcessor())
                 .failsToCompile()
-                .withErrorContaining("Conflict: The field 'b' in class test.Parent has the same XML name 'foo' as the field 'a' in class test.NameConflictInheritance1. You can specify another name via annotations.")
+                .withErrorContaining("Conflict: The field 'b' in class test.Parent has the same xml attribute name 'foo' as the field 'a' in class test.NameConflictInheritance1. You can specify another name via annotations.")
     }
 
     @Test
@@ -1112,11 +1157,11 @@ class AnnotationOnlyFieldDetectorStrategyTest {
         Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
                 .that(componentFile).processedWith(XmlProcessor())
                 .failsToCompile()
-                .withErrorContaining("Conflict: The field 'b' in class test.Parent has the same XML name 'foo' as the field 'a' in class test.NameConflictInheritance2. You can specify another name via annotations.")
+                .withErrorContaining("Conflict: field 'b' in class test.Parent is in conflict with field 'a' in class test.NameConflictInheritance2. Maybe both have the same xml name 'foo' (you can change that via annotations) or @${Path::class.simpleName} is causing this conflict.")
     }
 
     @Test
-    fun nameConflictInheritance3() {
+    fun attributeNotInConflictWithPropertyElement() {
         val componentFile = JavaFileObjects.forSourceLines("test.NameConflictInheritance3",
                 "package test;",
                 "",
@@ -1135,8 +1180,7 @@ class AnnotationOnlyFieldDetectorStrategyTest {
 
         Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
                 .that(componentFile).processedWith(XmlProcessor())
-                .failsToCompile()
-                .withErrorContaining("Conflict: The field 'b' in class test.Parent has the same XML name 'foo' as the field 'a' in class test.NameConflictInheritance3. You can specify another name via annotations.")
+                .compilesWithoutError()
     }
 
     @Test

@@ -18,7 +18,6 @@
 
 package com.tickaroo.tikxml.processor.field
 
-import com.tickaroo.tikxml.processor.utils.getSurroundingClassQualifiedName
 import com.tickaroo.tikxml.processor.xml.XmlChildElement
 import java.util.*
 import javax.lang.model.element.VariableElement
@@ -31,7 +30,6 @@ class PropertyField(element: VariableElement, name: String, required: Boolean? =
     override val attributes = LinkedHashMap<String, AttributeField>()
     override val childElements = LinkedHashMap<String, XmlChildElement>()
 
-    override fun isXmlElementMergeable() = true
-
+    override fun isXmlElementAccessableFromOutsideTypeAdapter() = true
 
 }

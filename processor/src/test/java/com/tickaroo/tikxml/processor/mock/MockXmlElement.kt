@@ -28,11 +28,11 @@ import javax.lang.model.element.TypeElement
  *
  * @author Hannes Dorfmann
  */
-class MockXmlElement(override val nameAsRoo: String = "mockRoot", override val element: TypeElement = MockClassElement()) : XmlRootElement {
+class MockXmlElement(override val nameAsRoot: String = "mockRoot", override val element: TypeElement = MockClassElement()) : XmlRootElement {
 
     override val attributes = HashMap<String, AttributeField>()
     override val childElements = HashMap<String, XmlChildElement>()
 
-    override fun isXmlElementMergeable() = true
+    override fun isXmlElementAccessableFromOutsideTypeAdapter() = true
 
 }

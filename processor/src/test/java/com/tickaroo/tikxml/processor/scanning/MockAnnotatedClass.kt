@@ -20,8 +20,9 @@ package com.tickaroo.tikxml.processor.scanning
 
 import com.tickaroo.tikxml.annotation.ScanMode
 import com.tickaroo.tikxml.processor.field.AnnotatedClass
-import com.tickaroo.tikxml.processor.field.NamedField
+import com.tickaroo.tikxml.processor.field.AttributeField
 import com.tickaroo.tikxml.processor.field.TextContentField
+import com.tickaroo.tikxml.processor.xml.XmlChildElement
 import org.mockito.Mockito
 import java.util.*
 import javax.lang.model.element.TypeElement
@@ -34,7 +35,10 @@ class MockAnnotatedClass(override val element: TypeElement, override val scanMod
 
     constructor(scanMode: ScanMode) : this(Mockito.mock(TypeElement::class.java) as TypeElement, scanMode)
 
-
     override var textContentField: TextContentField? = null
-    override val fields = HashMap<String, NamedField>()
+
+    override val attributes: Map<String, AttributeField> = HashMap()
+    override val childElements: Map<String, XmlChildElement> = HashMap()
+
+    override fun isXmlElementAccessableFromOutsideTypeAdapter(): Boolean = true
 }

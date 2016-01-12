@@ -18,15 +18,12 @@
 
 package com.tickaroo.tikxml.processor.xml
 
-import javax.lang.model.element.VariableElement
-
 /**
  *
  * @author Hannes Dorfmann
  */
 interface XmlChildElement : XmlElement {
 
-    val element: VariableElement?
     val name: String
 
 }

@@ -21,6 +21,8 @@ package com.tickaroo.tikxml.processor.field
 import com.tickaroo.tikxml.annotation.ScanMode
 import com.tickaroo.tikxml.annotation.Xml
 import com.tickaroo.tikxml.processor.ProcessingException
+import com.tickaroo.tikxml.processor.xml.XmlChildElement
+import com.tickaroo.tikxml.processor.xml.XmlRootElement
 import java.util.*
 import javax.lang.model.element.Element
 import javax.lang.model.element.ElementKind
@@ -30,13 +32,12 @@ import javax.lang.model.element.TypeElement
  * This class holds the information of an element that has been annotated with @Xml
  * @author Hannes Dorfmann
  */
-interface AnnotatedClass {
+interface AnnotatedClass : XmlRootElement {
 
-    val element: TypeElement
-    val fields: MutableMap<String, NamedField>
+    override val element: TypeElement
+    override val nameAsRoot: String
     val scanMode: ScanMode
     val inheritance: Boolean
-    val nameAsRoot: String
     val simpleClassName: String
     val qualifiedClassName: String
 
@@ -51,8 +52,10 @@ interface AnnotatedClass {
 class AnnotatedClassImpl
 @Throws(ProcessingException::class) constructor(e: Element) : AnnotatedClass {
 
+    override val attributes = HashMap<String, AttributeField>()
+    override val childElements = HashMap<String, XmlChildElement>()
+
     override val element: TypeElement
-    override val fields = HashMap<String, NamedField>()
 
     override val scanMode: ScanMode
     override val inheritance: Boolean
@@ -86,4 +89,5 @@ class AnnotatedClassImpl
         }
     }
 
+    override fun isXmlElementAccessableFromOutsideTypeAdapter(): Boolean = true
 }

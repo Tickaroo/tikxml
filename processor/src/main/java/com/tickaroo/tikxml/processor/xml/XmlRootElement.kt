@@ -25,6 +25,6 @@ import javax.lang.model.element.TypeElement
  * @author Hannes Dorfmann
  */
 interface XmlRootElement : XmlElement {
-    val element : TypeElement
-    val nameAsRoo : String
+    override val element : TypeElement
+    val nameAsRoot : String
 }

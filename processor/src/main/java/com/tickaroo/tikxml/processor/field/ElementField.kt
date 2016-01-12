@@ -32,7 +32,7 @@ open class ElementField(element: VariableElement, name: String, required: Boolea
     override val attributes = LinkedHashMap<String, AttributeField>()
     override val childElements = LinkedHashMap<String, XmlChildElement>()
 
-    override fun isXmlElementMergeable() = false
+    override fun isXmlElementAccessableFromOutsideTypeAdapter() = false
 }
 
 class ListElementField(element: VariableElement, name: String, required: Boolean? = null, val listType: TypeMirror, val inlineList: Boolean) : ElementField(element, name, required)

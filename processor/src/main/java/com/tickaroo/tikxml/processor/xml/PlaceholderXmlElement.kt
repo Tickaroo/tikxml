@@ -21,6 +21,7 @@ package com.tickaroo.tikxml.processor.xml
 import com.tickaroo.tikxml.processor.field.AttributeField
 import com.tickaroo.tikxml.processor.utils.getSurroundingClassQualifiedName
 import java.util.*
+import javax.lang.model.element.Element
 import javax.lang.model.element.TypeElement
 import javax.lang.model.element.VariableElement
 
@@ -30,16 +31,18 @@ import javax.lang.model.element.VariableElement
  * with a real element afterwards.
  * @author Hannes Dorfmann
  */
-class PlaceholderXmlElement(override val name: String, override val element: VariableElement?, val typeElement: TypeElement?) : XmlChildElement {
+class PlaceholderXmlElement(override val name: String, override val element: Element) : XmlChildElement {
 
 
     override val attributes = HashMap<String, AttributeField>()
     override val childElements = HashMap<String, XmlChildElement>()
 
-    override fun isXmlElementMergeable() = true
+    override fun isXmlElementAccessableFromOutsideTypeAdapter() = true
 
-    override fun toString(): String =
-            if (element != null) "field '${element.simpleName}' in class ${element.getSurroundingClassQualifiedName()}"
-            else typeElement?.qualifiedName.toString()
+    override fun toString(): String = when (element) {
+        is VariableElement -> "field '${element.simpleName}' in class ${element.getSurroundingClassQualifiedName()}"
+        is TypeElement -> element.qualifiedName.toString()
+        else -> throw IllegalArgumentException("Oops, unexpected element type $element. This should never happen. Please fill an issue here: https://github.com/Tickaroo/tikxml/issues")
+    }
 
 }

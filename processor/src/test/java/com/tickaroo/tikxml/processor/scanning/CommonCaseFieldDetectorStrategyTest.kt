@@ -115,7 +115,7 @@ class CommonCaseFieldDetectorStrategyTest {
         Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
                 .that(componentFile).processedWith(XmlProcessor())
                 .failsToCompile()
-                .withErrorContaining("Conflict: The field 'a' in class test.Parent has the same XML name 'a' as the field 'a' in class test.NameConflictInheritance. You can specify another name via annotations.")
+                .withErrorContaining("Conflict: The field 'a' in class test.Parent has the same xml attribute name 'a' as the field 'a' in class test.NameConflictInheritance. You can specify another name via annotations.")
     }
 
     @Test

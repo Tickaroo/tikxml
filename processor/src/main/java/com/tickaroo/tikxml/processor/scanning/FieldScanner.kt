@@ -23,12 +23,11 @@ import com.tickaroo.tikxml.annotation.Element
 import com.tickaroo.tikxml.annotation.PropertyElement
 import com.tickaroo.tikxml.annotation.Xml
 import com.tickaroo.tikxml.processor.ProcessingException
-import com.tickaroo.tikxml.processor.field.AnnotatedClass
-import com.tickaroo.tikxml.processor.field.Field
-import com.tickaroo.tikxml.processor.field.NamedField
+import com.tickaroo.tikxml.processor.field.*
 import com.tickaroo.tikxml.processor.field.access.GetterSetterFieldAccessPolicy
 import com.tickaroo.tikxml.processor.field.access.MinPackageVisibilityFieldAccessPolicy
 import com.tickaroo.tikxml.processor.utils.*
+import com.tickaroo.tikxml.processor.xml.XmlChildElement
 import java.util.*
 import javax.lang.model.element.ExecutableElement
 import javax.lang.model.element.TypeElement
@@ -112,23 +111,10 @@ class FieldScanner(protected val elementUtils: Elements, protected val typeUtils
                         throw ProcessingException(it, "Field '$it' is marked as TextContent and another xml element like @${Attribute::class.simpleName}, @${PropertyElement::class.simpleName} or @${Element::class.simpleName} at the same time which is not allowed. A field can only be exactly one of those types.")
                     }
 
-                    // TODO remove this
-                    // check for conflicts
-                    val existingField: NamedField? = annotatedClass.fields[field.name]
-                    if (existingField != null) {
-                        val conflictingField = existingField.element
-                        throw ProcessingException(it, "Conflict: The field '${it.toString()}' "
-                                + "in class ${currentElement.qualifiedName} has the same XML "
-                                + "name '${field.name}' as the field '${conflictingField.simpleName}' in class "
-                                + "${(conflictingField.enclosingElement as TypeElement).qualifiedName}. "
-                                + "You can specify another name via annotations.")
-                    }
-
                     // needs setter and getter?
                     if (checkAccessPolicyOrDeferGetterSetterCheck(it, field)) {
-                        annotatedClass.fields.put(field.name, field)
+                        addFieldToAnnotatedClass(annotatedClass, field)
                     }
-
                 }
             }
         }
@@ -219,23 +205,20 @@ class FieldScanner(protected val elementUtils: Elements, protected val typeUtils
             }
 
             if (it is NamedField) {
-                val conflictingField = annotatedClass.fields[it.name]
-                if (conflictingField != null) {
-                    throw ProcessingException(element, "Conflict: The field '${element.toString()}' "
-                            + "in class ${currentElement.qualifiedName} has the same XML "
-                            + "name '${it.name}' as the field '${conflictingField.element.simpleName}' in class "
-                            + "${(conflictingField.element.enclosingElement as TypeElement).qualifiedName}. "
-                            + "You can specify another name via annotations.")
-                }
-
-
-                annotatedClass.fields.put(it.name, it)
+                addFieldToAnnotatedClass(annotatedClass, it)
             }
 
             // Set access policy
             it.accessPolicy = GetterSetterFieldAccessPolicy(getter, setter)
         }
     }
+
+    private fun addFieldToAnnotatedClass(annotatedClass: AnnotatedClass, field: NamedField): Unit =
+            when (field) {
+                is AttributeField -> annotatedClass.addAttribute(field, PathDetector.getSegments(field.element))
+                is XmlChildElement -> annotatedClass.addChildElement(field, PathDetector.getSegments(field.element))
+                else -> throw IllegalArgumentException("Oops, unexpected element type $field. This should never happen. Please fill an issue here: https://github.com/Tickaroo/tikxml/issues")
+            }
 
     /**
      * Finds a method for a field. Removes hungarion notation. If field name was mFoo this method checks for a method called setFoo()
