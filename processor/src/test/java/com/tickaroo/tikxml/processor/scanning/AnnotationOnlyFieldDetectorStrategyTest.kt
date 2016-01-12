@@ -1131,7 +1131,7 @@ class AnnotationOnlyFieldDetectorStrategyTest {
         Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
                 .that(componentFile).processedWith(XmlProcessor())
                 .failsToCompile()
-                .withErrorContaining("Conflict: The field 'b' in class test.Parent has the same xml attribute name 'foo' as the field 'a' in class test.NameConflictInheritance1. You can specify another name via annotations.")
+                .withErrorContaining("Conflict: field 'b' in class test.Parent has the same xml attribute name 'foo' as the field 'a' in class test.NameConflictInheritance1. You can specify another name via annotations.")
     }
 
     @Test

@@ -61,7 +61,7 @@ class XmlElementTest {
         xmlElement.addAttribute(attribute1, path)
         assertTrue(xmlElement.attributes["foo"] == attribute1)
 
-        expectException("Conflict: The field 'other' in class mocked.MockedClass has the same xml attribute name 'foo' as the field 'foo' in class mocked.MockedClass. You can specify another name via annotations.") {
+        expectException("Conflict: field 'other' in class mocked.MockedClass has the same xml attribute name 'foo' as the field 'foo' in class mocked.MockedClass. You can specify another name via annotations.") {
             xmlElement.addAttribute(attribute2, path)
         }
     }
@@ -215,4 +215,21 @@ class XmlElementTest {
 
     }
 
+    @Test
+    fun attributeInSamePath() {
+        val rootElement = MockXmlElement()
+        val attribute1 = AttributeField(MockVariableElement("attribute1"), "foo")
+        val attribute2 = AttributeField(MockVariableElement("attribute2"), "foo")
+
+        val path = listOf("a", "b")
+
+        rootElement.addAttribute(attribute1, path)
+
+
+        // Add attribute to foo node should fail
+        expectException("Conflict: field 'attribute2' in class mocked.MockedClass has the same xml attribute name 'foo' as the field 'attribute1' in class mocked.MockedClass. You can specify another name via annotations.") {
+            rootElement.addAttribute(attribute2, path)
+        }
+
+    }
 }

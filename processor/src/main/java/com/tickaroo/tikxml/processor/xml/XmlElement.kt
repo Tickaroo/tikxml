@@ -22,7 +22,6 @@ import com.tickaroo.tikxml.annotation.Element
 import com.tickaroo.tikxml.annotation.Path
 import com.tickaroo.tikxml.processor.ProcessingException
 import com.tickaroo.tikxml.processor.field.AttributeField
-import com.tickaroo.tikxml.processor.utils.getSurroundingClassQualifiedName
 
 /**
  *
@@ -87,12 +86,8 @@ interface XmlElement {
         val existingAttribute = currentElement.attributes[attributeField.name]
 
         if (existingAttribute != null) {
-            val conflictingField = existingAttribute.element
-            val variableField = attributeField.element
-            throw ProcessingException(variableField, "Conflict: The field '${variableField.toString()}' "
-                    + "in class ${variableField.getSurroundingClassQualifiedName()} has the same xml attribute name "
-                    + "'${attributeField.name}' as the field '${conflictingField.simpleName}' in class "
-                    + "${conflictingField.getSurroundingClassQualifiedName()}. "
+            throw ProcessingException(attributeField.element, "Conflict: $attributeField has the same xml attribute name "
+                    + "'${attributeField.name}' as the $existingAttribute. "
                     + "You can specify another name via annotations.")
         } else {
             (currentElement.attributes as MutableMap).put(attributeField.name, attributeField);
