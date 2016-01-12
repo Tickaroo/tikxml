@@ -124,8 +124,8 @@ interface XmlElement {
         // merge attributes
         for ((name, attributeField) in toMerge.attributes) {
             if (into.attributes[name] != null) {
-                val variableField = toMerge.element
-                throw ProcessingException(variableField, "Conflict: $toMerge has the same xml attribute name '$name' as $into . You can specify another name via annotations.")
+                // Should not be possible, because we can't build a path with two PlaceholderXmlElement. Hence, this should never be reached.
+                throw ProcessingException(toMerge.element, "Conflict: $toMerge has the same xml attribute name '$name' as $into . You can specify another name via annotations.")
             }
 
             (into.attributes as MutableMap).put(name, attributeField)
@@ -134,8 +134,8 @@ interface XmlElement {
         // merge child elements
         for ((name, element) in toMerge.childElements) {
             if (into.childElements[name] != null) {
-                val variableField = toMerge.element
-                throw ProcessingException(variableField, "Conflict: $toMerge is in conflict with $into. Maybe both have the same xml name '$name' (you can change that via annotations) or @${Path::class.simpleName} is causing this conflict.")
+                // Should not be possible, because we can't build a path with two placeholder PlaceholderXmlElement. Hence, this should never be reached.
+                throw ProcessingException(toMerge.element, "Conflict: $toMerge is in conflict with $into. Maybe both have the same xml name '$name' (you can change that via annotations) or @${Path::class.simpleName} is causing this conflict.")
             }
 
             (into.childElements as MutableMap).put(name, element)
