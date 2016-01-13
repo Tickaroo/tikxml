@@ -30,7 +30,7 @@ import java.io.IOException;
  * @author Hannes Dorfmann
  * @since 1.0
  */
-public abstract class AttributeBinder<T> {
+public interface AttributeBinder<T> {
 
   /**
    * Reads an attribute value from xml and assigns it to the objects value. A trivial implementation
@@ -49,6 +49,6 @@ public abstract class AttributeBinder<T> {
    * @param reader The {@link XmlReader}
    * @throws IOException
    */
-  public abstract void fromXml(XmlReader reader, TikXmlConfig config, T value) throws IOException;
+  public void fromXml(XmlReader reader, TikXmlConfig config, T value) throws IOException;
 
 }

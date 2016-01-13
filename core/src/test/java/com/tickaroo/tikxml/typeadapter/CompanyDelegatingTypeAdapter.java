@@ -28,8 +28,12 @@ import java.util.Date;
  */
 public class CompanyDelegatingTypeAdapter extends DelegatingTypeAdapter<Company> {
 
+  public CompanyDelegatingTypeAdapter(){
+    this(true);
+  }
 
-  public CompanyDelegatingTypeAdapter() {
+  public CompanyDelegatingTypeAdapter(boolean shouldReadTextContent) {
+    super(shouldReadTextContent);
 
     attributeBinders.put("id", new AttributeBinder<Company>() {
       @Override
@@ -75,5 +79,8 @@ public class CompanyDelegatingTypeAdapter extends DelegatingTypeAdapter<Company>
     return new Company();
   }
 
-
+  @Override
+  protected void assignTextContent(String textContent, Company value) {
+    value.description = textContent;
+  }
 }

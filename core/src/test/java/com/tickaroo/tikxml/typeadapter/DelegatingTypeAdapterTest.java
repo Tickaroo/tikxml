@@ -81,7 +81,7 @@ public class DelegatingTypeAdapterTest {
     BufferedSource source = TestUtils.sourceForFile("simple_typeadapater_test.xml");
 
     exception.expect(IOException.class);
-    exception.expectMessage("Could not map the xml attribute with the name 'name' to java class. Have you annotated such a field in your java class to map this xml attribute?");
+    exception.expectMessage("Could not map the xml attribute with the name 'name' at path /company[@name] to java class. Have you annotated such a field in your java class to map this xml attribute?");
     Company company = tikXml.read(source, Company.class);
 
 
@@ -140,7 +140,7 @@ public class DelegatingTypeAdapterTest {
     BufferedSource source = TestUtils.sourceForFile("simple_typeadapater_with_propertyelements.xml");
 
     exception.expect(IOException.class);
-    exception.expectMessage("Could not map the xml element with the name 'legalForm' to java class. Have you annotated such a field in your java class to map this xml attribute?");
+    exception.expectMessage("Could not map the xml element with the name 'legalForm' at path /company/legalForm to java class. Have you annotated such a field in your java class to map this xml element?");
     Company company = tikXml.read(source, Company.class);
   }
 
@@ -163,4 +163,89 @@ public class DelegatingTypeAdapterTest {
     Assert.assertEquals(dateFormatter.parse("1999-12-31"), company.founded);
     Assert.assertNull(company.legalForm);
   }
+
+
+  @Test
+  public void readTextContent() throws IOException, ParseException {
+    TikXml tikXml = new TikXml.Builder()
+        .throwExceptionOnMissingMapping(true)
+        .addTypeConverter(Date.class, dateTypeConverter)
+        .addTypeAdapter(Company.class, new CompanyDelegatingTypeAdapter())
+        .build();
+
+
+    BufferedSource source = TestUtils.sourceForFile("simple_typeadapater_with_propertyelements_textcontent.xml");
+
+    Company company = tikXml.read(source, Company.class);
+
+
+    Assert.assertEquals(123, company.id);
+    Assert.assertEquals("Foo Inc.", company.name);
+    Assert.assertEquals(dateFormatter.parse("1999-12-31"), company.founded);
+    Assert.assertEquals("Inc.", company.legalForm);
+    Assert.assertEquals("This is the text content\n", company.description);
+
+  }
+
+  @Test
+  public void readTextContentSplitted() throws IOException, ParseException {
+    TikXml tikXml = new TikXml.Builder()
+        .throwExceptionOnMissingMapping(true)
+        .addTypeConverter(Date.class, dateTypeConverter)
+        .addTypeAdapter(Company.class, new CompanyDelegatingTypeAdapter())
+        .build();
+
+
+    BufferedSource source = TestUtils.sourceForFile("simple_typeadapater_with_propertyelements_textcontent_splitted.xml");
+
+    Company company = tikXml.read(source, Company.class);
+
+
+    Assert.assertEquals(123, company.id);
+    Assert.assertEquals("Foo Inc.", company.name);
+    Assert.assertEquals(dateFormatter.parse("1999-12-31"), company.founded);
+    Assert.assertEquals("Inc.", company.legalForm);
+    Assert.assertEquals("This\n" +
+        "    is the\n" +
+        "    text content\n", company.description);
+  }
+
+
+
+  @Test
+  public void failUnreadTextContent() throws IOException {
+    TikXml tikXml = new TikXml.Builder()
+        .throwExceptionOnMissingMapping(true)
+        .addTypeConverter(Date.class, dateTypeConverter)
+        .addTypeAdapter(Company.class, new CompanyDelegatingTypeAdapterWithoutReadingTextContent())
+        .build();
+
+
+    BufferedSource source = TestUtils.sourceForFile("simple_typeadapater_with_propertyelements_textcontent.xml");
+
+    exception.expect(IOException.class);
+    exception.expectMessage("Could not map the xml element's text content at path  at path /company/text() to java class. Have you annotated such a field in your java class to map the xml element's text content?");
+    Company company = tikXml.read(source, Company.class);
+  }
+
+  @Test
+  public void ignoreUnreadTextContent() throws IOException, ParseException {
+    TikXml tikXml = new TikXml.Builder()
+        .throwExceptionOnMissingMapping(false)
+        .addTypeConverter(Date.class, dateTypeConverter)
+        .addTypeAdapter(Company.class, new CompanyDelegatingTypeAdapterWithoutReadingTextContent())
+        .build();
+
+
+    BufferedSource source = TestUtils.sourceForFile("simple_typeadapater_with_propertyelements_textcontent_splitted.xml");
+
+   Company company = tikXml.read(source, Company.class);
+
+    Assert.assertEquals(123, company.id);
+    Assert.assertEquals("Foo Inc.", company.name);
+    Assert.assertEquals(dateFormatter.parse("1999-12-31"), company.founded);
+    Assert.assertEquals("Inc.", company.legalForm);
+    Assert.assertNull(company.description);
+  }
+
 }

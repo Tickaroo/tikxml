@@ -18,18 +18,12 @@
 
 package com.tickaroo.tikxml.typeadapter;
 
-import java.util.Date;
-
 /**
  * @author Hannes Dorfmann
  */
-public class Company {
-  int id;
-  String name;
-
-  String legalForm;
-  Date founded;
-
-  // Text Content
-  String description;
+public class CompanyDelegatingTypeAdapterWithoutReadingTextContent extends CompanyDelegatingTypeAdapter
+{
+  public CompanyDelegatingTypeAdapterWithoutReadingTextContent() {
+    super(false);
+  }
 }

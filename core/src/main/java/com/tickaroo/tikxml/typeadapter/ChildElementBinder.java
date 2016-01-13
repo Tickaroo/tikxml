@@ -23,13 +23,16 @@ import com.tickaroo.tikxml.XmlReader;
 import java.io.IOException;
 
 /**
- * This class is responsible to deal with child elements.
+ * This class is used with {@link DelegatingTypeAdapter} to delegate the work of reading child xml
+ * elements (not parsing complex objects, this will be done by {@link TypeAdapter}.
  *
  * @param <T> the type of the parents object
  * @author Hannes Dorfmann
+ * @see DelegatingTypeAdapter
+ * @see TypeAdapter
  * @since 1.0
  */
-public abstract class ChildElementBinder<T> {
+public interface ChildElementBinder<T> {
 
   /**
    * Reads an child xml element from xml document and assigns it to the objects value. A trivial
@@ -48,5 +51,5 @@ public abstract class ChildElementBinder<T> {
    * @param reader The {@link XmlReader}
    * @throws IOException
    */
-  public abstract void fromXml(XmlReader reader, TikXmlConfig config, T value) throws IOException;
+  public void fromXml(XmlReader reader, TikXmlConfig config, T value) throws IOException;
 }
