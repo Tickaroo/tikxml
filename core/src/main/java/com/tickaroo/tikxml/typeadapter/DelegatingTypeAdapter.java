@@ -34,6 +34,7 @@ import java.util.Map;
 public abstract class DelegatingTypeAdapter<T> implements TypeAdapter<T> {
 
   protected Map<String, AttributeBinder<T>> attributeBinders = new HashMap<>();
+  protected Map<String, ChildElementBinder<T>> childelmentBinders = new HashMap<>();
 
   /**
    * Creates a new instance of the object of the target
@@ -74,6 +75,32 @@ public abstract class DelegatingTypeAdapter<T> implements TypeAdapter<T> {
     //
     // Read child elements
     //
+    while (true) {
+      if (reader.hasElement()) {
+
+        reader.beginElement();
+
+        String elementName = reader.nextElementName();
+        ChildElementBinder<T> childElementBinder = childelmentBinders.get(elementName);
+        if (childElementBinder != null) {
+          childElementBinder.fromXml(reader, config, value);
+          reader.endElement();
+
+        } else {
+          if (config.throwsExceptionOnMissingMapping()) {
+            throw new IOException("Could not map the xml element with the name '" + elementName + "' to java class. Have you annotated such a field in your java class to map this xml attribute?");
+          } else {
+            reader.skipRemainingElement(); // includes reader.endElement()
+          }
+        }
+
+      } else if (reader.hasTextContent()) {
+        // TODO implement text content
+        // TODO reuse string buffer
+      } else {
+        break;
+      }
+    }
 
 
     return value;

@@ -22,6 +22,7 @@ import com.tickaroo.tikxml.TikXmlConfig;
 import com.tickaroo.tikxml.XmlReader;
 import com.tickaroo.tikxml.XmlWriter;
 import java.io.IOException;
+import java.util.Date;
 
 /**
  * @author Hannes Dorfmann
@@ -52,6 +53,28 @@ public class CompanyDelegatingTypeAdapter extends DelegatingTypeAdapter<Company>
       @Override
       public void toXml(XmlWriter writer, TikXmlConfig config, Company value) throws IOException {
 
+      }
+    });
+
+    //
+    // Child Elements
+    //
+    childelmentBinders.put("legalForm", new ChildElementBinder<Company>() {
+      @Override
+      public void fromXml(XmlReader reader, TikXmlConfig config, Company value) throws IOException {
+        value.legalForm = reader.nextTextContent();
+      }
+    });
+
+
+    childelmentBinders.put("founded", new ChildElementBinder<Company>() {
+      @Override
+      public void fromXml(XmlReader reader, TikXmlConfig config, Company value) throws IOException {
+        try {
+          value.founded = config.getTypeConverter(Date.class).read(reader.nextTextContent());
+        } catch (Exception e) {
+          throw new IOException(e);
+        }
       }
     });
 

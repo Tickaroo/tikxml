@@ -18,15 +18,12 @@
 
 package com.tickaroo.tikxml.typeadapter;
 
-import java.util.Date;
-
 /**
  * @author Hannes Dorfmann
  */
-public class Company {
-  int id;
-  String name;
+public class CompanyTypeAdapterWithoutLegalFormPropertyElement extends CompanyDelegatingTypeAdapter {
 
-  String legalForm;
-  Date founded;
+  public CompanyTypeAdapterWithoutLegalFormPropertyElement() {
+    childelmentBinders.remove("legalForm");
+  }
 }

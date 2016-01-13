@@ -20,7 +20,11 @@ package com.tickaroo.tikxml.typeadapter;
 
 import com.tickaroo.tikxml.TestUtils;
 import com.tickaroo.tikxml.TikXml;
+import com.tickaroo.tikxml.TypeConverter;
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import okio.BufferedSource;
 import org.junit.Assert;
 import org.junit.Rule;
@@ -34,6 +38,22 @@ public class DelegatingTypeAdapterTest {
 
   @Rule
   public ExpectedException exception = ExpectedException.none();
+
+  private SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd");
+
+  private TypeConverter<Date> dateTypeConverter = new TypeConverter<Date>() {
+
+    @Override
+    public synchronized Date read(String value) throws Exception {
+      return dateFormatter.parse(value);
+    }
+
+    @Override
+    public synchronized String write(Date value) throws Exception {
+      return dateFormatter.format(value);
+    }
+  };
+
 
   @Test
   public void readTest() throws IOException {
@@ -85,5 +105,62 @@ public class DelegatingTypeAdapterTest {
     Assert.assertNull(company.name);
 
 
+  }
+
+  @Test
+  public void readPropertyElements() throws IOException, ParseException {
+    TikXml tikXml = new TikXml.Builder()
+        .throwExceptionOnMissingMapping(true)
+        .addTypeConverter(Date.class, dateTypeConverter)
+        .addTypeAdapter(Company.class, new CompanyDelegatingTypeAdapter())
+        .build();
+
+
+    BufferedSource source = TestUtils.sourceForFile("simple_typeadapater_with_propertyelements.xml");
+
+    Company company = tikXml.read(source, Company.class);
+
+
+    Assert.assertEquals(123, company.id);
+    Assert.assertEquals("Foo Inc.", company.name);
+    Assert.assertEquals(dateFormatter.parse("1999-12-31"), company.founded);
+    Assert.assertEquals("Inc.", company.legalForm);
+
+  }
+
+  @Test
+  public void failUnmappedPropertyElement() throws IOException {
+    TikXml tikXml = new TikXml.Builder()
+        .throwExceptionOnMissingMapping(true)
+        .addTypeConverter(Date.class, dateTypeConverter)
+        .addTypeAdapter(Company.class, new CompanyTypeAdapterWithoutLegalFormPropertyElement())
+        .build();
+
+
+    BufferedSource source = TestUtils.sourceForFile("simple_typeadapater_with_propertyelements.xml");
+
+    exception.expect(IOException.class);
+    exception.expectMessage("Could not map the xml element with the name 'legalForm' to java class. Have you annotated such a field in your java class to map this xml attribute?");
+    Company company = tikXml.read(source, Company.class);
+  }
+
+
+  @Test
+  public void ingnoreUnmappedPropertyElement() throws IOException, ParseException {
+    TikXml tikXml = new TikXml.Builder()
+        .throwExceptionOnMissingMapping(false)
+        .addTypeConverter(Date.class, dateTypeConverter)
+        .addTypeAdapter(Company.class, new CompanyTypeAdapterWithoutLegalFormPropertyElement())
+        .build();
+
+
+    BufferedSource source = TestUtils.sourceForFile("simple_typeadapater_with_propertyelements.xml");
+
+    Company company = tikXml.read(source, Company.class);
+
+    Assert.assertEquals(123, company.id);
+    Assert.assertEquals("Foo Inc.", company.name);
+    Assert.assertEquals(dateFormatter.parse("1999-12-31"), company.founded);
+    Assert.assertNull(company.legalForm);
   }
 }
