@@ -26,13 +26,13 @@ import java.util.Date;
 /**
  * @author Hannes Dorfmann
  */
-public class CompanyDelegatingTypeAdapter extends DelegatingTypeAdapter<Company> {
+public class CompanyTypeAdapterWithPropertyWithAttribute extends DelegatingTypeAdapter<Company> {
 
-  public CompanyDelegatingTypeAdapter(){
+  public CompanyTypeAdapterWithPropertyWithAttribute() {
     this(true);
   }
 
-  public CompanyDelegatingTypeAdapter(boolean shouldReadTextContent) {
+  public CompanyTypeAdapterWithPropertyWithAttribute(boolean shouldReadTextContent) {
     super(shouldReadTextContent);
 
     attributeBinders.put("id", new AttributeBinder<Company>() {
@@ -80,7 +80,7 @@ public class CompanyDelegatingTypeAdapter extends DelegatingTypeAdapter<Company>
   }
 
   @Override
-  protected void assignTextContent(String textContent, Company value) {
+  protected void assignTextContent(TikXmlConfig config, String textContent, Company value) {
     value.description = textContent;
   }
 }

@@ -21,10 +21,10 @@ package com.tickaroo.tikxml.typeadapter;
 /**
  * @author Hannes Dorfmann
  */
-public class CompanyDelegatingTypeAdapterWithoutNameAttribute extends CompanyDelegatingTypeAdapter {
+public class CompanyTypeAdapterWithoutNameAttribute extends CompanyTypeAdapter {
 
 
-  public CompanyDelegatingTypeAdapterWithoutNameAttribute() {
+  public CompanyTypeAdapterWithoutNameAttribute() {
     attributeBinders.remove("name");
   }
 

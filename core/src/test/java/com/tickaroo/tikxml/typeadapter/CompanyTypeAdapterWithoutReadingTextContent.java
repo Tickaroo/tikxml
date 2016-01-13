@@ -21,9 +21,9 @@ package com.tickaroo.tikxml.typeadapter;
 /**
  * @author Hannes Dorfmann
  */
-public class CompanyDelegatingTypeAdapterWithoutReadingTextContent extends CompanyDelegatingTypeAdapter
+public class CompanyTypeAdapterWithoutReadingTextContent extends CompanyTypeAdapter
 {
-  public CompanyDelegatingTypeAdapterWithoutReadingTextContent() {
+  public CompanyTypeAdapterWithoutReadingTextContent() {
     super(false);
   }
 }

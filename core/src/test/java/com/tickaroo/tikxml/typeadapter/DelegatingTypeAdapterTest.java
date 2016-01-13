@@ -58,7 +58,7 @@ public class DelegatingTypeAdapterTest {
   @Test
   public void readTest() throws IOException {
     TikXml tikXml = new TikXml.Builder().
-        addTypeAdapter(Company.class, new CompanyDelegatingTypeAdapter())
+        addTypeAdapter(Company.class, new CompanyTypeAdapter())
         .build();
 
     BufferedSource source = TestUtils.sourceForFile("simple_typeadapater_test.xml");
@@ -74,7 +74,7 @@ public class DelegatingTypeAdapterTest {
   public void failUnmappedAttribute() throws IOException {
     TikXml tikXml = new TikXml.Builder()
         .throwExceptionOnMissingMapping(true)
-        .addTypeAdapter(Company.class, new CompanyDelegatingTypeAdapterWithoutNameAttribute())
+        .addTypeAdapter(Company.class, new CompanyTypeAdapterWithoutNameAttribute())
         .build();
 
 
@@ -92,7 +92,7 @@ public class DelegatingTypeAdapterTest {
   public void ignoreUnmappedAttribute() throws IOException {
     TikXml tikXml = new TikXml.Builder()
         .throwExceptionOnMissingMapping(false)
-        .addTypeAdapter(Company.class, new CompanyDelegatingTypeAdapterWithoutNameAttribute())
+        .addTypeAdapter(Company.class, new CompanyTypeAdapterWithoutNameAttribute())
         .build();
 
 
@@ -112,7 +112,7 @@ public class DelegatingTypeAdapterTest {
     TikXml tikXml = new TikXml.Builder()
         .throwExceptionOnMissingMapping(true)
         .addTypeConverter(Date.class, dateTypeConverter)
-        .addTypeAdapter(Company.class, new CompanyDelegatingTypeAdapter())
+        .addTypeAdapter(Company.class, new CompanyTypeAdapter())
         .build();
 
 
@@ -170,7 +170,7 @@ public class DelegatingTypeAdapterTest {
     TikXml tikXml = new TikXml.Builder()
         .throwExceptionOnMissingMapping(true)
         .addTypeConverter(Date.class, dateTypeConverter)
-        .addTypeAdapter(Company.class, new CompanyDelegatingTypeAdapter())
+        .addTypeAdapter(Company.class, new CompanyTypeAdapter())
         .build();
 
 
@@ -192,7 +192,7 @@ public class DelegatingTypeAdapterTest {
     TikXml tikXml = new TikXml.Builder()
         .throwExceptionOnMissingMapping(true)
         .addTypeConverter(Date.class, dateTypeConverter)
-        .addTypeAdapter(Company.class, new CompanyDelegatingTypeAdapter())
+        .addTypeAdapter(Company.class, new CompanyTypeAdapter())
         .build();
 
 
@@ -217,7 +217,7 @@ public class DelegatingTypeAdapterTest {
     TikXml tikXml = new TikXml.Builder()
         .throwExceptionOnMissingMapping(true)
         .addTypeConverter(Date.class, dateTypeConverter)
-        .addTypeAdapter(Company.class, new CompanyDelegatingTypeAdapterWithoutReadingTextContent())
+        .addTypeAdapter(Company.class, new CompanyTypeAdapterWithoutReadingTextContent())
         .build();
 
 
@@ -233,7 +233,7 @@ public class DelegatingTypeAdapterTest {
     TikXml tikXml = new TikXml.Builder()
         .throwExceptionOnMissingMapping(false)
         .addTypeConverter(Date.class, dateTypeConverter)
-        .addTypeAdapter(Company.class, new CompanyDelegatingTypeAdapterWithoutReadingTextContent())
+        .addTypeAdapter(Company.class, new CompanyTypeAdapterWithoutReadingTextContent())
         .build();
 
 

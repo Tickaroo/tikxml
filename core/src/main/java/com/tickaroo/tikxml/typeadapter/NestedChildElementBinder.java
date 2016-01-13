@@ -20,21 +20,23 @@ package com.tickaroo.tikxml.typeadapter;
 
 import com.tickaroo.tikxml.TikXmlConfig;
 import com.tickaroo.tikxml.XmlReader;
-import com.tickaroo.tikxml.XmlWriter;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Map;
 
 /**
- * A simplified {@link TypeAdapter} implementation
+ * A {@link ChildElementBinder} who can also have xml attributes and nested xml elements. This class
+ * used with {@link DelegatingTypeAdapter}
  *
  * @author Hannes Dorfmann
+ * @see ChildElementBinder
+ * @see DelegatingTypeAdapter
  * @since 1.0
  */
-public abstract class DelegatingTypeAdapter<T> implements TypeAdapter<T> {
+public abstract class NestedChildElementBinder<T> implements ChildElementBinder<T> {
 
-  protected Map<String, AttributeBinder<T>> attributeBinders = new HashMap<>();
-  protected Map<String, ChildElementBinder<T>> childelmentBinders = new HashMap<>();
+  public Map<String, AttributeBinder<T>> attributeBinders = null;
+  public Map<String, ChildElementBinder<T>> childelmentBinders = null;
+
 
   //
   // Text content
@@ -43,62 +45,51 @@ public abstract class DelegatingTypeAdapter<T> implements TypeAdapter<T> {
   private StringBuilder textContentBuilder = null;
   private final boolean shouldReadTextContent;
 
-
   /**
-   * Reading text content of this root element may requires some extra object allocation. If you
-   * know that you wont read text content of this root element than set this to false to allow some
-   * optimizations.
+   * For memory optimization you can specify here if attributes are read and child elements are
+   * read
    */
-  public DelegatingTypeAdapter(boolean shouldReadTextContent) {
+  public NestedChildElementBinder(boolean shouldReadTextContent) {
     this.shouldReadTextContent = shouldReadTextContent;
   }
 
   /**
-   * Creates a new instance of the object of the target
+   * Override this method and call super.fromXml() to read attributes
    *
-   * @return a new instance
+   * @param reader The {@link XmlReader}
+   * @throws IOException
    */
-  protected abstract T newInstance();
-
-  /**
-   * Assign the text content to the given value
-   */
-  protected abstract void assignTextContent(TikXmlConfig config, String textContent, T value);
-
-
   @Override
-  public T fromXml(XmlReader reader, TikXmlConfig config) throws IOException {
-
-    //
-    // New instance
-    //
-    T value = newInstance();
+  public void fromXml(XmlReader reader, TikXmlConfig config, T value) throws IOException {
 
     //
     // Read attributes
     //
-    while (reader.hasAttribute()) {
+    if (attributeBinders != null) {
+      while (reader.hasAttribute()) {
 
-      String attributeName = reader.nextAttributeName();
-      AttributeBinder<T> attributeBinder = attributeBinders.get(attributeName);
+        String attributeName = reader.nextAttributeName();
+        AttributeBinder<T> attributeBinder = attributeBinders.get(attributeName);
 
-      if (attributeBinder != null) {
-        attributeBinder.fromXml(reader, config, value);
-      } else {
-        if (config.throwsExceptionOnMissingMapping()) {
-          throw new IOException("Could not map the xml attribute with the name '" + attributeName + "' at path " + reader.getPath() + " to java class. Have you annotated such a field in your java class to map this xml attribute?");
+        if (attributeBinder != null) {
+          attributeBinder.fromXml(reader, config, value);
         } else {
-          reader.skipAttributeValue();
+          if (config.throwsExceptionOnMissingMapping()) {
+            throw new IOException("Could not map the xml attribute with the name '" + attributeName + "' to java class. Have you annotated such a field in your java class to map this xml attribute?");
+          } else {
+            reader.skipAttributeValue();
+          }
         }
-      }
 
+      }
     }
+
 
     //
     // Read child elements
     //
     while (true) {
-      if (reader.hasElement()) {
+      if (childelmentBinders != null && reader.hasElement()) {
         //
         // Read element
         //
@@ -145,7 +136,9 @@ public abstract class DelegatingTypeAdapter<T> implements TypeAdapter<T> {
       }
     }
 
-    // Assign the text content
+    //
+    // Assign text content if any
+    //
     if (shouldReadTextContent) {
       if (textContentBuilder != null && textContentBuilder.length() > 0) {
         assignTextContent(config, textContentBuilder.toString(), value);
@@ -156,12 +149,7 @@ public abstract class DelegatingTypeAdapter<T> implements TypeAdapter<T> {
       }
     }
 
-
-    return value;
   }
 
-  @Override
-  public void toXml(XmlWriter writer, TikXmlConfig config, T value) throws IOException {
-
-  }
+  protected abstract void assignTextContent(TikXmlConfig config, String textContent, T value);
 }

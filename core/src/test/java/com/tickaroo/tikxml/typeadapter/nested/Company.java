@@ -16,14 +16,25 @@
  *
  */
 
-package com.tickaroo.tikxml.typeadapter;
+package com.tickaroo.tikxml.typeadapter.nested;
+
+import java.util.Date;
 
 /**
  * @author Hannes Dorfmann
  */
-public class CompanyTypeAdapterWithoutLegalFormPropertyElement extends CompanyTypeAdapter {
+public class Company {
+  int id;
+  String name;
 
-  public CompanyTypeAdapterWithoutLegalFormPropertyElement() {
-    childelmentBinders.remove("legalForm");
-  }
+  String legalForm;
+  Date founded;
+  boolean legalFormPartOfTheName;
+
+  // Text Content
+  String description;
+
+  boolean shortInfo;
+
+  String otherText;
 }
