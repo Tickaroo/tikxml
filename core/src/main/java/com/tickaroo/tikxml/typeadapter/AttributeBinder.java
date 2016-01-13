@@ -20,7 +20,6 @@ package com.tickaroo.tikxml.typeadapter;
 
 import com.tickaroo.tikxml.TikXmlConfig;
 import com.tickaroo.tikxml.XmlReader;
-import com.tickaroo.tikxml.XmlWriter;
 import java.io.IOException;
 
 /**
@@ -51,7 +50,5 @@ public abstract class AttributeBinder<T> {
    * @throws IOException
    */
   public abstract void fromXml(XmlReader reader, TikXmlConfig config, T value) throws IOException;
-
-  public abstract void toXml(XmlWriter writer, TikXmlConfig config, T value) throws IOException;
 
 }

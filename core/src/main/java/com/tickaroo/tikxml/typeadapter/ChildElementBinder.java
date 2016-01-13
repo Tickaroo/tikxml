@@ -23,11 +23,30 @@ import com.tickaroo.tikxml.XmlReader;
 import java.io.IOException;
 
 /**
+ * This class is responsible to deal with child elements.
+ *
  * @param <T> the type of the parents object
  * @author Hannes Dorfmann
  * @since 1.0
  */
 public abstract class ChildElementBinder<T> {
 
+  /**
+   * Reads an child xml element from xml document and assigns it to the objects value. A trivial
+   * implementation to read an xml element's text content as integer may look like this:
+   * <pre>
+   *   {@code
+   *    class AgeAttributeBinder extends AttributeBinder<Person> {
+   *
+   *      public fromXml(XmlReader reader, TikXmlConfig config, Person value){
+   *        value.name = reader.nextTextContent();
+   *      }
+   *    }
+   *   }
+   * </pre>
+   *
+   * @param reader The {@link XmlReader}
+   * @throws IOException
+   */
   public abstract void fromXml(XmlReader reader, TikXmlConfig config, T value) throws IOException;
 }

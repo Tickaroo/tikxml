@@ -20,7 +20,6 @@ package com.tickaroo.tikxml.typeadapter;
 
 import com.tickaroo.tikxml.TikXmlConfig;
 import com.tickaroo.tikxml.XmlReader;
-import com.tickaroo.tikxml.XmlWriter;
 import java.io.IOException;
 import java.util.Date;
 
@@ -37,22 +36,12 @@ public class CompanyDelegatingTypeAdapter extends DelegatingTypeAdapter<Company>
       public void fromXml(XmlReader reader, TikXmlConfig config, Company value) throws IOException {
         value.id = reader.nextAttributeValueAsInt();
       }
-
-      @Override
-      public void toXml(XmlWriter writer, TikXmlConfig config, Company value) throws IOException {
-
-      }
     });
 
     attributeBinders.put("name", new AttributeBinder<Company>() {
       @Override
       public void fromXml(XmlReader reader, TikXmlConfig config, Company value) throws IOException {
         value.name = reader.nextAttributeValue();
-      }
-
-      @Override
-      public void toXml(XmlWriter writer, TikXmlConfig config, Company value) throws IOException {
-
       }
     });
 
