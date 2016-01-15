@@ -215,8 +215,30 @@ class FieldScanner(protected val elementUtils: Elements, protected val typeUtils
 
     private fun addFieldToAnnotatedClass(annotatedClass: AnnotatedClass, field: NamedField): Unit =
             when (field) {
+
                 is AttributeField -> annotatedClass.addAttribute(field, PathDetector.getSegments(field.element))
+
+                is PolymorphicElementField ->
+                    if (field is PolymorphicListElementField && !field.inlineList) {
+
+                        // Add "not inline list" by adding child elements
+                        val originElementPath = PathDetector.getSegments(field.element)
+                        annotatedClass.addChildElement(field, originElementPath)
+
+                        // Add Polymorphic elements as child element
+                        for ((xmlElementName, typeMirror) in field.typeElementNameMatcher) {
+                            field.addChildElement(PolymorphicSubstitutionField(field.element, typeMirror, field.accessPolicy, xmlElementName, field.required), originElementPath.plus(field.name))
+                        }
+
+                    } else {
+                        // Insert PolymorphicSubstitution instead of the original field.
+                        for ((xmlElementName, typeMirror) in field.typeElementNameMatcher) {
+                            annotatedClass.addChildElement(PolymorphicSubstitutionField(field.element, typeMirror, field.accessPolicy, xmlElementName, field.required), PathDetector.getSegments(field.element))
+                        }
+                    }
+
                 is XmlChildElement -> annotatedClass.addChildElement(field, PathDetector.getSegments(field.element))
+
                 else -> throw IllegalArgumentException("Oops, unexpected element type $field. This should never happen. Please fill an issue here: https://github.com/Tickaroo/tikxml/issues")
             }
 

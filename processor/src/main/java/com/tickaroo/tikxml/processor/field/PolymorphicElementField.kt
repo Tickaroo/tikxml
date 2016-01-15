@@ -18,6 +18,7 @@
 
 package com.tickaroo.tikxml.processor.field
 
+import com.tickaroo.tikxml.processor.field.access.FieldAccessPolicy
 import javax.lang.model.element.VariableElement
 import javax.lang.model.type.TypeMirror
 
@@ -25,12 +26,13 @@ import javax.lang.model.type.TypeMirror
  * Represents a Field with [com.tickaroo.tikxml.annotation.Element] annotation
  * @author Hannes Dorfmann
  */
-open class PolymorphicElementField(element: VariableElement, name: String, required: Boolean?, protected val typeElementNameMatcher: List<PolymorphicTypeElementNameMatcher>) : ElementField(element, name, required) {
+open class PolymorphicElementField(element: VariableElement, name: String, required: Boolean?, val typeElementNameMatcher: List<PolymorphicTypeElementNameMatcher>) : ElementField(element, name, required)
 
-}
-
-class PolymorphicListElementField(element: VariableElement, name: String, required: Boolean?, typeElementNameMatcher: List<PolymorphicTypeElementNameMatcher>, private val inlineList: Boolean) : PolymorphicElementField(element, name, required, typeElementNameMatcher)
+class PolymorphicListElementField(element: VariableElement, name: String, required: Boolean?, typeElementNameMatcher: List<PolymorphicTypeElementNameMatcher>, val inlineList: Boolean) : PolymorphicElementField(element, name, required, typeElementNameMatcher)
 
 data class PolymorphicTypeElementNameMatcher(val xmlElementName: String, val type: TypeMirror)
 
-
+/**
+ * This kind of element will be used to replace a [PolymorphicElementField]
+ */
+class PolymorphicSubstitutionField(element: VariableElement, override val typeMirror: TypeMirror, override var accessPolicy: FieldAccessPolicy, name: String, required: Boolean? = null) : ElementField(element, name, required)

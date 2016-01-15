@@ -20,6 +20,7 @@ package com.tickaroo.tikxml.processor.field
 
 import com.tickaroo.tikxml.processor.field.access.FieldAccessPolicy
 import javax.lang.model.element.VariableElement
+import javax.lang.model.type.TypeMirror
 
 /**
  * Represents a java class field that is mapped to xml
@@ -27,5 +28,8 @@ import javax.lang.model.element.VariableElement
  */
 open class Field(val element: VariableElement, val required: Boolean? = null) {
 
-    lateinit var accessPolicy: FieldAccessPolicy
+    open lateinit var accessPolicy: FieldAccessPolicy
+
+    open val typeMirror: TypeMirror
+        get() = element.asType()
 }
