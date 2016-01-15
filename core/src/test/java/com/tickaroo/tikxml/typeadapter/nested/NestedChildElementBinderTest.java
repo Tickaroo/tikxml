@@ -59,7 +59,7 @@ public class NestedChildElementBinderTest {
   public void readAll() throws IOException, ParseException {
 
     TikXml tikXml = new TikXml.Builder()
-        .throwExceptionOnMissingMapping(false)
+        .throwExceptionOnMissingMapping(true)
         .addTypeConverter(Date.class, dateTypeConverter)
         .addTypeAdapter(Company.class, new CompanyNestedTypeAdapter())
         .build();
@@ -75,6 +75,160 @@ public class NestedChildElementBinderTest {
     Assert.assertEquals("This is the text content\n    ", company.description);
     Assert.assertTrue(company.legalFormPartOfTheName);
     Assert.assertTrue(company.shortInfo);
+    Assert.assertEquals("Others Content", company.otherText);
+
+  }
+
+  @Test
+  public void readAllMultilineTextContent() throws IOException, ParseException {
+
+    TikXml tikXml = new TikXml.Builder()
+        .throwExceptionOnMissingMapping(true)
+        .addTypeConverter(Date.class, dateTypeConverter)
+        .addTypeAdapter(Company.class, new CompanyNestedTypeAdapter())
+        .build();
+
+    BufferedSource source = TestUtils.sourceForFile("company_nested_childbinder_multiline_text_content.xml");
+
+    Company company = tikXml.read(source, Company.class);
+
+    Assert.assertEquals(123, company.id);
+    Assert.assertEquals("Foo Inc.", company.name);
+    Assert.assertEquals(dateFormatter.parse("1999-12-31"), company.founded);
+    Assert.assertEquals("Inc.", company.legalForm);
+    Assert.assertEquals("This\n" +
+        "        is the\n" +
+        "        text content\n" +
+        "    ", company.description);
+    Assert.assertTrue(company.legalFormPartOfTheName);
+    Assert.assertTrue(company.shortInfo);
+    Assert.assertEquals("Others Content", company.otherText);
+
+  }
+
+  @Test
+  public void failingMissingMappingFounded() throws IOException, ParseException {
+
+    TikXml tikXml = new TikXml.Builder()
+        .throwExceptionOnMissingMapping(true)
+        .addTypeConverter(Date.class, dateTypeConverter)
+        .addTypeAdapter(Company.class, new CompanyNestedTypeAdapterWithoutFounded())
+        .build();
+
+    BufferedSource source = TestUtils.sourceForFile("company_nested_childbinder.xml");
+
+    exception.expect(IOException.class);
+    exception.expectMessage("Could not map the xml element with the name 'founded' at path /company/info/founded to java class. Have you annotated such a field in your java class to map this xml element?");
+    Company company = tikXml.read(source, Company.class);
+
+  }
+
+
+  @Test
+  public void ignoringMissingMappingFounded() throws IOException, ParseException {
+
+
+    TikXml tikXml = new TikXml.Builder()
+        .throwExceptionOnMissingMapping(false)
+        .addTypeConverter(Date.class, dateTypeConverter)
+        .addTypeAdapter(Company.class, new CompanyNestedTypeAdapterWithoutFounded())
+        .build();
+
+    BufferedSource source = TestUtils.sourceForFile("company_nested_childbinder.xml");
+
+    Company company = tikXml.read(source, Company.class);
+
+    Assert.assertEquals(123, company.id);
+    Assert.assertEquals("Foo Inc.", company.name);
+    Assert.assertNull(company.founded);
+    Assert.assertEquals("Inc.", company.legalForm);
+    Assert.assertEquals("This is the text content\n    ", company.description);
+    Assert.assertTrue(company.legalFormPartOfTheName);
+    Assert.assertTrue(company.shortInfo);
+    Assert.assertEquals("Others Content", company.otherText);
+
+  }
+
+  @Test
+  public void failingMissingMappingTextContent() throws IOException, ParseException {
+
+    TikXml tikXml = new TikXml.Builder()
+        .throwExceptionOnMissingMapping(true)
+        .addTypeConverter(Date.class, dateTypeConverter)
+        .addTypeAdapter(Company.class, new CompanyNestedTypeAdapterWithoutReadingTextContent())
+        .build();
+
+    BufferedSource source = TestUtils.sourceForFile("company_nested_childbinder.xml");
+
+    exception.expect(IOException.class);
+    exception.expectMessage("Could not map the xml element's text content at path  at path /company/info/text() to java class. Have you annotated such a field in your java class to map the xml element's text content?");
+    Company company = tikXml.read(source, Company.class);
+
+  }
+
+  @Test
+  public void ignoreMissingMappingTextContent() throws IOException, ParseException {
+
+    TikXml tikXml = new TikXml.Builder()
+        .throwExceptionOnMissingMapping(false)
+        .addTypeConverter(Date.class, dateTypeConverter)
+        .addTypeAdapter(Company.class, new CompanyNestedTypeAdapterWithoutReadingTextContent())
+        .build();
+
+    BufferedSource source = TestUtils.sourceForFile("company_nested_childbinder.xml");
+
+    Company company = tikXml.read(source, Company.class);
+
+    Assert.assertEquals(123, company.id);
+    Assert.assertEquals("Foo Inc.", company.name);
+    Assert.assertEquals(dateFormatter.parse("1999-12-31"), company.founded);
+    Assert.assertEquals("Inc.", company.legalForm);
+    Assert.assertNull(company.description);
+    Assert.assertTrue(company.legalFormPartOfTheName);
+    Assert.assertTrue(company.shortInfo);
+    Assert.assertEquals("Others Content", company.otherText);
+  }
+
+  @Test
+  public void failingMissingMappingShortInfoAttribute() throws IOException, ParseException {
+
+    TikXml tikXml = new TikXml.Builder()
+        .throwExceptionOnMissingMapping(true)
+        .addTypeConverter(Date.class, dateTypeConverter)
+        .addTypeAdapter(Company.class, new CompanyNestedTypeAdapterWithoutAttribute())
+        .build();
+
+    BufferedSource source = TestUtils.sourceForFile("company_nested_childbinder.xml");
+
+    exception.expect(IOException.class);
+    exception.expectMessage("Could not map the xml attribute with the name 'shortInfo' at path /company/info[@shortInfo] to java class. Have you annotated such a field in your java class to map this xml attribute?");
+    Company company = tikXml.read(source, Company.class);
+
+  }
+
+
+  @Test
+  public void ignoringMissingMappingShortInfoAttribute() throws IOException, ParseException {
+
+
+    TikXml tikXml = new TikXml.Builder()
+        .throwExceptionOnMissingMapping(false)
+        .addTypeConverter(Date.class, dateTypeConverter)
+        .addTypeAdapter(Company.class, new CompanyNestedTypeAdapterWithoutAttribute())
+        .build();
+
+    BufferedSource source = TestUtils.sourceForFile("company_nested_childbinder.xml");
+
+    Company company = tikXml.read(source, Company.class);
+
+
+    Assert.assertEquals(123, company.id);
+    Assert.assertEquals("Foo Inc.", company.name);
+    Assert.assertEquals(dateFormatter.parse("1999-12-31"), company.founded);
+    Assert.assertEquals("Inc.", company.legalForm);
+    Assert.assertEquals("This is the text content\n    ", company.description);
+    Assert.assertTrue(company.legalFormPartOfTheName);
+    Assert.assertFalse(company.shortInfo);
     Assert.assertEquals("Others Content", company.otherText);
 
   }

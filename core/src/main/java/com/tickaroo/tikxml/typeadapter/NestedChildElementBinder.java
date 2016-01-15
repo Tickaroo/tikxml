@@ -38,6 +38,8 @@ public abstract class NestedChildElementBinder<T> implements ChildElementBinder<
   public Map<String, ChildElementBinder<T>> childelmentBinders = null;
 
 
+  // TODO Maybe use a Pool of StringBuilders?
+
   //
   // Text content
   //
@@ -75,7 +77,7 @@ public abstract class NestedChildElementBinder<T> implements ChildElementBinder<
           attributeBinder.fromXml(reader, config, value);
         } else {
           if (config.throwsExceptionOnMissingMapping()) {
-            throw new IOException("Could not map the xml attribute with the name '" + attributeName + "' to java class. Have you annotated such a field in your java class to map this xml attribute?");
+            throw new IOException("Could not map the xml attribute with the name '" + attributeName + "' at path " + reader.getPath() + " to java class. Have you annotated such a field in your java class to map this xml attribute?");
           } else {
             reader.skipAttributeValue();
           }
