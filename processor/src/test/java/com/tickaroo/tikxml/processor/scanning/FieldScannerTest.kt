@@ -22,9 +22,7 @@ import com.google.common.truth.Truth
 import com.google.testing.compile.JavaFileObjects
 import com.google.testing.compile.JavaSourceSubjectFactory
 import com.google.testing.compile.JavaSourcesSubject
-import com.tickaroo.tikxml.annotation.Attribute
-import com.tickaroo.tikxml.annotation.TextContent
-import com.tickaroo.tikxml.annotation.Xml
+import com.tickaroo.tikxml.annotation.*
 import com.tickaroo.tikxml.processor.XmlProcessor
 import org.junit.Test
 import javax.tools.JavaFileObject
@@ -468,4 +466,464 @@ class FieldScannerTest {
                 .withErrorContaining("The field 'foo' in class WrongMethodReturnType has private or protected visibility. Hence a corresponding getter method must be provided with minimum package visibility (or public visibility if this is a super class in a different package) with the name getFoo() or isFoo() in case of a boolean. Unfortunately, there is no such getter method. Please provide one!")
     }
 
+    @Test
+    fun polymorphicElement() {
+        val componentFile = JavaFileObjects.forSourceLines("test.PolymorphicElement",
+
+                "@${Xml::class.qualifiedName}",
+                "class PolymorphicElement {",
+                "   @${Element::class.qualifiedName} ( typesByElement = {",
+                "     @${ElementNameMatcher::class.qualifiedName}(elementName=\"a\" , type=A.class),  ",
+                "     @${ElementNameMatcher::class.qualifiedName}(elementName=\"b\" , type=B.class)  ",
+                "   })",
+                "   Root element;",
+                "",
+                "   @${Xml::class.qualifiedName}",
+                "   static class Root {} ",
+                "",
+                "   @${Xml::class.qualifiedName}",
+                "   static class A  extends Root {} ",
+                "",
+                "   @${Xml::class.qualifiedName}",
+                "   static class B extends Root {} ",
+                "}")
+        Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
+                .that(componentFile)
+                .processedWith(XmlProcessor())
+                .compilesWithoutError()
+    }
+
+    @Test
+    fun polymorphicElementConflictingElementName() {
+        val componentFile = JavaFileObjects.forSourceLines("test.PolymorphicElement",
+
+                "@${Xml::class.qualifiedName}",
+                "class PolymorphicElement {",
+                "   @${Element::class.qualifiedName} ( typesByElement = {",
+                "     @${ElementNameMatcher::class.qualifiedName}(elementName=\"a\" , type=A.class),  ",
+                "     @${ElementNameMatcher::class.qualifiedName}(elementName=\"a\" , type=B.class)  ",
+                "   })",
+                "   Root element;",
+                "",
+                "   @${Xml::class.qualifiedName}",
+                "   static class Root {} ",
+                "",
+                "   @${Xml::class.qualifiedName}",
+                "   static class A  extends Root {} ",
+                "",
+                "   @${Xml::class.qualifiedName}",
+                "   static class B extends Root {} ",
+                "}")
+        Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
+                .that(componentFile)
+                .processedWith(XmlProcessor())
+                .failsToCompile()
+                .withErrorContaining("Conflict: A @${ElementNameMatcher::class.simpleName} with the name \"a\" is already mapped to the type PolymorphicElement.A to resolve polymorphism. Hence it cannot be mapped to PolymorphicElement.B as well.")
+    }
+
+    @Test
+    fun polymorphicElementConflictingWithPropertyElement() {
+        val componentFile = JavaFileObjects.forSourceLines("test.PolymorphicElement",
+
+                "@${Xml::class.qualifiedName}",
+                "class PolymorphicElement {",
+                "   @${Element::class.qualifiedName} ( typesByElement = {",
+                "     @${ElementNameMatcher::class.qualifiedName}(elementName=\"a\" , type=A.class),  ",
+                "     @${ElementNameMatcher::class.qualifiedName}(elementName=\"b\" , type=B.class)  ",
+                "   })",
+                "   Root element;",
+                "",
+                "    @${PropertyElement::class.qualifiedName}",
+                "    String a;",
+                "",
+                "   @${Xml::class.qualifiedName}",
+                "   static class Root {} ",
+                "",
+                "   @${Xml::class.qualifiedName}",
+                "   static class A  extends Root {} ",
+                "",
+                "   @${Xml::class.qualifiedName}",
+                "   static class B extends Root {} ",
+                "}")
+        Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
+                .that(componentFile)
+                .processedWith(XmlProcessor())
+                .failsToCompile()
+                .withErrorContaining("Conflict: field 'a' in class PolymorphicElement is in conflict with field 'element' in class PolymorphicElement. Maybe both have the same xml name 'a' (you can change that via annotations) or @${Path::class.simpleName} is causing this conflict.")
+    }
+
+    @Test
+    fun polymorphicElementConflictingWithElement() {
+        val componentFile = JavaFileObjects.forSourceLines("test.PolymorphicElement",
+
+                "@${Xml::class.qualifiedName}",
+                "class PolymorphicElement {",
+                "   @${Element::class.qualifiedName} ( typesByElement = {",
+                "     @${ElementNameMatcher::class.qualifiedName}(elementName=\"a\" , type=A.class),  ",
+                "     @${ElementNameMatcher::class.qualifiedName}(elementName=\"b\" , type=B.class)  ",
+                "   })",
+                "   Root element;",
+                "",
+                "    @${Element::class.qualifiedName}",
+                "    Root a;",
+                "",
+                "   @${Xml::class.qualifiedName}",
+                "   static class Root {} ",
+                "",
+                "   @${Xml::class.qualifiedName}",
+                "   static class A  extends Root {} ",
+                "",
+                "   @${Xml::class.qualifiedName}",
+                "   static class B extends Root {} ",
+                "}")
+        Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
+                .that(componentFile)
+                .processedWith(XmlProcessor())
+                .failsToCompile()
+                .withErrorContaining("Conflict: field 'a' in class PolymorphicElement is in conflict with field 'element' in class PolymorphicElement. Maybe both have the same xml name 'a' (you can change that via annotations) or @${Path::class.simpleName} is causing this conflict.")
+    }
+
+    @Test
+    fun polymorphicElementConflictingWithPathAttribute() {
+        val componentFile = JavaFileObjects.forSourceLines("test.PolymorphicElement",
+
+                "@${Xml::class.qualifiedName}",
+                "class PolymorphicElement {",
+                "   @${Element::class.qualifiedName} ( typesByElement = {",
+                "     @${ElementNameMatcher::class.qualifiedName}(elementName=\"a\" , type=A.class),  ",
+                "     @${ElementNameMatcher::class.qualifiedName}(elementName=\"b\" , type=B.class)  ",
+                "   })",
+                "   Root element;",
+                "",
+                "    @${Path::class.qualifiedName}(\"b\")",
+                "    @${Attribute::class.qualifiedName}",
+                "    String attribute;",
+                "",
+                "   @${Xml::class.qualifiedName}",
+                "   static class Root {} ",
+                "",
+                "   @${Xml::class.qualifiedName}",
+                "   static class A  extends Root {} ",
+                "",
+                "   @${Xml::class.qualifiedName}",
+                "   static class B extends Root {} ",
+                "}")
+        Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
+                .that(componentFile)
+                .processedWith(XmlProcessor())
+                .failsToCompile()
+                .withErrorContaining("Element field 'element' in class PolymorphicElement can't have attributes that are accessed from outside of the TypeAdapter that is generated from @${Element::class.simpleName} annotated class! Therefore attribute field 'attribute' in class PolymorphicElement can't be added. Most likely the @${Path::class.simpleName} is in conflict with an @${Element::class.simpleName} annotation.")
+    }
+
+    @Test
+    fun polymorphicElementConflictingWithPathAttribute2() {
+        val componentFile = JavaFileObjects.forSourceLines("test.PolymorphicElement",
+
+                "@${Xml::class.qualifiedName}",
+                "class PolymorphicElement {",
+                "    @${Path::class.qualifiedName}(\"b\")",
+                "    @${Attribute::class.qualifiedName}",
+                "    String attribute;",
+                "",
+                "   @${Element::class.qualifiedName} ( typesByElement = {",
+                "     @${ElementNameMatcher::class.qualifiedName}(elementName=\"a\" , type=A.class),  ",
+                "     @${ElementNameMatcher::class.qualifiedName}(elementName=\"b\" , type=B.class)  ",
+                "   })",
+                "   Root element;",
+                "",
+                "   @${Xml::class.qualifiedName}",
+                "   static class Root {} ",
+                "",
+                "   @${Xml::class.qualifiedName}",
+                "   static class A  extends Root {} ",
+                "",
+                "   @${Xml::class.qualifiedName}",
+                "   static class B extends Root {} ",
+                "}")
+        Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
+                .that(componentFile)
+                .processedWith(XmlProcessor())
+                .failsToCompile()
+                .withErrorContaining("Conflict: field 'element' in class PolymorphicElement is in conflict with PolymorphicElement. Maybe both have the same xml name 'b' (you can change that via annotations) or @${Path::class.simpleName} is causing this conflict.")
+    }
+
+
+    /// LIST TESTS
+
+    @Test
+    fun polymorphicElementList() {
+        val componentFile = JavaFileObjects.forSourceLines("test.PolymorphicElement",
+
+                "@${Xml::class.qualifiedName}",
+                "class PolymorphicElement {",
+                "   @${Element::class.qualifiedName} ( typesByElement = {",
+                "     @${ElementNameMatcher::class.qualifiedName}(elementName=\"a\" , type=A.class),  ",
+                "     @${ElementNameMatcher::class.qualifiedName}(elementName=\"b\" , type=B.class)  ",
+                "   })",
+                "   java.util.List<Root> element;",
+                "",
+                "   @${Xml::class.qualifiedName}",
+                "   static class Root {} ",
+                "",
+                "   @${Xml::class.qualifiedName}",
+                "   static class A  extends Root {} ",
+                "",
+                "   @${Xml::class.qualifiedName}",
+                "   static class B extends Root {} ",
+                "}")
+        Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
+                .that(componentFile)
+                .processedWith(XmlProcessor())
+                .compilesWithoutError()
+    }
+
+    @Test
+    fun polymorphicElementListConflictingElementName() {
+        val componentFile = JavaFileObjects.forSourceLines("test.PolymorphicElement",
+
+                "@${Xml::class.qualifiedName}",
+                "class PolymorphicElement {",
+                "   @${Element::class.qualifiedName} ( typesByElement = {",
+                "     @${ElementNameMatcher::class.qualifiedName}(elementName=\"a\" , type=A.class),  ",
+                "     @${ElementNameMatcher::class.qualifiedName}(elementName=\"a\" , type=B.class)  ",
+                "   })",
+                "   java.util.List<Root> element;",
+                "",
+                "   @${Xml::class.qualifiedName}",
+                "   static class Root {} ",
+                "",
+                "   @${Xml::class.qualifiedName}",
+                "   static class A  extends Root {} ",
+                "",
+                "   @${Xml::class.qualifiedName}",
+                "   static class B extends Root {} ",
+                "}")
+        Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
+                .that(componentFile)
+                .processedWith(XmlProcessor())
+                .failsToCompile()
+                .withErrorContaining("Conflict: A @${ElementNameMatcher::class.simpleName} with the name \"a\" is already mapped to the type PolymorphicElement.A to resolve polymorphism. Hence it cannot be mapped to PolymorphicElement.B as well.")
+    }
+
+    @Test
+    fun polymorphicElementInlineListConflictingWithPropertyElement() {
+        val componentFile = JavaFileObjects.forSourceLines("test.PolymorphicElement",
+
+                "@${Xml::class.qualifiedName}",
+                "class PolymorphicElement {",
+                "   @${Element::class.qualifiedName} ( typesByElement = {",
+                "     @${ElementNameMatcher::class.qualifiedName}(elementName=\"a\" , type=A.class),  ",
+                "     @${ElementNameMatcher::class.qualifiedName}(elementName=\"b\" , type=B.class)  ",
+                "   })",
+                "   @ ${InlineList::class.qualifiedName}",
+                "   java.util.List<Root> element;",
+                "",
+                "    @${PropertyElement::class.qualifiedName}",
+                "    String a;",
+                "",
+                "   @${Xml::class.qualifiedName}",
+                "   static class Root {} ",
+                "",
+                "   @${Xml::class.qualifiedName}",
+                "   static class A  extends Root {} ",
+                "",
+                "   @${Xml::class.qualifiedName}",
+                "   static class B extends Root {} ",
+                "}")
+        Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
+                .that(componentFile)
+                .processedWith(XmlProcessor())
+                .failsToCompile()
+                .withErrorContaining("Conflict: field 'a' in class PolymorphicElement is in conflict with field 'element' in class PolymorphicElement. Maybe both have the same xml name 'a' (you can change that via annotations) or @${Path::class.simpleName} is causing this conflict.")
+    }
+
+    @Test
+    fun polymorphicElementListNoConflictingWithPropertyElement() {
+        val componentFile = JavaFileObjects.forSourceLines("test.PolymorphicElement",
+
+                "@${Xml::class.qualifiedName}",
+                "class PolymorphicElement {",
+                "   @${Element::class.qualifiedName} ( typesByElement = {",
+                "     @${ElementNameMatcher::class.qualifiedName}(elementName=\"a\" , type=A.class),  ",
+                "     @${ElementNameMatcher::class.qualifiedName}(elementName=\"b\" , type=B.class)  ",
+                "   })",
+                "   java.util.List<Root> element;",
+                "",
+                "    @${PropertyElement::class.qualifiedName}",
+                "    String a;",
+                "",
+                "   @${Xml::class.qualifiedName}",
+                "   static class Root {} ",
+                "",
+                "   @${Xml::class.qualifiedName}",
+                "   static class A  extends Root {} ",
+                "",
+                "   @${Xml::class.qualifiedName}",
+                "   static class B extends Root {} ",
+                "}")
+        Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
+                .that(componentFile)
+                .processedWith(XmlProcessor())
+                .compilesWithoutError()
+    }
+
+    @Test
+    fun polymorphicElementInlineListConflictingWithElement() {
+        val componentFile = JavaFileObjects.forSourceLines("test.PolymorphicElement",
+
+                "@${Xml::class.qualifiedName}",
+                "class PolymorphicElement {",
+                "   @${Element::class.qualifiedName} ( typesByElement = {",
+                "     @${ElementNameMatcher::class.qualifiedName}(elementName=\"a\" , type=A.class),  ",
+                "     @${ElementNameMatcher::class.qualifiedName}(elementName=\"b\" , type=B.class)  ",
+                "   })",
+                "   @ ${InlineList::class.qualifiedName}",
+                "   java.util.List<Root> element;",
+                "",
+                "    @${Element::class.qualifiedName}",
+                "    Root a;",
+                "",
+                "   @${Xml::class.qualifiedName}",
+                "   static class Root {} ",
+                "",
+                "   @${Xml::class.qualifiedName}",
+                "   static class A  extends Root {} ",
+                "",
+                "   @${Xml::class.qualifiedName}",
+                "   static class B extends Root {} ",
+                "}")
+        Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
+                .that(componentFile)
+                .processedWith(XmlProcessor())
+                .failsToCompile()
+                .withErrorContaining("Conflict: field 'a' in class PolymorphicElement is in conflict with field 'element' in class PolymorphicElement. Maybe both have the same xml name 'a' (you can change that via annotations) or @${Path::class.simpleName} is causing this conflict.")
+    }
+
+    @Test
+    fun polymorphicElementListNoConflictingWithElement() {
+        val componentFile = JavaFileObjects.forSourceLines("test.PolymorphicElement",
+
+                "@${Xml::class.qualifiedName}",
+                "class PolymorphicElement {",
+                "   @${Element::class.qualifiedName} ( typesByElement = {",
+                "     @${ElementNameMatcher::class.qualifiedName}(elementName=\"a\" , type=A.class),  ",
+                "     @${ElementNameMatcher::class.qualifiedName}(elementName=\"b\" , type=B.class)  ",
+                "   })",
+                "   java.util.List<Root> element;",
+                "",
+                "    @${Element::class.qualifiedName}",
+                "    Root a;",
+                "",
+                "   @${Xml::class.qualifiedName}",
+                "   static class Root {} ",
+                "",
+                "   @${Xml::class.qualifiedName}",
+                "   static class A  extends Root {} ",
+                "",
+                "   @${Xml::class.qualifiedName}",
+                "   static class B extends Root {} ",
+                "}")
+        Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
+                .that(componentFile)
+                .processedWith(XmlProcessor())
+                .compilesWithoutError()
+    }
+
+    @Test
+    fun polymorphicElementInlineListConflictingWithPathAttribute() {
+        val componentFile = JavaFileObjects.forSourceLines("test.PolymorphicElement",
+
+                "@${Xml::class.qualifiedName}",
+                "class PolymorphicElement {",
+                "   @${Element::class.qualifiedName} ( typesByElement = {",
+                "     @${ElementNameMatcher::class.qualifiedName}(elementName=\"a\" , type=A.class),  ",
+                "     @${ElementNameMatcher::class.qualifiedName}(elementName=\"b\" , type=B.class)  ",
+                "   })",
+                "   @ ${InlineList::class.qualifiedName}",
+                "   java.util.List<Root> element;",
+                "",
+                "    @${Path::class.qualifiedName}(\"b\")",
+                "    @${Attribute::class.qualifiedName}",
+                "    String attribute;",
+                "",
+                "   @${Xml::class.qualifiedName}",
+                "   static class Root {} ",
+                "",
+                "   @${Xml::class.qualifiedName}",
+                "   static class A  extends Root {} ",
+                "",
+                "   @${Xml::class.qualifiedName}",
+                "   static class B extends Root {} ",
+                "}")
+        Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
+                .that(componentFile)
+                .processedWith(XmlProcessor())
+                .failsToCompile()
+                .withErrorContaining("Element field 'element' in class PolymorphicElement can't have attributes that are accessed from outside of the TypeAdapter that is generated from @${Element::class.simpleName} annotated class! Therefore attribute field 'attribute' in class PolymorphicElement can't be added. Most likely the @${Path::class.simpleName} is in conflict with an @${Element::class.simpleName} annotation.")
+    }
+
+
+    @Test
+    fun polymorphicElementListNoConflictingWithPathAttribute() {
+        val componentFile = JavaFileObjects.forSourceLines("test.PolymorphicElement",
+
+                "@${Xml::class.qualifiedName}",
+                "class PolymorphicElement {",
+                "   @${Element::class.qualifiedName} ( typesByElement = {",
+                "     @${ElementNameMatcher::class.qualifiedName}(elementName=\"a\" , type=A.class),  ",
+                "     @${ElementNameMatcher::class.qualifiedName}(elementName=\"b\" , type=B.class)  ",
+                "   })",
+                "   java.util.List<Root> element;",
+                "",
+                "    @${Path::class.qualifiedName}(\"element\")",
+                "    @${Attribute::class.qualifiedName}",
+                "    String attribute;",
+                "",
+                "   @${Xml::class.qualifiedName}",
+                "   static class Root {} ",
+                "",
+                "   @${Xml::class.qualifiedName}",
+                "   static class A  extends Root {} ",
+                "",
+                "   @${Xml::class.qualifiedName}",
+                "   static class B extends Root {} ",
+                "}")
+        Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
+                .that(componentFile)
+                .processedWith(XmlProcessor())
+                .failsToCompile()
+                .withErrorContaining("Element field 'element' in class PolymorphicElement can't have attributes that are accessed from outside of the TypeAdapter that is generated from @${Element::class.simpleName} annotated class! Therefore attribute field 'attribute' in class PolymorphicElement can't be added. Most likely the @${Path::class.simpleName} is in conflict with an @${Element::class.simpleName} annotation.")
+    }
+
+    @Test
+    fun polymorphicElementListConflictingWithPathAttribute2() {
+        val componentFile = JavaFileObjects.forSourceLines("test.PolymorphicElement",
+
+                "@${Xml::class.qualifiedName}",
+                "class PolymorphicElement {",
+                "    @${Path::class.qualifiedName}(\"element\")",
+                "    @${Attribute::class.qualifiedName}",
+                "    String attribute;",
+                "",
+                "   @${Element::class.qualifiedName} ( typesByElement = {",
+                "     @${ElementNameMatcher::class.qualifiedName}(elementName=\"a\" , type=A.class),  ",
+                "     @${ElementNameMatcher::class.qualifiedName}(elementName=\"b\" , type=B.class)  ",
+                "   })",
+                "   java.util.List<Root> element;",
+                "",
+                "   @${Xml::class.qualifiedName}",
+                "   static class Root {} ",
+                "",
+                "   @${Xml::class.qualifiedName}",
+                "   static class A  extends Root {} ",
+                "",
+                "   @${Xml::class.qualifiedName}",
+                "   static class B extends Root {} ",
+                "}")
+        Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
+                .that(componentFile)
+                .processedWith(XmlProcessor())
+                .failsToCompile()
+                .withErrorContaining("Conflict: field 'element' in class PolymorphicElement is in conflict with PolymorphicElement. Maybe both have the same xml name 'element' (you can change that via annotations) or @${Path::class.simpleName} is causing this conflict.")
+    }
 }
