@@ -35,7 +35,7 @@ import java.util.Map;
 public abstract class NestedChildElementBinder<T> implements ChildElementBinder<T> {
 
   public Map<String, AttributeBinder<T>> attributeBinders = null;
-  public Map<String, ChildElementBinder<T>> childelmentBinders = null;
+  public Map<String, ChildElementBinder<T>> childElementBinders = null;
 
 
   // TODO Maybe use a Pool of StringBuilders?
@@ -91,14 +91,14 @@ public abstract class NestedChildElementBinder<T> implements ChildElementBinder<
     // Read child elements
     //
     while (true) {
-      if (childelmentBinders != null && reader.hasElement()) {
+      if (childElementBinders != null && reader.hasElement()) {
         //
         // Read element
         //
         reader.beginElement();
 
         String elementName = reader.nextElementName();
-        ChildElementBinder<T> childElementBinder = childelmentBinders.get(elementName);
+        ChildElementBinder<T> childElementBinder = childElementBinders.get(elementName);
         if (childElementBinder != null) {
           childElementBinder.fromXml(reader, config, value);
           reader.endElement();

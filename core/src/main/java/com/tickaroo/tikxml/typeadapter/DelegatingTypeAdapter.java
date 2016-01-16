@@ -34,7 +34,7 @@ import java.util.Map;
 public abstract class DelegatingTypeAdapter<T> implements TypeAdapter<T> {
 
   protected Map<String, AttributeBinder<T>> attributeBinders = new HashMap<>();
-  protected Map<String, ChildElementBinder<T>> childelmentBinders = new HashMap<>();
+  protected Map<String, ChildElementBinder<T>> childElementBinders = new HashMap<>();
 
   //
   // Text content
@@ -105,7 +105,7 @@ public abstract class DelegatingTypeAdapter<T> implements TypeAdapter<T> {
         reader.beginElement();
 
         String elementName = reader.nextElementName();
-        ChildElementBinder<T> childElementBinder = childelmentBinders.get(elementName);
+        ChildElementBinder<T> childElementBinder = childElementBinders.get(elementName);
         if (childElementBinder != null) {
           childElementBinder.fromXml(reader, config, value);
           reader.endElement();

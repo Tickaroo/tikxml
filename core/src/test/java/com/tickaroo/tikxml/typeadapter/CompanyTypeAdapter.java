@@ -52,7 +52,7 @@ public class CompanyTypeAdapter extends DelegatingTypeAdapter<Company> {
     //
     // Child Elements
     //
-    childelmentBinders.put("legalForm", new ChildElementBinder<Company>() {
+    childElementBinders.put("legalForm", new ChildElementBinder<Company>() {
       @Override
       public void fromXml(XmlReader reader, TikXmlConfig config, Company value) throws IOException {
         value.legalForm = reader.nextTextContent();
@@ -60,7 +60,7 @@ public class CompanyTypeAdapter extends DelegatingTypeAdapter<Company> {
     });
 
 
-    childelmentBinders.put("founded", new ChildElementBinder<Company>() {
+    childElementBinders.put("founded", new ChildElementBinder<Company>() {
       @Override
       public void fromXml(XmlReader reader, TikXmlConfig config, Company value) throws IOException {
         try {

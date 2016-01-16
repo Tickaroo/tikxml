@@ -58,12 +58,12 @@ public class CompanyNestedTypeAdapterWithoutReadingTextContent extends Delegatin
     //
     // Child Elements
     //
-    childelmentBinders.put("info", new NestedChildElementBinder<Company>(false) {
+    childElementBinders.put("info", new NestedChildElementBinder<Company>(false) {
 
       // Initializer
       {
         attributeBinders = new HashMap<String, AttributeBinder<Company>>();
-        childelmentBinders = new HashMap<String, ChildElementBinder<Company>>();
+        childElementBinders = new HashMap<String, ChildElementBinder<Company>>();
 
         attributeBinders.put("shortInfo", new AttributeBinder<Company>() {
           @Override
@@ -72,11 +72,11 @@ public class CompanyNestedTypeAdapterWithoutReadingTextContent extends Delegatin
           }
         });
 
-        childelmentBinders.put("legalForm", new NestedChildElementBinder<Company>(true) {
+        childElementBinders.put("legalForm", new NestedChildElementBinder<Company>(true) {
 
           {
             attributeBinders = new HashMap<String, AttributeBinder<Company>>();
-            childelmentBinders = new HashMap<String, ChildElementBinder<Company>>();
+            childElementBinders = new HashMap<String, ChildElementBinder<Company>>();
 
             attributeBinders.put("partOfTheName", new AttributeBinder<Company>() {
               @Override
@@ -93,7 +93,7 @@ public class CompanyNestedTypeAdapterWithoutReadingTextContent extends Delegatin
         });
 
 
-        childelmentBinders.put("founded", new ChildElementBinder<Company>() {
+        childElementBinders.put("founded", new ChildElementBinder<Company>() {
           @Override
           public void fromXml(XmlReader reader, TikXmlConfig config, Company value) throws IOException {
             try {
@@ -111,7 +111,7 @@ public class CompanyNestedTypeAdapterWithoutReadingTextContent extends Delegatin
       }
     });
 
-    childelmentBinders.put("other", new ChildElementBinder<Company>() {
+    childElementBinders.put("other", new ChildElementBinder<Company>() {
       @Override
       public void fromXml(XmlReader reader, TikXmlConfig config, Company value) throws IOException {
         value.otherText = reader.nextTextContent();

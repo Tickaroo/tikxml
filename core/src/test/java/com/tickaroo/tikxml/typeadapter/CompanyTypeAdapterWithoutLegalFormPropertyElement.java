@@ -24,6 +24,6 @@ package com.tickaroo.tikxml.typeadapter;
 public class CompanyTypeAdapterWithoutLegalFormPropertyElement extends CompanyTypeAdapter {
 
   public CompanyTypeAdapterWithoutLegalFormPropertyElement() {
-    childelmentBinders.remove("legalForm");
+    childElementBinders.remove("legalForm");
   }
 }
