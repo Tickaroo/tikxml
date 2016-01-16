@@ -732,7 +732,7 @@ Usually you want an exception to be thrown because usually you need all data fro
 
 ```java
 TikXml tikXml = TikXml.Builder()
-                      .throwExceptionOnMissingMapping(true) // set this to false if you don't want that an exception is thrown
+                      .exceptionOnUnreadXml(true) // set this to false if you don't want that an exception is thrown
                       .build();
 ```
 

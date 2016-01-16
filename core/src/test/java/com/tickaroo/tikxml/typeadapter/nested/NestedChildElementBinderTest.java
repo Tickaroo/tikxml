@@ -59,7 +59,7 @@ public class NestedChildElementBinderTest {
   public void readAll() throws IOException, ParseException {
 
     TikXml tikXml = new TikXml.Builder()
-        .throwExceptionOnMissingMapping(true)
+        .exceptionOnUnreadXml(true)
         .addTypeConverter(Date.class, dateTypeConverter)
         .addTypeAdapter(Company.class, new CompanyNestedTypeAdapter())
         .build();
@@ -83,7 +83,7 @@ public class NestedChildElementBinderTest {
   public void readAllMultilineTextContent() throws IOException, ParseException {
 
     TikXml tikXml = new TikXml.Builder()
-        .throwExceptionOnMissingMapping(true)
+        .exceptionOnUnreadXml(true)
         .addTypeConverter(Date.class, dateTypeConverter)
         .addTypeAdapter(Company.class, new CompanyNestedTypeAdapter())
         .build();
@@ -110,7 +110,7 @@ public class NestedChildElementBinderTest {
   public void failingMissingMappingFounded() throws IOException, ParseException {
 
     TikXml tikXml = new TikXml.Builder()
-        .throwExceptionOnMissingMapping(true)
+        .exceptionOnUnreadXml(true)
         .addTypeConverter(Date.class, dateTypeConverter)
         .addTypeAdapter(Company.class, new CompanyNestedTypeAdapterWithoutFounded())
         .build();
@@ -129,7 +129,7 @@ public class NestedChildElementBinderTest {
 
 
     TikXml tikXml = new TikXml.Builder()
-        .throwExceptionOnMissingMapping(false)
+        .exceptionOnUnreadXml(false)
         .addTypeConverter(Date.class, dateTypeConverter)
         .addTypeAdapter(Company.class, new CompanyNestedTypeAdapterWithoutFounded())
         .build();
@@ -153,7 +153,7 @@ public class NestedChildElementBinderTest {
   public void failingMissingMappingTextContent() throws IOException, ParseException {
 
     TikXml tikXml = new TikXml.Builder()
-        .throwExceptionOnMissingMapping(true)
+        .exceptionOnUnreadXml(true)
         .addTypeConverter(Date.class, dateTypeConverter)
         .addTypeAdapter(Company.class, new CompanyNestedTypeAdapterWithoutReadingTextContent())
         .build();
@@ -170,7 +170,7 @@ public class NestedChildElementBinderTest {
   public void ignoreMissingMappingTextContent() throws IOException, ParseException {
 
     TikXml tikXml = new TikXml.Builder()
-        .throwExceptionOnMissingMapping(false)
+        .exceptionOnUnreadXml(false)
         .addTypeConverter(Date.class, dateTypeConverter)
         .addTypeAdapter(Company.class, new CompanyNestedTypeAdapterWithoutReadingTextContent())
         .build();
@@ -193,7 +193,7 @@ public class NestedChildElementBinderTest {
   public void failingMissingMappingShortInfoAttribute() throws IOException, ParseException {
 
     TikXml tikXml = new TikXml.Builder()
-        .throwExceptionOnMissingMapping(true)
+        .exceptionOnUnreadXml(true)
         .addTypeConverter(Date.class, dateTypeConverter)
         .addTypeAdapter(Company.class, new CompanyNestedTypeAdapterWithoutAttribute())
         .build();
@@ -212,7 +212,7 @@ public class NestedChildElementBinderTest {
 
 
     TikXml tikXml = new TikXml.Builder()
-        .throwExceptionOnMissingMapping(false)
+        .exceptionOnUnreadXml(false)
         .addTypeConverter(Date.class, dateTypeConverter)
         .addTypeAdapter(Company.class, new CompanyNestedTypeAdapterWithoutAttribute())
         .build();

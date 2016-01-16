@@ -73,7 +73,7 @@ public class DelegatingTypeAdapterTest {
   @Test
   public void failUnmappedAttribute() throws IOException {
     TikXml tikXml = new TikXml.Builder()
-        .throwExceptionOnMissingMapping(true)
+        .exceptionOnUnreadXml(true)
         .addTypeAdapter(Company.class, new CompanyTypeAdapterWithoutNameAttribute())
         .build();
 
@@ -91,7 +91,7 @@ public class DelegatingTypeAdapterTest {
   @Test
   public void ignoreUnmappedAttribute() throws IOException {
     TikXml tikXml = new TikXml.Builder()
-        .throwExceptionOnMissingMapping(false)
+        .exceptionOnUnreadXml(false)
         .addTypeAdapter(Company.class, new CompanyTypeAdapterWithoutNameAttribute())
         .build();
 
@@ -110,7 +110,7 @@ public class DelegatingTypeAdapterTest {
   @Test
   public void readPropertyElements() throws IOException, ParseException {
     TikXml tikXml = new TikXml.Builder()
-        .throwExceptionOnMissingMapping(true)
+        .exceptionOnUnreadXml(true)
         .addTypeConverter(Date.class, dateTypeConverter)
         .addTypeAdapter(Company.class, new CompanyTypeAdapter())
         .build();
@@ -131,7 +131,7 @@ public class DelegatingTypeAdapterTest {
   @Test
   public void failUnmappedPropertyElement() throws IOException {
     TikXml tikXml = new TikXml.Builder()
-        .throwExceptionOnMissingMapping(true)
+        .exceptionOnUnreadXml(true)
         .addTypeConverter(Date.class, dateTypeConverter)
         .addTypeAdapter(Company.class, new CompanyTypeAdapterWithoutLegalFormPropertyElement())
         .build();
@@ -148,7 +148,7 @@ public class DelegatingTypeAdapterTest {
   @Test
   public void ingnoreUnmappedPropertyElement() throws IOException, ParseException {
     TikXml tikXml = new TikXml.Builder()
-        .throwExceptionOnMissingMapping(false)
+        .exceptionOnUnreadXml(false)
         .addTypeConverter(Date.class, dateTypeConverter)
         .addTypeAdapter(Company.class, new CompanyTypeAdapterWithoutLegalFormPropertyElement())
         .build();
@@ -168,7 +168,7 @@ public class DelegatingTypeAdapterTest {
   @Test
   public void readTextContent() throws IOException, ParseException {
     TikXml tikXml = new TikXml.Builder()
-        .throwExceptionOnMissingMapping(true)
+        .exceptionOnUnreadXml(true)
         .addTypeConverter(Date.class, dateTypeConverter)
         .addTypeAdapter(Company.class, new CompanyTypeAdapter())
         .build();
@@ -190,7 +190,7 @@ public class DelegatingTypeAdapterTest {
   @Test
   public void readTextContentSplitted() throws IOException, ParseException {
     TikXml tikXml = new TikXml.Builder()
-        .throwExceptionOnMissingMapping(true)
+        .exceptionOnUnreadXml(true)
         .addTypeConverter(Date.class, dateTypeConverter)
         .addTypeAdapter(Company.class, new CompanyTypeAdapter())
         .build();
@@ -215,7 +215,7 @@ public class DelegatingTypeAdapterTest {
   @Test
   public void failUnreadTextContent() throws IOException {
     TikXml tikXml = new TikXml.Builder()
-        .throwExceptionOnMissingMapping(true)
+        .exceptionOnUnreadXml(true)
         .addTypeConverter(Date.class, dateTypeConverter)
         .addTypeAdapter(Company.class, new CompanyTypeAdapterWithoutReadingTextContent())
         .build();
@@ -231,7 +231,7 @@ public class DelegatingTypeAdapterTest {
   @Test
   public void ignoreUnreadTextContent() throws IOException, ParseException {
     TikXml tikXml = new TikXml.Builder()
-        .throwExceptionOnMissingMapping(false)
+        .exceptionOnUnreadXml(false)
         .addTypeConverter(Date.class, dateTypeConverter)
         .addTypeAdapter(Company.class, new CompanyTypeAdapterWithoutReadingTextContent())
         .build();

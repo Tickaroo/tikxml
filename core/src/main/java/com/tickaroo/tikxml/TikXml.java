@@ -43,8 +43,15 @@ public final class TikXml {
     private TikXmlConfig config = new TikXmlConfig();
 
 
-    public Builder throwExceptionOnMissingMapping(boolean throwException) {
-      config.throwExceptionOnMissingMapping = throwException;
+    /**
+     * Specify if an exception should be thrown if parts of the currently reading xml element are
+     * not read (not mapped to java class)
+     *
+     * @param throwException true if exception should be thrown, otherwise false
+     * @return The Builder itself
+     */
+    public Builder exceptionOnUnreadXml(boolean throwException) {
+      config.exceptionOnUnreadXml = throwException;
       return this;
     }
 
@@ -73,6 +80,9 @@ public final class TikXml {
     }
 
 
+    /**
+     * @return {@link TikXml} instance with the specified config
+     */
     public TikXml build() {
       return new TikXml(config);
     }
@@ -97,7 +107,7 @@ public final class TikXml {
     T value = config.getTypeAdapter(clazz).fromXml(reader, config);
 
     reader.endElement();
-    
+
     return value;
   }
 

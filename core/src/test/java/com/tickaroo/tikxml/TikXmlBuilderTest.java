@@ -32,12 +32,12 @@ public class TikXmlBuilderTest {
   @Test
   public void throwExceptionOnMissingMappingTest() {
 
-    TikXml tikXml = new TikXml.Builder().throwExceptionOnMissingMapping(false).build();
-    Assert.assertFalse(tikXml.config.throwExceptionOnMissingMapping);
+    TikXml tikXml = new TikXml.Builder().exceptionOnUnreadXml(false).build();
+    Assert.assertFalse(tikXml.config.exceptionOnUnreadXml);
 
 
-    TikXml tikXml2 = new TikXml.Builder().throwExceptionOnMissingMapping(true).build();
-    Assert.assertTrue(tikXml2.config.throwExceptionOnMissingMapping);
+    TikXml tikXml2 = new TikXml.Builder().exceptionOnUnreadXml(true).build();
+    Assert.assertTrue(tikXml2.config.exceptionOnUnreadXml);
   }
 
   @Test
