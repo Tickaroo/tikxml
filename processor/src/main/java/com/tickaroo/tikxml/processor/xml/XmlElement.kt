@@ -22,6 +22,7 @@ import com.tickaroo.tikxml.annotation.Element
 import com.tickaroo.tikxml.annotation.Path
 import com.tickaroo.tikxml.processor.ProcessingException
 import com.tickaroo.tikxml.processor.field.AttributeField
+import com.tickaroo.tikxml.processor.generator.CodeGenerator
 
 /**
  *
@@ -36,6 +37,10 @@ interface XmlElement {
      */
     val attributes: Map<String, AttributeField>
     val childElements: Map<String, XmlChildElement>
+
+    fun hasAttributes() = attributes.isNotEmpty()
+
+    fun hasChildElements() = childElements.isNotEmpty()
 
     /**
      * Can this [XmlElement] be merged with another [XmlElement] ?
@@ -143,5 +148,6 @@ interface XmlElement {
 
         (parentElement.childElements as MutableMap).put(into.name, into)
     }
+
 
 }

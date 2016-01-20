@@ -16,16 +16,23 @@
  *
  */
 
-package com.tickaroo.tikxml.processor.field
+package com.tickaroo.tikxml.processor.generator
 
-import javax.lang.model.element.VariableElement
+import java.util.*
 
 /**
- * Represents an field which value is represented by an xml element's attribute
+ * Instance that manages custom
  * @author Hannes Dorfmann
  */
-class AttributeField(element: VariableElement, name: String, required: Boolean? = null,
-                     val converterQualifiedName: String? = null) : NamedField(element, name, required) {
+class CustomTypeConverterManager {
 
+    /**
+     * Map from qualified class name to java field name
+     */
+    val converterMap: Map<String, String> = HashMap()
+    private var fieldNameCounter = 1
 
+    fun getFieldNameForConverter(qualifiedConverterClassName: String): String = (converterMap as MutableMap).getOrPut(qualifiedConverterClassName) {
+        "typeConverter${fieldNameCounter++}"
+    }
 }

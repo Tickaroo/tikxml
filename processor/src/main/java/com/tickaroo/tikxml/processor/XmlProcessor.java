@@ -77,7 +77,7 @@ public class XmlProcessor extends AbstractProcessor {
     elementUtils = processingEnv.getElementUtils();
     typeUtils = processingEnv.getTypeUtils();
     fieldDetectorStrategyFactory = new FieldDetectorStrategyFactory(elementUtils, typeUtils, new AnnotationBasedRequiredDetector());
-    generator = new TypeAdapterCodeGenerator(filer, elementUtils);
+    generator = new TypeAdapterCodeGenerator(filer, elementUtils, new HashSet<String>());
   }
 
   @Override

@@ -43,7 +43,6 @@ public abstract class DelegatingTypeAdapter<T> implements TypeAdapter<T> {
   private StringBuilder textContentBuilder = null;
   private final boolean shouldReadTextContent;
 
-
   /**
    * Reading text content of this root element may requires some extra object allocation. If you
    * know that you wont read text content of this root element than set this to false to allow some
@@ -61,10 +60,12 @@ public abstract class DelegatingTypeAdapter<T> implements TypeAdapter<T> {
   protected abstract T newInstance();
 
   /**
-   * Assign the text content to the given value
+   * Assign the text content to the given value. Override this in sub class if your typeadapter has
+   * text content
    */
-  protected abstract void assignTextContent(TikXmlConfig config, String textContent, T value);
+  protected void assignTextContent(TikXmlConfig config, String textContent, T value) {
 
+  }
 
   @Override
   public T fromXml(XmlReader reader, TikXmlConfig config) throws IOException {
@@ -86,12 +87,15 @@ public abstract class DelegatingTypeAdapter<T> implements TypeAdapter<T> {
         attributeBinder.fromXml(reader, config, value);
       } else {
         if (config.throwsExceptionOnMissingMapping()) {
-          throw new IOException("Could not map the xml attribute with the name '" + attributeName + "' at path " + reader.getPath() + " to java class. Have you annotated such a field in your java class to map this xml attribute?");
+          throw new IOException("Could not map the xml attribute with the name '"
+              + attributeName
+              + "' at path "
+              + reader.getPath()
+              + " to java class. Have you annotated such a field in your java class to map this xml attribute?");
         } else {
           reader.skipAttributeValue();
         }
       }
-
     }
 
     //
@@ -109,15 +113,17 @@ public abstract class DelegatingTypeAdapter<T> implements TypeAdapter<T> {
         if (childElementBinder != null) {
           childElementBinder.fromXml(reader, config, value);
           reader.endElement();
-
         } else {
           if (config.throwsExceptionOnMissingMapping()) {
-            throw new IOException("Could not map the xml element with the name '" + elementName + "' at path " + reader.getPath() + " to java class. Have you annotated such a field in your java class to map this xml element?");
+            throw new IOException("Could not map the xml element with the name '"
+                + elementName
+                + "' at path "
+                + reader.getPath()
+                + " to java class. Have you annotated such a field in your java class to map this xml element?");
           } else {
             reader.skipRemainingElement(); // includes reader.endElement()
           }
         }
-
       } else if (reader.hasTextContent()) {
         //
         // Read text content
@@ -135,7 +141,9 @@ public abstract class DelegatingTypeAdapter<T> implements TypeAdapter<T> {
           }
         } else {
           if (config.throwsExceptionOnMissingMapping()) {
-            throw new IOException("Could not map the xml element's text content at path  at path " + reader.getPath() + " to java class. Have you annotated such a field in your java class to map the xml element's text content?");
+            throw new IOException("Could not map the xml element's text content at path  at path "
+                + reader.getPath()
+                + " to java class. Have you annotated such a field in your java class to map the xml element's text content?");
           } else {
             reader.skipTextContent();
           }
@@ -155,7 +163,6 @@ public abstract class DelegatingTypeAdapter<T> implements TypeAdapter<T> {
         textContent = null;
       }
     }
-
 
     return value;
   }

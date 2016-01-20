@@ -37,7 +37,6 @@ public abstract class NestedChildElementBinder<T> implements ChildElementBinder<
   public Map<String, AttributeBinder<T>> attributeBinders = null;
   public Map<String, ChildElementBinder<T>> childElementBinders = null;
 
-
   // TODO Maybe use a Pool of StringBuilders?
 
   //
@@ -77,15 +76,17 @@ public abstract class NestedChildElementBinder<T> implements ChildElementBinder<
           attributeBinder.fromXml(reader, config, value);
         } else {
           if (config.throwsExceptionOnMissingMapping()) {
-            throw new IOException("Could not map the xml attribute with the name '" + attributeName + "' at path " + reader.getPath() + " to java class. Have you annotated such a field in your java class to map this xml attribute?");
+            throw new IOException("Could not map the xml attribute with the name '"
+                + attributeName
+                + "' at path "
+                + reader.getPath()
+                + " to java class. Have you annotated such a field in your java class to map this xml attribute?");
           } else {
             reader.skipAttributeValue();
           }
         }
-
       }
     }
-
 
     //
     // Read child elements
@@ -102,15 +103,17 @@ public abstract class NestedChildElementBinder<T> implements ChildElementBinder<
         if (childElementBinder != null) {
           childElementBinder.fromXml(reader, config, value);
           reader.endElement();
-
         } else {
           if (config.throwsExceptionOnMissingMapping()) {
-            throw new IOException("Could not map the xml element with the name '" + elementName + "' at path " + reader.getPath() + " to java class. Have you annotated such a field in your java class to map this xml element?");
+            throw new IOException("Could not map the xml element with the name '"
+                + elementName
+                + "' at path "
+                + reader.getPath()
+                + " to java class. Have you annotated such a field in your java class to map this xml element?");
           } else {
             reader.skipRemainingElement(); // includes reader.endElement()
           }
         }
-
       } else if (reader.hasTextContent()) {
         //
         // Read text content
@@ -128,7 +131,9 @@ public abstract class NestedChildElementBinder<T> implements ChildElementBinder<
           }
         } else {
           if (config.throwsExceptionOnMissingMapping()) {
-            throw new IOException("Could not map the xml element's text content at path  at path " + reader.getPath() + " to java class. Have you annotated such a field in your java class to map the xml element's text content?");
+            throw new IOException("Could not map the xml element's text content at path  at path "
+                + reader.getPath()
+                + " to java class. Have you annotated such a field in your java class to map the xml element's text content?");
           } else {
             reader.skipTextContent();
           }
@@ -150,8 +155,16 @@ public abstract class NestedChildElementBinder<T> implements ChildElementBinder<
         textContent = null;
       }
     }
-
   }
 
-  protected abstract void assignTextContent(TikXmlConfig config, String textContent, T value);
+  /**
+   * Override this method if your chile element has a text content
+   *
+   * @param config the config
+   * @param textContent the textvalue as string
+   * @param value the value where we have to assign the text content value
+   */
+  protected void assignTextContent(TikXmlConfig config, String textContent, T value) {
+
+  }
 }

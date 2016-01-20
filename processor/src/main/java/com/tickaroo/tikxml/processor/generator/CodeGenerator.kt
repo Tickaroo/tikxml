@@ -16,16 +16,15 @@
  *
  */
 
-package com.tickaroo.tikxml.processor.field
+package com.tickaroo.tikxml.processor.generator
 
-import javax.lang.model.element.VariableElement
+import com.squareup.javapoet.CodeBlock
 
 /**
- * Represents an field which value is represented by an xml element's attribute
+ *
  * @author Hannes Dorfmann
  */
-class AttributeField(element: VariableElement, name: String, required: Boolean? = null,
-                     val converterQualifiedName: String? = null) : NamedField(element, name, required) {
+interface CodeGenerator {
 
-
+    fun getCodeBlock() : CodeBlock
 }

@@ -39,6 +39,7 @@ fun TypeMirror.isPrimitive() = when (kind) {
         "java.lang.Float" -> true
         "java.lang.String" -> true
         "java.lang.Character" -> true
+        "java.lang.Long" -> true
         else -> false
     }
 }
@@ -55,3 +56,9 @@ fun TypeMirror.isString() = when (toString()) {
     else -> false
 
 }
+
+fun TypeMirror.isInt() = if (kind == TypeKind.INT || toString() == "java.lang.Integer") true else false
+
+fun TypeMirror.isDouble() = if (kind == TypeKind.DOUBLE || toString() == "java.lang.Double") true else false
+
+fun TypeMirror.isLong() = if (kind == TypeKind.LONG || toString() == "java.lang.Long") true else false
