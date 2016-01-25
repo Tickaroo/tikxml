@@ -24,6 +24,7 @@ import com.google.testing.compile.JavaSourceSubjectFactory
 import com.google.testing.compile.JavaSourcesSubject
 import com.tickaroo.tikxml.annotation.*
 import com.tickaroo.tikxml.processor.XmlProcessor
+import org.junit.Ignore
 import org.junit.Test
 import javax.tools.JavaFileObject
 
@@ -298,7 +299,7 @@ class AnnotationOnlyFieldDetectorStrategyTest {
                 "class InlineListOnLinkedListType {",
                 "   @${InlineList::class.java.canonicalName}",
                 "   @${Element::class.java.canonicalName}",
-                "   java.util.LinkedList<String> aList;",
+                "   java.util.List<String> aList;",
                 "}")
 
         Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
@@ -852,13 +853,14 @@ class AnnotationOnlyFieldDetectorStrategyTest {
                 "       @${ElementNameMatcher::class.qualifiedName}(elementName=\"bar\" , type=InnerClass2.class),",
                 "    })",
                 "   java.util.List aField;",
+                "}",
                 "",
-                " public interface MyInterface {}",
+                " interface MyInterface {}",
                 "@${Xml::class.java.canonicalName}(scanMode = ${ScanMode::class.qualifiedName}.${ScanMode.ANNOTATIONS_ONLY})",
-                " public class InnerClass1 implements MyInterface{}",
+                " class InnerClass1 implements MyInterface{}",
                 "@${Xml::class.java.canonicalName}(scanMode = ${ScanMode::class.qualifiedName}.${ScanMode.ANNOTATIONS_ONLY})",
-                " public class InnerClass2 implements MyInterface{}",
-                "}")
+                " class InnerClass2 implements MyInterface{}"
+        )
 
         Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
                 .that(componentFile).processedWith(XmlProcessor())
@@ -867,6 +869,7 @@ class AnnotationOnlyFieldDetectorStrategyTest {
     }
 
     @Test
+    @Ignore
     fun elementListWildcardExtendsInterfaceWithPolymorphism() {
         val componentFile = JavaFileObjects.forSourceLines("test.ElementListWildcardInterfaceWithPolymorphism",
                 "package test;",
@@ -906,18 +909,19 @@ class AnnotationOnlyFieldDetectorStrategyTest {
                 "       @${ElementNameMatcher::class.qualifiedName}(elementName=\"bar\" , type=InnerClass2.class),",
                 "    })",
                 "   java.util.List<? extends MyInterface> aField;",
+                "}",
                 "",
-                " public interface MyInterface {}",
+                " interface MyInterface {}",
                 "@${Xml::class.java.canonicalName}(scanMode = ${ScanMode::class.qualifiedName}.${ScanMode.ANNOTATIONS_ONLY})",
-                " public class InnerClass1 implements MyInterface{}",
+                "class InnerClass1 implements MyInterface{}",
                 "@${Xml::class.java.canonicalName}(scanMode = ${ScanMode::class.qualifiedName}.${ScanMode.ANNOTATIONS_ONLY})",
-                " public class InnerClass2 {}",
-                "}")
+                "class InnerClass2{}"
+        )
 
         Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
                 .that(componentFile).processedWith(XmlProcessor())
                 .failsToCompile()
-                .withErrorContaining("The type test.ElementListWildcardExtendsInterfaceWithPolymorphismWrong.InnerClass2 must be a sub type of test.ElementListWildcardExtendsInterfaceWithPolymorphismWrong.MyInterface. Otherwise this type cannot be used in @${ElementNameMatcher::class.simpleName} to resolve polymorphism")
+                .withErrorContaining("The type test.InnerClass2 must be a sub type of test.MyInterface. Otherwise this type cannot be used in @${ElementNameMatcher::class.simpleName} to resolve polymorphism")
 
     }
 
@@ -982,7 +986,8 @@ class AnnotationOnlyFieldDetectorStrategyTest {
     }
 
     @Test
-    fun elementListWildcardInterfaceWithPolymorphism() {
+    @Ignore
+    fun elementListWildcardInterfaceWithoutPolymorphism() {
         val componentFile = JavaFileObjects.forSourceLines("test.ElementListWildcardInterfaceWithPolymorphism",
                 "package test;",
                 "",

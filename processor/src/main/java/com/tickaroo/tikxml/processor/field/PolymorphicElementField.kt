@@ -91,7 +91,8 @@ class PolymorphicSubstitutionListField(element: VariableElement, typeMirror: Typ
                         .add(accessPolicy.resolveAssignment("new \$T()", valueTypeAsArrayList))
                         .endControlFlow()
                         .build())
-                .addStatement("${accessPolicy.resolveGetter()}.add((\$T) $valueFromAdapter )", ClassName.get(typeMirror), ClassName.get(typeMirror))
+                .addStatement("\$T v = $valueFromAdapter", ClassName.get(typeMirror), ClassName.get(typeMirror))
+                .addStatement("${accessPolicy.resolveGetter()}.add(v)")
                 .build()
 
         return TypeSpec.anonymousClassBuilder("")
