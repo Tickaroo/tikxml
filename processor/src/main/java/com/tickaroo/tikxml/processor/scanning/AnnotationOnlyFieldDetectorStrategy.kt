@@ -31,9 +31,6 @@ import javax.lang.model.element.VariableElement
 import javax.lang.model.type.*
 import javax.lang.model.util.Elements
 import javax.lang.model.util.Types
-import kotlin.collections.isEmpty
-import kotlin.text.isBlank
-import kotlin.text.isEmpty
 
 /**
  * A [FieldScanner] that scans the element only for annotations
@@ -54,7 +51,15 @@ open class AnnotationOnlyFieldDetectorStrategy(protected val elementUtils: Eleme
         return ignoreAnnotation != null
     }
 
-    protected fun isTextContentAnnotated(element: VariableElement) = element.getAnnotation(TextContent::class.java) != null
+    protected fun isTextContentAnnotated(element: VariableElement): Boolean {
+        // TODO implement support for @TextContent + @Path --> https://github.com/Tickaroo/tikxml/issues/16
+        val textContentAnnotated = element.getAnnotation(TextContent::class.java) != null
+        if (textContentAnnotated && element.getAnnotation(Path::class.java) != null) {
+            throw ProcessingException(element, "Unfortunately @${Path::class.simpleName} on @${TextContent::class.simpleName} is not supported yet")
+        } else {
+            return textContentAnnotated
+        }
+    }
 
     override fun isXmlTextContent(element: VariableElement): TextContentField? =
             if (ignoreField(element)) null
@@ -112,7 +117,7 @@ open class AnnotationOnlyFieldDetectorStrategy(protected val elementUtils: Eleme
 
             val converterChecker = AttributeConverterChecker()
             return AttributeField(element,
-                    nameFromAnnotationOrFieldName(attributeAnnotation.name, element),
+                    nameFromAnnotationOrField(attributeAnnotation.name, element),
                     requiredDetector.isRequired(element),
                     converterChecker.getQualifiedConverterName(element, attributeAnnotation))
         }
@@ -120,7 +125,7 @@ open class AnnotationOnlyFieldDetectorStrategy(protected val elementUtils: Eleme
         if (propertyAnnotation != null) {
             val converterChecker = PropertyElementConverterChecker()
             return PropertyField(element,
-                    nameFromAnnotationOrFieldName(propertyAnnotation.name, element),
+                    nameFromAnnotationOrField(propertyAnnotation.name, element),
                     requiredDetector.isRequired(element),
                     converterChecker.getQualifiedConverterName(element, propertyAnnotation))
         }
@@ -143,7 +148,7 @@ open class AnnotationOnlyFieldDetectorStrategy(protected val elementUtils: Eleme
 
                     return ListElementField(
                             element,
-                            nameFromAnnotationOrFieldName(elementAnnotation.name, element),
+                            nameFromAnnotationOrField(elementAnnotation.name, element),
                             requiredDetector.isRequired(element),
                             getGenericTypeFromList(element),
                             inlineList
@@ -167,7 +172,7 @@ open class AnnotationOnlyFieldDetectorStrategy(protected val elementUtils: Eleme
 
                     return ElementField(
                             element,
-                            nameFromAnnotationOrFieldName(elementAnnotation.name, element),
+                            nameFromAnnotationOrField(elementAnnotation.name, element),
                             requiredDetector.isRequired(element)
                     )
                 }
@@ -176,10 +181,11 @@ open class AnnotationOnlyFieldDetectorStrategy(protected val elementUtils: Eleme
                 if (isList(element)) {
                     return PolymorphicListElementField(
                             element,
-                            nameFromAnnotationOrFieldName(elementAnnotation.name, element),
+                            nameFromAnnotationOrField(elementAnnotation.name, element),
                             requiredDetector.isRequired(element),
                             getPolymorphicTypes(element, nameMatchers),
-                            inlineList
+                            inlineList,
+                            getGenericTypeFromList(element)
                     )
 
                 } else {
@@ -190,7 +196,7 @@ open class AnnotationOnlyFieldDetectorStrategy(protected val elementUtils: Eleme
 
                     return PolymorphicElementField(
                             element,
-                            nameFromAnnotationOrFieldName(elementAnnotation.name, element),
+                            nameFromAnnotationOrField(elementAnnotation.name, element),
                             requiredDetector.isRequired(element),
                             getPolymorphicTypes(element, nameMatchers)
                     )
@@ -337,7 +343,7 @@ open class AnnotationOnlyFieldDetectorStrategy(protected val elementUtils: Eleme
     /**
      * Get the name of a annotated field from annotation or use the field name if no name set
      */
-    protected fun nameFromAnnotationOrFieldName(name: String, element: VariableElement) =
+    protected fun nameFromAnnotationOrField(name: String, element: VariableElement) =
             if (name.isEmpty()) {
                 element.simpleName.toString()
             } else name

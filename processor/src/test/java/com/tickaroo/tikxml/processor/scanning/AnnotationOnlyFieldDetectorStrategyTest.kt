@@ -264,7 +264,7 @@ class AnnotationOnlyFieldDetectorStrategyTest {
                 "class InlineListOnListType {",
                 "   @${InlineList::class.java.simpleName}",
                 "   @${Element::class.java.simpleName}",
-                "   java.util.List<String> aList;",
+                "   java.util.List<Object> aList;",
                 "}")
 
         Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
@@ -281,7 +281,7 @@ class AnnotationOnlyFieldDetectorStrategyTest {
                 "class InlineListOnArrayListType {",
                 "   @${InlineList::class.java.canonicalName}",
                 "   @${Element::class.java.canonicalName}",
-                "   java.util.ArrayList<String> aList;",
+                "   java.util.ArrayList<Object> aList;",
                 "}")
 
         Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
@@ -475,7 +475,7 @@ class AnnotationOnlyFieldDetectorStrategyTest {
                 "   Object aField;",
                 "",
                 "@${Xml::class.java.canonicalName}(scanMode = ${ScanMode::class.qualifiedName}.${ScanMode.ANNOTATIONS_ONLY})",
-                " public class InnerClass {}",
+                " static class InnerClass {}",
                 "}")
 
         Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
@@ -566,12 +566,13 @@ class AnnotationOnlyFieldDetectorStrategyTest {
                 "       @${ElementNameMatcher::class.qualifiedName}(elementName=\"bar\" , type=InnerClass2.class),",
                 "    })",
                 "   Object aField;",
+                "}",
                 "",
                 "@${Xml::class.java.canonicalName}(scanMode = ${ScanMode::class.qualifiedName}.${ScanMode.ANNOTATIONS_ONLY})",
-                " public class InnerClass1 {}",
+                "class InnerClass1 {}",
                 "@${Xml::class.java.canonicalName}(scanMode = ${ScanMode::class.qualifiedName}.${ScanMode.ANNOTATIONS_ONLY})",
-                " public class InnerClass2 {}",
-                "}")
+                "class InnerClass2 {}"
+        )
 
         Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
                 .that(componentFile).processedWith(XmlProcessor())
@@ -636,13 +637,13 @@ class AnnotationOnlyFieldDetectorStrategyTest {
                 "       @${ElementNameMatcher::class.qualifiedName}(elementName=\"bar\" , type=InnerClass2.class),",
                 "    })",
                 "   MyInterface aField;",
+                "}",
                 "",
-                " public interface MyInterface {}",
+                "interface MyInterface {}",
                 "@${Xml::class.java.canonicalName}(scanMode = ${ScanMode::class.qualifiedName}.${ScanMode.ANNOTATIONS_ONLY})",
-                " public class InnerClass1 implements MyInterface{}",
+                "class InnerClass1 implements MyInterface{}",
                 "@${Xml::class.java.canonicalName}(scanMode = ${ScanMode::class.qualifiedName}.${ScanMode.ANNOTATIONS_ONLY})",
-                " public class InnerClass2 implements MyInterface{}",
-                "}")
+                "class InnerClass2 implements MyInterface{}")
 
         Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
                 .that(componentFile).processedWith(XmlProcessor())
@@ -711,13 +712,14 @@ class AnnotationOnlyFieldDetectorStrategyTest {
                 "       @${ElementNameMatcher::class.qualifiedName}(elementName=\"bar\" , type=InnerClass2.class),",
                 "    })",
                 "   MyClass aField;",
+                "}",
                 "",
-                " public abstract class MyClass {}",
+                "abstract class MyClass {}",
                 "@${Xml::class.java.canonicalName}(scanMode = ${ScanMode::class.qualifiedName}.${ScanMode.ANNOTATIONS_ONLY})",
-                " public class InnerClass1 extends MyClass{}",
+                "class InnerClass1 extends MyClass{}",
                 "@${Xml::class.java.canonicalName}(scanMode = ${ScanMode::class.qualifiedName}.${ScanMode.ANNOTATIONS_ONLY})",
-                " public class InnerClass2 extends MyClass{}",
-                "}")
+                "class InnerClass2 extends MyClass{}"
+        )
 
         Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
                 .that(componentFile).processedWith(XmlProcessor())
@@ -739,17 +741,18 @@ class AnnotationOnlyFieldDetectorStrategyTest {
                 "    })",
                 "   MyClass aField;",
                 "",
-                " public abstract class MyClass {}",
+                "}",
+                "",
+                "abstract class MyClass {}",
                 "@${Xml::class.java.canonicalName}(scanMode = ${ScanMode::class.qualifiedName}.${ScanMode.ANNOTATIONS_ONLY})",
-                " public class InnerClass1 extends MyClass{}",
+                "class InnerClass1 extends MyClass{}",
                 "@${Xml::class.java.canonicalName}(scanMode = ${ScanMode::class.qualifiedName}.${ScanMode.ANNOTATIONS_ONLY})",
-                " public class InnerClass2 {}",
-                "}")
+                "class InnerClass2 {}")
 
         Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
                 .that(componentFile).processedWith(XmlProcessor())
                 .failsToCompile()
-                .withErrorContaining("The type test.ElementOnAbstractClassWithPolymorphismWrong.InnerClass2 must be a sub type of test.ElementOnAbstractClassWithPolymorphismWrong.MyClass. Otherwise this type cannot be used in @${ElementNameMatcher::class.simpleName} to resolve polymorphism")
+                .withErrorContaining("The type test.InnerClass2 must be a sub type of test.MyClass. Otherwise this type cannot be used in @${ElementNameMatcher::class.simpleName} to resolve polymorphism")
     }
 
     @Test
@@ -765,13 +768,14 @@ class AnnotationOnlyFieldDetectorStrategyTest {
                 "       @${ElementNameMatcher::class.qualifiedName}(elementName=\"bar\" , type=InnerClass2.class),",
                 "    })",
                 "   java.util.List<MyClass> aField;",
+                "}",
+
                 "",
-                " public abstract class MyClass {}",
+                "abstract class MyClass {}",
                 "@${Xml::class.java.canonicalName}(scanMode = ${ScanMode::class.qualifiedName}.${ScanMode.ANNOTATIONS_ONLY})",
-                " public class InnerClass1 extends MyClass{}",
+                " class InnerClass1 extends MyClass{}",
                 "@${Xml::class.java.canonicalName}(scanMode = ${ScanMode::class.qualifiedName}.${ScanMode.ANNOTATIONS_ONLY})",
-                " public class InnerClass2 extends MyClass{}",
-                "}")
+                " class InnerClass2 extends MyClass{}")
 
         Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
                 .that(componentFile).processedWith(XmlProcessor())
@@ -792,13 +796,14 @@ class AnnotationOnlyFieldDetectorStrategyTest {
                 "       @${ElementNameMatcher::class.qualifiedName}(elementName=\"bar\" , type=InnerClass2.class),",
                 "    })",
                 "   java.util.List<MyInterface> aField;",
+                "}",
                 "",
-                " public interface MyInterface {}",
+                " interface MyInterface {}",
                 "@${Xml::class.java.canonicalName}(scanMode = ${ScanMode::class.qualifiedName}.${ScanMode.ANNOTATIONS_ONLY})",
-                " public class InnerClass1 implements MyInterface{}",
+                "class InnerClass1 implements MyInterface{}",
                 "@${Xml::class.java.canonicalName}(scanMode = ${ScanMode::class.qualifiedName}.${ScanMode.ANNOTATIONS_ONLY})",
-                " public class InnerClass2 implements MyInterface{}",
-                "}")
+                "class InnerClass2 implements MyInterface{}"
+        )
 
         Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
                 .that(componentFile).processedWith(XmlProcessor())
@@ -819,13 +824,14 @@ class AnnotationOnlyFieldDetectorStrategyTest {
                 "       @${ElementNameMatcher::class.qualifiedName}(elementName=\"bar\" , type=InnerClass2.class),",
                 "    })",
                 "   java.util.List aField;",
+                "}",
                 "",
-                " public abstract class MyClass {}",
+                "abstract class MyClass {}",
                 "@${Xml::class.java.canonicalName}(scanMode = ${ScanMode::class.qualifiedName}.${ScanMode.ANNOTATIONS_ONLY})",
-                " public class InnerClass1 extends MyClass{}",
+                "class InnerClass1 extends MyClass{}",
                 "@${Xml::class.java.canonicalName}(scanMode = ${ScanMode::class.qualifiedName}.${ScanMode.ANNOTATIONS_ONLY})",
-                " public class InnerClass2 extends MyClass{}",
-                "}")
+                "class InnerClass2 extends MyClass{}"
+        )
 
         Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
                 .that(componentFile).processedWith(XmlProcessor())
@@ -928,14 +934,15 @@ class AnnotationOnlyFieldDetectorStrategyTest {
                 "       @${ElementNameMatcher::class.qualifiedName}(elementName=\"bar\" , type=Parent.class),",
                 "    })",
                 "   java.util.List<? super GrandParent> aField;",
+                "}",
                 "",
                 "@${Xml::class.java.canonicalName}(scanMode = ${ScanMode::class.qualifiedName}.${ScanMode.ANNOTATIONS_ONLY})",
-                " public class GrandParent {}",
+                "class GrandParent {}",
                 "@${Xml::class.java.canonicalName}(scanMode = ${ScanMode::class.qualifiedName}.${ScanMode.ANNOTATIONS_ONLY})",
-                " public class Parent extends GrandParent {}",
+                "class Parent extends GrandParent {}",
                 "@${Xml::class.java.canonicalName}(scanMode = ${ScanMode::class.qualifiedName}.${ScanMode.ANNOTATIONS_ONLY})",
-                " public class Child extends Parent {}",
-                "}")
+                "class Child extends Parent {}"
+        )
 
 
         Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
@@ -987,13 +994,14 @@ class AnnotationOnlyFieldDetectorStrategyTest {
                 "       @${ElementNameMatcher::class.qualifiedName}(elementName=\"bar\" , type=InnerClass2.class),",
                 "    })",
                 "   java.util.List<?> aField;",
+                "}",
                 "",
-                " public interface MyInterface {}",
+                "interface MyInterface {}",
                 "@${Xml::class.java.canonicalName}(scanMode = ${ScanMode::class.qualifiedName}.${ScanMode.ANNOTATIONS_ONLY})",
-                " public class InnerClass1 implements MyInterface{}",
+                "class InnerClass1 implements MyInterface{}",
                 "@${Xml::class.java.canonicalName}(scanMode = ${ScanMode::class.qualifiedName}.${ScanMode.ANNOTATIONS_ONLY})",
-                " public class InnerClass2 {}",
-                "}")
+                "class InnerClass2 {}"
+        )
 
         Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
                 .that(componentFile).processedWith(XmlProcessor())
@@ -1001,7 +1009,7 @@ class AnnotationOnlyFieldDetectorStrategyTest {
     }
 
     @Test
-    fun noConflictBetweenAttributeAndPropertyElment() {
+    fun noConflictBetweenAttributeAndPropertyElement() {
         val componentFile = JavaFileObjects.forSourceLines("test.NameConflict1",
                 "package test;",
                 "",

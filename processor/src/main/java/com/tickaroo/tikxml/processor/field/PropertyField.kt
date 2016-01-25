@@ -18,8 +18,14 @@
 
 package com.tickaroo.tikxml.processor.field
 
+import com.squareup.javapoet.ClassName
+import com.squareup.javapoet.FieldSpec
+import com.squareup.javapoet.ParameterizedTypeName
+import com.squareup.javapoet.TypeSpec
+import com.tickaroo.tikxml.processor.generator.CodeGenUtils
 import com.tickaroo.tikxml.processor.xml.XmlChildElement
 import java.util.*
+import javax.lang.model.element.Modifier
 import javax.lang.model.element.VariableElement
 
 /**
@@ -32,4 +38,33 @@ class PropertyField(element: VariableElement, name: String, required: Boolean? =
 
     override fun isXmlElementAccessableFromOutsideTypeAdapter() = true
 
+    override fun generateReadXmlCode(codeGenUtils: CodeGenUtils): TypeSpec {
+
+        val fromXmlMethod = codeGenUtils.fromXmlMethodBuilder()
+                .addCode(codeGenUtils.assignViaTypeConverterOrPrimitive(element, CodeGenUtils.AssignmentType.ELEMENT, accessPolicy, converterQualifiedName))
+                .build()
+
+
+        if (!hasAttributes()) {
+            return TypeSpec.anonymousClassBuilder("")
+                    .addSuperinterface(codeGenUtils.childElementBinderType)
+                    .addMethod(fromXmlMethod)
+                    .build()
+        }
+
+
+        // Multiple attributes
+        val attributeMapType = ParameterizedTypeName.get(ClassName.get(Map::class.java), ClassName.get(String::class.java), codeGenUtils.attributeBinderType)
+        val attributeHashMapType = ParameterizedTypeName.get(ClassName.get(Map::class.java), ClassName.get(String::class.java), codeGenUtils.attributeBinderType)
+        return TypeSpec.anonymousClassBuilder("")
+                .addSuperinterface(codeGenUtils.nestedChildElementBinderType)
+                .addField(FieldSpec.builder(attributeMapType, CodeGenUtils.attributeBindersParam, Modifier.PRIVATE)
+                        .initializer("new \$T()", attributeHashMapType)
+                        .build())
+                .addInitializerBlock(codeGenUtils.generateAttributeBinders(this))
+                .addMethod(fromXmlMethod)
+                .build()
+
+
+    }
 }

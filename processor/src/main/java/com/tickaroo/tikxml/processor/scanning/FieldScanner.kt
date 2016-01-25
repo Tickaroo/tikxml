@@ -24,8 +24,7 @@ import com.tickaroo.tikxml.annotation.PropertyElement
 import com.tickaroo.tikxml.annotation.Xml
 import com.tickaroo.tikxml.processor.ProcessingException
 import com.tickaroo.tikxml.processor.field.*
-import com.tickaroo.tikxml.processor.field.access.GetterSetterFieldAccessPolicy
-import com.tickaroo.tikxml.processor.field.access.MinPackageVisibilityFieldAccessPolicy
+import com.tickaroo.tikxml.processor.field.access.FieldAccessPolicy
 import com.tickaroo.tikxml.processor.utils.*
 import com.tickaroo.tikxml.processor.xml.XmlChildElement
 import java.util.*
@@ -72,7 +71,7 @@ class FieldScanner(protected val elementUtils: Elements, protected val typeUtils
         // Function to
         fun checkAccessPolicyOrDeferGetterSetterCheck(element: VariableElement, field: Field): Boolean {
             if (element.hasMinimumPackageVisibilityModifiers()) {
-                field.accessPolicy = MinPackageVisibilityFieldAccessPolicy(field.element)
+                field.accessPolicy = FieldAccessPolicy.MinPackageVisibilityFieldAccessPolicy(field.element)
                 return true
             } else {
                 fieldWithMethodAccessRequired.add(field) // processed afterwards
@@ -93,6 +92,7 @@ class FieldScanner(protected val elementUtils: Elements, protected val typeUtils
 
                 val fieldDetectorStrategy = fieldDetectorStrategyFactory.getStrategy(xmlAnnotation.scanMode)
 
+                // TODO support for @TextContent + @Path
                 val textContentField = fieldDetectorStrategy.isXmlTextContent(it as VariableElement)
 
                 // TextContent Field
@@ -209,7 +209,7 @@ class FieldScanner(protected val elementUtils: Elements, protected val typeUtils
             }
 
             // Set access policy
-            it.accessPolicy = GetterSetterFieldAccessPolicy(getter, setter)
+            it.accessPolicy = FieldAccessPolicy.GetterSetterFieldAccessPolicy(getter, setter)
         }
     }
 
@@ -218,23 +218,27 @@ class FieldScanner(protected val elementUtils: Elements, protected val typeUtils
 
                 is AttributeField -> annotatedClass.addAttribute(field, PathDetector.getSegments(field.element))
 
-                is PolymorphicElementField ->
-                    if (field is PolymorphicListElementField && !field.inlineList) {
-
+                is PolymorphicListElementField ->
+                    if (field.inlineList) {
+                        val path = PathDetector.getSegments(field.element)
+                        for ((xmlElementName, typeMirror) in field.typeElementNameMatcher) {
+                            annotatedClass.addChildElement(PolymorphicSubstitutionListField(field.element, typeMirror, field.accessPolicy, xmlElementName, field.genericListTypeMirror, field.required), path)
+                        }
+                    } else {
                         // Add "not inline list" by adding child elements
                         val originElementPath = PathDetector.getSegments(field.element)
                         annotatedClass.addChildElement(field, originElementPath)
 
                         // Add Polymorphic elements as child element
                         for ((xmlElementName, typeMirror) in field.typeElementNameMatcher) {
-                            field.addChildElement(PolymorphicSubstitutionField(field.element, typeMirror, field.accessPolicy, xmlElementName, field.required), originElementPath.plus(field.name))
+                            field.addChildElement(PolymorphicSubstitutionListField(field.element, typeMirror, field.accessPolicy, xmlElementName, field.genericListTypeMirror, field.required), emptyList())
                         }
+                    }
 
-                    } else {
-                        // Insert PolymorphicSubstitution instead of the original field.
-                        for ((xmlElementName, typeMirror) in field.typeElementNameMatcher) {
-                            annotatedClass.addChildElement(PolymorphicSubstitutionField(field.element, typeMirror, field.accessPolicy, xmlElementName, field.required), PathDetector.getSegments(field.element))
-                        }
+                is PolymorphicElementField ->
+                    // Insert PolymorphicSubstitution instead of the original field.
+                    for ((xmlElementName, typeMirror) in field.typeElementNameMatcher) {
+                        annotatedClass.addChildElement(PolymorphicSubstitutionField(field.element, typeMirror, field.accessPolicy, xmlElementName, field.required), PathDetector.getSegments(field.element))
                     }
 
                 is XmlChildElement -> annotatedClass.addChildElement(field, PathDetector.getSegments(field.element))

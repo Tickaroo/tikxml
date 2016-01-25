@@ -18,7 +18,15 @@
 
 package com.tickaroo.tikxml.processor.field
 
+import com.squareup.javapoet.ClassName
+import com.squareup.javapoet.CodeBlock
+import com.squareup.javapoet.ParameterizedTypeName
+import com.squareup.javapoet.TypeSpec
+import com.tickaroo.tikxml.annotation.InlineList
+import com.tickaroo.tikxml.processor.ProcessingException
 import com.tickaroo.tikxml.processor.field.access.FieldAccessPolicy
+import com.tickaroo.tikxml.processor.generator.CodeGenUtils
+import java.util.*
 import javax.lang.model.element.VariableElement
 import javax.lang.model.type.TypeMirror
 
@@ -26,13 +34,72 @@ import javax.lang.model.type.TypeMirror
  * Represents a Field with [com.tickaroo.tikxml.annotation.Element] annotation
  * @author Hannes Dorfmann
  */
-open class PolymorphicElementField(element: VariableElement, name: String, required: Boolean?, val typeElementNameMatcher: List<PolymorphicTypeElementNameMatcher>) : ElementField(element, name, required)
+open class PolymorphicElementField(element: VariableElement, name: String, required: Boolean?, val typeElementNameMatcher: List<PolymorphicTypeElementNameMatcher>) : ElementField(element, name, required) {
+    override fun generateReadXmlCode(codeGenUtils: CodeGenUtils): TypeSpec {
+        return codeGenUtils.generateNestedChildElementBinder(this)
+    }
+}
 
-class PolymorphicListElementField(element: VariableElement, name: String, required: Boolean?, typeElementNameMatcher: List<PolymorphicTypeElementNameMatcher>, val inlineList: Boolean) : PolymorphicElementField(element, name, required, typeElementNameMatcher)
+class PolymorphicListElementField(element: VariableElement, name: String, required: Boolean?, typeElementNameMatcher: List<PolymorphicTypeElementNameMatcher>, val inlineList: Boolean, val genericListTypeMirror: TypeMirror) : PolymorphicElementField(element, name, required, typeElementNameMatcher) {
 
-data class PolymorphicTypeElementNameMatcher(val xmlElementName: String, val type: TypeMirror)
+    override fun generateReadXmlCode(codeGenUtils: CodeGenUtils): TypeSpec {
+        if (inlineList) {
+            throw ProcessingException(element, "Oops, en error has occurred while generating reading xml code from an element annotated with @${InlineList::class.simpleName}. Please fill an issue at https://github.com/Tickaroo/tikxml/issues")
+        }
+        // Not an inline list, so it will have child elements
+        return codeGenUtils.generateNestedChildElementBinder(this)
+    }
+
+}
 
 /**
  * This kind of element will be used to replace a [PolymorphicElementField]
  */
-class PolymorphicSubstitutionField(element: VariableElement, override val typeMirror: TypeMirror, override var accessPolicy: FieldAccessPolicy, name: String, required: Boolean? = null) : ElementField(element, name, required)
+open class PolymorphicSubstitutionField(element: VariableElement, override val typeMirror: TypeMirror, override var accessPolicy: FieldAccessPolicy, name: String, required: Boolean? = null) : ElementField(element, name, required) {
+
+    override fun isXmlElementAccessableFromOutsideTypeAdapter(): Boolean = false
+
+    override fun generateReadXmlCode(codeGenUtils: CodeGenUtils): TypeSpec {
+
+        val fromXmlMethod = codeGenUtils.fromXmlMethodBuilder()
+                .addCode(accessPolicy.resolveAssignment("${CodeGenUtils.tikConfigParam}.getTypeAdapter(\$T.class).fromXml(${CodeGenUtils.readerParam}, ${CodeGenUtils.tikConfigParam})", ClassName.get(typeMirror)))
+                .build()
+
+        return TypeSpec.anonymousClassBuilder("")
+                .addSuperinterface(codeGenUtils.childElementBinderType)
+                .addMethod(fromXmlMethod)
+                .build()
+    }
+
+}
+
+/**
+ * This kind of element will be used to replace a [PolymorphicElementField] but for List elements
+ */
+class PolymorphicSubstitutionListField(element: VariableElement, typeMirror: TypeMirror, accessPolicy: FieldAccessPolicy, name: String, private val genericListTypeMirror : TypeMirror, required: Boolean? = null) : PolymorphicSubstitutionField(element, typeMirror, accessPolicy, name, required) {
+
+
+    override fun generateReadXmlCode(codeGenUtils: CodeGenUtils): TypeSpec {
+
+        val valueTypeAsArrayList = ParameterizedTypeName.get(ClassName.get(ArrayList::class.java), ClassName.get(genericListTypeMirror))
+
+        val valueFromAdapter = "${CodeGenUtils.tikConfigParam}.getTypeAdapter(\$T.class).fromXml(${CodeGenUtils.readerParam}, ${CodeGenUtils.tikConfigParam})"
+
+        val fromXmlMethod = codeGenUtils.fromXmlMethodBuilder()
+                .addCode(CodeBlock.builder()
+                        .beginControlFlow("if (${accessPolicy.resolveGetter()} == null)")
+                        .add(accessPolicy.resolveAssignment("new \$T()", valueTypeAsArrayList))
+                        .endControlFlow()
+                        .build())
+                .addStatement("${accessPolicy.resolveGetter()}.add((\$T) $valueFromAdapter )", ClassName.get(typeMirror), ClassName.get(typeMirror))
+                .build()
+
+        return TypeSpec.anonymousClassBuilder("")
+                .addSuperinterface(codeGenUtils.childElementBinderType)
+                .addMethod(fromXmlMethod)
+                .build()
+    }
+
+}
+
+data class PolymorphicTypeElementNameMatcher(val xmlElementName: String, val type: TypeMirror)

@@ -18,6 +18,14 @@
 
 package com.tickaroo.tikxml.processor.field
 
+import com.squareup.javapoet.ClassName
+import com.squareup.javapoet.CodeBlock
+import com.squareup.javapoet.ParameterizedTypeName
+import com.squareup.javapoet.TypeSpec
+import com.tickaroo.tikxml.annotation.InlineList
+import com.tickaroo.tikxml.processor.ProcessingException
+import com.tickaroo.tikxml.processor.generator.CodeGenUtils
+import com.tickaroo.tikxml.processor.utils.getSurroundingClassQualifiedName
 import com.tickaroo.tikxml.processor.xml.XmlChildElement
 import java.util.*
 import javax.lang.model.element.VariableElement
@@ -33,6 +41,49 @@ open class ElementField(element: VariableElement, name: String, required: Boolea
     override val childElements = LinkedHashMap<String, XmlChildElement>()
 
     override fun isXmlElementAccessableFromOutsideTypeAdapter() = false
+
+    override fun generateReadXmlCode(codeGenUtils: CodeGenUtils): TypeSpec {
+
+        val fromXmlMethod = codeGenUtils.fromXmlMethodBuilder()
+                .addCode(accessPolicy.resolveAssignment("${CodeGenUtils.tikConfigParam}.getTypeAdapter(${element.getSurroundingClassQualifiedName()}.class).fromXml(${CodeGenUtils.readerParam}, ${CodeGenUtils.tikConfigParam})"))
+                .build()
+
+        return TypeSpec.anonymousClassBuilder("")
+                .addSuperinterface(codeGenUtils.childElementBinderType)
+                .addMethod(fromXmlMethod)
+                .build()
+
+    }
 }
 
-class ListElementField(element: VariableElement, name: String, required: Boolean? = null, val listType: TypeMirror, val inlineList: Boolean) : ElementField(element, name, required)
+class ListElementField(element: VariableElement, name: String, required: Boolean? = null, private val genericListType: TypeMirror, val inlineList: Boolean) : ElementField(element, name, required) {
+
+
+    override fun generateReadXmlCode(codeGenUtils: CodeGenUtils): TypeSpec {
+
+        if (inlineList) {
+            throw ProcessingException(element, "Oops, en error has occurred while generating reading xml code from an element annotated with @${InlineList::class.simpleName}. Please fill an issue at https://github.com/Tickaroo/tikxml/issues")
+        }
+
+        val valueTypeAsArrayList = ParameterizedTypeName.get(ClassName.get(ArrayList::class.java), ClassName.get(genericListType))
+
+
+        val valueFromAdapter = "${CodeGenUtils.tikConfigParam}.getTypeAdapter(\$T.class).fromXml(${CodeGenUtils.readerParam}, ${CodeGenUtils.tikConfigParam})"
+
+        val fromXmlMethod = codeGenUtils.fromXmlMethodBuilder()
+                .addCode(CodeBlock.builder()
+                        .beginControlFlow("if (${accessPolicy.resolveGetter()} == null)")
+                        .add(accessPolicy.resolveAssignment("new \$T()", valueTypeAsArrayList))
+                        .endControlFlow()
+                        .build())
+                .addStatement("${accessPolicy.resolveGetter()}.add((\$T) $valueFromAdapter )", ClassName.get(genericListType), ClassName.get(genericListType))
+                .build()
+
+        return TypeSpec.anonymousClassBuilder("")
+                .addSuperinterface(codeGenUtils.childElementBinderType)
+                .addMethod(fromXmlMethod)
+                .build()
+
+    }
+
+}

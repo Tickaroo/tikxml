@@ -67,7 +67,6 @@ public class XmlProcessor extends AbstractProcessor {
   private Elements elementUtils;
   private Types typeUtils;
   private FieldDetectorStrategyFactory fieldDetectorStrategyFactory;
-  private TypeAdapterCodeGenerator generator;
 
   @Override
   public synchronized void init(ProcessingEnvironment processingEnv) {
@@ -77,7 +76,6 @@ public class XmlProcessor extends AbstractProcessor {
     elementUtils = processingEnv.getElementUtils();
     typeUtils = processingEnv.getTypeUtils();
     fieldDetectorStrategyFactory = new FieldDetectorStrategyFactory(elementUtils, typeUtils, new AnnotationBasedRequiredDetector());
-    generator = new TypeAdapterCodeGenerator(filer, elementUtils, new HashSet<String>());
   }
 
   @Override
@@ -135,6 +133,9 @@ public class XmlProcessor extends AbstractProcessor {
         // Scan class
         scanner.scan(clazz);
 
+
+        // TODO annotation processor options for overriding primitive types
+        TypeAdapterCodeGenerator generator = new TypeAdapterCodeGenerator(filer, elementUtils, new HashSet<String>());
         generator.generateCode(clazz);
       }
 

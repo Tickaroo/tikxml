@@ -18,7 +18,9 @@
 
 package com.tickaroo.tikxml.processor.xml
 
+import com.squareup.javapoet.TypeSpec
 import com.tickaroo.tikxml.processor.field.AttributeField
+import com.tickaroo.tikxml.processor.generator.CodeGenUtils
 import com.tickaroo.tikxml.processor.utils.getSurroundingClassQualifiedName
 import java.util.*
 import javax.lang.model.element.Element
@@ -45,4 +47,7 @@ class PlaceholderXmlElement(override val name: String, override val element: Ele
         else -> throw IllegalArgumentException("Oops, unexpected element type $element. This should never happen. Please fill an issue here: https://github.com/Tickaroo/tikxml/issues")
     }
 
+    override fun generateReadXmlCode(codeGenUtils: CodeGenUtils): TypeSpec {
+        return codeGenUtils.generateNestedChildElementBinder(this)
+    }
 }

@@ -18,6 +18,9 @@
 
 package com.tickaroo.tikxml.processor.xml
 
+import com.squareup.javapoet.TypeSpec
+import com.tickaroo.tikxml.processor.generator.CodeGenUtils
+
 /**
  *
  * @author Hannes Dorfmann
@@ -25,5 +28,7 @@ package com.tickaroo.tikxml.processor.xml
 interface XmlChildElement : XmlElement {
 
     val name: String
+
+    fun generateReadXmlCode(codeGenUtils: CodeGenUtils): TypeSpec
 
 }

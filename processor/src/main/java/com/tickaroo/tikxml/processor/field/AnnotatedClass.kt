@@ -90,4 +90,6 @@ class AnnotatedClassImpl
     }
 
     override fun isXmlElementAccessableFromOutsideTypeAdapter(): Boolean = true
+
+    override fun hasTextContent() = textContentField != null
 }

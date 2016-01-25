@@ -18,9 +18,54 @@
 
 package com.tickaroo.tikxml.processor.field.access
 
+import com.squareup.javapoet.CodeBlock
+import com.tickaroo.tikxml.processor.generator.CodeGenUtils
+import javax.lang.model.element.ExecutableElement
+import javax.lang.model.element.VariableElement
+
 /**
  * Base class. This class just stores info about how to set / read a a field from annotation processing generated code.
  * (via getter-setter or same field is directly visible)
  * @author Hannes Dorfmann
  */
-abstract class FieldAccessPolicy
+sealed abstract class FieldAccessPolicy {
+
+    /**
+     * Can't access the underlying field directly, hence we need to use the public getter and setter
+     */
+    class GetterSetterFieldAccessPolicy(private val getter: ExecutableElement, private val setter: ExecutableElement) : FieldAccessPolicy() {
+
+        override fun resolveAssignment(assignValue: String, argument: Any?) =
+                CodeBlock.builder()
+                        .addStatement("${CodeGenUtils.valueParam}.${setter.simpleName}($assignValue)", argument)
+                        .build()
+
+        override fun resolveGetter() =
+                "${CodeGenUtils.valueParam}.${getter.simpleName}()"
+
+        override fun resolveSetter() = ""
+    }
+
+    /**
+     * Policy that can access the field directly because it has at least package visibility
+     */
+    class MinPackageVisibilityFieldAccessPolicy(private val element: VariableElement) : FieldAccessPolicy() {
+
+        override fun resolveAssignment(assignValue: String, argument: Any?) =
+                CodeBlock.builder()
+                        .addStatement("${resolveSetter()} = $assignValue", argument)
+                        .build()
+
+        override fun resolveGetter() = "${CodeGenUtils.valueParam}.$element"
+
+        override fun resolveSetter() = "${CodeGenUtils.valueParam}.$element"
+    }
+
+
+    abstract fun resolveAssignment(assignValue: String, argument: Any? = null): CodeBlock
+
+    abstract fun resolveGetter(): String
+
+    abstract fun resolveSetter(): String
+
+}
