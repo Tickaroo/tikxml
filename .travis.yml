@@ -1,5 +1,8 @@
 language: java
 
+before_install:
+ - chmod +x .buildscript/deploy_snapshot.sh
+
 jdk:
   - oraclejdk7
   - oraclejdk8
