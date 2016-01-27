@@ -18,15 +18,19 @@
 
 package com.tickaroo.tikxml.processor.scanning
 
-import com.tickaroo.tikxml.annotation.InlineList
+import com.tickaroo.tikxml.annotation.ElementNameMatcher
 import com.tickaroo.tikxml.processor.ProcessingException
 import com.tickaroo.tikxml.processor.field.AttributeField
 import com.tickaroo.tikxml.processor.field.ElementField
 import com.tickaroo.tikxml.processor.field.ListElementField
 import com.tickaroo.tikxml.processor.field.NamedField
 import com.tickaroo.tikxml.processor.utils.getSurroundingClassQualifiedName
+import com.tickaroo.tikxml.processor.utils.isAbstract
+import com.tickaroo.tikxml.processor.utils.isInterface
 import com.tickaroo.tikxml.processor.utils.isPrimitive
+import javax.lang.model.element.TypeElement
 import javax.lang.model.element.VariableElement
+import javax.lang.model.type.DeclaredType
 import javax.lang.model.type.TypeKind
 import javax.lang.model.util.Elements
 import javax.lang.model.util.Types
@@ -43,7 +47,7 @@ class CommonCaseFieldDetectorStrategy(elementUtils: Elements, typeUtils: Types, 
             return null
         }
 
-        if (isTextContentAnnotated(element)){
+        if (isTextContentAnnotated(element)) {
             return null
         }
 
@@ -65,25 +69,43 @@ class CommonCaseFieldDetectorStrategy(elementUtils: Elements, typeUtils: Types, 
         // Objects are treated as Element
         if (element.asType().kind == TypeKind.DECLARED) {
 
-            val inlineList = element.getAnnotation(InlineList::class.java) != null
-
             if (isList(element)) {
+
+                val genericListType = getGenericTypeFromList(element)
+                val genericListTypeElement = typeUtils.asElement(genericListType) as TypeElement
+
+                if (genericListTypeElement.isInterface()) {
+                    throw ProcessingException(element, "The generic list type of '$element' in class ${element.getSurroundingClassQualifiedName()} is an interface. Hence polymorphism must be resolved manually by using @${ElementNameMatcher::class.simpleName}.")
+                }
+
+                if (genericListTypeElement.isAbstract()) {
+                    throw ProcessingException(element, "The generic list type of '$element' in class ${element.getSurroundingClassQualifiedName()} is a abstract class. Hence polymorphism must be resolved manually by using @${ElementNameMatcher::class.simpleName}.")
+                }
+
+                val elementName = getXmlElementNameOrThrowException(element, genericListTypeElement)
+
+
                 return ListElementField(
                         element,
-                        element.simpleName.toString(),
+                        elementName,
                         requiredDetector.isRequired(element),
-                        getGenericTypeFromList(element),
-                        inlineList
+                        getGenericTypeFromList(element)
                 )
             }
 
-            if (inlineList) {
-                throw ProcessingException(element, "@${InlineList::class.simpleName} is only allowed on fields of type java.util.List but field '${element.simpleName}' in class ${element.getSurroundingClassQualifiedName()} is not a List");
+            val elementType = (element.asType() as DeclaredType).asElement() as TypeElement
+
+            if (elementType.isInterface()) {
+                throw ProcessingException(element, "The field '$element' in class ${element.getSurroundingClassQualifiedName()} is of a type that is an interface. Hence polymorphism must be resolved manually by using @${ElementNameMatcher::class.simpleName}.")
+            }
+
+            if (elementType.isAbstract()) {
+                throw ProcessingException(element, "The field '$element' in ${element.getSurroundingClassQualifiedName()} is of a type that is an abstract class. Hence polymorphism must be resolved manually by using @${ElementNameMatcher::class.simpleName}.")
             }
 
             return ElementField(
                     element,
-                    element.simpleName.toString(),
+                    getXmlElementNameOrThrowException(element, elementType),
                     requiredDetector.isRequired(element)
             )
         }

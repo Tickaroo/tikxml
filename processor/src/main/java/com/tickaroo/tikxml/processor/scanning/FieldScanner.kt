@@ -218,22 +218,12 @@ class FieldScanner(protected val elementUtils: Elements, protected val typeUtils
 
                 is AttributeField -> annotatedClass.addAttribute(field, PathDetector.getSegments(field.element))
 
-                is PolymorphicListElementField ->
-                    if (field.inlineList) {
-                        val path = PathDetector.getSegments(field.element)
-                        for ((xmlElementName, typeMirror) in field.typeElementNameMatcher) {
-                            annotatedClass.addChildElement(PolymorphicSubstitutionListField(field.element, typeMirror, field.accessPolicy, xmlElementName, field.genericListTypeMirror, field.required), path)
-                        }
-                    } else {
-                        // Add "not inline list" by adding child elements
-                        val originElementPath = PathDetector.getSegments(field.element)
-                        annotatedClass.addChildElement(field, originElementPath)
-
-                        // Add Polymorphic elements as child element
-                        for ((xmlElementName, typeMirror) in field.typeElementNameMatcher) {
-                            field.addChildElement(PolymorphicSubstitutionListField(field.element, typeMirror, field.accessPolicy, xmlElementName, field.genericListTypeMirror, field.required), emptyList())
-                        }
+                is PolymorphicListElementField -> {
+                    val path = PathDetector.getSegments(field.element)
+                    for ((xmlElementName, typeMirror) in field.typeElementNameMatcher) {
+                        annotatedClass.addChildElement(PolymorphicSubstitutionListField(field.element, typeMirror, field.accessPolicy, xmlElementName, field.genericListTypeMirror, field.required), path)
                     }
+                }
 
                 is PolymorphicElementField ->
                     // Insert PolymorphicSubstitution instead of the original field.

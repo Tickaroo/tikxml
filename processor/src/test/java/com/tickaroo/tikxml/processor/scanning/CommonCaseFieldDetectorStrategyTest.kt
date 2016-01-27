@@ -22,6 +22,7 @@ import com.google.common.truth.Truth
 import com.google.testing.compile.JavaFileObjects
 import com.google.testing.compile.JavaSourceSubjectFactory
 import com.google.testing.compile.JavaSourcesSubject
+import com.tickaroo.tikxml.annotation.Element
 import com.tickaroo.tikxml.annotation.IgnoreXml
 import com.tickaroo.tikxml.annotation.ScanMode
 import com.tickaroo.tikxml.annotation.Xml
@@ -52,7 +53,7 @@ class CommonCaseFieldDetectorStrategyTest {
     }
 
     @Test
-    fun elementsOnly() {
+    fun elementsCauseConflict() {
         val componentFile = JavaFileObjects.forSourceLines("test.AttributeClass",
                 "package test;",
                 "",
@@ -70,17 +71,42 @@ class CommonCaseFieldDetectorStrategyTest {
 
         Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
                 .that(componentFile).processedWith(XmlProcessor())
-                .compilesWithoutError()
+                .failsToCompile()
+                .withErrorContaining("Conflict: field 'b' in class test.AttributeClass is in conflict with field 'a' in class test.AttributeClass. Maybe both have the same xml name 'other' (you can change that via annotations) or @Path is causing this conflict.")
     }
 
     @Test
-    fun elementsAndAttributes() {
+    fun elementsOnlyNoConflict() {
         val componentFile = JavaFileObjects.forSourceLines("test.AttributeClass",
                 "package test;",
                 "",
                 "@${Xml::class.java.canonicalName}(scanMode = ${ScanMode::class.qualifiedName}.${ScanMode.COMMON_CASE})",
                 "class AttributeClass {",
                 "   Other a;",
+                "   @${Element::class.qualifiedName}(name=\"foo\")",
+                "   Other b;",
+                "",
+                "}",
+                "",
+                "@${Xml::class.java.canonicalName}(scanMode = ${ScanMode::class.qualifiedName}.${ScanMode.COMMON_CASE})",
+                "class Other {",
+                " int b;",
+                "}")
+
+        Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
+                .that(componentFile).processedWith(XmlProcessor())
+                .compilesWithoutError()
+    }
+
+    @Test
+    fun elementsAndAttributesWithConflict() {
+        val componentFile = JavaFileObjects.forSourceLines("test.AttributeClass",
+                "package test;",
+                "",
+                "@${Xml::class.java.canonicalName}(scanMode = ${ScanMode::class.qualifiedName}.${ScanMode.COMMON_CASE})",
+                "class AttributeClass {",
+                "   Other a;",
+                "   @${Element::class.qualifiedName}(name=\"foo\")",
                 "   Other b;",
                 "   int c;",
                 "",

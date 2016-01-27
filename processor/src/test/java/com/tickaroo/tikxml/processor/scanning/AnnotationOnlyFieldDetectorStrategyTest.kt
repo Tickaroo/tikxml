@@ -133,7 +133,6 @@ class AnnotationOnlyFieldDetectorStrategyTest {
         val componentFile = JavaFileObjects.forSourceLines("test.MultipleAnnotations4",
                 "package test;",
                 "",
-                "",
                 "@${Xml::class.qualifiedName}(scanMode = ${ScanMode::class.qualifiedName}.${ScanMode.ANNOTATIONS_ONLY})",
                 "class MultipleAnnotations4 {",
                 "   @${Attribute::class.qualifiedName}",
@@ -195,82 +194,35 @@ class AnnotationOnlyFieldDetectorStrategyTest {
                 "",
                 "@${Xml::class.qualifiedName}(scanMode = ${ScanMode::class.qualifiedName}.${ScanMode.ANNOTATIONS_ONLY})",
                 "class MultipleAnnotations4 {",
-                "   @${Element::class.qualifiedName}",
                 "   @${TextContent::class.qualifiedName}",
+                "   @${Element::class.qualifiedName}",
                 "   String aField;",
                 "}")
 
         Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
                 .that(componentFile).processedWith(XmlProcessor())
                 .failsToCompile()
-                .withErrorContaining("Field 'aField' is marked as TextContent and another xml element like @Attribute, @PropertyElement or @Element at the same time which is not allowed. A field can only be exactly one of those types.")
     }
 
-    @Test
-    fun inlineListOnNotListType() {
-        val componentFile = JavaFileObjects.forSourceLines("test.InlineListOnNotListType",
-                "package test;",
-                "",
-                "import ${Xml::class.java.canonicalName};",
-                "import ${InlineList::class.java.canonicalName};",
-                "import ${Element::class.java.canonicalName};",
-                "",
-                "@${Xml::class.java.simpleName}(scanMode = ${ScanMode::class.qualifiedName}.${ScanMode.ANNOTATIONS_ONLY})",
-                "class InlineListOnNotListType {",
-                "   @${InlineList::class.java.simpleName}",
-                "   @${Element::class.java.simpleName}",
-                "   String aField;",
-                "}")
-
-        Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
-                .that(componentFile).processedWith(XmlProcessor())
-                .failsToCompile()
-                .withErrorContaining("The annotation @InlineList is only allowed on java.util.List types, but the field 'aField' in class test.InlineListOnNotListType is of type java.lang.String")
-    }
 
     @Test
-    fun inlineListOnNotListTypeWithPolymorphism() {
-        val componentFile = JavaFileObjects.forSourceLines("test.InlineListOnNotListTypeWithPolymorphism",
-                "package test;",
-                "",
-                "import ${Xml::class.java.canonicalName};",
-                "import ${InlineList::class.java.canonicalName};",
-                "import ${Element::class.java.canonicalName};",
-                "",
-                "@${Xml::class.java.simpleName}(scanMode = ${ScanMode::class.qualifiedName}.${ScanMode.ANNOTATIONS_ONLY})",
-                "class InlineListOnNotListTypeWithPolymorphism {",
-                "   @${InlineList::class.java.simpleName}",
-                "   @${Element::class.java.simpleName}(",
-                "       typesByElement = @${ElementNameMatcher::class.qualifiedName}(elementName=\"foo\" , type=java.lang.Object)",
-                "    )",
-                "   String aField;",
-                "}")
-
-        Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
-                .that(componentFile).processedWith(XmlProcessor())
-                .failsToCompile()
-                .withErrorContaining("The annotation @InlineList is only allowed on java.util.List types, but the field 'aField' in class test.InlineListOnNotListTypeWithPolymorphism is of type java.lang.String")
-    }
-
-    @Test
-    fun inlineListOnListType() {
+    fun failBecauseGenericListTypeNotAnnotated() {
         val componentFile = JavaFileObjects.forSourceLines("test.InlineListOnListType",
                 "package test;",
                 "",
                 "import ${Xml::class.java.canonicalName};",
-                "import ${InlineList::class.java.canonicalName};",
                 "import ${Element::class.java.canonicalName};",
                 "",
                 "@${Xml::class.java.simpleName}(scanMode = ${ScanMode::class.qualifiedName}.${ScanMode.ANNOTATIONS_ONLY})",
                 "class InlineListOnListType {",
-                "   @${InlineList::class.java.simpleName}",
                 "   @${Element::class.java.simpleName}",
                 "   java.util.List<Object> aList;",
                 "}")
 
         Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
                 .that(componentFile).processedWith(XmlProcessor())
-                .compilesWithoutError()
+                .failsToCompile()
+                .withErrorContaining("The type java.lang.Object used for field 'aList' in test.InlineListOnListType can't be used, because is not annotated with @${Xml::class.simpleName}. Annotate java.lang.Object with @${Xml::class.simpleName}!")
     }
 
     @Test
@@ -280,14 +232,14 @@ class AnnotationOnlyFieldDetectorStrategyTest {
                 "",
                 "@${Xml::class.java.canonicalName}(scanMode = ${ScanMode::class.qualifiedName}.${ScanMode.ANNOTATIONS_ONLY})",
                 "class InlineListOnArrayListType {",
-                "   @${InlineList::class.java.canonicalName}",
                 "   @${Element::class.java.canonicalName}",
                 "   java.util.ArrayList<Object> aList;",
                 "}")
 
         Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
                 .that(componentFile).processedWith(XmlProcessor())
-                .compilesWithoutError()
+                .failsToCompile()
+                .withErrorContaining("The type java.lang.Object used for field 'aList' in test.InlineListOnArrayListType can't be used, because is not annotated with @${Xml::class.simpleName}. Annotate java.lang.Object with @${Xml::class.simpleName}!")
     }
 
     @Test
@@ -297,14 +249,14 @@ class AnnotationOnlyFieldDetectorStrategyTest {
                 "",
                 "@${Xml::class.java.canonicalName}(scanMode = ${ScanMode::class.qualifiedName}.${ScanMode.ANNOTATIONS_ONLY})",
                 "class InlineListOnLinkedListType {",
-                "   @${InlineList::class.java.canonicalName}",
                 "   @${Element::class.java.canonicalName}",
-                "   java.util.List<String> aList;",
+                "   java.util.List<Object> aList;",
                 "}")
 
         Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
                 .that(componentFile).processedWith(XmlProcessor())
-                .compilesWithoutError()
+                .failsToCompile()
+                .withErrorContaining("The type java.lang.Object used for field 'aList' in test.InlineListOnLinkedListType can't be used, because is not annotated with @${Xml::class.simpleName}. Annotate java.lang.Object with @${Xml::class.simpleName}!")
     }
 
     @Test
@@ -497,13 +449,12 @@ class AnnotationOnlyFieldDetectorStrategyTest {
                 "   Object aField;",
                 "",
                 "@${Xml::class.java.canonicalName}(scanMode = ${ScanMode::class.qualifiedName}.${ScanMode.ANNOTATIONS_ONLY})",
-                " public class InnerClass {}",
+                " static class InnerClass {}",
                 "}")
 
         Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
                 .that(componentFile).processedWith(XmlProcessor())
-                .failsToCompile()
-                .withErrorContaining("The xml element name in @${ElementNameMatcher::class.simpleName} cannot be empty")
+                .compilesWithoutError()
     }
 
     @Test
@@ -514,18 +465,17 @@ class AnnotationOnlyFieldDetectorStrategyTest {
                 "@${Xml::class.java.canonicalName}(scanMode = ${ScanMode::class.qualifiedName}.${ScanMode.ANNOTATIONS_ONLY})",
                 "class PolymorphicBlankXmlName {",
                 "   @${Element::class.java.canonicalName}(",
-                "       typesByElement = @${ElementNameMatcher::class.qualifiedName}(elementName=\"    \" , type=InnerClass.class)",
+                "       typesByElement = @${ElementNameMatcher::class.qualifiedName}(type=InnerClass.class)",
                 "    )",
                 "   Object aField;",
                 "",
                 "@${Xml::class.java.canonicalName}(scanMode = ${ScanMode::class.qualifiedName}.${ScanMode.ANNOTATIONS_ONLY})",
-                " public class InnerClass {}",
+                " static class InnerClass {}",
                 "}")
 
         Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
                 .that(componentFile).processedWith(XmlProcessor())
-                .failsToCompile()
-                .withErrorContaining("The xml element name in @${ElementNameMatcher::class.simpleName} cannot be empty")
+                .compilesWithoutError()
     }
 
     @Test
@@ -1045,7 +995,7 @@ class AnnotationOnlyFieldDetectorStrategyTest {
                 "   @${Element::class.java.canonicalName}( name =\"foo\" )",
                 "   Other b;",
                 "   @${Xml::class.java.canonicalName}(scanMode = ${ScanMode::class.qualifiedName}.${ScanMode.ANNOTATIONS_ONLY})",
-                "   public class Other {}",
+                "   static class Other {}",
                 "}")
 
         Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
@@ -1408,7 +1358,57 @@ class AnnotationOnlyFieldDetectorStrategyTest {
     }
 
     @Test
+    fun attributeAndPathConflict0() {
+        val componentFile = JavaFileObjects.forSourceLines("test.PathAnnotation",
+                "package test;",
+                "",
+                "@${Xml::class.java.canonicalName}(scanMode = ${ScanMode::class.qualifiedName}.${ScanMode.ANNOTATIONS_ONLY})",
+                "class PathAnnotation {",
+                "   @${Path::class.qualifiedName}(\"foo\")",
+                "   @${Attribute::class.qualifiedName}",
+                "   int bar;",
+                "",
+                "   @${Element::class.qualifiedName}",
+                "   foo foo;",
+                "",
+                "   @${Xml::class.java.canonicalName}(scanMode = ${ScanMode::class.qualifiedName}.${ScanMode.ANNOTATIONS_ONLY})",
+                "   static class foo {}",
+                "}"
+        )
+
+        Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
+                .that(componentFile).processedWith(XmlProcessor())
+                .failsToCompile()
+                .withErrorContaining("Conflict: field 'foo' in class test.PathAnnotation is in conflict with test.PathAnnotation. Maybe both have the same xml name 'foo' (you can change that via annotations) or @${Path::class.simpleName} is causing this conflict.")
+    }
+
+    @Test
     fun attributeAndPathConflict1() {
+        val componentFile = JavaFileObjects.forSourceLines("test.PathAnnotation",
+                "package test;",
+                "",
+                "@${Xml::class.java.canonicalName}(scanMode = ${ScanMode::class.qualifiedName}.${ScanMode.ANNOTATIONS_ONLY})",
+                "class PathAnnotation {",
+                "   @${Path::class.qualifiedName}(\"foo\")",
+                "   @${Attribute::class.qualifiedName}",
+                "   int bar;",
+                "",
+                "   @${Element::class.qualifiedName}",
+                "   Foo foo;",
+                "",
+                "   @${Xml::class.java.canonicalName}(scanMode = ${ScanMode::class.qualifiedName}.${ScanMode.ANNOTATIONS_ONLY})",
+                "   static class Foo {}",
+                "}"
+        )
+
+        Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
+                .that(componentFile).processedWith(XmlProcessor())
+                .failsToCompile()
+                .withErrorContaining("Conflict: field 'foo' in class test.PathAnnotation is in conflict with test.PathAnnotation. Maybe both have the same xml name 'foo' (you can change that via annotations) or @${Path::class.simpleName} is causing this conflict.")
+    }
+
+    @Test
+    fun attributeAndPathConflict2() {
         val componentFile = JavaFileObjects.forSourceLines("test.PathAnnotation",
                 "package test;",
                 "",
@@ -1421,27 +1421,25 @@ class AnnotationOnlyFieldDetectorStrategyTest {
                 "   @${Element::class.qualifiedName}",
                 "   Other foo;",
                 "",
-                "   @${Xml::class.java.canonicalName}(scanMode = ${ScanMode::class.qualifiedName}.${ScanMode.ANNOTATIONS_ONLY})",
-                "   public class Other {}",
+                "   @${Xml::class.java.canonicalName}(scanMode = ${ScanMode::class.qualifiedName}.${ScanMode.ANNOTATIONS_ONLY}, nameAsRoot=\"foo\")",
+                "   static class Other {}",
                 "}"
         )
 
         Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
                 .that(componentFile).processedWith(XmlProcessor())
                 .failsToCompile()
-
-
                 .withErrorContaining("Conflict: field 'foo' in class test.PathAnnotation is in conflict with test.PathAnnotation. Maybe both have the same xml name 'foo' (you can change that via annotations) or @${Path::class.simpleName} is causing this conflict.")
     }
 
     @Test
-    fun attributeAndPathConflict2() {
+    fun attributeAndPathConflict3() {
         val componentFile = JavaFileObjects.forSourceLines("test.PathAnnotation",
                 "package test;",
                 "",
                 "@${Xml::class.java.canonicalName}(scanMode = ${ScanMode::class.qualifiedName}.${ScanMode.ANNOTATIONS_ONLY})",
                 "class PathAnnotation {",
-                "   @${Element::class.qualifiedName}",
+                "   @${Element::class.qualifiedName}(name=\"foo\")",
                 "   Other foo;",
                 "",
                 "   @${Path::class.qualifiedName}(\"foo\")",
@@ -1470,7 +1468,7 @@ class AnnotationOnlyFieldDetectorStrategyTest {
                 "   @${Element::class.qualifiedName}",
                 "   Other foo;",
                 "",
-                "   @${Path::class.qualifiedName}(\"asd/foo\")",
+                "   @${Path::class.qualifiedName}(\"asd/other\")",
                 "   @${Attribute::class.qualifiedName}",
                 "   int bar;",
                 "",
@@ -1492,7 +1490,7 @@ class AnnotationOnlyFieldDetectorStrategyTest {
                 "",
                 "@${Xml::class.java.canonicalName}(scanMode = ${ScanMode::class.qualifiedName}.${ScanMode.ANNOTATIONS_ONLY})",
                 "class PathAnnotation {",
-                "   @${Path::class.qualifiedName}(\"asd/foo\")",
+                "   @${Path::class.qualifiedName}(\"asd/other\")",
                 "   @${Attribute::class.qualifiedName}",
                 "   int bar;",
                 "",
@@ -1508,9 +1506,7 @@ class AnnotationOnlyFieldDetectorStrategyTest {
         Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
                 .that(componentFile).processedWith(XmlProcessor())
                 .failsToCompile()
-
-
-                .withErrorContaining("Conflict: field 'foo' in class test.PathAnnotation is in conflict with test.PathAnnotation. Maybe both have the same xml name 'foo' (you can change that via annotations) or @${Path::class.simpleName} is causing this conflict.")
+                .withErrorContaining("Conflict: field 'foo' in class test.PathAnnotation is in conflict with test.PathAnnotation. Maybe both have the same xml name 'other' (you can change that via annotations) or @${Path::class.simpleName} is causing this conflict.")
     }
 
     @Test
@@ -1552,7 +1548,7 @@ class AnnotationOnlyFieldDetectorStrategyTest {
         Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
                 .that(componentFile).processedWith(XmlProcessor())
                 .failsToCompile()
-                .withErrorContaining("The generic list type of 'alist' is an abstract class test.ElementListWithAbstractClass. Hence polymorphism must be resolved manually by using @ElementNameMatcher.")
+                .withErrorContaining("The generic list type of 'alist' in class test.ElementListWithAbstractClass is a abstrac class. Hence polymorphism must be resolved manually by using @ElementNameMatcher.")
     }
 
     @Test
@@ -1573,7 +1569,7 @@ class AnnotationOnlyFieldDetectorStrategyTest {
         Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
                 .that(componentFile).processedWith(XmlProcessor())
                 .failsToCompile()
-                .withErrorContaining("The generic list type of java.util.List<test.OtherClass> alist in test.ElementListWithNotAnnotatedClass is not valid here, because test.OtherClass is not annotated with @${Xml::class.simpleName}. Annotate test.OtherClass with @${Xml::class.simpleName}!")
+                .withErrorContaining("The type test.OtherClass used for field 'alist' in test.ElementListWithNotAnnotatedClass can't be used, because is not annotated with @${Xml::class.simpleName}. Annotate test.OtherClass with @${Xml::class.simpleName}!")
     }
 
     @Test

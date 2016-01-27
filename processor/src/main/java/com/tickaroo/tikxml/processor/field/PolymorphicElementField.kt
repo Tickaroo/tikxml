@@ -22,7 +22,6 @@ import com.squareup.javapoet.ClassName
 import com.squareup.javapoet.CodeBlock
 import com.squareup.javapoet.ParameterizedTypeName
 import com.squareup.javapoet.TypeSpec
-import com.tickaroo.tikxml.annotation.InlineList
 import com.tickaroo.tikxml.processor.ProcessingException
 import com.tickaroo.tikxml.processor.field.access.FieldAccessPolicy
 import com.tickaroo.tikxml.processor.generator.CodeGenUtils
@@ -40,16 +39,11 @@ open class PolymorphicElementField(element: VariableElement, name: String, requi
     }
 }
 
-class PolymorphicListElementField(element: VariableElement, name: String, required: Boolean?, typeElementNameMatcher: List<PolymorphicTypeElementNameMatcher>, val inlineList: Boolean, val genericListTypeMirror: TypeMirror) : PolymorphicElementField(element, name, required, typeElementNameMatcher) {
+class PolymorphicListElementField(element: VariableElement, name: String, required: Boolean?, typeElementNameMatcher: List<PolymorphicTypeElementNameMatcher>, val genericListTypeMirror: TypeMirror) : PolymorphicElementField(element, name, required, typeElementNameMatcher) {
 
     override fun generateReadXmlCode(codeGenUtils: CodeGenUtils): TypeSpec {
-        if (inlineList) {
-            throw ProcessingException(element, "Oops, en error has occurred while generating reading xml code from an element annotated with @${InlineList::class.simpleName}. Please fill an issue at https://github.com/Tickaroo/tikxml/issues")
-        }
-        // Not an inline list, so it will have child elements
-        return codeGenUtils.generateNestedChildElementBinder(this)
+        throw ProcessingException(element, "Oops, en error has occurred while generating reading xml code for $this. Please fill an issue at https://github.com/Tickaroo/tikxml/issues")
     }
-
 }
 
 /**
@@ -76,7 +70,7 @@ open class PolymorphicSubstitutionField(element: VariableElement, override val t
 /**
  * This kind of element will be used to replace a [PolymorphicElementField] but for List elements
  */
-class PolymorphicSubstitutionListField(element: VariableElement, typeMirror: TypeMirror, accessPolicy: FieldAccessPolicy, name: String, private val genericListTypeMirror : TypeMirror, required: Boolean? = null) : PolymorphicSubstitutionField(element, typeMirror, accessPolicy, name, required) {
+class PolymorphicSubstitutionListField(element: VariableElement, typeMirror: TypeMirror, accessPolicy: FieldAccessPolicy, name: String, private val genericListTypeMirror: TypeMirror, required: Boolean? = null) : PolymorphicSubstitutionField(element, typeMirror, accessPolicy, name, required) {
 
 
     override fun generateReadXmlCode(codeGenUtils: CodeGenUtils): TypeSpec {

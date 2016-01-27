@@ -53,7 +53,7 @@ open class ElementField(element: VariableElement, name: String, required: Boolea
     }
 }
 
-class ListElementField(element: VariableElement, name: String, required: Boolean? = null, private val genericListType: TypeMirror, val inlineList: Boolean) : ElementField(element, name, required) {
+class ListElementField(element: VariableElement, name: String, required: Boolean? = null, private val genericListType: TypeMirror) : ElementField(element, name, required) {
 
 
     override fun generateReadXmlCode(codeGenUtils: CodeGenUtils): TypeSpec {

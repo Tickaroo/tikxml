@@ -564,7 +564,7 @@ class FieldScannerTest {
                 "   })",
                 "   Root element;",
                 "",
-                "    @${Element::class.qualifiedName}",
+                "    @${Element::class.qualifiedName}(name=\"a\")",
                 "    Root a;",
                 "",
                 "   @${Xml::class.qualifiedName}",
@@ -715,7 +715,7 @@ class FieldScannerTest {
                 "     @${ElementNameMatcher::class.qualifiedName}(elementName=\"a\" , type=A.class),  ",
                 "     @${ElementNameMatcher::class.qualifiedName}(elementName=\"b\" , type=B.class)  ",
                 "   })",
-                "   @ ${InlineList::class.qualifiedName}",
+                "",
                 "   java.util.List<Root> element;",
                 "",
                 "    @${PropertyElement::class.qualifiedName}",
@@ -750,7 +750,7 @@ class FieldScannerTest {
                 "   java.util.List<Root> element;",
                 "",
                 "    @${PropertyElement::class.qualifiedName}",
-                "    String a;",
+                "    String property;",
                 "",
                 "   @${Xml::class.qualifiedName}",
                 "   static class Root {} ",
@@ -777,10 +777,10 @@ class FieldScannerTest {
                 "     @${ElementNameMatcher::class.qualifiedName}(elementName=\"a\" , type=A.class),  ",
                 "     @${ElementNameMatcher::class.qualifiedName}(elementName=\"b\" , type=B.class)  ",
                 "   })",
-                "   @ ${InlineList::class.qualifiedName}",
+                "",
                 "   java.util.List<Root> element;",
                 "",
-                "    @${Element::class.qualifiedName}",
+                "    @${Element::class.qualifiedName}(name = \"a\")",
                 "    Root a;",
                 "",
                 "   @${Xml::class.qualifiedName}",
@@ -839,7 +839,7 @@ class FieldScannerTest {
                 "     @${ElementNameMatcher::class.qualifiedName}(elementName=\"a\" , type=A.class),  ",
                 "     @${ElementNameMatcher::class.qualifiedName}(elementName=\"b\" , type=B.class)  ",
                 "   })",
-                "   @ ${InlineList::class.qualifiedName}",
+                "",
                 "   java.util.List<Root> element;",
                 "",
                 "    @${Path::class.qualifiedName}(\"b\")",
@@ -862,7 +862,6 @@ class FieldScannerTest {
                 .withErrorContaining("Element field 'element' in class PolymorphicElement can't have attributes that are accessed from outside of the TypeAdapter that is generated from @${Element::class.simpleName} annotated class! Therefore attribute field 'attribute' in class PolymorphicElement can't be added. Most likely the @${Path::class.simpleName} is in conflict with an @${Element::class.simpleName} annotation.")
     }
 
-
     @Test
     fun polymorphicElementListNoConflictingWithPathAttribute() {
         val componentFile = JavaFileObjects.forSourceLines("test.PolymorphicElement",
@@ -875,7 +874,7 @@ class FieldScannerTest {
                 "   })",
                 "   java.util.List<Root> element;",
                 "",
-                "    @${Path::class.qualifiedName}(\"element\")",
+                "    @${Path::class.qualifiedName}(\"a\")",
                 "    @${Attribute::class.qualifiedName}",
                 "    String attribute;",
                 "",
@@ -901,10 +900,11 @@ class FieldScannerTest {
 
                 "@${Xml::class.qualifiedName}",
                 "class PolymorphicElement {",
-                "    @${Path::class.qualifiedName}(\"element\")",
+                "    @${Path::class.qualifiedName}(\"element/a\")",
                 "    @${Attribute::class.qualifiedName}",
                 "    String attribute;",
                 "",
+                "    @${Path::class.qualifiedName}(\"element\")",
                 "   @${Element::class.qualifiedName} ( typesByElement = {",
                 "     @${ElementNameMatcher::class.qualifiedName}(elementName=\"a\" , type=A.class),  ",
                 "     @${ElementNameMatcher::class.qualifiedName}(elementName=\"b\" , type=B.class)  ",
@@ -924,6 +924,6 @@ class FieldScannerTest {
                 .that(componentFile)
                 .processedWith(XmlProcessor())
                 .failsToCompile()
-                .withErrorContaining("Conflict: field 'element' in class PolymorphicElement is in conflict with PolymorphicElement. Maybe both have the same xml name 'element' (you can change that via annotations) or @${Path::class.simpleName} is causing this conflict.")
+                .withErrorContaining("Conflict: field 'element' in class PolymorphicElement is in conflict with PolymorphicElement. Maybe both have the same xml name 'a' (you can change that via annotations) or @${Path::class.simpleName} is causing this conflict.")
     }
 }

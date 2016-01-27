@@ -133,8 +133,6 @@ open class AnnotationOnlyFieldDetectorStrategy(protected val elementUtils: Eleme
 
         if (elementAnnotation != null) {
             val nameMatchers = elementAnnotation.typesByElement
-            val inlineListAnnotation = element.getAnnotation(InlineList::class.java)
-            val inlineList = inlineListAnnotation != null;
 
             // Check for primitives
             if (element.asType().kind != TypeKind.DECLARED) {
@@ -154,20 +152,24 @@ open class AnnotationOnlyFieldDetectorStrategy(protected val elementUtils: Eleme
                     }
 
                     if (genericListTypeElement.isAbstract()) {
-                        throw ProcessingException(element, "The generic list type of '$element' is an abstract class ${element.getSurroundingClassQualifiedName()}. Hence polymorphism must be resolved manually by using @${ElementNameMatcher::class.simpleName}.")
+                        throw ProcessingException(element, "The generic list type of '$element' in class ${element.getSurroundingClassQualifiedName()} is a abstrac class. Hence polymorphism must be resolved manually by using @${ElementNameMatcher::class.simpleName}.")
                     }
 
-                    val elementName = getXmlElementNameOrThrowException(element, genericListTypeElement)
+                    val elementName = if (elementAnnotation.name.isEmpty()) {
+                        getXmlElementNameOrThrowException(element, genericListTypeElement)
+                    } else {
+                        elementAnnotation.name
+                    }
 
                     return ListElementField(
                             element,
                             elementName,
                             requiredDetector.isRequired(element),
-                            genericListType,
-                            inlineList
+                            genericListType
                     )
 
                 } else {
+                    // A simple element without polymorphism
 
                     // Interfaces not allowed with no name matchers to resolve polymorphism
                     if ( typeUtils.asElement(element.asType()).kind == ElementKind.INTERFACE ) {
@@ -179,13 +181,15 @@ open class AnnotationOnlyFieldDetectorStrategy(protected val elementUtils: Eleme
                         throw ProcessingException(element, "The type of field '${element.simpleName}' in class ${element.enclosingElement} is an abstract class. Since abstract classes cannot no be instantiated you have to specify which class should be instantiated (resolve polymorphism) manually by @${Element::class.simpleName}( typesByElement = ... )")
                     }
 
-                    if (inlineList) {
-                        throw ProcessingException(element, "The annotation @${InlineList::class.simpleName} is only allowed on java.util.List types, but the field '${element.simpleName}' in class ${(element.enclosingElement as TypeElement).qualifiedName} is of type ${element.asType()}")
+                    val elementName = if (elementAnnotation.name.isEmpty()) {
+                        getXmlElementNameOrThrowException(element, (element.asType() as DeclaredType).asElement() as TypeElement)
+                    } else {
+                        elementAnnotation.name
                     }
 
                     return ElementField(
                             element,
-                            nameFromAnnotationOrField(elementAnnotation.name, element),
+                            elementName,
                             requiredDetector.isRequired(element)
                     )
                 }
@@ -194,28 +198,18 @@ open class AnnotationOnlyFieldDetectorStrategy(protected val elementUtils: Eleme
                 if (isList(element)) {
 
                     val genericListType = getGenericTypeFromList(element)
-                    val genericListTypeElement = typeUtils.asElement(genericListType) as TypeElement
-
-                    val elementName = getXmlElementNameOrThrowException(element, genericListTypeElement)
-
                     return PolymorphicListElementField(
                             element,
-                            elementName,
+                            "placeHolderToSubstituteWithPolymorphicListElement",
                             requiredDetector.isRequired(element),
                             getPolymorphicTypes(element, nameMatchers),
-                            inlineList,
                             genericListType
                     )
 
                 } else {
-
-                    if (inlineList) {
-                        throw ProcessingException(element, "The annotation @${InlineList::class.simpleName} is only allowed on java.util.List types, but the field '${element.simpleName}' in class ${(element.enclosingElement as TypeElement).qualifiedName} is of type ${element.asType()}")
-                    }
-
                     return PolymorphicElementField(
                             element,
-                            nameFromAnnotationOrField(elementAnnotation.name, element),
+                            "placeholderTOSubstituteWithPolymorhicElement",
                             requiredDetector.isRequired(element),
                             getPolymorphicTypes(element, nameMatchers)
                     )
@@ -242,20 +236,27 @@ open class AnnotationOnlyFieldDetectorStrategy(protected val elementUtils: Eleme
             throw ProcessingException(element, "No @${ElementNameMatcher::class.simpleName} specified to resolve polymorphism")
         }
 
+        val checkTargetClassXmlAnnotated = fun(typeElement: TypeElement) {
+            if (typeElement.getAnnotation(Xml::class.java) == null) {
+                throw ProcessingException(element, "The class ${typeElement.qualifiedName} is not annotated with @${Xml::class.simpleName}, but is used in '$element' in class @${element.getSurroundingClassQualifiedName()} to resolve polymorphism. Please annotate @${element.getSurroundingClassQualifiedName()} with @${Xml::class.simpleName}")
+            }
+        }
+
         val namingMap = HashMap<String, PolymorphicTypeElementNameMatcher>()
 
         for (matcher in matcherAnnotations) {
-            val xmlElementName = matcher.elementName
-            if (xmlElementName.isBlank()) {
-                throw ProcessingException(element, "The xml element name in @${ElementNameMatcher::class.simpleName} cannot be empty")
-            }
-
             try {
 
                 val typeClass = matcher.type
                 val typeElement = elementUtils.getTypeElement(typeClass.qualifiedName)
 
                 checkPublicClassWithEmptyConstructor(element, typeElement)
+                checkTargetClassXmlAnnotated(typeElement)
+                val xmlElementName = if (matcher.elementName.isEmpty()) {
+                    getXmlElementName(typeElement)
+                } else {
+                    matcher.elementName
+                }
 
                 val typeMatcher = namingMap[xmlElementName]
                 if (typeMatcher != null) {
@@ -274,6 +275,13 @@ open class AnnotationOnlyFieldDetectorStrategy(protected val elementUtils: Eleme
                 val typeElement = (typeMirror as DeclaredType).asElement() as TypeElement
 
                 checkPublicClassWithEmptyConstructor(element, typeElement)
+                checkTargetClassXmlAnnotated(typeElement)
+
+                val xmlElementName = if (matcher.elementName.isEmpty()) {
+                    getXmlElementName(typeElement)
+                } else {
+                    matcher.elementName
+                }
 
                 val typeMatcher = namingMap[xmlElementName]
                 if (typeMatcher != null) {
@@ -367,18 +375,21 @@ open class AnnotationOnlyFieldDetectorStrategy(protected val elementUtils: Eleme
     /**
      * Get the xmlElement name which is either @Xml(nameAsRoot = "foo") property or the class name decapitalize (first letter in lower case)
      */
-    protected fun getXmlElementNameOrThrowException(listElement: VariableElement, genericListTypeElement: TypeElement): String {
+    protected fun getXmlElementNameOrThrowException(field: VariableElement, typeElement: TypeElement): String {
 
-        val xmlAnnotation = genericListTypeElement.getAnnotation(Xml::class.java)
+        val xmlAnnotation = typeElement.getAnnotation(Xml::class.java)
 
         if (xmlAnnotation == null) {
-            throw ProcessingException(listElement, "The generic list type of ${listElement.asType()} $listElement in ${listElement.getSurroundingClassQualifiedName()} is not valid here, because ${genericListTypeElement.qualifiedName} is not annotated with @${Xml::class.simpleName}. Annotate ${genericListTypeElement.qualifiedName} with @${Xml::class.simpleName}!")
+            throw ProcessingException(field, "The type ${typeElement.qualifiedName} used for field '$field' in ${field.getSurroundingClassQualifiedName()} can't be used, because is not annotated with @${Xml::class.simpleName}. Annotate ${typeElement.qualifiedName} with @${Xml::class.simpleName}!")
         } else {
-            return if (xmlAnnotation.nameAsRoot.isEmpty()) {
-                genericListTypeElement.simpleName.toString().decapitalize()
+            return getXmlElementName(typeElement, xmlAnnotation)
+        }
+    }
+
+    private fun getXmlElementName(typeElement: TypeElement, xmlAnnotation: Xml = typeElement.getAnnotation(Xml::class.java)!!) =
+            if (xmlAnnotation.nameAsRoot.isEmpty()) {
+                typeElement.simpleName.toString().decapitalize()
             } else {
                 xmlAnnotation.nameAsRoot
             }
-        }
-    }
 }
