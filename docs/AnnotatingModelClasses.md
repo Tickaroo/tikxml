@@ -37,9 +37,8 @@ public class Book {
 }
 ```
 
-Please ignore reading (parsing) xml for a moment. This paragraph is about writing xml. If `Book` is the root object of an xml document 
-we have to specify a name for that root xml element. Per default we use the class name in lowercase, 
-but you can customize it within the `@Xml( nameAsRoot = "foo")` annotation.
+Per default we use the class name in lowercase, but you can customize it within the `@Xml( nameAsRoot = "foo")` annotation.
+We use this name for both writing xml (root xml tag will be named according this), but also for reading elements to map a xml element name to a certain type by this name as we will see later.
 
 
 ## XML Element attributes
@@ -170,7 +169,7 @@ public class Book {
   @PropertyElement
   String title;
  
-  @Element(name = "author") // name is optional, field name will be used as default value
+  @Element
   Author author;
 }
 
@@ -186,11 +185,78 @@ public class Author {
 }
 ```
 
-`TikXml` will write and parse an instance of `Author` automatically for you. 
+`TikXml` will write and parse an instance of `Author` automatically for you. You may now ask yourself how `TikXml` knows that `<author>` maps to java class `Author.class`.
+This is done by detecting that class `Author` is annotated with `@Xml`. Since `Author` doesn't specify a custom name `@Xml(nameAsRoot="foo")` TikXml is using the class name with the first character to lower case.
+
+We can override this mapping by specifying a name:
+```java
+@Xml(nameAsRoo="foo")
+public class Author {
+  
+  @PropertyElement
+  String firstname;
+  
+  @PropertyElement
+  String lastname;
+}
+```
+
+Then the following xml will be parsed as well:
+
+```xml
+<book id="123">
+  <title>Effective Java</title>
+  <foo>     <!-- foo maps to Author.class -->
+    <firstname>Joshua</firstname>
+    <lastname>Bloch</lastname>
+  </foo>
+</book>
+```
+
+But that would mean that in our whole application all `<foo>` tags will map to `Author.class`. Usually this is the common case.
+However, we can also override the name of an element in `Book` class like this:
+
+```java
+@Xml
+public class Book {
+
+  @Attribute
+  String id; 
+  
+  @PropertyElement
+  String title;
+ 
+  @Element(name = "foo2")
+  Author author;
+}
+
+@Xml // not nameAsRoot specified
+public class Author {
+  
+  @PropertyElement
+  String firstname;
+  
+  @PropertyElement
+  String lastname;
+}
+```
+
+That means, that globally we are still mapping `<author>` to `Author` class, but while reading a `<book>` element we map `<foo2>` elements to `Author` class. So reading the following xml would be possible:
+
+```xml
+<book id="123">
+  <title>Effective Java</title>
+  <foo2>     <!-- foo2 maps to Author.class -->
+    <firstname>Joshua</firstname>
+    <lastname>Bloch</lastname>
+  </foo2>
+</book>
+```
+
+
 
 ## Polymorphism and inheritance
-`TikXml` supports polymorphism and inheritance. However, you have to specify that explicitly 
-via annotations similar to other parser like jackson (json parser).
+`TikXml` supports inheriting attributes, properties and elements from super class
 
 ```java
 @Xml
@@ -215,10 +281,12 @@ public class Journalist extends Author {
 
 `Author` has firstname and lastname fields. Since `Journalist extends Author` Journalist (java class) of course  
 has inherited firstname and lastname fields as well. That also means that the xml representation of an Journalist 
-has firstname and lastname xml elements. This is usually the desired behaviour. However, you can 
+has firstname and lastname xml elements. This is usually the desired behaviour and therefore the default behaviour. However, you can 
 disable that via `@Xml(inheritance = false)`. If you set `inheritance = false` Journalist's xml representation
 will not have the inherited properties from super class (firstname and lastname), but only the properties 
 defined in the Journalist class itself (only newspaperPublisher). 
+
+Now let's take a look how to resolve polymorphism while reading xml.
 Lets say that a book can be written by either a `Author` or an `Journalist`:
 
 ```java
@@ -232,29 +300,30 @@ public class Book {
   String title;
  
   @Element(
-    name = "author", // optional, otherwise field name will be used
-    typesByElement = @ElementNameMatcher( elementName = "journalist", type = Journalist.class)
+    typesByElement = {
+      @ElementNameMatcher(type = Author.class),
+      @ElementNameMatcher(type = Journalist.class)
+    }
   )
   Author author;
 }
 ```
 
 So`@Element(typesByElement = @ElementNameMatcher)` is where we have to define how we determine polymorphism while reading xml.
-With `@ElementNameMatcher(elementName = "journalist", type = Author.class)` we define that, if the xml element name is `journalist` we are going to parse an `Journalist` object.
+With `@ElementNameMatcher(type = Journalist.class)` we define that, xml element `<journalist>` is parsed into an `Journalist` object (class Journalist has to be annotated with `@Xml` and you can specify a `rootAsName` as described above).
 
 ```xml
 <book id="111">
   <title>Android for Dummies</title>
-  <Journalist>
+  <journalist>
     <firstname>Hannes</firstname>
     <lastname>Dorfmann</lastname>
     <newspaper_publisher>New York Times</newspaper_publisher>
-  </Journalist>
+  </journalist>
 </book>
 ```
 
-Otherwise, if we want to parse an `Author` we expect an xml element with the name `author` 
-because the normal `@Element(name="author")` definition will apply.
+Additionally, `TikXml` is able to read an `Author`. We expect an xml element with the name `author` (class Author has to be annotated with `@Xml`, `nameAsRoot` can be used to specify the name)
 
 ```xml
 <book id="123">
@@ -266,7 +335,42 @@ because the normal `@Element(name="author")` definition will apply.
 </book>
 ```
 
-We can also do that with java `Interfaces`:
+So TikXml will use the same mechanism as alrady mentioned to map `@Xml(nameAsRoot="foo")` annotated classes to `<author>` or `<journalist>` tag to `<author>`. We have already seen that we can override this mapping with `@Element(name="foo")`. 
+We can do the same with `@ElementNameMatcher( elementName="foo")` like this:
+
+```java
+@Xml
+public class Book {
+
+  @Attribute
+  String id; 
+  
+  @PropertyElement
+  String title;
+ 
+  @Element(
+    typesByElement = {
+      @ElementNameMatcher(type = Author.class),
+      @ElementNameMatcher(type = Journalist.class, elementName = "journ",)
+    }
+  )
+  Author author;
+}
+```
+
+to read a xml document like this:
+```xml
+<book id="111">
+  <title>Android for Dummies</title>
+  <journ>  <!-- maps to clas Journalist -->
+    <firstname>Hannes</firstname>
+    <lastname>Dorfmann</lastname>
+    <newspaper_publisher>New York Times</newspaper_publisher>
+  </journ>
+</book>
+```
+
+This kind of polymorphism resolving also works with `Interfaces`:
 
 ```java
 interface Writer {
@@ -312,8 +416,8 @@ public class Book {
  
   @Element(
     typesByElement = {
-      @ElementNameMatcher( elementName = "author", type = Author.class),
-      @ElementNameMatcher( elementName = "organization", type = Organization.class),
+      @ElementNameMatcher(type = Author.class),
+      @ElementNameMatcher(type = Organization.class),
     }
   )
   Writer writer;
@@ -343,7 +447,7 @@ and
 </book>
 ```
 
-As you see, you can define arbitrary many `@ElementNameMatcher` to resolve polymorphism. 
+You can define arbitrary many `@ElementNameMatcher` to resolve polymorphism. 
 Since resolution of polymorphism is done by **checking the xml element name** the `<book>` can only have 
 one single `<author />` tag, because we can't use xml element's name as property anymore (as we did with `@PropertyElement`).
 
@@ -392,9 +496,7 @@ public class Book {
 </book>
 ```
 
-The parser can't know whether `<author>` maps to `writer1` or `writer2`. 
-We are aware of this limitation and might fix that in a future version (i.e. we could add `@AttributeMatcher` support for xml attributes to determine the java type). However, we think that this 
-is not a common use case. Usually you deal with multiple elements in form of a list.
+The parser can't know whether `<author>` maps to `writer1` or `writer2`. However, we can parse the same xml tags into a list as we will see in the next chapter.
 
 
 ## List of elements
@@ -404,13 +506,23 @@ If we want to have a List of child elements we use `@Element` on `java.util.List
 @Xml
 class Catalogue {
 
-  @Element(name = "books") // optional name of xml element, otherwise field name is used
+  @Element
   List<Book> books;
 
 }
 ```
 
 which will read and write the following xml:
+
+```xml
+<catalog>
+    <book id="1">...</book>
+    <book id="2">...</book>
+    <book id="3">...</book>
+</catalog>
+```
+
+As you see, all Lists are treated as inline lists (there is no extra xml tag for `<books>` containing a list of `<book>` element like this:
 
 ```xml
 <catalog>
@@ -421,34 +533,21 @@ which will read and write the following xml:
   </books>
 </catalog>
 ```
-
-With `@Element( typesByElement = @ElementNameMatcher() )` you can deal with polymorphism for lists the same way as shown above.
-
-## Inline list of elements
-As you have seen in the section before our xml includes an extra `<books>` tag, 
-where the list of `<book>` element is in. We can remove this surrounding tag with the additional `@InlineList` annotation.
-This will result in a flatten list like this:
-
-```xml
-<catalog>
-    <book id="1">...</book>
-    <book id="2">...</book>
-    <book id="3">...</book>
-</catalog>
-```
-
+We can add this extra `<books>` xml tag by adding a `@Path` annotation which "simulates" a xml node as we will see later in the next chapter:
 
 ```java
 @Xml
 class Catalogue {
 
-  @InlineList
+  @Path("books")
   @Element
   List<Book> books;
 
 }
 ```
 
+
+With `@Element( typesByElement = @ElementNameMatcher(...) )` you can deal with polymorphism for lists the same way as already shown for other elements.
 
 ## Paths 
 Have a look at the following example: Imagine we have a xml representation of a bookstore with only one single book and one single newspaper:
@@ -494,7 +593,7 @@ It will also take that "virtual emulated" nodes into account when writing xml.
 
 Please note that this is not **XPath**. It looks similar to XPath, but XPath is not supported by `TikXml`.
 
-However, with `@Path` you can't access xml attribute or child elements that belongs to another type, because for each type an own `TypeAdapter` will be generated who is responsible to read and write xml.
+However, with `@Path` you **can't access xml attribute or child elements that belongs to another type**, because for each type an own `TypeAdapter` will be generated who is responsible to read and write xml.
 Let's take a look at the same xml as shown before but change the structure we want to parse this data into:
 
 ```xml
@@ -548,7 +647,7 @@ Rather he asks the `BookStoreTypeAdapter` to continue. Then the `BookStoreTypeAd
 Therefore the attribute name of `<bookstore name="Lukes bookstore">` will be consumed by `BookStoreTypeAdapter`. Thus, `ShopTypeAdapter` can't consume this attribute again because it's already consumed by `BookStoreTypeAdapter`.
 Exactly the same is true for `<inventory>` xml tag. As the field `Inventory inventory` in class `BookStore` is annotated with `@Element` `TikXml` will generate a `InventoryTypeAdapter` that consumes the whole `<inventory>` xml tag.
 
-**Basically the content of an xml tag that already maps to an java class field annoteted with `@Element` (incl. lists) can't be accessed via `@Path` from outside.**
+**Basically the content of an xml tag that already maps to an java class field annotated with `@Element` (incl. lists) can't be accessed via `@Path` from outside.**
 
 So when is `@Path` useful? As already described at the beginning of this section, with `@Path` we can't get rich of unnecessary object allocation for xml tags that just wraps the real data we are interested in.
 Performance with `@Path` is still the same as parsing each xml tag into its own java class.
