@@ -16,24 +16,26 @@
  *
  */
 
-package com.tickaroo.tikxml.processor.generator
+package com.tickaroo.tikxml.annotationprocessing.element;
 
-import java.util.*
+import com.tickaroo.tikxml.TikXml;
+import com.tickaroo.tikxml.annotationprocessing.TestUtils;
+import java.io.IOException;
+import org.junit.Assert;
+import org.junit.Test;
 
 /**
- * Instance that manages custom
  * @author Hannes Dorfmann
  */
-class CustomTypeConverterManager {
+public class ServerTest {
 
-    /**
-     * Map from qualified class name to java field name
-     */
-    val converterMap: Map<String, String> = HashMap()
-    private var fieldNameCounter = 1
+  @Test
+  public void test() throws IOException {
+    TikXml xml = new TikXml.Builder().exceptionOnUnreadXml(true).build();
+    Server server = xml.read(TestUtils.sourceForFile("server.xml"), Server.class);
 
-    fun getFieldNameForConverter(qualifiedConverterClassName: String): String = (converterMap as MutableMap).getOrPut(qualifiedConverterClassName) {
-        "typeConverter${fieldNameCounter++}"
-    }
-
+    Assert.assertEquals("fooServer", server.name);
+    Assert.assertTrue(server.config.enabled);
+    Assert.assertEquals("127.0.0.1", server.config.ip);
+  }
 }

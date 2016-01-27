@@ -1,0 +1,110 @@
+<?xml version="10.0" encoding="UTF-8" ?>
+<!--
+  ~ Copyright (C) 2015 Hannes Dorfmann
+  ~ Copyright (C) 2015 Tickaroo, Inc.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~        http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  ~
+  -->
+
+<catalog>
+    <book id="1">
+        <author>author1</author>
+        <title>title1</title>
+        <genre>genre1</genre>
+        <price>1</price>
+        <publish_date>2000-09-01</publish_date>
+        <description>description1</description>
+    </book>
+
+    <book id="2">
+        <author>author2</author>
+        <title>title2</title>
+        <genre>genre2</genre>
+        <price>2</price>
+        <publish_date>2000-09-02</publish_date>
+        <description>description2</description>
+    </book>
+
+    <book id="3">
+        <author>author3</author>
+        <title>title3</title>
+        <genre>genre3</genre>
+        <price>3</price>
+        <publish_date>2000-09-03</publish_date>
+        <description>description3</description>
+    </book>
+
+    <book id="4">
+        <author>author4</author>
+        <title>title4</title>
+        <genre>genre4</genre>
+        <price>4</price>
+        <publish_date>2000-09-04</publish_date>
+        <description>description4</description>
+    </book>
+
+    <book id="5">
+        <author>author5</author>
+        <title>title5</title>
+        <genre>genre5</genre>
+        <price>5</price>
+        <publish_date>2000-09-05</publish_date>
+        <description>description5</description>
+    </book>
+
+    <book id="6">
+        <author>author6</author>
+        <title>title6</title>
+        <genre>genre6</genre>
+        <price>6</price>
+        <publish_date>2000-09-06</publish_date>
+        <description>description6</description>
+    </book>
+
+    <book id="7">
+        <author>author7</author>
+        <title>title7</title>
+        <genre>genre7</genre>
+        <price>7</price>
+        <publish_date>2000-09-07</publish_date>
+        <description>description7</description>
+    </book>
+
+    <book id="8">
+        <author>author8</author>
+        <title>title8</title>
+        <genre>genre8</genre>
+        <price>8</price>
+        <publish_date>2000-09-08</publish_date>
+        <description>description8</description>
+    </book>
+
+    <book id="9">
+        <author>author9</author>
+        <title>title9</title>
+        <genre>genre9</genre>
+        <price>9</price>
+        <publish_date>2000-09-09</publish_date>
+        <description>description9</description>
+    </book>
+
+    <book id="10">
+        <author>author10</author>
+        <title>title10</title>
+        <genre>genre10</genre>
+        <price>10</price>
+        <publish_date>2000-09-010</publish_date>
+        <description>description10</description>
+    </book>
+</catalog>

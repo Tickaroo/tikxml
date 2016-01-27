@@ -43,7 +43,8 @@ class TypeAdapterCodeGenerator(private val filer: Filer, private val elementUtil
         val annotatedClassType = ClassName.get(annotatedClass.element)
         val genericParamTypeAdapter = ParameterizedTypeName.get(ClassName.get(DelegatingTypeAdapter::class.java), annotatedClassType)
 
-        val codeGenUtils = CodeGenUtils(CustomTypeConverterManager(), typeConvertersForPrimitives, annotatedClassType)
+        val customTypeConverterManager = CustomTypeConverterManager()
+        val codeGenUtils = CodeGenUtils(customTypeConverterManager, typeConvertersForPrimitives, annotatedClassType)
 
         val assignTextContentBuilder = codeGenUtils.assignTextContentMethodBuilder()
 
@@ -81,6 +82,12 @@ class TypeAdapterCodeGenerator(private val filer: Filer, private val elementUtil
 
         if (annotatedClass.hasTextContent()) {
             adapterClassBuilder.addMethod(assignTextContentBuilder.build())
+        }
+
+        // Add fields from TypeConverter
+        for ((qualifiedConverterClass, fieldName) in customTypeConverterManager.converterMap) {
+            val converterClassName = ClassName.get(elementUtils.getTypeElement(qualifiedConverterClass))
+            adapterClassBuilder.addField(FieldSpec.builder(converterClassName, fieldName, Modifier.PRIVATE).initializer("new \$T()", converterClassName).build())
         }
 
 

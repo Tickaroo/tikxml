@@ -16,24 +16,25 @@
  *
  */
 
-package com.tickaroo.tikxml.processor.generator
+package com.tickaroo.tikxml.annotationprocessing;
 
-import java.util.*
+import com.tickaroo.tikxml.TypeConverter;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
- * Instance that manages custom
  * @author Hannes Dorfmann
  */
-class CustomTypeConverterManager {
+public class DateConverter implements TypeConverter<Date> {
 
-    /**
-     * Map from qualified class name to java field name
-     */
-    val converterMap: Map<String, String> = HashMap()
-    private var fieldNameCounter = 1
+  public static DateFormat format = new SimpleDateFormat("yyyy-MM-dd");
 
-    fun getFieldNameForConverter(qualifiedConverterClassName: String): String = (converterMap as MutableMap).getOrPut(qualifiedConverterClassName) {
-        "typeConverter${fieldNameCounter++}"
-    }
+  @Override public Date read(String value) throws Exception {
+    return format.parse(value);
+  }
 
+  @Override public String write(Date value) throws Exception {
+    return format.format(value);
+  }
 }

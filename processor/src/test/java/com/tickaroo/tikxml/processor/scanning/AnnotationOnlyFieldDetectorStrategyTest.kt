@@ -1512,4 +1512,88 @@ class AnnotationOnlyFieldDetectorStrategyTest {
 
                 .withErrorContaining("Conflict: field 'foo' in class test.PathAnnotation is in conflict with test.PathAnnotation. Maybe both have the same xml name 'foo' (you can change that via annotations) or @${Path::class.simpleName} is causing this conflict.")
     }
+
+    @Test
+    fun elementListWithInterfaceAsGenericType() {
+        val componentFile = JavaFileObjects.forSourceLines("test.ElementListWithInterface",
+                "package test;",
+                "",
+                "@${Xml::class.java.canonicalName}(scanMode = ${ScanMode::class.qualifiedName}.${ScanMode.ANNOTATIONS_ONLY})",
+                "class ElementListWithInterface {",
+
+                "  @${Element::class.qualifiedName}",
+                "  java.util.List<AnInterface> alist;",
+                "}",
+                "",
+                "interface AnInterface{}"
+        )
+
+        Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
+                .that(componentFile).processedWith(XmlProcessor())
+                .failsToCompile()
+                .withErrorContaining("The generic list type of 'alist' in class test.ElementListWithInterface is an interface. Hence polymorphism must be resolved manually by using @${ElementNameMatcher::class.simpleName}.")
+    }
+
+    @Test
+    fun elementListWithAbstractClassAsGenericType() {
+        val componentFile = JavaFileObjects.forSourceLines("test.ElementListWithAbstractClass",
+                "package test;",
+                "",
+                "@${Xml::class.java.canonicalName}(scanMode = ${ScanMode::class.qualifiedName}.${ScanMode.ANNOTATIONS_ONLY})",
+                "class ElementListWithAbstractClass {",
+
+                "  @${Element::class.qualifiedName}",
+                "  java.util.List<AbstractClass> alist;",
+                "}",
+                "",
+                "abstract class AbstractClass{}"
+        )
+
+        Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
+                .that(componentFile).processedWith(XmlProcessor())
+                .failsToCompile()
+                .withErrorContaining("The generic list type of 'alist' is an abstract class test.ElementListWithAbstractClass. Hence polymorphism must be resolved manually by using @ElementNameMatcher.")
+    }
+
+    @Test
+    fun elementListWithClassWithoutXmlAnnotationAsGenericType() {
+        val componentFile = JavaFileObjects.forSourceLines("test.ElementListWithNotAnnotatedClass",
+                "package test;",
+                "",
+                "@${Xml::class.java.canonicalName}(scanMode = ${ScanMode::class.qualifiedName}.${ScanMode.ANNOTATIONS_ONLY})",
+                "class ElementListWithNotAnnotatedClass {",
+
+                "  @${Element::class.qualifiedName}",
+                "  java.util.List<OtherClass> alist;",
+                "}",
+                "",
+                "class OtherClass{}"
+        )
+
+        Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
+                .that(componentFile).processedWith(XmlProcessor())
+                .failsToCompile()
+                .withErrorContaining("The generic list type of java.util.List<test.OtherClass> alist in test.ElementListWithNotAnnotatedClass is not valid here, because test.OtherClass is not annotated with @${Xml::class.simpleName}. Annotate test.OtherClass with @${Xml::class.simpleName}!")
+    }
+
+    @Test
+    fun validElementList() {
+        val componentFile = JavaFileObjects.forSourceLines("test.ValidElementList",
+                "package test;",
+                "",
+                "@${Xml::class.java.canonicalName}(scanMode = ${ScanMode::class.qualifiedName}.${ScanMode.ANNOTATIONS_ONLY})",
+                "class ValidElementList {",
+
+                "  @${Element::class.qualifiedName}",
+                "  java.util.List<OtherClass> alist;",
+                "}",
+                "",
+                "@${Xml::class.java.canonicalName}(scanMode = ${ScanMode::class.qualifiedName}.${ScanMode.ANNOTATIONS_ONLY})",
+                "class OtherClass{}"
+        )
+
+        Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
+                .that(componentFile).processedWith(XmlProcessor())
+                .compilesWithoutError()
+    }
 }

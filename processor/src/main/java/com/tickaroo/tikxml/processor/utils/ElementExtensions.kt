@@ -24,7 +24,6 @@ import javax.lang.model.type.TypeKind
 import javax.lang.model.type.TypeMirror
 import javax.lang.model.util.Elements
 import javax.lang.model.util.Types
-import kotlin.text.startsWith
 
 
 /**
@@ -62,6 +61,11 @@ fun Element.isDefaultVisibility() = !isPrivate() && !isProtected() && !isPublic(
  * Checks if a element has a protected modifier
  */
 fun Element.isAbstract() = modifiers.contains(Modifier.ABSTRACT)
+
+/**
+ * Checks if the class is an interface
+ */
+fun Element.isInterface() = kind == ElementKind.INTERFACE
 
 /**
  * Checks if a given element is static

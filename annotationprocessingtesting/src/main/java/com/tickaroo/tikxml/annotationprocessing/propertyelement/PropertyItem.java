@@ -16,24 +16,27 @@
  *
  */
 
-package com.tickaroo.tikxml.processor.generator
+package com.tickaroo.tikxml.annotationprocessing.propertyelement;
 
-import java.util.*
+import com.tickaroo.tikxml.annotation.PropertyElement;
+import com.tickaroo.tikxml.annotation.Xml;
+import com.tickaroo.tikxml.annotationprocessing.DateConverter;
+import java.util.Date;
 
 /**
- * Instance that manages custom
  * @author Hannes Dorfmann
  */
-class CustomTypeConverterManager {
+@Xml
+public class PropertyItem {
+  @PropertyElement String aString;
+  @PropertyElement int anInt;
+  @PropertyElement boolean aBoolean;
+  @PropertyElement double aDouble;
+  @PropertyElement long aLong;
+  @PropertyElement(converter = DateConverter.class) Date aDate;
 
-    /**
-     * Map from qualified class name to java field name
-     */
-    val converterMap: Map<String, String> = HashMap()
-    private var fieldNameCounter = 1
-
-    fun getFieldNameForConverter(qualifiedConverterClassName: String): String = (converterMap as MutableMap).getOrPut(qualifiedConverterClassName) {
-        "typeConverter${fieldNameCounter++}"
-    }
-
+  @PropertyElement Integer intWrapper;
+  @PropertyElement Boolean booleanWrapper;
+  @PropertyElement Double doubleWrapper;
+  @PropertyElement Long longWrapper;
 }

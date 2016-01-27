@@ -16,24 +16,18 @@
  *
  */
 
-package com.tickaroo.tikxml.processor.generator
+package com.tickaroo.tikxml.annotationprocessing.elementlist;
 
-import java.util.*
+import com.tickaroo.tikxml.annotation.Element;
+import com.tickaroo.tikxml.annotation.Xml;
+import java.util.List;
 
 /**
- * Instance that manages custom
  * @author Hannes Dorfmann
  */
-class CustomTypeConverterManager {
+@Xml
+public class Catalogue {
 
-    /**
-     * Map from qualified class name to java field name
-     */
-    val converterMap: Map<String, String> = HashMap()
-    private var fieldNameCounter = 1
-
-    fun getFieldNameForConverter(qualifiedConverterClassName: String): String = (converterMap as MutableMap).getOrPut(qualifiedConverterClassName) {
-        "typeConverter${fieldNameCounter++}"
-    }
-
+  @Element
+  List<Book> books;
 }

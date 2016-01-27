@@ -16,24 +16,18 @@
  *
  */
 
-package com.tickaroo.tikxml.processor.generator
+package com.tickaroo.tikxml.annotationprocessing.element;
 
-import java.util.*
+import com.tickaroo.tikxml.annotation.Attribute;
+import com.tickaroo.tikxml.annotation.PropertyElement;
+import com.tickaroo.tikxml.annotation.Xml;
 
 /**
- * Instance that manages custom
  * @author Hannes Dorfmann
  */
-class CustomTypeConverterManager {
+@Xml
+public class ServerConfig {
 
-    /**
-     * Map from qualified class name to java field name
-     */
-    val converterMap: Map<String, String> = HashMap()
-    private var fieldNameCounter = 1
-
-    fun getFieldNameForConverter(qualifiedConverterClassName: String): String = (converterMap as MutableMap).getOrPut(qualifiedConverterClassName) {
-        "typeConverter${fieldNameCounter++}"
-    }
-
+  @Attribute boolean enabled;
+  @PropertyElement String ip;
 }

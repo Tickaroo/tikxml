@@ -146,11 +146,24 @@ open class AnnotationOnlyFieldDetectorStrategy(protected val elementUtils: Eleme
                 // No polymorphism
                 if (isList(element)) {
 
+                    val genericListType = getGenericTypeFromList(element)
+                    val genericListTypeElement = typeUtils.asElement(genericListType) as TypeElement
+
+                    if (genericListTypeElement.isInterface()) {
+                        throw ProcessingException(element, "The generic list type of '$element' in class ${element.getSurroundingClassQualifiedName()} is an interface. Hence polymorphism must be resolved manually by using @${ElementNameMatcher::class.simpleName}.")
+                    }
+
+                    if (genericListTypeElement.isAbstract()) {
+                        throw ProcessingException(element, "The generic list type of '$element' is an abstract class ${element.getSurroundingClassQualifiedName()}. Hence polymorphism must be resolved manually by using @${ElementNameMatcher::class.simpleName}.")
+                    }
+
+                    val elementName = getXmlElementNameOrThrowException(element, genericListTypeElement)
+
                     return ListElementField(
                             element,
-                            nameFromAnnotationOrField(elementAnnotation.name, element),
+                            elementName,
                             requiredDetector.isRequired(element),
-                            getGenericTypeFromList(element),
+                            genericListType,
                             inlineList
                     )
 
@@ -179,13 +192,19 @@ open class AnnotationOnlyFieldDetectorStrategy(protected val elementUtils: Eleme
             } else {
                 // polymorphism
                 if (isList(element)) {
+
+                    val genericListType = getGenericTypeFromList(element)
+                    val genericListTypeElement = typeUtils.asElement(genericListType) as TypeElement
+
+                    val elementName = getXmlElementNameOrThrowException(element, genericListTypeElement)
+
                     return PolymorphicListElementField(
                             element,
-                            nameFromAnnotationOrField(elementAnnotation.name, element),
+                            elementName,
                             requiredDetector.isRequired(element),
                             getPolymorphicTypes(element, nameMatchers),
                             inlineList,
-                            getGenericTypeFromList(element)
+                            genericListType
                     )
 
                 } else {
@@ -207,10 +226,7 @@ open class AnnotationOnlyFieldDetectorStrategy(protected val elementUtils: Eleme
 
         }
 
-
-
         throw ProcessingException(element, "Unknown annotation detected! I'm sorry, this should not happen. Please file an issue on github https://github.com/Tickaroo/tikxml/issues ")
-
     }
 
     /**
@@ -348,4 +364,21 @@ open class AnnotationOnlyFieldDetectorStrategy(protected val elementUtils: Eleme
                 element.simpleName.toString()
             } else name
 
+    /**
+     * Get the xmlElement name which is either @Xml(nameAsRoot = "foo") property or the class name decapitalize (first letter in lower case)
+     */
+    protected fun getXmlElementNameOrThrowException(listElement: VariableElement, genericListTypeElement: TypeElement): String {
+
+        val xmlAnnotation = genericListTypeElement.getAnnotation(Xml::class.java)
+
+        if (xmlAnnotation == null) {
+            throw ProcessingException(listElement, "The generic list type of ${listElement.asType()} $listElement in ${listElement.getSurroundingClassQualifiedName()} is not valid here, because ${genericListTypeElement.qualifiedName} is not annotated with @${Xml::class.simpleName}. Annotate ${genericListTypeElement.qualifiedName} with @${Xml::class.simpleName}!")
+        } else {
+            return if (xmlAnnotation.nameAsRoot.isEmpty()) {
+                genericListTypeElement.simpleName.toString().decapitalize()
+            } else {
+                xmlAnnotation.nameAsRoot
+            }
+        }
+    }
 }

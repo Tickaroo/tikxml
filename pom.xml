@@ -41,6 +41,7 @@
         <module>core</module>
         <module>annotation</module>
         <module>processor</module>
+        <module>annotationprocessingtesting</module>
     </modules>
 
 
