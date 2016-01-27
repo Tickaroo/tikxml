@@ -42,6 +42,7 @@
         <module>annotation</module>
         <module>processor</module>
         <module>annotationprocessingtesting</module>
+        <module>retrofit-converter</module>
     </modules>
 
 
