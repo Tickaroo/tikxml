@@ -16,7 +16,7 @@
   ~
   -->
 <server name="fooServer">
-  <config enabled="true">
+  <serverConfig enabled="true">
     <ip>127.0.0.1</ip>
-  </config>
+  </serverConfig>
 </server>

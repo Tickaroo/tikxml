@@ -25,7 +25,6 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.util.Date;
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -34,13 +33,23 @@ import org.junit.Test;
 public class CatalogueTest {
 
   @Test
-  @Ignore
-  public void simple() throws IOException {
+  public void simple() throws IOException, ParseException {
     TikXml xml = new TikXml.Builder().exceptionOnUnreadXml(true).build();
 
     Catalogue catalogue = xml.read(TestUtils.sourceForFile("books.xml"), Catalogue.class);
 
-    Assert.assertEquals(12, catalogue);
+    Assert.assertEquals(10, catalogue.books.size());
+    for (int i = 1; i<= 10; i++){
+      Book book = catalogue.books.get(i-1);
+      Date date = DateConverter.format.parse("2000-09-0"+i);
+
+      Assert.assertEquals(i, book.id);
+      Assert.assertEquals("author"+i, book.author);
+      Assert.assertEquals("genre"+i, book.genre);
+      Assert.assertEquals(i, book.price, 0);
+      Assert.assertEquals(date, book.publishDate);
+      Assert.assertEquals("description"+i, book.description);
+    }
   }
 
   @Test

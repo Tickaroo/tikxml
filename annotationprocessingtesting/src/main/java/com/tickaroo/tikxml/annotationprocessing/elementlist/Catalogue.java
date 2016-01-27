@@ -19,6 +19,7 @@
 package com.tickaroo.tikxml.annotationprocessing.elementlist;
 
 import com.tickaroo.tikxml.annotation.Element;
+import com.tickaroo.tikxml.annotation.Path;
 import com.tickaroo.tikxml.annotation.Xml;
 import java.util.List;
 
@@ -28,6 +29,7 @@ import java.util.List;
 @Xml
 public class Catalogue {
 
+  @Path("books")
   @Element
   List<Book> books;
 }

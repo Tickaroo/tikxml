@@ -19,7 +19,6 @@
 package com.tickaroo.tikxml.annotationprocessing.elementlist;
 
 import com.tickaroo.tikxml.annotation.Element;
-import com.tickaroo.tikxml.annotation.InlineList;
 import com.tickaroo.tikxml.annotation.Xml;
 import java.util.List;
 
@@ -29,7 +28,6 @@ import java.util.List;
 @Xml
 public class InlineListCatalogue {
 
-  @InlineList
   @Element(name = "book")
   List<Book> books;
 }
