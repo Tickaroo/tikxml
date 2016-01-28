@@ -42,7 +42,6 @@ public final class TikXml {
 
     private TikXmlConfig config = new TikXmlConfig();
 
-
     /**
      * Specify if an exception should be thrown if parts of the currently reading xml element are
      * not read (not mapped to java class)
@@ -79,16 +78,13 @@ public final class TikXml {
       return this;
     }
 
-
     /**
      * @return {@link TikXml} instance with the specified config
      */
     public TikXml build() {
       return new TikXml(config);
     }
-
   }
-
 
   // Visible for testing
   final TikXmlConfig config;
@@ -111,10 +107,7 @@ public final class TikXml {
     return value;
   }
 
-
   public <T> void write(BufferedSink sink, T valueToWrite) throws IOException {
-
+    throw new UnsupportedOperationException("Writing xml is not implemented yet");
   }
-
-
 }
