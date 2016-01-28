@@ -14,7 +14,7 @@ Since the generated serializer / deserializer will be in the same package as the
 
 **or**
 
-- fields can be private but must provide a non _private or protected getter and setter_ methods following java method naming convetion (`setFoo(Foo foo), getFoo()`)
+- fields can be private but must provide a non _private or protected getter and setter_ methods following java method naming convention (`setFoo(Foo foo), getFoo()`)
   ```java
      public class Book {
      
@@ -100,8 +100,9 @@ As you see, you can specify a custom converter for each field with `@Attribute(c
 Additionally, you can set default converter for all your xml feeds directly in `TikXml`. 
 
 ```java
-TikXml parser = new TikXml(); // Xml serializer / deserializer
-parser.setConverter(Date.class, new MyDateConverter() ); // all fields of type Date will be serialized / deserialized by using MyDateConverter
+TikXml parser = new TikXml.Builder()
+               .addTypeConverter(Date.class, new MyDateConverter() ); // all fields of type Date will be serialized / deserialized by using MyDateConverter
+               .build();
 ```
 
 If you set a default converter you can still apply another converter on a specific field via annotation.
@@ -852,4 +853,4 @@ As already said, this is not supported (yet) because of performance reasons.
 ```
 
 # Kotlin
-TBD
+Kotlin is supported, except `data classes`
