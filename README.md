@@ -4,6 +4,32 @@ A fast xml parser for android (and java)
 # Work in Progress
 [![Build Status](https://travis-ci.org/Tickaroo/tikxml.svg?branch=master)](https://travis-ci.org/Tickaroo/tikxml)
 
+The documentation can be found [here](https://github.com/Tickaroo/tikxml/blob/master/docs/AnnotatingModelClasses.md)
+
+Latest snapshot `0.1-SNAPSHOT` available: 
+
+```groovy
+repositories {
+  mavenCentral()
+  maven {
+    url 'http://oss.sonatype.org/content/repositories/snapshots'
+  }
+}
+```
+
+```groovy
+compile 'com.tickaroo.tikxml:annotation:0.1-SNAPSHOT'
+compile 'com.tickaroo.tikxml:core:0.1-SNAPSHOT'
+
+apt 'com.tickaroo.tikxml:processor:0.1-SNAPSHOT'
+```
+
+For retrofit2-beta3:
+
+```groovy
+compile 'com.tickaroo.tikxml:retrofit-converter:0.1-SNAPSHOT'
+```
+
 # License
 ```
 Copyright 2015 Tickaroo
