@@ -54,7 +54,6 @@ public class NestedChildElementBinderTest {
     }
   };
 
-
   @Test
   public void readAll() throws IOException, ParseException {
 
@@ -76,7 +75,6 @@ public class NestedChildElementBinderTest {
     Assert.assertTrue(company.legalFormPartOfTheName);
     Assert.assertTrue(company.shortInfo);
     Assert.assertEquals("Others Content", company.otherText);
-
   }
 
   @Test
@@ -88,7 +86,8 @@ public class NestedChildElementBinderTest {
         .addTypeAdapter(Company.class, new CompanyNestedTypeAdapter())
         .build();
 
-    BufferedSource source = TestUtils.sourceForFile("company_nested_childbinder_multiline_text_content.xml");
+    BufferedSource source =
+        TestUtils.sourceForFile("company_nested_childbinder_multiline_text_content.xml");
 
     Company company = tikXml.read(source, Company.class);
 
@@ -103,7 +102,6 @@ public class NestedChildElementBinderTest {
     Assert.assertTrue(company.legalFormPartOfTheName);
     Assert.assertTrue(company.shortInfo);
     Assert.assertEquals("Others Content", company.otherText);
-
   }
 
   @Test
@@ -118,15 +116,13 @@ public class NestedChildElementBinderTest {
     BufferedSource source = TestUtils.sourceForFile("company_nested_childbinder.xml");
 
     exception.expect(IOException.class);
-    exception.expectMessage("Could not map the xml element with the name 'founded' at path /company/info/founded to java class. Have you annotated such a field in your java class to map this xml element?");
+    exception.expectMessage(
+        "Could not map the xml element with the name 'founded' at path /company/info/founded to java class. Have you annotated such a field in your java class to map this xml element? Otherwise you can turn this error message off with TikXml.Builder().exceptionOnUnreadXml(false).build().");
     Company company = tikXml.read(source, Company.class);
-
   }
-
 
   @Test
   public void ignoringMissingMappingFounded() throws IOException, ParseException {
-
 
     TikXml tikXml = new TikXml.Builder()
         .exceptionOnUnreadXml(false)
@@ -146,7 +142,6 @@ public class NestedChildElementBinderTest {
     Assert.assertTrue(company.legalFormPartOfTheName);
     Assert.assertTrue(company.shortInfo);
     Assert.assertEquals("Others Content", company.otherText);
-
   }
 
   @Test
@@ -161,9 +156,9 @@ public class NestedChildElementBinderTest {
     BufferedSource source = TestUtils.sourceForFile("company_nested_childbinder.xml");
 
     exception.expect(IOException.class);
-    exception.expectMessage("Could not map the xml element's text content at path  at path /company/info/text() to java class. Have you annotated such a field in your java class to map the xml element's text content?");
+    exception.expectMessage(
+        "Could not map the xml element's text content at path  at path /company/info/text() to java class. Have you annotated such a field in your java class to map the xml element's text content? Otherwise you can turn this error message off with TikXml.Builder().exceptionOnUnreadXml(false).build().");
     Company company = tikXml.read(source, Company.class);
-
   }
 
   @Test
@@ -201,15 +196,13 @@ public class NestedChildElementBinderTest {
     BufferedSource source = TestUtils.sourceForFile("company_nested_childbinder.xml");
 
     exception.expect(IOException.class);
-    exception.expectMessage("Could not map the xml attribute with the name 'shortInfo' at path /company/info[@shortInfo] to java class. Have you annotated such a field in your java class to map this xml attribute?");
+    exception.expectMessage(
+        "Could not map the xml attribute with the name 'shortInfo' at path /company/info[@shortInfo]to java class. Have you annotated such a field in your java class to map this xml attribute? Otherwise you can turn this error message off with TikXml.Builder().exceptionOnUnreadXml(false).build().");
     Company company = tikXml.read(source, Company.class);
-
   }
-
 
   @Test
   public void ignoringMissingMappingShortInfoAttribute() throws IOException, ParseException {
-
 
     TikXml tikXml = new TikXml.Builder()
         .exceptionOnUnreadXml(false)
@@ -221,7 +214,6 @@ public class NestedChildElementBinderTest {
 
     Company company = tikXml.read(source, Company.class);
 
-
     Assert.assertEquals(123, company.id);
     Assert.assertEquals("Foo Inc.", company.name);
     Assert.assertEquals(dateFormatter.parse("1999-12-31"), company.founded);
@@ -230,7 +222,5 @@ public class NestedChildElementBinderTest {
     Assert.assertTrue(company.legalFormPartOfTheName);
     Assert.assertFalse(company.shortInfo);
     Assert.assertEquals("Others Content", company.otherText);
-
   }
-
 }

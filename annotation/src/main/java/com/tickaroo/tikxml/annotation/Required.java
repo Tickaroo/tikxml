@@ -34,6 +34,8 @@ import java.lang.annotation.Target;
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
+@Deprecated
 public @interface Required {
+  @Deprecated
   boolean value() default true;
 }

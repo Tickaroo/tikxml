@@ -81,7 +81,7 @@ public class DelegatingTypeAdapterTest {
     BufferedSource source = TestUtils.sourceForFile("simple_typeadapater_test.xml");
 
     exception.expect(IOException.class);
-    exception.expectMessage("Could not map the xml attribute with the name 'name' at path /company[@name] to java class. Have you annotated such a field in your java class to map this xml attribute?");
+    exception.expectMessage("Could not map the xml attribute with the name 'name' at path /company[@name] to java class. Have you annotated such a field in your java class to map this xml attribute? Otherwise you can turn this error message off with TikXml.Builder().exceptionOnUnreadXml(false).build().");
     Company company = tikXml.read(source, Company.class);
 
 
@@ -140,7 +140,7 @@ public class DelegatingTypeAdapterTest {
     BufferedSource source = TestUtils.sourceForFile("simple_typeadapater_with_propertyelements.xml");
 
     exception.expect(IOException.class);
-    exception.expectMessage("Could not map the xml element with the name 'legalForm' at path /company/legalForm to java class. Have you annotated such a field in your java class to map this xml element?");
+    exception.expectMessage("Could not map the xml element with the name 'legalForm' at path /company/legalForm to java class. Have you annotated such a field in your java class to map this xml element? Otherwise you can turn this error message off with TikXml.Builder().exceptionOnUnreadXml(false).build().");
     Company company = tikXml.read(source, Company.class);
   }
 
@@ -224,7 +224,7 @@ public class DelegatingTypeAdapterTest {
     BufferedSource source = TestUtils.sourceForFile("simple_typeadapater_with_propertyelements_textcontent.xml");
 
     exception.expect(IOException.class);
-    exception.expectMessage("Could not map the xml element's text content at path  at path /company/text() to java class. Have you annotated such a field in your java class to map the xml element's text content?");
+    exception.expectMessage("Could not map the xml element's text content at path  at path /company/text() to java class. Have you annotated such a field in your java class to map the xml element's text content? Otherwise you can turn this error message off with TikXml.Builder().exceptionOnUnreadXml(false).build().");
     Company company = tikXml.read(source, Company.class);
   }
 

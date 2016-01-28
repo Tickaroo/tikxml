@@ -91,7 +91,7 @@ public abstract class DelegatingTypeAdapter<T> implements TypeAdapter<T> {
               + attributeName
               + "' at path "
               + reader.getPath()
-              + " to java class. Have you annotated such a field in your java class to map this xml attribute?");
+              + " to java class. Have you annotated such a field in your java class to map this xml attribute? Otherwise you can turn this error message off with TikXml.Builder().exceptionOnUnreadXml(false).build().");
         } else {
           reader.skipAttributeValue();
         }
@@ -119,7 +119,7 @@ public abstract class DelegatingTypeAdapter<T> implements TypeAdapter<T> {
                 + elementName
                 + "' at path "
                 + reader.getPath()
-                + " to java class. Have you annotated such a field in your java class to map this xml element?");
+                + " to java class. Have you annotated such a field in your java class to map this xml element? Otherwise you can turn this error message off with TikXml.Builder().exceptionOnUnreadXml(false).build().");
           } else {
             reader.skipRemainingElement(); // includes reader.endElement()
           }
@@ -143,7 +143,7 @@ public abstract class DelegatingTypeAdapter<T> implements TypeAdapter<T> {
           if (config.throwsExceptionOnMissingMapping()) {
             throw new IOException("Could not map the xml element's text content at path  at path "
                 + reader.getPath()
-                + " to java class. Have you annotated such a field in your java class to map the xml element's text content?");
+                + " to java class. Have you annotated such a field in your java class to map the xml element's text content? Otherwise you can turn this error message off with TikXml.Builder().exceptionOnUnreadXml(false).build().");
           } else {
             reader.skipTextContent();
           }
