@@ -1,8 +1,9 @@
+# Work in Progress
+Please note that this is still **work in progress!**
+[![Build Status](https://travis-ci.org/Tickaroo/tikxml.svg?branch=master)](https://travis-ci.org/Tickaroo/tikxml)
+
 # Tik XML
 A fast xml parser for android (and java)
-
-# Work in Progress
-[![Build Status](https://travis-ci.org/Tickaroo/tikxml.svg?branch=master)](https://travis-ci.org/Tickaroo/tikxml)
 
 The documentation can be found [here](https://github.com/Tickaroo/tikxml/blob/master/docs/AnnotatingModelClasses.md)
 
@@ -32,7 +33,7 @@ compile 'com.tickaroo.tikxml:retrofit-converter:0.1-SNAPSHOT'
 
 # Benchmark
 We did benchmark on this early version of TikXml to compare it's results with other popular xml parsers like SimpleXml and Jackson.
-TikXml is working around 1,9 x faster than jackson and 4,3 times faster than SimpleXml by also having a low memory footprint:
+TikXml is working around 1,9 times faster than jackson and 4,3 times faster than SimpleXml by also having a low memory footprint:
 ![Benchmark](https://raw.githubusercontent.com/Tickaroo/tikxml/master/docs/Benchmark.png)
 
 TikXml has been build on top of Okio and therefore highly optimized for Retrofit2.
