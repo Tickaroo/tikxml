@@ -44,6 +44,7 @@ class CodeGenUtils(val customTypeConverterManager: CustomTypeConverterManager, v
     companion object PARAMS {
         const val valueParam = "value"
         const val tikConfigParam = "config"
+        const val tikConfigMethodExceptionOnUnreadXml = "exceptionOnUnreadXml"
         const val textContentParam = "textContent"
         const val readerParam = "reader"
         const val attributeBindersParam = "attributeBinders"
@@ -216,6 +217,18 @@ class CodeGenUtils(val customTypeConverterManager: CustomTypeConverterManager, v
                 .addInitializerBlock(initializerBuilder.build())
                 .build()
     }
+
+    fun ignoreAttributes() = CodeBlock.builder()
+            .beginControlFlow("if (!$tikConfigParam.$tikConfigMethodExceptionOnUnreadXml())")
+                .beginControlFlow("while ($readerParam.hasAttribute())")
+                    .addStatement("$readerParam.skipAttribute()")
+                .endControlFlow()
+            .nextControlFlow("else")
+                .beginControlFlow("if($readerParam.hasAttribute())")
+                    .addStatement("throw new \$T(\$S)", ClassName.get(IOException::class.java), "Unread attribute at path $readerParam.getPath()")
+                .endControlFlow()
+            .endControlFlow()
+            .build()
 
     fun fromXmlMethodBuilder() = MethodSpec.methodBuilder("fromXml")
             .addAnnotation(Override::class.java)

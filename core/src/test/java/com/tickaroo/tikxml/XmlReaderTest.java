@@ -798,4 +798,32 @@ public class XmlReaderTest {
     }
   }
 
+
+  @Test
+  public void skipAttribute() throws IOException {
+
+    String xml = "<foo abc=\"123\" />";
+    XmlReader reader = readerFrom(xml);
+
+    reader.beginElement();
+    reader.nextElementName();
+    reader.skipAttribute();
+    reader.endElement();
+  }
+
+  @Test
+  public void failSkipAttribute() throws IOException {
+
+    String xml = "<foo />";
+    XmlReader reader = readerFrom(xml);
+
+    reader.beginElement();
+    reader.nextElementName();
+    exception.expect(IOException.class);
+    exception.expectMessage("Expected xml element attribute name but was ELEMENT_END at path /foo");
+    reader.skipAttribute();
+    reader.endElement();
+  }
+
+
 }

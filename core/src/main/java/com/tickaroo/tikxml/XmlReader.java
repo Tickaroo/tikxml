@@ -71,10 +71,8 @@ public class XmlReader implements Closeable {
   /** The input XML. */
   private int peeked = PEEKED_NONE;
 
-
   private String[] pathNames = new String[32];
   private int[] pathIndices = new int[32];
-
 
   /*
    * The nesting stack. Using a manual array rather than an ArrayList saves 20%.
@@ -88,7 +86,6 @@ public class XmlReader implements Closeable {
 
   private final BufferedSource source;
   private final Buffer buffer;
-
 
   private XmlReader(BufferedSource source) {
     if (source == null) {
@@ -162,7 +159,6 @@ public class XmlReader implements Closeable {
       } else {
         throw syntaxError("Expected xml element name (literal expected)");
       }
-
     } else if (peekStack == XmlScope.ELEMENT_ATTRIBUTE) {
       int c = nextNonWhitespace(true);
 
@@ -221,13 +217,15 @@ public class XmlReader implements Closeable {
               return peeked = PEEKED_SINGLE_QUOTED;
 
             default:
-              throw syntaxError("Expected double quote (\") or single quote (') while reading xml elements attribute");
+              throw syntaxError(
+                  "Expected double quote (\") or single quote (') while reading xml elements attribute");
           }
 
         default:
-          throw syntaxError("Unexpected character '" + ((char) c) + "' while trying to read xml elements attribute");
+          throw syntaxError("Unexpected character '"
+              + ((char) c)
+              + "' while trying to read xml elements attribute");
       }
-
     } else if (peekStack == XmlScope.ELEMENT_CONTENT) {
       int c = nextNonWhitespace(true);
 
@@ -239,21 +237,16 @@ public class XmlReader implements Closeable {
         buffer.skip(9); // skip opening cdata tag
         return peeked = PEEKED_CDATA;
       }
-
-
     } else if (peekStack == XmlScope.EMPTY_DOCUMENT) {
       stack[stackSize - 1] = XmlScope.NONEMPTY_DOCUMENT;
-
     } else if (peekStack == XmlScope.NONEMPTY_DOCUMENT) {
       int c = nextNonWhitespace(false);
       if (c == -1) {
         return peeked = PEEKED_EOF;
       }
-
     } else if (peekStack == XmlScope.CLOSED) {
       throw new IllegalStateException("XmlReader is closed");
     }
-
 
     int c = nextNonWhitespace(true);
     switch (c) {
@@ -277,11 +270,13 @@ public class XmlReader implements Closeable {
             } else {
               syntaxError("Missing closing '>' character in </" + pathNames[stackSize - 1]);
             }
-
           } else {
-            syntaxError("Expected a closing element tag </" + pathNames[stackSize - 1] + "> but found </" + closingElementName + ">");
+            syntaxError("Expected a closing element tag </"
+                + pathNames[stackSize - 1]
+                + "> but found </"
+                + closingElementName
+                + ">");
           }
-
         }
         // its just a < which means begin of the element
         return peeked = PEEKED_ELEMENT_BEGIN;
@@ -294,7 +289,6 @@ public class XmlReader implements Closeable {
         buffer.readByte(); // consume '
         return peeked = PEEKED_SINGLE_QUOTED;
     }
-
 
     return PEEKED_NONE;
   }
@@ -318,7 +312,6 @@ public class XmlReader implements Closeable {
         && buffer.getByte(6) == 'T'
         && buffer.getByte(7) == 'A'
         && buffer.getByte(8) == '[';
-
   }
 
   /**
@@ -370,7 +363,6 @@ public class XmlReader implements Closeable {
     return p == PEEKED_ELEMENT_BEGIN;
   }
 
-
   /**
    * Returns true if the current xml element has an unparsed attribute. {@link #beginElement()} must
    * be called before invoking this method
@@ -420,16 +412,20 @@ public class XmlReader implements Closeable {
     }
 
     if (p == PEEKED_DOUBLE_QUOTED || p == PEEKED_SINGLE_QUOTED) {
-      String attributeValue = nextQuotedValue(p == PEEKED_DOUBLE_QUOTED ? DOUBLE_QUOTE : SINGLE_QUOTE);
+      String attributeValue =
+          nextQuotedValue(p == PEEKED_DOUBLE_QUOTED ? DOUBLE_QUOTE : SINGLE_QUOTE);
 
       peeked = PEEKED_NONE;
-      pathNames[stackSize - 1] = null; // Remove attribute name from stack, do that after nextQuotedValue() to ensure that xpath is correctly in case that nextQuotedValue() fails
+      pathNames[stackSize - 1] =
+          null; // Remove attribute name from stack, do that after nextQuotedValue() to ensure that xpath is correctly in case that nextQuotedValue() fails
       return attributeValue;
     } else {
-      throw new XmlDataException("Expected xml element attribute value (in double quotes or single quotes) but was " + peek()
-          + " at path " + getPath());
+      throw new XmlDataException(
+          "Expected xml element attribute value (in double quotes or single quotes) but was "
+              + peek()
+              + " at path "
+              + getPath());
     }
-
   }
 
   /**
@@ -443,7 +439,6 @@ public class XmlReader implements Closeable {
     // TODO natively support integer
     return Integer.parseInt(nextAttributeValue());
   }
-
 
   /**
    * Consumes the next attribute's value and returns it as long. Assumes that {@link
@@ -491,11 +486,23 @@ public class XmlReader implements Closeable {
       pathNames[stackSize - 1] = null; // Remove attribute name from stack
       skipQuotedValue(p == PEEKED_DOUBLE_QUOTED ? DOUBLE_QUOTE : SINGLE_QUOTE);
     } else {
-      throw new XmlDataException("Expected xml element attribute value (in double quotes or single quotes) but was " + peek()
-          + " at path " + getPath());
+      throw new XmlDataException(
+          "Expected xml element attribute value (in double quotes or single quotes) but was "
+              + peek()
+              + " at path "
+              + getPath());
     }
   }
 
+  /**
+   * Skip the entire attribute (attribute name and attribute value)
+   *
+   * @throws IOException
+   */
+  public void skipAttribute() throws IOException {
+    nextAttributeName();
+    skipAttributeValue();
+  }
 
   /**
    * Returns true if the current xml element  has another a body which contains either a value or
@@ -528,11 +535,13 @@ public class XmlReader implements Closeable {
 
       // Read text until '<' found
       long index = source.indexOf(OPENING_XML_ELEMENT);
-      if (index == -1L)
-        throw syntaxError("Unterminated element text content. Expected </" + pathNames[stackSize - 1] + "> but haven't found");
+      if (index == -1L) {
+        throw syntaxError("Unterminated element text content. Expected </"
+            + pathNames[stackSize - 1]
+            + "> but haven't found");
+      }
 
       return buffer.readUtf8(index);
-
     } else if (p == PEEKED_CDATA) {
       peeked = PEEKED_NONE;
 
@@ -544,7 +553,6 @@ public class XmlReader implements Closeable {
       buffer.readByte(); // consume ]
       buffer.readByte(); // consume >
       return result;
-
     } else {
       throw new XmlDataException("Expected xml element text content but was " + peek()
           + " at path " + getPath());
@@ -563,7 +571,6 @@ public class XmlReader implements Closeable {
     return Integer.parseInt(nextTextContent());
   }
 
-
   /**
    * Get the next text content of an xml element as long. Text content is {@code
    * <element>123</element>}
@@ -575,7 +582,6 @@ public class XmlReader implements Closeable {
     // TODO natively support
     return Long.parseLong(nextTextContent());
   }
-
 
   /**
    * Get the next text content of an xml element as double. Text content is {@code
@@ -641,17 +647,18 @@ public class XmlReader implements Closeable {
 
       // Read text until '<' found
       long index = source.indexOf(OPENING_XML_ELEMENT);
-      if (index == -1L)
-        throw syntaxError("Unterminated element text content. Expected </" + pathNames[stackSize - 1] + "> but haven't found");
+      if (index == -1L) {
+        throw syntaxError("Unterminated element text content. Expected </"
+            + pathNames[stackSize - 1]
+            + "> but haven't found");
+      }
 
       buffer.skip(index);
-
     } else if (p == PEEKED_CDATA) {
       peeked = PEEKED_NONE;
       // Search index of closing CDATA tag ]]>
       long index = indexOfClosingCDATA();
       buffer.skip(index + 3); // +3 because of consuming closing tag
-
     } else {
       throw new XmlDataException("Expected xml element text content but was " + peek()
           + " at path " + getPath());
@@ -688,14 +695,12 @@ public class XmlReader implements Closeable {
     pathIndices[stackSize - 1]++;
   }
 
-
   /**
    * Returns a XPath to the current location in the XML value.
    */
   public String getPath() {
     return XmlScope.getPath(stackSize, stack, pathNames, pathIndices);
   }
-
 
   @Override
   public void close() throws IOException {
@@ -720,7 +725,6 @@ public class XmlReader implements Closeable {
     }
     return false;
   }
-
 
   /**
    * Returns true once {@code limit - pos >= minimum}. If the data is exhausted before that many
@@ -826,12 +830,10 @@ public class XmlReader implements Closeable {
     peeked = PEEKED_NONE;
     pathNames[stackSize - 1] = result;
 
-
     // Next we expect element attributes block
     pushStack(XmlScope.ELEMENT_ATTRIBUTE);
     return result;
   }
-
 
   /** Returns an unquoted value as a string. */
   private String nextUnquotedValue() throws IOException {
@@ -850,8 +852,11 @@ public class XmlReader implements Closeable {
     StringBuilder builder = null;
     while (true) {
       long index = source.indexOf(runTerminator);
-      if (index == -1L)
-        throw syntaxError("Unterminated string (" + (runTerminator == DOUBLE_QUOTE ? "double quote \"" : "single quote '") + " is missing)");
+      if (index == -1L) {
+        throw syntaxError(
+            "Unterminated string (" + (runTerminator == DOUBLE_QUOTE ? "double quote \""
+                : "single quote '") + " is missing)");
+      }
 
       // If we've got an escape character, we're going to need a string builder.
       if (buffer.getByte(index) == '\\') {
@@ -874,7 +879,6 @@ public class XmlReader implements Closeable {
       }
     }
   }
-
 
   /**
    * Checks wheter the passed character is a literal or not
@@ -988,7 +992,8 @@ public class XmlReader implements Closeable {
 
     int stackPeek = stack[stackSize - 1];
     if (stackPeek != XmlScope.ELEMENT_OPENING && stackPeek != XmlScope.ELEMENT_ATTRIBUTE) {
-      throw new AssertionError("This method can only be invoked after having consumed the opening element via beginElement()");
+      throw new AssertionError(
+          "This method can only be invoked after having consumed the opening element via beginElement()");
     }
 
     int count = 1;
@@ -998,7 +1003,6 @@ public class XmlReader implements Closeable {
           beginElement();
           count++;
           break;
-
 
         case ELEMENT_END:
           endElement();
@@ -1028,13 +1032,12 @@ public class XmlReader implements Closeable {
           break;
 
         default:
-          throw new AssertionError("Oops, there is something not implemented correctly internally. Please fill an issue on https://github.com/Tickaroo/tikxml/issues . Please include stacktrace and the model class you try to parse");
-
+          throw new AssertionError(
+              "Oops, there is something not implemented correctly internally. Please fill an issue on https://github.com/Tickaroo/tikxml/issues . Please include stacktrace and the model class you try to parse");
       }
       peeked = PEEKED_NONE;
     } while (count != 0);
   }
-
 
   /**
    * Skip an unquoted value
@@ -1083,5 +1086,4 @@ public class XmlReader implements Closeable {
     END_OF_DOCUMENT
 
   }
-
 }

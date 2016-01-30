@@ -41,7 +41,7 @@ public final class TikXmlConfig {
    *
    * @return true if exception should be thrown, otherwise false
    */
-  public boolean throwsExceptionOnMissingMapping() {
+  public boolean exceptionOnUnreadXml() {
     return exceptionOnUnreadXml;
   }
 

@@ -75,7 +75,7 @@ public abstract class NestedChildElementBinder<T> implements ChildElementBinder<
         if (attributeBinder != null) {
           attributeBinder.fromXml(reader, config, value);
         } else {
-          if (config.throwsExceptionOnMissingMapping()) {
+          if (config.exceptionOnUnreadXml()) {
             throw new IOException("Could not map the xml attribute with the name '"
                 + attributeName
                 + "' at path "
@@ -104,7 +104,7 @@ public abstract class NestedChildElementBinder<T> implements ChildElementBinder<
           childElementBinder.fromXml(reader, config, value);
           reader.endElement();
         } else {
-          if (config.throwsExceptionOnMissingMapping()) {
+          if (config.exceptionOnUnreadXml()) {
             throw new IOException("Could not map the xml element with the name '"
                 + elementName
                 + "' at path "
@@ -130,7 +130,7 @@ public abstract class NestedChildElementBinder<T> implements ChildElementBinder<
             textContentBuilder.append(reader.nextTextContent());
           }
         } else {
-          if (config.throwsExceptionOnMissingMapping()) {
+          if (config.exceptionOnUnreadXml()) {
             throw new IOException("Could not map the xml element's text content at path  at path "
                 + reader.getPath()
                 + " to java class. Have you annotated such a field in your java class to map the xml element's text content? Otherwise you can turn this error message off with TikXml.Builder().exceptionOnUnreadXml(false).build().");

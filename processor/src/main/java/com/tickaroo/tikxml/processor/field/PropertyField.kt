@@ -40,18 +40,23 @@ class PropertyField(element: VariableElement, name: String, required: Boolean? =
 
     override fun generateReadXmlCode(codeGenUtils: CodeGenUtils): TypeSpec {
 
-        val fromXmlMethod = codeGenUtils.fromXmlMethodBuilder()
-                .addCode(codeGenUtils.assignViaTypeConverterOrPrimitive(element, CodeGenUtils.AssignmentType.ELEMENT, accessPolicy, converterQualifiedName))
-                .build()
-
-
         if (!hasAttributes()) {
+            val fromXmlMethod = codeGenUtils.fromXmlMethodBuilder()
+                    .addCode(codeGenUtils.ignoreAttributes())
+                    .addCode(codeGenUtils.assignViaTypeConverterOrPrimitive(element, CodeGenUtils.AssignmentType.ELEMENT, accessPolicy, converterQualifiedName))
+                    .build()
+
+
             return TypeSpec.anonymousClassBuilder("")
                     .addSuperinterface(codeGenUtils.childElementBinderType)
                     .addMethod(fromXmlMethod)
                     .build()
         }
 
+
+        val fromXmlMethod = codeGenUtils.fromXmlMethodBuilder()
+                .addCode(codeGenUtils.assignViaTypeConverterOrPrimitive(element, CodeGenUtils.AssignmentType.ELEMENT, accessPolicy, converterQualifiedName))
+                .build()
 
         // Multiple attributes
         val attributeMapType = ParameterizedTypeName.get(ClassName.get(Map::class.java), ClassName.get(String::class.java), codeGenUtils.attributeBinderType)

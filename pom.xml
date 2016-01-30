@@ -43,6 +43,7 @@
         <module>processor</module>
         <module>annotationprocessingtesting</module>
         <module>retrofit-converter</module>
+        <module>benchmark</module>
     </modules>
 
 
