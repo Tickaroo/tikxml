@@ -52,10 +52,9 @@ open class AnnotationOnlyFieldDetectorStrategy(protected val elementUtils: Eleme
     }
 
     protected fun isTextContentAnnotated(element: VariableElement): Boolean {
-        // TODO implement support for @TextContent + @Path --> https://github.com/Tickaroo/tikxml/issues/16
         val textContentAnnotated = element.getAnnotation(TextContent::class.java) != null
         if (textContentAnnotated && element.getAnnotation(Path::class.java) != null) {
-            throw ProcessingException(element, "Unfortunately @${Path::class.simpleName} on @${TextContent::class.simpleName} is not supported yet")
+            throw ProcessingException(element, "@${Path::class.simpleName} on @${TextContent::class.simpleName} is not allowed. Use @${PropertyElement::class.simpleName} and @${Path::class.simpleName} instead on field '$element' in class ${element.getSurroundingClassQualifiedName()}")
         } else {
             return textContentAnnotated
         }

@@ -204,7 +204,6 @@ class AnnotationOnlyFieldDetectorStrategyTest {
                 .failsToCompile()
     }
 
-
     @Test
     fun failBecauseGenericListTypeNotAnnotated() {
         val componentFile = JavaFileObjects.forSourceLines("test.InlineListOnListType",
@@ -1591,5 +1590,25 @@ class AnnotationOnlyFieldDetectorStrategyTest {
         Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
                 .that(componentFile).processedWith(XmlProcessor())
                 .compilesWithoutError()
+    }
+
+    @Test
+    fun failOnPathWithTextContent() {
+        val componentFile = JavaFileObjects.forSourceLines("test.PathOnTextContent",
+                "package test;",
+                "",
+                "@${Xml::class.java.canonicalName}(scanMode = ${ScanMode::class.qualifiedName}.${ScanMode.ANNOTATIONS_ONLY})",
+                "class PathOnTextContent {",
+
+                "  @${Path::class.qualifiedName}(\"asd\")",
+                "  @${TextContent::class.qualifiedName}",
+                "  String foo;",
+                "}"
+        )
+
+        Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
+                .that(componentFile).processedWith(XmlProcessor())
+                .failsToCompile()
+                .withErrorContaining("@${Path::class.simpleName} on @${TextContent::class.simpleName} is not allowed. Use @${PropertyElement::class.simpleName} and @${Path::class.simpleName} instead on field 'foo' in class test.PathOnTextContent")
     }
 }
