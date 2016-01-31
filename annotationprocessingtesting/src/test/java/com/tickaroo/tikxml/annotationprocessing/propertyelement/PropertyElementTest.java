@@ -51,15 +51,14 @@ public class PropertyElementTest {
     Assert.assertEquals(true, item.booleanWrapper);
     Assert.assertEquals(23.42, item.doubleWrapper, 0);
     Assert.assertEquals(2147483648L, (long) item.longWrapper);
-
   }
-
 
   @Test
   public void settersGetters() throws IOException, ParseException {
     TikXml xml = new TikXml.Builder().exceptionOnUnreadXml(true).build();
 
-    PropertyItemWithGetterSetters item = xml.read(TestUtils.sourceForFile("property_item.xml"), PropertyItemWithGetterSetters.class);
+    PropertyItemWithGetterSetters item =
+        xml.read(TestUtils.sourceForFile("property_item.xml"), PropertyItemWithGetterSetters.class);
 
     Date date = DateConverter.format.parse("1988-03-04");
 
@@ -74,7 +73,31 @@ public class PropertyElementTest {
     Assert.assertEquals(true, item.getBooleanWrapper());
     Assert.assertEquals(23.42, item.getDoubleWrapper(), 0);
     Assert.assertEquals(2147483648L, (long) item.getLongWrapper());
-
   }
 
+  @Test
+  public void skipAttributes() throws IOException, ParseException {
+    TikXml xml = new TikXml.Builder().exceptionOnUnreadXml(false).build();
+
+    PropertyItemWithGetterSetters item =
+        xml.read(TestUtils.sourceForFile("property_item_with_attributes.xml"),
+            PropertyItemWithGetterSetters.class);
+
+    Assert.assertEquals("foo", item.getAString());
+  }
+
+  @Test
+  public void failSkippingAttributes() throws IOException, ParseException {
+    TikXml xml = new TikXml.Builder().exceptionOnUnreadXml(true).build();
+
+    try {
+
+      PropertyItemWithGetterSetters item =
+          xml.read(TestUtils.sourceForFile("property_item_with_attributes.xml"),
+              PropertyItemWithGetterSetters.class);
+      Assert.fail("Exception expected");
+    } catch (IOException e) {
+      Assert.assertEquals("Unread attribute 'a' at path /item/aString[@a]", e.getMessage());
+    }
+  }
 }

@@ -225,7 +225,7 @@ class CodeGenUtils(val customTypeConverterManager: CustomTypeConverterManager, v
                 .endControlFlow()
             .nextControlFlow("else")
                 .beginControlFlow("if($readerParam.hasAttribute())")
-                    .addStatement("throw new \$T(\$S)", ClassName.get(IOException::class.java), "Unread attribute at path $readerParam.getPath()")
+                    .addStatement("throw new \$T(\"Unread attribute '\"+ reader.nextAttributeName()+\"'- at path \"+ $readerParam.getPath())", ClassName.get(IOException::class.java))
                 .endControlFlow()
             .endControlFlow()
             .build()
