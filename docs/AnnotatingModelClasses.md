@@ -576,7 +576,7 @@ class Shop {
 
   @Path("bookstore") // means <bookstore name="value" />
   @Attribute
-  String name
+  String name;
   
   @Path("bookstore/inventory")  //  '/' indicates child element
   @Element
@@ -616,7 +616,7 @@ class Shop {
 
   @Path("bookstore") // ERROR: attribute name can't be accesses because belongs to TypeAdapter of BookStore and not to TypeAdapter of Shop
   @Attribute
-  String name
+  String name;
   
   @Element
   BookStore bookstore;
@@ -854,3 +854,14 @@ As already said, this is not supported (yet) because of performance reasons.
 
 # Kotlin
 Kotlin is supported, except `data classes`
+
+```kotlin
+@Xml
+class Book {
+  @Attribute 
+  var id : Integer = ""
+  
+  @Element 
+  lateinit var author : Author  // Also works with lateinit
+}
+```
