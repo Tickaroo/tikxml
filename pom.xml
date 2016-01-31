@@ -44,6 +44,7 @@
         <module>annotationprocessingtesting</module>
         <module>retrofit-converter</module>
         <module>benchmark</module>
+        <module>converters</module>
     </modules>
 
 
