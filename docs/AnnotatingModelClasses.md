@@ -108,9 +108,9 @@ TikXml parser = new TikXml.Builder()
 If you set a default converter you can still apply another converter on a specific field via annotation.
 The converter specified in the annotation will be used instead of the default converter.
 
-**Please note that the MyDateConverter shown above is not thread safe** because `SimpleDateFormat` is not thread safe. TikXml already provides some `TypeConverter` like `DateRfc3339TypeConverter` for parsing dates (thread safe).
+**Please note that the MyDateConverter shown above is not thread safe** because `SimpleDateFormat` is not thread safe. TikXml already provides some `TypeConverter` like `DateRfc3339TypeConverter` (additional dependency) for parsing dates (thread safe).
 
-Many times we have to encode and decode html/xml characters like `<` with `&lt;` or `"` with `&quot;` etc. Wouldn't it be nice to be able to register `TypeConverters` for primitives as well?
+Many times we have to encode and decode html/xml characters like `<` with `&lt;` or `"` with `&quot;` etc. Wouldn't it be nice to be able to register `TypeConverters` for primitives application wide as well?
 With TikXml you can do that:
 
 ```java
