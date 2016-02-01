@@ -108,7 +108,28 @@ TikXml parser = new TikXml.Builder()
 If you set a default converter you can still apply another converter on a specific field via annotation.
 The converter specified in the annotation will be used instead of the default converter.
 
- 
+**Please note that the MyDateConverter shown above is not thread safe** because `SimpleDateFormat` is not thread safe. TikXml already provides some `TypeConverter` like `DateRfc3339TypeConverter` for parsing dates (thread safe).
+
+Many times we have to encode and decode html/xml characters like `<` with `&lt;` or `"` with `&quot;` etc. Wouldn't it be nice to be able to register `TypeConverters` for primitives as well?
+With TikXml you can do that:
+
+```java
+TikXml parser = new TikXml.Builder()
+               .addTypeConverter(String.class, new HtmlEscapeStringConverter() ); // HtmlEscapeStringConverter encode / decode html characters. This class ships as optional dependency
+               .build();
+```
+Since `TikXml` is highly optimized for performance primitives (we count `String` as a primitive as well) don't do a lookup for a `TypeConverter`. You have to specify explicitly which primitives (and primitives wrapper) should do the lookup for a type converter. This has to be done by the annotation processor argument `primitiveTypeConverters` which accepts a list of full qualified class names for those primitives (and primitives wrappers) you want to use TypeConverters for:
+
+```groovy
+apt {
+    arguments {
+        primitiveTypeConverters "java.lang.String, java.lang.int, java.lang.Integer"
+    }
+}
+```
+
+Note that you have to specify both, the primitive itself `java.lang.int` and his wrapper class `java.lang.Integer`, to say `TikXml` that a `TypeConverter` should be used for those types.
+
 ## Property Elements
 In XML not only attributes can be used to model properties but also nested elements like this:
 ```xml
@@ -783,7 +804,7 @@ Per default **COMMON_CASE** will be used. You can specify default Scan Mode glob
 ```groovy 
 apt {
   arguments {
-    defaultScanMode ANNOTATION_ONLY  // or COMMON_CASE
+    defaultScanMode "ANNOTATION_ONLY"  // or "COMMON_CASE"
   }
 }
 ```
