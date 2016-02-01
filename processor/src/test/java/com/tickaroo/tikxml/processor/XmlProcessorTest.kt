@@ -25,6 +25,7 @@ import com.google.testing.compile.JavaSourcesSubject
 import com.tickaroo.tikxml.annotation.Xml
 import org.junit.Test
 import javax.tools.JavaFileObject
+import kotlin.test.assertEquals
 
 /**
  *
@@ -75,5 +76,37 @@ class XmlProcessorTest {
         Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
                 .that(componentFile).processedWith(XmlProcessor())
                 .compilesWithoutError()
+    }
+
+    @Test
+    fun typeConverterForPrimitiveTypesNoOptions(){
+        val processor = XmlProcessor()
+        assertEquals(emptySet<String>(), processor.readPrimitiveTypeConverterOptions(null))
+        assertEquals(emptySet<String>(), processor.readPrimitiveTypeConverterOptions(""))
+    }
+
+    @Test
+    fun typeConverterForPrimitiveTypesSingle(){
+
+        val expectedOptions = setOf("java.lang.String")
+        val processor = XmlProcessor()
+        assertEquals(expectedOptions, processor.readPrimitiveTypeConverterOptions("java.lang.String"))
+
+    }
+
+    @Test
+    fun typeConverterForPrimitiveTypesMultiple(){
+
+        val expectedOptions = setOf("java.lang.String", "java.lang.int", "java.lang.Integer")
+        val processor = XmlProcessor()
+        assertEquals(expectedOptions, processor.readPrimitiveTypeConverterOptions("java.lang.String, java.lang.int, java.lang.Integer"))
+    }
+
+    @Test
+    fun typeConverterForPrimitiveTypesMultipleTrim(){
+
+        val expectedOptions = setOf("java.lang.String", "java.lang.int", "java.lang.Integer")
+        val processor = XmlProcessor()
+        assertEquals(expectedOptions, processor.readPrimitiveTypeConverterOptions("  java.lang.String,    java.lang.int  ,    java.lang.Integer   "))
     }
 }

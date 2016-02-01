@@ -19,9 +19,6 @@
 package com.tickaroo.tikxml.processor;
 
 import com.google.auto.service.AutoService;
-import com.squareup.javapoet.JavaFile;
-import com.squareup.javapoet.MethodSpec;
-import com.squareup.javapoet.TypeSpec;
 import com.tickaroo.tikxml.annotation.ScanMode;
 import com.tickaroo.tikxml.annotation.Xml;
 import com.tickaroo.tikxml.processor.field.AnnotatedClass;
@@ -30,7 +27,6 @@ import com.tickaroo.tikxml.processor.generator.TypeAdapterCodeGenerator;
 import com.tickaroo.tikxml.processor.scanning.AnnotationBasedRequiredDetector;
 import com.tickaroo.tikxml.processor.scanning.FieldDetectorStrategyFactory;
 import com.tickaroo.tikxml.processor.scanning.FieldScanner;
-import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 import javax.annotation.processing.AbstractProcessor;
@@ -61,6 +57,7 @@ public class XmlProcessor extends AbstractProcessor {
    * The default scan mode
    */
   private static final String OPTION_DEFAULT_SCAN_MODE = "defaultScanMode";
+  private static final String OPTION_TYPE_CONVERTER_FOR_PRIMITIVES = "primitiveTypeConverters";
 
   private Messager messager;
   private Filer filer;
@@ -75,7 +72,8 @@ public class XmlProcessor extends AbstractProcessor {
     filer = processingEnv.getFiler();
     elementUtils = processingEnv.getElementUtils();
     typeUtils = processingEnv.getTypeUtils();
-    fieldDetectorStrategyFactory = new FieldDetectorStrategyFactory(elementUtils, typeUtils, new AnnotationBasedRequiredDetector());
+    fieldDetectorStrategyFactory = new FieldDetectorStrategyFactory(elementUtils, typeUtils,
+        new AnnotationBasedRequiredDetector());
   }
 
   @Override
@@ -89,6 +87,7 @@ public class XmlProcessor extends AbstractProcessor {
   public Set<String> getSupportedOptions() {
     Set<String> options = new HashSet<>();
     options.add(OPTION_DEFAULT_SCAN_MODE);
+    options.add(OPTION_TYPE_CONVERTER_FOR_PRIMITIVES);
     return options;
   }
 
@@ -112,19 +111,26 @@ public class XmlProcessor extends AbstractProcessor {
       }
 
       if (defaultScanMode == ScanMode.DEFAULT) {
-        throw new ProcessingException(null, "The option '%s' is not allowed. Must either be %s or %s",
+        throw new ProcessingException(null,
+            "The option '%s' is not allowed. Must either be %s or %s",
             OPTION_DEFAULT_SCAN_MODE, optionScanAsString, ScanMode.ANNOTATIONS_ONLY.toString(),
             ScanMode.COMMON_CASE.toString());
       }
 
+      String primitiveTypeConverterOptions =
+          processingEnv.getOptions().get(OPTION_TYPE_CONVERTER_FOR_PRIMITIVES);
+      Set<String> primitiveTypeConverters =
+          readPrimitiveTypeConverterOptions(primitiveTypeConverterOptions);
 
-      FieldScanner scanner = new FieldScanner(elementUtils, typeUtils, fieldDetectorStrategyFactory);
+      FieldScanner scanner =
+          new FieldScanner(elementUtils, typeUtils, fieldDetectorStrategyFactory);
       Set<? extends Element> elementsAnnotatedWith = roundEnv.getElementsAnnotatedWith(Xml.class);
 
       for (Element element : elementsAnnotatedWith) {
 
         // Skip abstract classes
-        if (element.getKind() == ElementKind.CLASS && element.getModifiers().contains(Modifier.ABSTRACT)) {
+        if (element.getKind() == ElementKind.CLASS && element.getModifiers()
+            .contains(Modifier.ABSTRACT)) {
           continue;
         }
 
@@ -133,46 +139,29 @@ public class XmlProcessor extends AbstractProcessor {
         // Scan class
         scanner.scan(clazz);
 
-
-        // TODO annotation processor options for overriding primitive types
-        TypeAdapterCodeGenerator generator = new TypeAdapterCodeGenerator(filer, elementUtils, new HashSet<String>());
+        TypeAdapterCodeGenerator generator =
+            new TypeAdapterCodeGenerator(filer, elementUtils, primitiveTypeConverters);
         generator.generateCode(clazz);
       }
-
     } catch (ProcessingException e) {
       printError(e);
     }
 
-
     return false;
   }
 
-  private void generateCode(AnnotatedClass clazz) {
-    // TODO replace code generation with real one
+  Set<String> readPrimitiveTypeConverterOptions(String optionsAsString) {
+    Set<String> primitiveTypeConverters = new HashSet<String>();
 
-    MethodSpec main = MethodSpec.methodBuilder("main")
-        .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
-        .returns(void.class)
-        .addParameter(String[].class, "args")
-        .addStatement("$T.out.println($S)", System.class, "Hello, JavaPoet!")
-        .build();
-
-    TypeSpec helloWorld = TypeSpec.classBuilder("HelloWorld" + clazz.getSimpleClassName())
-        .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
-        .addMethod(main)
-        .build();
-
-    JavaFile javaFile = JavaFile.builder("com.example.helloworld", helloWorld)
-        .build();
-
-    try {
-      javaFile.writeTo(filer);
-    } catch (IOException e) {
-      e.printStackTrace();
+    if (optionsAsString != null && optionsAsString.length() > 0) {
+      String[] options = optionsAsString.split(",");
+      for (String o : options) {
+        primitiveTypeConverters.add(o.trim());
+      }
     }
 
+    return primitiveTypeConverters;
   }
-
 
   /**
    * Prints the error message
