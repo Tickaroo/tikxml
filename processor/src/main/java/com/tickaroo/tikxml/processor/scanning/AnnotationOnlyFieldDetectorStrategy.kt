@@ -372,7 +372,7 @@ open class AnnotationOnlyFieldDetectorStrategy(protected val elementUtils: Eleme
             } else name
 
     /**
-     * Get the xmlElement name which is either @Xml(nameAsRoot = "foo") property or the class name decapitalize (first letter in lower case)
+     * Get the xmlElement name which is either @Xml(name = "foo") property or the class name decapitalize (first letter in lower case)
      */
     protected fun getXmlElementNameOrThrowException(field: VariableElement, typeElement: TypeElement): String {
 
@@ -386,9 +386,9 @@ open class AnnotationOnlyFieldDetectorStrategy(protected val elementUtils: Eleme
     }
 
     private fun getXmlElementName(typeElement: TypeElement, xmlAnnotation: Xml = typeElement.getAnnotation(Xml::class.java)!!) =
-            if (xmlAnnotation.nameAsRoot.isEmpty()) {
+            if (xmlAnnotation.name.isEmpty()) {
                 typeElement.simpleName.toString().decapitalize()
             } else {
-                xmlAnnotation.nameAsRoot
+                xmlAnnotation.name
             }
 }

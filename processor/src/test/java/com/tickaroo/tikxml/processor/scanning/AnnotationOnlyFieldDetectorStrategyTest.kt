@@ -1420,7 +1420,7 @@ class AnnotationOnlyFieldDetectorStrategyTest {
                 "   @${Element::class.qualifiedName}",
                 "   Other foo;",
                 "",
-                "   @${Xml::class.java.canonicalName}(scanMode = ${ScanMode::class.qualifiedName}.${ScanMode.ANNOTATIONS_ONLY}, nameAsRoot=\"foo\")",
+                "   @${Xml::class.java.canonicalName}(scanMode = ${ScanMode::class.qualifiedName}.${ScanMode.ANNOTATIONS_ONLY}, name=\"foo\")",
                 "   static class Other {}",
                 "}"
         )

@@ -75,7 +75,7 @@ class AnnotatedClassImpl
         val xmlAnnotation = element.getAnnotation(Xml::class.java)
         scanMode = xmlAnnotation.scanMode
         inheritance = xmlAnnotation.inheritance
-        nameAsRoot = xmlAnnotation.nameAsRoot
+        nameAsRoot = xmlAnnotation.name
 
     }
 

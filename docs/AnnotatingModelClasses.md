@@ -30,14 +30,14 @@ Since the generated serializer / deserializer will be in the same package as the
 To mark a class as serializeable / deserializeable by `TikXml` you have to annotate your model class with `@Xml`.
 
 ```java
-@Xml(nameAsRoot = "book") // name is optional. Per default we use class name in lowercase
+@Xml(name = "book") // name is optional. Per default we use class name in lowercase
 public class Book {
 
   String id; 
 }
 ```
 
-Per default we use the class name in lowercase, but you can customize it within the `@Xml( nameAsRoot = "foo")` annotation.
+Per default we use the class name in lowercase, but you can customize it within the `@Xml( name = "foo")` annotation.
 We use this name for both writing xml (root xml tag will be named according this), but also for reading elements to map a xml element name to a certain type by this name as we will see later.
 
 
@@ -208,11 +208,11 @@ public class Author {
 ```
 
 `TikXml` will write and parse an instance of `Author` automatically for you. You may now ask yourself how `TikXml` knows that `<author>` maps to java class `Author.class`.
-This is done by detecting that class `Author` is annotated with `@Xml`. Since `Author` doesn't specify a custom name `@Xml(nameAsRoot="foo")` TikXml is using the class name with the first character to lower case.
+This is done by detecting that class `Author` is annotated with `@Xml`. Since `Author` doesn't specify a custom name `@Xml(name="foo")` TikXml is using the class name with the first character to lower case.
 
 We can override this mapping by specifying a name:
 ```java
-@Xml(nameAsRoo="foo")
+@Xml(name="foo")
 public class Author {
   
   @PropertyElement
@@ -252,7 +252,7 @@ public class Book {
   Author author;
 }
 
-@Xml // not nameAsRoot specified
+@Xml // not name specified
 public class Author {
   
   @PropertyElement
@@ -345,7 +345,7 @@ With `@ElementNameMatcher(type = Journalist.class)` we define that, xml element 
 </book>
 ```
 
-Additionally, `TikXml` is able to read an `Author`. We expect an xml element with the name `author` (class Author has to be annotated with `@Xml`, `nameAsRoot` can be used to specify the name)
+Additionally, `TikXml` is able to read an `Author`. We expect an xml element with the name `author` (class Author has to be annotated with `@Xml`, `name` can be used to specify the name)
 
 ```xml
 <book id="123">
@@ -357,7 +357,7 @@ Additionally, `TikXml` is able to read an `Author`. We expect an xml element wit
 </book>
 ```
 
-So TikXml will use the same mechanism as alrady mentioned to map `@Xml(nameAsRoot="foo")` annotated classes to `<author>` or `<journalist>` tag to `<author>`. We have already seen that we can override this mapping with `@Element(name="foo")`. 
+So TikXml will use the same mechanism as alrady mentioned to map `@Xml(name="foo")` annotated classes to `<author>` or `<journalist>` tag to `<author>`. We have already seen that we can override this mapping with `@Element(name="foo")`. 
 We can do the same with `@ElementNameMatcher( name="foo")` like this:
 
 ```java

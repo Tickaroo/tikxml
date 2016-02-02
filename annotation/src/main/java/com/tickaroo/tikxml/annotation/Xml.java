@@ -41,7 +41,7 @@ public @interface Xml {
    *
    * @return desired element name
    */
-  String nameAsRoot() default "";
+  String name() default "";
 
   /**
    * Specify how TikXml will determine the mapping between xml and java classes by scanning {@link
