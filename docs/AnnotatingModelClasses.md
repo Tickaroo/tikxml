@@ -829,8 +829,8 @@ but are reading the following xml
 </book>
 ```
 
-The parser will throw an exception because there is no mapping from xml attribute `id` to a java field in `Book` class.
-Usually you want an exception to be thrown because usually you need all data from xml field. But there might be scenarios where this is not the desired behaviour. Hence, you can configure that a mapping is required in `TikXml`:
+TikXml will throw an exception because there is no mapping from xml attribute `id` to a java field in `Book` class.
+Usually you want an exception to be thrown because usually you need all data from xml field (or may talk to the backend developers that this information is not needed and they should remove it). But there might be scenarios where this is not the desired behaviour. Hence, you can configure that a mapping is required in `TikXml`:
 
 ```java
 TikXml tikXml = TikXml.Builder()
