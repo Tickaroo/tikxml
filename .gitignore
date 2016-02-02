@@ -34,7 +34,7 @@ $RECYCLE.BIN/
 # Maven
 log/
 target/
-
+*.xml.versionsBackup
 
 
 
