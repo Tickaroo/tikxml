@@ -671,7 +671,7 @@ Exactly the same is true for `<inventory>` xml tag. As the field `Inventory inve
 
 **Basically the content of an xml tag that already maps to an java class field annotated with `@Element` (incl. lists) can't be accessed via `@Path` from outside.**
 
-So when is `@Path` useful? As already described at the beginning of this section, with `@Path` we can't get rich of unnecessary object allocation for xml tags that just wraps the real data we are interested in.
+So when is `@Path` useful? As already described at the beginning of this section, with `@Path` we can get rid of unnecessary object allocation for xml tags that just wraps the real data we are interested in.
 Performance with `@Path` is still the same as parsing each xml tag into its own java class.
 i.e parsing `<shop>` into Shop.class, `<bookstore>` into BookStore.class, `<inventory>` into Inventory.class, `<book>` into Book.class and `<newspaper>` into  Newspaper.class will have the same performance as pasing the same xml data into the following class annotated with `@Path`:
 
