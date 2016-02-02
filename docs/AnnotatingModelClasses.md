@@ -358,7 +358,7 @@ Additionally, `TikXml` is able to read an `Author`. We expect an xml element wit
 ```
 
 So TikXml will use the same mechanism as alrady mentioned to map `@Xml(nameAsRoot="foo")` annotated classes to `<author>` or `<journalist>` tag to `<author>`. We have already seen that we can override this mapping with `@Element(name="foo")`. 
-We can do the same with `@ElementNameMatcher( elementName="foo")` like this:
+We can do the same with `@ElementNameMatcher( name="foo")` like this:
 
 ```java
 @Xml
@@ -373,7 +373,7 @@ public class Book {
   @Element(
     typesByElement = {
       @ElementNameMatcher(type = Author.class),
-      @ElementNameMatcher(type = Journalist.class, elementName = "journ",)
+      @ElementNameMatcher(type = Journalist.class, name = "journ",)
     }
   )
   Author author;
@@ -487,16 +487,16 @@ public class Book {
  
   @Element(
     typesByElement = {
-      @ElementNameMatcher( elementName = "author", type = Author.class),
-      @ElementNameMatcher( elementName = "organization", type = Organization.class),
+      @ElementNameMatcher( name = "author", type = Author.class),
+      @ElementNameMatcher( name = "organization", type = Organization.class),
     }
   )
   Writer writer1;
   
   @Element(
       typesByElement = {
-        @ElementNameMatcher( elementName = "author", type = Author.class),
-        @ElementNameMatcher( elementName = "organization", type = Organization.class),
+        @ElementNameMatcher( name = "author", type = Author.class),
+        @ElementNameMatcher( name = "organization", type = Organization.class),
       }
     )
     Writer writer2;
