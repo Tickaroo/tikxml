@@ -862,7 +862,6 @@ As already said, this is not supported (yet) because of performance reasons.
 # Proguard
 ```
 -keep class com.tickaroo.tikxml.** { *; }
--dontwarn butterknife.internal.**
 -keep class **$$TypeAdapter { *; }
 
 -keepclasseswithmembernames class * {
