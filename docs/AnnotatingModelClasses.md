@@ -751,7 +751,8 @@ reads the whole text content of a XML element even if there are other xml elemen
 </book>
 ```
 
-If you have multiple `@TextContent` annotations along your inheritance hierarchy, only the `@TextContent` annotated field in the "leaf class"
+If you have multiple `@TextContent` annotations along your inheritance hierarchy, only the `@TextContent` annotated field in the "leaf class" will be taken into account and receive the text content from xml assigned to.
+
 ```java
 @Xml
 class Person {

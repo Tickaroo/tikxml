@@ -27,19 +27,31 @@ import org.junit.Test;
  */
 public class HtmlEscapeStringConverterTest {
 
-
   @Test
   public void testEscaping() throws Exception {
 
-    String xml = "&quot;&amp;&lt;&gt;&auml;&Agrave;&Ouml;&szlig;&uuml;&laquo;&raquo;&bdquo;&ldquo;&rdquo;";
-    String expected= "\"&<>äÀÖßü«»„“”";
+    String xml =
+        "&quot;&amp;&lt;&gt;&auml;&Agrave;&Ouml;&szlig;&uuml;&laquo;&raquo;&bdquo;&ldquo;&rdquo;";
+    String expected = "\"&<>äÀÖßü«»„“”";
 
     HtmlEscapeStringConverter converter = new HtmlEscapeStringConverter();
     String converted = converter.read(xml);
 
-
     Assert.assertEquals(expected, converted);
 
     Assert.assertEquals(xml, converter.write(expected));
+  }
+
+  @Test
+  public void test() throws Exception {
+    String toDecode =
+        "Der Brand ist am Donnerstag kurz nach 21 Uhr auf dem gro&szlig;en Bauernhof mit Geb&auml;udekomplex";
+    String expected =
+        "Der Brand ist am Donnerstag kurz nach 21 Uhr auf dem großen Bauernhof mit Gebäudekomplex";
+
+    HtmlEscapeStringConverter converter = new HtmlEscapeStringConverter();
+    String converted = converter.read(toDecode);
+
+    Assert.assertEquals(expected, converted);
   }
 }
