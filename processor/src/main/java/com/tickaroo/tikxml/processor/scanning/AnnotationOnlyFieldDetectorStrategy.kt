@@ -251,10 +251,10 @@ open class AnnotationOnlyFieldDetectorStrategy(protected val elementUtils: Eleme
 
                 checkPublicClassWithEmptyConstructor(element, typeElement)
                 checkTargetClassXmlAnnotated(typeElement)
-                val xmlElementName = if (matcher.elementName.isEmpty()) {
+                val xmlElementName = if (matcher.name.isEmpty()) {
                     getXmlElementName(typeElement)
                 } else {
-                    matcher.elementName
+                    matcher.name
                 }
 
                 val typeMatcher = namingMap[xmlElementName]
@@ -276,10 +276,10 @@ open class AnnotationOnlyFieldDetectorStrategy(protected val elementUtils: Eleme
                 checkPublicClassWithEmptyConstructor(element, typeElement)
                 checkTargetClassXmlAnnotated(typeElement)
 
-                val xmlElementName = if (matcher.elementName.isEmpty()) {
+                val xmlElementName = if (matcher.name.isEmpty()) {
                     getXmlElementName(typeElement)
                 } else {
-                    matcher.elementName
+                    matcher.name
                 }
 
                 val typeMatcher = namingMap[xmlElementName]
