@@ -751,7 +751,7 @@ reads the whole text content of a XML element even if there are other xml elemen
 </book>
 ```
 
-If you have multiple `@TextContent` annotations along your inheritance hierarchy, only the `@TextContent` annotated field in the "leaf class" will be taken into account and receive the text content from xml assigned to.
+If you have multiple `@TextContent` annotations along your inheritance hierarchy, only the `@TextContent` annotated field in the "leaf class" will be taken into account.
 
 ```java
 @Xml
@@ -773,7 +773,7 @@ class Author extends Person {
 }
 ```
 
-If we parse an `Author` from a XML document then the text content will be parsed only into `Author.authorDescription`.
+If we parse an `Author` from a XML document then the text content will be parsed only into `Author.authorDescription`, whereas if we parse a `Person` the text content will be parsed into `Person.description`.
 
 ## Scan Modes
 As you see there are quite some annotations. Usually programmers are lazy people. Therefore we provide two modes.
