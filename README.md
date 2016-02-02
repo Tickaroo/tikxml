@@ -7,7 +7,7 @@ A fast xml parser for android (and java)
 
 The documentation can be found [here](https://github.com/Tickaroo/tikxml/blob/master/docs/AnnotatingModelClasses.md)
 
-Latest snapshot `0.1-SNAPSHOT` available: 
+Latest snapshot `0.2-SNAPSHOT` available: 
 
 ```groovy
 repositories {
@@ -19,16 +19,16 @@ repositories {
 ```
 
 ```groovy
-compile 'com.tickaroo.tikxml:annotation:0.1-SNAPSHOT'
-compile 'com.tickaroo.tikxml:core:0.1-SNAPSHOT'
+compile 'com.tickaroo.tikxml:annotation:0.2-SNAPSHOT'
+compile 'com.tickaroo.tikxml:core:0.2-SNAPSHOT'
 
-apt 'com.tickaroo.tikxml:processor:0.1-SNAPSHOT'
+apt 'com.tickaroo.tikxml:processor:0.2-SNAPSHOT'
 ```
 
 For retrofit2-beta3:
 
 ```groovy
-compile 'com.tickaroo.tikxml:retrofit-converter:0.1-SNAPSHOT'
+compile 'com.tickaroo.tikxml:retrofit-converter:0.2-SNAPSHOT'
 ```
 
 # Benchmark
