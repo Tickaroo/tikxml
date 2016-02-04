@@ -49,6 +49,6 @@ public interface AttributeBinder<T> {
    * @param reader The {@link XmlReader}
    * @throws IOException
    */
-  public void fromXml(XmlReader reader, TikXmlConfig config, T value) throws IOException;
+  void fromXml(XmlReader reader, TikXmlConfig config, T value) throws IOException;
 
 }

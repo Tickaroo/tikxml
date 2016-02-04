@@ -19,7 +19,6 @@
 package com.tickaroo.tikxml.processor
 
 import javax.lang.model.element.Element
-import kotlin.text.format
 
 /**
  * This exception will be thrown to inform that something went wrong during annotation processing
@@ -27,6 +26,5 @@ import kotlin.text.format
  * @since 1.0
  */
 class ProcessingException(val element: Element?, msg: String) : Exception(msg) {
-
-    constructor(element: Element, msg: String, vararg params: Any) : this(element, msg.format(params))
+    constructor(element: Element?, msg: String, vararg params: Any) : this(element, msg.format(params))
 }

@@ -42,7 +42,7 @@ public interface TypeAdapter<T> {
   /**
    * This name will be used as class suffix for the generated TypeAdapter by annotation processing
    */
-  static final String GENERATED_CLASS_SUFFIX = "$$TypeAdapter";
+  String GENERATED_CLASS_SUFFIX = "$$TypeAdapter";
 
 
   /**
@@ -53,7 +53,7 @@ public interface TypeAdapter<T> {
    * @return The instantiated java object of type T
    * @throws IOException
    */
-  public T fromXml(XmlReader reader, TikXmlConfig config) throws IOException;
+  T fromXml(XmlReader reader, TikXmlConfig config) throws IOException;
 
   /**
    * @param writer The {@link XmlWriter} to write xml
@@ -61,5 +61,5 @@ public interface TypeAdapter<T> {
    * @param value The value to write as xml
    * @throws IOException
    */
-  public void toXml(XmlWriter writer, TikXmlConfig config, T value) throws IOException;
+  void toXml(XmlWriter writer, TikXmlConfig config, T value) throws IOException;
 }

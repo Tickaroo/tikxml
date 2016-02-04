@@ -58,7 +58,7 @@ public interface TypeConverter<T> {
    * @param value The string representation. Take the String and create your java type.
    * @return The object created from string
    */
-  public T read(String value) throws Exception;
+  T read(String value) throws Exception;
 
   /**
    * Take an object and convert it into a string representation that can be written as xml.
@@ -66,7 +66,7 @@ public interface TypeConverter<T> {
    * @param value The object
    * @return The string representation of an object. You should consider using {@link StringBuilder}
    */
-  public String write(T value) throws Exception;
+  String write(T value) throws Exception;
 
 
   /**
@@ -76,7 +76,7 @@ public interface TypeConverter<T> {
    * @author Hannes Dorfmann
    * @since 1.0
    */
-  public static final class NoneTypeConverter implements TypeConverter<Object> {
+  final class NoneTypeConverter implements TypeConverter<Object> {
 
     private NoneTypeConverter() {
     }
