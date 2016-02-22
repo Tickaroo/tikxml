@@ -105,9 +105,16 @@ public class XmlProcessor extends AbstractProcessor {
       String optionScanAsString = processingEnv.getOptions().get(OPTION_DEFAULT_SCAN_MODE);
       ScanMode defaultScanMode;
       if (optionScanAsString == null || optionScanAsString.length() == 0) {
-        defaultScanMode = ScanMode.COMMON_CASE;
+        defaultScanMode = ScanMode.ANNOTATIONS_ONLY;
       } else {
-        defaultScanMode = ScanMode.valueOf(optionScanAsString);
+        try {
+          defaultScanMode = ScanMode.valueOf(optionScanAsString);
+        } catch (Exception e) {
+          throw new ProcessingException(null,
+              "The option '%s' is not allowed. Must either be %s or %s",
+              OPTION_DEFAULT_SCAN_MODE, optionScanAsString, ScanMode.ANNOTATIONS_ONLY.toString(),
+              ScanMode.COMMON_CASE.toString());
+        }
       }
 
       if (defaultScanMode == ScanMode.DEFAULT) {
@@ -168,6 +175,7 @@ public class XmlProcessor extends AbstractProcessor {
    *
    * @param exception The exception that has caused an error
    */
+
   private void printError(ProcessingException exception) {
     messager.printMessage(Diagnostic.Kind.ERROR, exception.getMessage(), exception.getElement());
   }

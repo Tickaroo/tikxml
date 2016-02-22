@@ -777,7 +777,7 @@ If we parse an `Author` from a XML document then the text content will be parsed
 
 ## Scan Modes
 As you see there are quite some annotations. Usually programmers are lazy people. Therefore we provide two modes.
- 1. **ANNOTATION_ONLY**: This means that only fields with annotations like `@Attribute`, `@Element`, `@PropertyElement`, `@TextContent` will be used. Any other fields are not be taken into account when scanning for xml mappings.
+ 1. **ANNOTATIONS_ONLY**: This means that only fields with annotations like `@Attribute`, `@Element`, `@PropertyElement`, `@TextContent` will be used. Any other fields are not be taken into account when scanning for xml mappings.
  2. **COMMON_CASE**: The "common case" means all primitive java data types (like int, double, string) are mapped to xml attributes (is equal to
 annotating class fields with `@Attribute`. All non primitive types (in other words objects) are mapped to child objects (is equal to annotating class fields with {@link
   Example: 
@@ -801,7 +801,7 @@ annotating class fields with `@Attribute`. All non primitive types (in other wor
   }
   ```
 
-Per default **COMMON_CASE** will be used. You can specify default Scan Mode globally for all your `@Xml` annotated classes by setting up the annotation processor option like this:
+Per default **ANNOTATIONS_ONLY** will be used. You can specify default Scan Mode globally for all your `@Xml` annotated classes by setting up the annotation processor option like this:
 ```groovy 
 apt {
   arguments {
