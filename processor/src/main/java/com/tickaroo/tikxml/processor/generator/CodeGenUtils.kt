@@ -187,7 +187,7 @@ class CodeGenUtils(val customTypeConverterManager: CustomTypeConverterManager, v
         //
         // Use typeconveter from TikConfig
         //
-        return accessPolicy.resolveAssignment("$tikConfigParam.getTypeConverter($type.class).read($readerParam.${xmlReaderMethodPrefix}())")
+        return surroundWithTryCatch("$tikConfigParam.getTypeConverter($type.class).read($readerParam.${xmlReaderMethodPrefix}())")
     }
 
     /**
