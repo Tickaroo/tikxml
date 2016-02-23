@@ -1611,4 +1611,5 @@ class AnnotationOnlyFieldDetectorStrategyTest {
                 .failsToCompile()
                 .withErrorContaining("@${Path::class.simpleName} on @${TextContent::class.simpleName} is not allowed. Use @${PropertyElement::class.simpleName} and @${Path::class.simpleName} instead on field 'foo' in class test.PathOnTextContent")
     }
+
 }
