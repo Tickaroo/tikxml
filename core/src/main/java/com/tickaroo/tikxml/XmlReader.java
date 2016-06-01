@@ -617,13 +617,10 @@ public class XmlReader implements Closeable {
    * @throws IOException
    */
   private long indexOfClosingCDATA() throws IOException {
-    long index;
-    do {
-      index = source.indexOf(CDATA_CLOSE);
+    long index = source.indexOf(CDATA_CLOSE);
       if (index == -1) {
         throw new EOFException("<![CDATA[ at " + getPath() + " has never been closed with ]]>");
       }
-    }
     while (fillBuffer(index + 3)
         && buffer.getByte(index + 1) == ']'
         && buffer.getByte(index + 2) == ']'
