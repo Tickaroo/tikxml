@@ -38,8 +38,8 @@ public class XmlReader implements Closeable {
 
   private static final ByteString UNQUOTED_STRING_TERMINALS
       = ByteString.encodeUtf8(" >/=");
-
-  private static final ByteString CDATA_CLOSE = ByteString.decodeUtf8("]]>");
+  
+  private static final ByteString CDATA_CLOSE = ByteString.encodeUtf8("]]>");
 
   private static final Byte DOUBLE_QUOTE = (byte) '"';
   private static final Byte SINGLE_QUOTE = (byte) '\'';
