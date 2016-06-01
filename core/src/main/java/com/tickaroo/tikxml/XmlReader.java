@@ -38,7 +38,7 @@ public class XmlReader implements Closeable {
 
   private static final ByteString UNQUOTED_STRING_TERMINALS
       = ByteString.encodeUtf8(" >/=");
-  
+
   private static final ByteString CDATA_CLOSE = ByteString.encodeUtf8("]]>");
 
   private static final Byte DOUBLE_QUOTE = (byte) '"';
@@ -617,16 +617,11 @@ public class XmlReader implements Closeable {
    * @throws IOException
    */
   private long indexOfClosingCDATA() throws IOException {
-    long index = source.indexOf(CDATA_CLOSE);
+      long index = source.indexOf(CDATA_CLOSE);
       if (index == -1) {
         throw new EOFException("<![CDATA[ at " + getPath() + " has never been closed with ]]>");
       }
-    while (fillBuffer(index + 3)
-        && buffer.getByte(index + 1) == ']'
-        && buffer.getByte(index + 2) == ']'
-        && buffer.getByte(index + 3) == '>');
-
-    return index;
+      return index;
   }
 
   /**
