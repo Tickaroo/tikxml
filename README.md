@@ -36,7 +36,7 @@ We did benchmark on this early version of TikXml to compare it's results with ot
 TikXml is working around 1,9 times faster than jackson and 4,3 times faster than SimpleXml by also having a low memory footprint:
 ![Benchmark](https://raw.githubusercontent.com/Tickaroo/tikxml/master/docs/Benchmark.png)
 
-TikXml has been build on top of Okio and therefore highly optimized for Retrofit2.
+TikXml has been built on top of Okio and therefore highly optimized for Retrofit2.
 
 # License
 
