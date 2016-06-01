@@ -5,7 +5,7 @@ Please note that this is still **work in progress!**
 # Tik XML
 A fast xml parser for android (and java)
 
-**The documentation can be found [here](https://github.com/Tickaroo/tikxml/blob/master/docs/AnnotatingModelClasses.md) **
+** The documentation can be found [here](https://github.com/Tickaroo/tikxml/blob/master/docs/AnnotatingModelClasses.md) **
 
 Latest snapshot `0.5.0-SNAPSHOT` available: 
 
