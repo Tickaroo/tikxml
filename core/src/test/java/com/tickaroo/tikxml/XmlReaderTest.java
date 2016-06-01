@@ -187,6 +187,25 @@ public class XmlReaderTest {
     }
   }
 
+  @Test
+  public void jsonArrayTextContent() throws IOException {
+    String xml = "<element><![CDATA[[{a:'b'}, {b:'c'}]]]></element>";
+    XmlReader reader = readerFrom(xml);
+
+    try {
+      Assert.assertTrue(reader.hasElement());
+      reader.beginElement();
+      Assert.assertEquals("element", reader.nextElementName());
+      Assert.assertTrue(reader.hasTextContent());
+      Assert.assertEquals("[{a:'b'}, {b:'c'}]", reader.nextTextContent());
+      reader.endElement();
+      Assert.assertFalse(reader.hasElement());
+      Assert.assertEquals(XmlReader.XmlToken.END_OF_DOCUMENT, reader.peek());
+    } finally {
+      reader.close();
+    }
+  }
+
 
   @Test
   public void inlineClosing() throws IOException {
