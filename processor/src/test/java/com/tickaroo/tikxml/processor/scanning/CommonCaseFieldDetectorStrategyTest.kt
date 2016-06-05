@@ -187,4 +187,20 @@ class CommonCaseFieldDetectorStrategyTest {
                 .compilesWithoutError()
     }
 
+    // https://github.com/Tickaroo/tikxml/issues/30
+    @Test
+    fun isPrefixField() {
+        val componentFile = JavaFileObjects.forSourceLines("test.NameConflictIgnoreAnnotation",
+                "package test;",
+                "",
+                "@${Xml::class.java.canonicalName}(scanMode = ${ScanMode::class.qualifiedName}.${ScanMode.COMMON_CASE})",
+                "class Rosters {",
+                "   String isCoach;",
+                "}")
+
+        Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
+                .that(componentFile).processedWith(XmlProcessor())
+                .compilesWithoutError()
+    }
+
 }

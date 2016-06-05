@@ -116,7 +116,7 @@ fun Element.isMethodWithMinimumPackageVisibility() = isMethod() && hasMinimumPac
 /**
  * Checks if a given Element is a getter method (prefix = "get" or prefix = "is") with at least one package visibility
  */
-fun Element.isGetterMethodWithMinimumPackageVisibility() = isMethodWithMinimumPackageVisibility() && simpleName.startsWith("get") || simpleName.startsWith("is")
+fun Element.isGetterMethodWithMinimumPackageVisibility() = isMethodWithMinimumPackageVisibility() && (simpleName.startsWith("get") || simpleName.startsWith("is"))
 
 /**
  * Checks if a given Element is a setted method (prefix = "set") with at least one package visibility
