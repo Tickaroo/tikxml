@@ -42,12 +42,12 @@ public class XmlReaderTest {
   @Test
   public void readObjectWithAttributes() throws IOException {
 
-    String elementText = "I'm an ElementText\n with multiple lines and special \n chars @ \" üäöß?1§$%&&/()=*'";
+    String elementText =
+        "I'm an ElementText\n with multiple lines and special \n chars @ \" üäöß?1§$%&&/()=*'";
     String xml = "<element a=\"qwe\" b='123' c=\"skipMe\">" + elementText + "</element>";
     XmlReader reader = readerFrom(xml);
 
     try {
-
 
       Assert.assertEquals(reader.peek(), XmlReader.XmlToken.ELEMENT_BEGIN);
       Assert.assertTrue(reader.hasElement());
@@ -63,14 +63,12 @@ public class XmlReaderTest {
       Assert.assertEquals(XmlReader.XmlToken.ATTRIBUTE_VALUE, reader.peek());
       Assert.assertEquals("qwe", reader.nextAttributeValue());
 
-
       Assert.assertTrue(reader.hasAttribute());
       Assert.assertEquals(XmlReader.XmlToken.ATTRIBUTE_NAME, reader.peek());
       Assert.assertEquals("b", reader.nextAttributeName());
 
       Assert.assertEquals(XmlReader.XmlToken.ATTRIBUTE_VALUE, reader.peek());
       Assert.assertEquals("123", reader.nextAttributeValue());
-
 
       Assert.assertTrue(reader.hasAttribute());
       Assert.assertEquals(XmlReader.XmlToken.ATTRIBUTE_NAME, reader.peek());
@@ -88,9 +86,7 @@ public class XmlReaderTest {
       Assert.assertEquals(XmlReader.XmlToken.ELEMENT_END, reader.peek());
       reader.endElement();
 
-
       Assert.assertEquals(XmlReader.XmlToken.END_OF_DOCUMENT, reader.peek());
-
     } finally {
       reader.close();
     }
@@ -111,7 +107,6 @@ public class XmlReaderTest {
     }
   }
 
-
   @Test
   public void attributeNoQuotes() throws IOException {
     String xml = "<element a=qwe></element>";
@@ -123,13 +118,10 @@ public class XmlReaderTest {
       reader.nextAttributeName();
       exception.expect(IOException.class);
       reader.nextAttributeValue();
-
     } finally {
       reader.close();
     }
-
   }
-
 
   @Test
   public void validWithWhitespaces() throws IOException {
@@ -148,7 +140,6 @@ public class XmlReaderTest {
     }
   }
 
-
   @Test
   public void readObjectWithMultilineComment() throws IOException {
     String xml = "<element><!-- comment \n multiline \n -->Value</element>";
@@ -166,7 +157,6 @@ public class XmlReaderTest {
     } finally {
       reader.close();
     }
-
   }
 
   @Test
@@ -206,7 +196,6 @@ public class XmlReaderTest {
     }
   }
 
-
   @Test
   public void inlineClosing() throws IOException {
     String xml = "<element a='foo' />";
@@ -223,12 +212,10 @@ public class XmlReaderTest {
       Assert.assertEquals(XmlReader.XmlToken.ELEMENT_END, reader.peek());
       reader.endElement();
       Assert.assertEquals(XmlReader.XmlToken.END_OF_DOCUMENT, reader.peek());
-
     } finally {
       reader.close();
     }
   }
-
 
   @Test
   public void incompleteSingleQuoteAttribute() throws IOException {
@@ -242,13 +229,13 @@ public class XmlReaderTest {
       Assert.assertTrue(reader.hasAttribute());
       Assert.assertEquals("a", reader.nextAttributeName());
       exception.expect(IOException.class);
-      exception.expectMessage("Unterminated string (single quote ' is missing) at path /element[@a]");
+      exception.expectMessage(
+          "Unterminated string (single quote ' is missing) at path /element[@a]");
       reader.nextAttributeValue();
     } finally {
       reader.close();
     }
   }
-
 
   @Test
   public void incompleteDoubleQuoteAttribute() throws IOException {
@@ -262,13 +249,13 @@ public class XmlReaderTest {
       Assert.assertTrue(reader.hasAttribute());
       Assert.assertEquals("a", reader.nextAttributeName());
       exception.expect(IOException.class);
-      exception.expectMessage("Unterminated string (double quote \" is missing) at path /element[@a]");
+      exception.expectMessage(
+          "Unterminated string (double quote \" is missing) at path /element[@a]");
       reader.nextAttributeValue();
     } finally {
       reader.close();
     }
   }
-
 
   @Test
   public void missingClosingTag() throws IOException {
@@ -288,9 +275,7 @@ public class XmlReaderTest {
     } finally {
       reader.close();
     }
-
   }
-
 
   @Test
   public void unclosedElement() throws IOException {
@@ -303,9 +288,9 @@ public class XmlReaderTest {
       reader.nextAttributeName();
       reader.nextAttributeValue();
       exception.expect(IOException.class);
-      exception.expectMessage("Unterminated element text content. Expected </fooElement> but haven't found at path /fooElement/text()");
+      exception.expectMessage(
+          "Unterminated element text content. Expected </fooElement> but haven't found at path /fooElement/text()");
       reader.nextTextContent();
-
     } finally {
       reader.close();
     }
@@ -326,7 +311,6 @@ public class XmlReaderTest {
 
       Assert.assertFalse(reader.hasElement());
       Assert.assertEquals(XmlReader.XmlToken.END_OF_DOCUMENT, reader.peek());
-
     } finally {
       reader.close();
     }
@@ -348,12 +332,10 @@ public class XmlReaderTest {
 
       Assert.assertFalse(reader.hasElement());
       Assert.assertEquals(XmlReader.XmlToken.END_OF_DOCUMENT, reader.peek());
-
     } finally {
       reader.close();
     }
   }
-
 
   @Test
   public void skipTextContent() throws IOException {
@@ -371,7 +353,6 @@ public class XmlReaderTest {
 
       Assert.assertFalse(reader.hasElement());
       Assert.assertEquals(XmlReader.XmlToken.END_OF_DOCUMENT, reader.peek());
-
     } finally {
       reader.close();
     }
@@ -389,7 +370,8 @@ public class XmlReaderTest {
       Assert.assertFalse(reader.hasAttribute());
       Assert.assertTrue(reader.hasTextContent());
       exception.expect(IOException.class);
-      exception.expectMessage("Unterminated element text content. Expected </foo> but haven't found at path /foo/text()");
+      exception.expectMessage(
+          "Unterminated element text content. Expected </foo> but haven't found at path /foo/text()");
       reader.skipTextContent();
     } finally {
       reader.close();
@@ -412,7 +394,6 @@ public class XmlReaderTest {
       reader.close();
     }
   }
-
 
   @Test
   public void nestedElements() throws IOException {
@@ -453,8 +434,6 @@ public class XmlReaderTest {
       reader.endElement(); // end bar
 
       reader.endElement(); // end foo
-
-
     } finally {
       reader.close();
     }
@@ -462,7 +441,8 @@ public class XmlReaderTest {
 
   @Test
   public void mixingTextContentChildElements() throws IOException {
-    String xml = "<foo a='1'>Value1 first part<bar b='2'></bar>Value2 second part<bar b='3'> <other c='4' /> </bar>Value3 third part</foo>";
+    String xml =
+        "<foo a='1'>Value1 first part<bar b='2'></bar>Value2 second part<bar b='3'> <other c='4' /> </bar>Value3 third part</foo>";
     XmlReader reader = readerFrom(xml);
 
     try {
@@ -507,10 +487,7 @@ public class XmlReaderTest {
       Assert.assertTrue(reader.hasTextContent());
       Assert.assertEquals("Value3 third part", reader.nextTextContent());
 
-
       reader.endElement(); // end foo
-
-
     } finally {
       reader.close();
     }
@@ -540,12 +517,10 @@ public class XmlReaderTest {
 
       reader.endElement();
       Assert.assertFalse(reader.hasElement());
-
     } finally {
       reader.close();
     }
   }
-
 
   @Test
   public void missingClosingCDATA() throws IOException {
@@ -563,16 +538,13 @@ public class XmlReaderTest {
       Assert.assertTrue(reader.hasTextContent());
       Assert.assertEquals("NormalValue", reader.nextTextContent());
 
-
       exception.expect(IOException.class);
       exception.expectMessage("<![CDATA[ at /foo/text() has never been closed with ]]>");
       Assert.assertEquals(cdata, reader.nextTextContent());
-
     } finally {
       reader.close();
     }
   }
-
 
   @Test
   public void skipCDATA() throws IOException {
@@ -598,7 +570,6 @@ public class XmlReaderTest {
 
       reader.endElement();
       Assert.assertFalse(reader.hasElement());
-
     } finally {
       reader.close();
     }
@@ -606,7 +577,8 @@ public class XmlReaderTest {
 
   @Test
   public void skipRemainingElement() throws IOException {
-    String xml = "<foo><e1></e1><bar a='1' b='2'>TextContent<child a='1'>Child text Value<other b='123'>Text<inline /></other></child> <![CDATA[some <cdata></> &]]> </bar>TextAfterSkippedElement<element></element></foo>";
+    String xml =
+        "<foo><e1></e1><bar a='1' b='2'>TextContent<child a='1'>Child text Value<other b='123'>Text<inline /></other></child> <![CDATA[some <cdata></> &]]> </bar>TextAfterSkippedElement<element></element></foo>";
     XmlReader reader = readerFrom(xml);
 
     try {
@@ -628,16 +600,15 @@ public class XmlReaderTest {
       reader.endElement();
 
       reader.endElement(); // end <foo>
-
     } finally {
       reader.close();
     }
   }
 
-
   @Test
   public void skipRemainingElementUnclosed() throws IOException {
-    String xml = "<foo><e1></e1><bar a='1' b='2'>TextContent<child a='1'>Child text Value<other b='123'>Text<inline /></other> <![CDATA[some <cdata></> &]]>";
+    String xml =
+        "<foo><e1></e1><bar a='1' b='2'>TextContent<child a='1'>Child text Value<other b='123'>Text<inline /></other> <![CDATA[some <cdata></> &]]>";
     XmlReader reader = readerFrom(xml);
 
     try {
@@ -653,7 +624,6 @@ public class XmlReaderTest {
       exception.expect(IOException.class);
       exception.expectMessage("Unexpected end of input at path /foo/bar/child/text()");
       reader.skipRemainingElement(); // skip <bar>
-
     } finally {
       reader.close();
     }
@@ -661,7 +631,8 @@ public class XmlReaderTest {
 
   @Test
   public void callingSkipRemainingElementInWrongPlace() throws IOException {
-    String xml = "<foo><e1></e1><bar a='1' b='2'>TextContent<child a='1'>Child text Value<other b='123'>Text<inline /></other></child> <![CDATA[some <cdata></> &]]> </bar>TextAfterSkippedElement<element></element></foo>";
+    String xml =
+        "<foo><e1></e1><bar a='1' b='2'>TextContent<child a='1'>Child text Value<other b='123'>Text<inline /></other></child> <![CDATA[some <cdata></> &]]> </bar>TextAfterSkippedElement<element></element></foo>";
     XmlReader reader = readerFrom(xml);
 
     try {
@@ -674,9 +645,9 @@ public class XmlReaderTest {
       reader.endElement();
 
       exception.expect(AssertionError.class);
-      exception.expectMessage("This method can only be invoked after having consumed the opening element via beginElement()");
+      exception.expectMessage(
+          "This method can only be invoked after having consumed the opening element via beginElement()");
       reader.skipRemainingElement(); // Forgot to call beginElement() before
-
     } finally {
       reader.close();
     }
@@ -688,9 +659,20 @@ public class XmlReaderTest {
     int intMax = Integer.MAX_VALUE;
     double doubleMax = Double.MAX_VALUE;
 
-    String xml = "<foo aString=\"a very short string\"  aString2='a very short string' anInt=\"" + intMax + "\" anInt2='" + intMax + "' aLong=\"" + longMax + "\"  aLong2='" + longMax + "' aBool=\"true\" aBool2=\"false\" aBool3='true' aBool4='false'  aDouble=\"" + doubleMax + "\" aDouble2='" + doubleMax + "' />";
+    String xml = "<foo aString=\"a very short string\"  aString2='a very short string' anInt=\""
+        + intMax
+        + "\" anInt2='"
+        + intMax
+        + "' aLong=\""
+        + longMax
+        + "\"  aLong2='"
+        + longMax
+        + "' aBool=\"true\" aBool2=\"false\" aBool3='true' aBool4='false'  aDouble=\""
+        + doubleMax
+        + "\" aDouble2='"
+        + doubleMax
+        + "' />";
     XmlReader reader = readerFrom(xml);
-
 
     try {
       Assert.assertTrue(reader.hasElement());
@@ -727,10 +709,8 @@ public class XmlReaderTest {
       Assert.assertEquals("aBool4", reader.nextAttributeName());
       Assert.assertFalse(reader.nextAttributeValueAsBoolean());
 
-
       Assert.assertEquals("aDouble", reader.nextAttributeName());
       Assert.assertEquals(doubleMax, reader.nextAttributeValueAsDouble(), 0);
-
 
       Assert.assertEquals("aDouble2", reader.nextAttributeName());
       Assert.assertEquals(doubleMax, reader.nextAttributeValueAsDouble(), 0);
@@ -740,7 +720,6 @@ public class XmlReaderTest {
       reader.close();
     }
   }
-
 
   @Test
   public void readTextContentAsPrimitiveValues() throws IOException {
@@ -757,7 +736,6 @@ public class XmlReaderTest {
         "   <boolFalse>false</boolFalse>" +
         "</foo>";
     XmlReader reader = readerFrom(xml);
-
 
     try {
       Assert.assertTrue(reader.hasElement());
@@ -779,7 +757,6 @@ public class XmlReaderTest {
       Assert.assertEquals(Integer.MIN_VALUE, reader.nextTextContentAsInt());
       reader.endElement();
 
-
       reader.beginElement();
       Assert.assertEquals("longMax", reader.nextElementName());
       Assert.assertEquals(Long.MAX_VALUE, reader.nextTextContentAsLong());
@@ -789,7 +766,6 @@ public class XmlReaderTest {
       Assert.assertEquals("longMin", reader.nextElementName());
       Assert.assertEquals(Long.MIN_VALUE, reader.nextTextContentAsLong());
       reader.endElement();
-
 
       reader.beginElement();
       Assert.assertEquals("doubleMax", reader.nextElementName());
@@ -817,7 +793,6 @@ public class XmlReaderTest {
     }
   }
 
-
   @Test
   public void skipAttribute() throws IOException {
 
@@ -844,5 +819,15 @@ public class XmlReaderTest {
     reader.endElement();
   }
 
+  @Test
+  public void emptyTag() throws IOException {
 
+    String xml = "<empty />";
+    XmlReader reader = readerFrom(xml);
+
+    reader.beginElement();
+    Assert.assertFalse(reader.hasAttribute());
+    reader.nextElementName();
+    reader.endElement();
+  }
 }
