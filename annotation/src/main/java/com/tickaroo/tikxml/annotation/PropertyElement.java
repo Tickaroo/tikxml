@@ -59,15 +59,21 @@ import java.lang.annotation.Target;
  *   }
  * </pre>
  *
- * <p>
- *   <b>Property Elements are not allowed to be empty!</b> i.e. parsing the same example as above:
- *   <pre>
+ * <p> <b>Property Elements are not allowed to be empty!</b> i.e. parsing the same example as
+ * above:
+ * <pre>
  *     {@code
- *
-
+ * <book id="123">
+ * <title></title>
+ * <author>Joshua Bloch</author>
+ * <publish_date>2015-11-25</publish_date>
+ * </book>
  *     }
  *   </pre>
- * </p>
+ *
+ * but with an empty tag {@code <title></title> } the empty string will be set. In general, default
+ * values will be set for empty tags. Empty string for Strings, false for booleans, 0 for numbers
+ * (like int, double, long ...) </p>
  *
  * @author Hannes Dorfmann
  * @since 1.0
@@ -76,7 +82,6 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
 public @interface PropertyElement {
-
 
   /**
    * Specify the name of the xml element
