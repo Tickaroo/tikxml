@@ -522,6 +522,15 @@ public class XmlReader implements Closeable {
    * Get the next text content of an xml element. Text content is {@code <element>text
    * content</element>}
    *
+   * If the element is empty (no content) like {@code <element></element>} this method will return
+   * the empty string "".
+   *
+   * {@code null} as return type is not supported yet, because there is no way in xml to distinguish
+   * between empty string "" or null since both might be represented with {@code
+   * <element></element>}. So if you want to represent a null element, simply don't write the
+   * corresponding xml tag. Then the parser will not try set the mapped field and it will remain the
+   * default value (which is null).
+   *
    * @return The xml element's text content
    * @throws IOException
    */
@@ -555,6 +564,12 @@ public class XmlReader implements Closeable {
       buffer.readByte(); // consume ]
       buffer.readByte(); // consume >
       return result;
+    } else if (p == PEEKED_ELEMENT_END) {
+      // this is an element without any text content. i.e. <foo></foo>.
+      // In that case we return the default value of a string which is the empty string
+
+      // Don't do peeked = PEEKED_NONE; because that would consume the end tag, which we haven't done yet.
+      return "";
     } else {
       throw new XmlDataException("Expected xml element text content but was " + peek()
           + " at path " + getPath());
@@ -565,48 +580,79 @@ public class XmlReader implements Closeable {
    * Get the next text content of an xml element as integer. Text content is {@code
    * <element>123</element>}
    *
-   * @return The xml element's text content as integer
+   * @return The xml element's text content as integer or 0 if empty tag like {@code
+   * <element></element>}
    * @throws IOException
    */
   public int nextTextContentAsInt() throws IOException {
     // TODO natively support
-    return Integer.parseInt(nextTextContent());
+
+    // case when <element></element>  is empty, then return default value which is "0" for long
+    String content = nextTextContent();
+    if (content.equals("")) {
+      return 0;
+    }
+
+    return Integer.parseInt(content);
   }
 
   /**
    * Get the next text content of an xml element as long. Text content is {@code
    * <element>123</element>}
    *
-   * @return The xml element's text content as long
+   * @return The xml element's text content as long or 0 if empty tag like {@code
+   * <element></element>}
    * @throws IOException
    */
   public long nextTextContentAsLong() throws IOException {
     // TODO natively support
-    return Long.parseLong(nextTextContent());
+
+    // case when <element></element>  is empty, then return default value which is "0" for long
+    String content = nextTextContent();
+    if (content.equals("")) {
+      return 0;
+    }
+
+    return Long.parseLong(content);
   }
 
   /**
    * Get the next text content of an xml element as double. Text content is {@code
    * <element>123</element>}
    *
-   * @return The xml element's text content as double
+   * @return The xml element's text content as double or 0.0 if empty tag like {@code
+   * <element></element>}
    * @throws IOException
    */
   public double nextTextContentAsDouble() throws IOException {
     // TODO natively support
-    return Double.parseDouble(nextTextContent());
+
+    // case when <element></element>  is empty, then return default value which is "0.0" for double
+    String content = nextTextContent();
+    if (content.equals("")) {
+      return 0;
+    }
+
+    return Double.parseDouble(content);
   }
 
   /**
    * Get the next text content of an xml element as boolean. Text content is {@code
    * <element>123</element>}
    *
-   * @return The xml element's text content as boolean
+   * @return The xml element's text content as boolean or false if empty tag like {@code
+   * <element></element>}
    * @throws IOException
    */
   public boolean nextTextContentAsBoolean() throws IOException {
     // TODO natively support
-    return Boolean.parseBoolean(nextTextContent());
+
+    // case when <element></element>  is empty, then return default value which is "false" for boolean
+    String content = nextTextContent();
+    if (content.equals("")) {
+      return false;
+    }
+    return Boolean.parseBoolean(content);
   }
 
   /**
@@ -617,11 +663,11 @@ public class XmlReader implements Closeable {
    * @throws IOException
    */
   private long indexOfClosingCDATA() throws IOException {
-      long index = source.indexOf(CDATA_CLOSE);
-      if (index == -1) {
-        throw new EOFException("<![CDATA[ at " + getPath() + " has never been closed with ]]>");
-      }
-      return index;
+    long index = source.indexOf(CDATA_CLOSE);
+    if (index == -1) {
+      throw new EOFException("<![CDATA[ at " + getPath() + " has never been closed with ]]>");
+    }
+    return index;
   }
 
   /**

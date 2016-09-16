@@ -59,6 +59,16 @@ import java.lang.annotation.Target;
  *   }
  * </pre>
  *
+ * <p>
+ *   <b>Property Elements are not allowed to be empty!</b> i.e. parsing the same example as above:
+ *   <pre>
+ *     {@code
+ *
+
+ *     }
+ *   </pre>
+ * </p>
+ *
  * @author Hannes Dorfmann
  * @since 1.0
  */

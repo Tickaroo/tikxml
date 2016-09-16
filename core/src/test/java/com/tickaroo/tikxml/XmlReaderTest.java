@@ -19,10 +19,8 @@
 package com.tickaroo.tikxml;
 
 import java.io.IOException;
-import org.junit.Assert;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.*;
+import org.junit.rules.*;
 
 import static com.tickaroo.tikxml.TestUtils.readerFrom;
 
@@ -829,5 +827,115 @@ public class XmlReaderTest {
     Assert.assertFalse(reader.hasAttribute());
     reader.nextElementName();
     reader.endElement();
+  }
+
+  @Test
+  public void emptyTextContentString() throws IOException {
+
+    String xml = "<empty />";
+    XmlReader reader = readerFrom(xml);
+
+    reader.beginElement();
+    Assert.assertFalse(reader.hasAttribute());
+    reader.nextElementName();
+    Assert.assertEquals("", reader.nextTextContent());
+    reader.endElement();
+
+    String xml2 = "<empty></empty>";
+    XmlReader reader2 = readerFrom(xml2);
+
+    reader2.beginElement();
+    Assert.assertFalse(reader2.hasAttribute());
+    reader2.nextElementName();
+    Assert.assertEquals("", reader2.nextTextContent());
+    reader2.endElement();
+  }
+
+  @Test
+  public void emptyTextContentInteger() throws IOException {
+
+    String xml = "<empty />";
+    XmlReader reader = readerFrom(xml);
+
+    reader.beginElement();
+    Assert.assertFalse(reader.hasAttribute());
+    reader.nextElementName();
+    Assert.assertEquals(0, reader.nextTextContentAsInt());
+    reader.endElement();
+
+    String xml2 = "<empty></empty>";
+    XmlReader reader2 = readerFrom(xml2);
+
+    reader2.beginElement();
+    Assert.assertFalse(reader2.hasAttribute());
+    reader2.nextElementName();
+    Assert.assertEquals(0, reader2.nextTextContentAsInt());
+    reader2.endElement();
+  }
+
+  @Test
+  public void emptyTextContentDouble() throws IOException {
+
+    String xml = "<empty />";
+    XmlReader reader = readerFrom(xml);
+
+    reader.beginElement();
+    Assert.assertFalse(reader.hasAttribute());
+    reader.nextElementName();
+    Assert.assertEquals(0.0, 0.0, reader.nextTextContentAsDouble());
+    reader.endElement();
+
+    String xml2 = "<empty></empty>";
+    XmlReader reader2 = readerFrom(xml2);
+
+    reader2.beginElement();
+    Assert.assertFalse(reader2.hasAttribute());
+    reader2.nextElementName();
+    Assert.assertEquals(0.0, 0.0, reader2.nextTextContentAsDouble());
+    reader2.endElement();
+  }
+
+  @Test
+  public void emptyTextContentLong() throws IOException {
+
+    String xml = "<empty />";
+    XmlReader reader = readerFrom(xml);
+
+    reader.beginElement();
+    Assert.assertFalse(reader.hasAttribute());
+    reader.nextElementName();
+    Assert.assertEquals(0, reader.nextTextContentAsLong());
+    reader.endElement();
+
+    String xml2 = "<empty></empty>";
+    XmlReader reader2 = readerFrom(xml2);
+
+    reader2.beginElement();
+    Assert.assertFalse(reader2.hasAttribute());
+    reader2.nextElementName();
+    Assert.assertEquals(0, reader2.nextTextContentAsLong());
+    reader2.endElement();
+  }
+
+  @Test
+  public void emptyTextContentBoolean() throws IOException {
+
+    String xml = "<empty />";
+    XmlReader reader = readerFrom(xml);
+
+    reader.beginElement();
+    Assert.assertFalse(reader.hasAttribute());
+    reader.nextElementName();
+    Assert.assertEquals(false, reader.nextTextContentAsBoolean());
+    reader.endElement();
+
+    String xml2 = "<empty></empty>";
+    XmlReader reader2 = readerFrom(xml2);
+
+    reader2.beginElement();
+    Assert.assertFalse(reader2.hasAttribute());
+    reader2.nextElementName();
+    Assert.assertEquals(false, reader2.nextTextContentAsBoolean());
+    reader2.endElement();
   }
 }

@@ -164,6 +164,15 @@ The `@PropertyElement` annotation is similar to the `@Attribute` annotation. You
 The converters can be shared between `@Attribute` and `@PropertyElement`. So you can use your custom converter like `MyDateConverter` for both, `@Attribute` and `@PropertyElement`.
 Also, a default converter set with `tikXml.setConverter(Date.class, new MyDateConverter() );` will be used for both as well.
 
+Another Problem in XML is that we can't distinguish between `empty string ""` or `null`. For example:
+
+```xml
+<element></element>
+```
+
+In that does that mean that we want to map this value to `empty string ""` or `null`. In TikXml this will map to the empty string. If you want to express `null` then simply don't write the xml tag `<element></element>` in your xml file.
+In case that you want to map such an empty xml tag to `boolean` TikXml returns `false` and for number types like `int`, `double` etc. `0` will be returned.
+
 ## Child Elements
 In XML you can nest child element in elements. You have already seen that in `@PropertyElement`. 
 However, property elements are there read just the text content of an element and meant to be used 
