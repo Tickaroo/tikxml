@@ -89,7 +89,8 @@ public abstract class NestedChildElementBinder<T> implements ChildElementBinder<
           }
         }
       } else {
-        while(reader.hasAttribute()){
+        // Skip the attributes if no attributes binder is registered
+        while (reader.hasAttribute()) {
           reader.skipAttribute();
         }
       }
