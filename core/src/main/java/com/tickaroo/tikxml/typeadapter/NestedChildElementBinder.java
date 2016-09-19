@@ -66,24 +66,31 @@ public abstract class NestedChildElementBinder<T> implements ChildElementBinder<
     //
     // Read attributes
     //
-    if (attributeBinders != null) {
-      while (reader.hasAttribute()) {
+    if (reader.hasAttribute()) {
 
-        String attributeName = reader.nextAttributeName();
-        AttributeBinder<T> attributeBinder = attributeBinders.get(attributeName);
+      if (attributeBinders != null) {
+        while (reader.hasAttribute()) {
 
-        if (attributeBinder != null) {
-          attributeBinder.fromXml(reader, config, value);
-        } else {
-          if (config.exceptionOnUnreadXml()) {
-            throw new IOException("Could not map the xml attribute with the name '"
-                + attributeName
-                + "' at path "
-                + reader.getPath()
-                + "to java class. Have you annotated such a field in your java class to map this xml attribute? Otherwise you can turn this error message off with TikXml.Builder().exceptionOnUnreadXml(false).build().");
+          String attributeName = reader.nextAttributeName();
+          AttributeBinder<T> attributeBinder = attributeBinders.get(attributeName);
+
+          if (attributeBinder != null) {
+            attributeBinder.fromXml(reader, config, value);
           } else {
-            reader.skipAttributeValue();
+            if (config.exceptionOnUnreadXml()) {
+              throw new IOException("Could not map the xml attribute with the name '"
+                  + attributeName
+                  + "' at path "
+                  + reader.getPath()
+                  + "to java class. Have you annotated such a field in your java class to map this xml attribute? Otherwise you can turn this error message off with TikXml.Builder().exceptionOnUnreadXml(false).build().");
+            } else {
+              reader.skipAttributeValue();
+            }
           }
+        }
+      } else {
+        while(reader.hasAttribute()){
+          reader.skipAttribute();
         }
       }
     }

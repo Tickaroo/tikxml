@@ -49,7 +49,7 @@ class TypeAdapterCodeGenerator(private val filer: Filer, private val elementUtil
         val assignTextContentBuilder = codeGenUtils.assignTextContentMethodBuilder()
 
         if (annotatedClass.hasTextContent()) {
-            val textContentElement = annotatedClass.textContentField!!.element
+            // val textContentElement = annotatedClass.textContentField!!.element
             // TODO FieldAccessPolicy
             val field = annotatedClass.textContentField!!
             assignTextContentBuilder.addCode(field.accessPolicy.resolveAssignment(CodeGenUtils.textContentParam))
