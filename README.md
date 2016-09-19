@@ -2,7 +2,7 @@
 Please note that this is still **work in progress!**
 [![Build Status](https://travis-ci.org/Tickaroo/tikxml.svg?branch=master)](https://travis-ci.org/Tickaroo/tikxml)
 
-# Tik XML
+# TikXML
 A fast xml parser for android (and java)
 
 The **documentation** can be found [here](https://github.com/Tickaroo/tikxml/blob/master/docs/AnnotatingModelClasses.md)
