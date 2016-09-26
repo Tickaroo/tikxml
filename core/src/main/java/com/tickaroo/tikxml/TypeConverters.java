@@ -18,6 +18,7 @@
 
 package com.tickaroo.tikxml;
 
+import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -29,8 +30,7 @@ import java.util.Map;
  */
 final class TypeConverters {
 
-  private final Map<Class<?>, TypeConverter<?>> cache = new HashMap<Class<?>, TypeConverter<?>>();
-
+  private final Map<Type, TypeConverter<?>> cache = new HashMap<Type, TypeConverter<?>>();
 
   TypeConverters() {
   } // package visibility
@@ -43,7 +43,7 @@ final class TypeConverters {
    * @param <T> The generics type
    * @return The typeConverters itself
    */
-  <T> TypeConverters add(Class<T> clazz, TypeConverter<T> converter) {
+  <T> TypeConverters add(Type clazz, TypeConverter<T> converter) {
     cache.put(clazz, converter);
     return this;
   }
@@ -55,14 +55,21 @@ final class TypeConverters {
    * @param <T> The type of the type converter
    * @return The TypeConverter
    */
-  public <T> TypeConverter<T> get(Class<T> clazz) throws TypeConverterNotFoundException {
+  public <T> TypeConverter<T> get(Type clazz) throws TypeConverterNotFoundException {
     TypeConverter<T> converter = (TypeConverter<T>) cache.get(clazz);
     if (converter == null) {
-      throw new TypeConverterNotFoundException("No " + TypeConverter.class.getSimpleName() + " found for class " + clazz.getCanonicalName() + ". " +
-          "You have to add one via " + TikXml.class.getSimpleName() + "." + TikXml.Builder.class.getSimpleName() + "().");
+      throw new TypeConverterNotFoundException("No "
+          + TypeConverter.class.getSimpleName()
+          + " found for type "
+          + clazz.toString()
+          + ". "
+          +
+          "You have to add one via "
+          + TikXml.class.getSimpleName()
+          + "."
+          + TikXml.Builder.class.getSimpleName()
+          + "().addTypeAdapter()");
     }
     return converter;
   }
-
-
 }

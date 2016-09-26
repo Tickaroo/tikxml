@@ -20,6 +20,7 @@ package com.tickaroo.tikxml;
 
 import com.tickaroo.tikxml.typeadapter.TypeAdapter;
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -31,7 +32,7 @@ import java.util.Map;
  */
 final class TypeAdapters {
 
-  private final Map<Class<?>, TypeAdapter<?>> adaptersCache = new HashMap<Class<?>, TypeAdapter<?>>();
+  private final Map<Type, TypeAdapter<?>> adaptersCache = new HashMap<Type, TypeAdapter<?>>();
 
   TypeAdapters() {
   } // package visibility
@@ -43,25 +44,29 @@ final class TypeAdapters {
    * @param adapter The {@link TypeAdapter} for the given class
    * @param <T> The generic type of the adapter
    */
-  <T> void add(Class<T> clazz, TypeAdapter<T> adapter) {
+  <T> void add(Type clazz, TypeAdapter<T> adapter) {
     adaptersCache.put(clazz, adapter);
   }
 
   /**
    * Get the a {@link TypeAdapter} for the given class
    *
-   * @param clazz The class you want to query a TypeAdapter for
+   * @param type The class you want to query a TypeAdapter for
    * @param <T> The generic type of the TypeAdapter
    * @return The {@link TypeAdapter} for the given class
    * @throws IOException If no {@link TypeAdapter} has been found or could be loaded dynamically via
    * reflections
    */
-  public <T> TypeAdapter<T> get(Class<T> clazz) throws TypeAdapterNotFoundException {
-    TypeAdapter<T> adapter = (TypeAdapter<T>) adaptersCache.get(clazz);
+  public <T> TypeAdapter<T> get(Type type) throws TypeAdapterNotFoundException {
+
+    type = Types.canonicalize(type);
+
+    TypeAdapter<T> adapter = (TypeAdapter<T>) adaptersCache.get(type);
 
     if (adapter != null) {
       return adapter;
-    } else {
+    } else if (type instanceof Class) {
+      Class clazz = (Class) type;
       // try to load TypeAdapter via reflections
       StringBuilder qualifiedTypeAdapterClassName = new StringBuilder();
       try {
@@ -77,19 +82,20 @@ final class TypeAdapters {
         qualifiedTypeAdapterClassName.append(clazz.getSimpleName());
         qualifiedTypeAdapterClassName.append(TypeAdapter.GENERATED_CLASS_SUFFIX);
 
-        Class<TypeAdapter<T>> adapterClass = (Class<TypeAdapter<T>>) Class.forName(qualifiedTypeAdapterClassName.toString());
+        Class<TypeAdapter<T>> adapterClass =
+            (Class<TypeAdapter<T>>) Class.forName(qualifiedTypeAdapterClassName.toString());
         TypeAdapter<T> adapterInstance = adapterClass.newInstance();
         adaptersCache.put(clazz, adapterInstance);
         return adapterInstance;
-
-      } catch (ClassNotFoundException e) {
-        throw new TypeAdapterNotFoundException("No TypeAdapter for class " + clazz.getCanonicalName() + " found. Expected name of the type adapter is " + qualifiedTypeAdapterClassName.toString(), e);
-      } catch (InstantiationException e) {
-        throw new TypeAdapterNotFoundException("No TypeAdapter for class " + clazz.getCanonicalName() + " found. Expected name of the type adapter is " + qualifiedTypeAdapterClassName.toString(), e);
-      } catch (IllegalAccessException e) {
-        throw new TypeAdapterNotFoundException("No TypeAdapter for class " + clazz.getCanonicalName() + " found. Expected name of the type adapter is " + qualifiedTypeAdapterClassName.toString(), e);
+      } catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
+        throw new TypeAdapterNotFoundException("No TypeAdapter for class "
+            + clazz.getCanonicalName()
+            + " found. Expected name of the type adapter is "
+            + qualifiedTypeAdapterClassName.toString(), e);
       }
+    } else {
+      throw new TypeAdapterNotFoundException(
+          "No generated nor manually added TypeAdapter has been found for " + type.toString());
     }
   }
-
 }

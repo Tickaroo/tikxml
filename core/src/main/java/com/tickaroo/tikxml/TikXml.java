@@ -20,6 +20,7 @@ package com.tickaroo.tikxml;
 
 import com.tickaroo.tikxml.typeadapter.TypeAdapter;
 import java.io.IOException;
+import java.lang.reflect.Type;
 import okio.BufferedSink;
 import okio.BufferedSource;
 
@@ -61,7 +62,7 @@ public final class TikXml {
      * @param converterForClass The converter for this class
      * @return The Builder itself
      */
-    public <T> Builder addTypeConverter(Class<T> clazz, TypeConverter<T> converterForClass) {
+    public <T> Builder addTypeConverter(Type clazz, TypeConverter<T> converterForClass) {
       config.typeConverters.add(clazz, converterForClass);
       return this;
     }
@@ -73,7 +74,7 @@ public final class TikXml {
      * @param adapterForClass The {@link TypeAdapter} for the given class
      * @return The builder itself
      */
-    public <T> Builder addTypeAdapter(Class<T> clazz, TypeAdapter<T> adapterForClass) {
+    public <T> Builder addTypeAdapter(Type clazz, TypeAdapter<T> adapterForClass) {
       config.typeAdapters.add(clazz, adapterForClass);
       return this;
     }
