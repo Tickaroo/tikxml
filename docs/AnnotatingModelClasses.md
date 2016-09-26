@@ -101,7 +101,7 @@ Additionally, you can set default converter for all your xml feeds directly in `
 
 ```java
 TikXml parser = new TikXml.Builder()
-               .addTypeConverter(Date.class, new MyDateConverter() ); // all fields of type Date will be serialized / deserialized by using MyDateConverter
+               .addTypeConverter(Date.class, new MyDateConverter()) // all fields of type Date will be serialized / deserialized by using MyDateConverter
                .build();
 ```
 
@@ -115,7 +115,7 @@ With TikXml you can do that:
 
 ```java
 TikXml parser = new TikXml.Builder()
-               .addTypeConverter(String.class, new HtmlEscapeStringConverter() ); // HtmlEscapeStringConverter encode / decode html characters. This class ships as optional dependency
+               .addTypeConverter(String.class, new HtmlEscapeStringConverter()) // HtmlEscapeStringConverter encode / decode html characters. This class ships as optional dependency
                .build();
 ```
 Since `TikXml` is highly optimized for performance primitives (we count `String` as a primitive as well) don't do a lookup for a `TypeConverter`. You have to specify explicitly which primitives (and primitives wrapper) should do the lookup for a type converter. This has to be done by the annotation processor argument `primitiveTypeConverters` which accepts a list of full qualified class names for those primitives (and primitives wrappers) you want to use TypeConverters for:
@@ -162,7 +162,7 @@ public class Book {
 
 The `@PropertyElement` annotation is similar to the `@Attribute` annotation. You can optionally specify a `name` (otherwise field name will be used) and a `converter`. 
 The converters can be shared between `@Attribute` and `@PropertyElement`. So you can use your custom converter like `MyDateConverter` for both, `@Attribute` and `@PropertyElement`.
-Also, a default converter set with `tikXml.setConverter(Date.class, new MyDateConverter() );` will be used for both as well.
+Also, a default converter set with `tikXml.setConverter(Date.class, new MyDateConverter());` will be used for both as well.
 
 Another Problem in XML is that we can't distinguish between `empty string ""` or `null`. For example:
 
@@ -844,7 +844,7 @@ Usually you want an exception to be thrown because usually you need all data fro
 ```java
 TikXml tikXml = TikXml.Builder()
                       .exceptionOnUnreadXml(true) // set this to false if you don't want that an exception is thrown
-                      .build();
+                      .build());
 ```
 
 For performance reason, the other way around is not implemented: Let's say you have a class `Book` and want to ensure that all fields are filled from xml:
