@@ -99,6 +99,12 @@ class PathDetectorTest {
         assertEquals("asd", segments[2])
     }
 
+    @Test fun namespacedPath() {
+        val segments = PathDetector.extractPathSegments(element, "foo:bar")
+        assertEquals(1, segments.size)
+        assertEquals("foo:bar", segments[0])
+    }
+
     @Test fun tripplePathTrailingSlash() {
         expectException {
             PathDetector.extractPathSegments(element, "foo/bar/asd/")
