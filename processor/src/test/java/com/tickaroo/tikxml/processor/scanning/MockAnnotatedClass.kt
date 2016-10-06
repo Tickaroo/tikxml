@@ -41,4 +41,6 @@ class MockAnnotatedClass(override val element: TypeElement, override val scanMod
     override val childElements: Map<String, XmlChildElement> = HashMap()
 
     override fun isXmlElementAccessableFromOutsideTypeAdapter(): Boolean = true
+
+    override val annotatedConstructor: Boolean = false;
 }

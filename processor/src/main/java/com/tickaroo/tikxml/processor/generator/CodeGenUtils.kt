@@ -47,6 +47,7 @@ class CodeGenUtils(val customTypeConverterManager: CustomTypeConverterManager, v
         const val tikConfigMethodExceptionOnUnreadXml = "exceptionOnUnreadXml"
         const val textContentParam = "textContent"
         const val readerParam = "reader"
+        const val writerParam = "writer"
         const val attributeBindersParam = "attributeBinders"
         const val childElementBindersParam = "childElementBinders"
     }

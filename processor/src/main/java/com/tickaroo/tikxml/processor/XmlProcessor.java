@@ -23,7 +23,7 @@ import com.tickaroo.tikxml.annotation.ScanMode;
 import com.tickaroo.tikxml.annotation.Xml;
 import com.tickaroo.tikxml.processor.field.AnnotatedClass;
 import com.tickaroo.tikxml.processor.field.AnnotatedClassImpl;
-import com.tickaroo.tikxml.processor.generator.TypeAdapterCodeGenerator;
+import com.tickaroo.tikxml.processor.generator.TypeAdapterCodeGenerator2;
 import com.tickaroo.tikxml.processor.scanning.AnnotationBasedRequiredDetector;
 import com.tickaroo.tikxml.processor.scanning.FieldDetectorStrategyFactory;
 import com.tickaroo.tikxml.processor.scanning.FieldScanner;
@@ -146,8 +146,8 @@ public class XmlProcessor extends AbstractProcessor {
         // Scan class
         scanner.scan(clazz);
 
-        TypeAdapterCodeGenerator generator =
-            new TypeAdapterCodeGenerator(filer, elementUtils, primitiveTypeConverters);
+        TypeAdapterCodeGenerator2 generator =
+            new TypeAdapterCodeGenerator2(filer, elementUtils, primitiveTypeConverters);
         generator.generateCode(clazz);
       }
     } catch (ProcessingException e) {

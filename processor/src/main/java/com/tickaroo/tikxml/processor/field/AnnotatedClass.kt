@@ -43,6 +43,8 @@ interface AnnotatedClass : XmlRootElement {
 
     var textContentField: TextContentField?
 
+    val annotatedConstructor : Boolean
+
 }
 
 /**
@@ -62,6 +64,7 @@ class AnnotatedClassImpl
     override val nameAsRoot: String
     override val simpleClassName: String
     override val qualifiedClassName: String
+    override val annotatedConstructor: Boolean = false; // TODO implement that
 
     override var textContentField: TextContentField? = null
 
