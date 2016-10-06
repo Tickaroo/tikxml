@@ -32,6 +32,7 @@ import java.util.Map;
  * @see DelegatingTypeAdapter
  * @since 1.0
  */
+@Deprecated
 public abstract class NestedChildElementBinder<T> implements ChildElementBinder<T> {
 
   public Map<String, AttributeBinder<T>> attributeBinders = null;

@@ -23,6 +23,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 /**
+ * This annotation is used to resolve polymorphism by scanning for a certain xml tag
  * @author Hannes Dorfmann
  * @since 1.0
  */

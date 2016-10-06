@@ -63,7 +63,7 @@ import java.lang.annotation.Target;
  */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.FIELD)
+@Target({ElementType.FIELD, ElementType.PARAMETER})
 public @interface Element {
 
   /**
@@ -76,9 +76,8 @@ public @interface Element {
   /**
    * Define here how to resolve polymorphism
    *
-   * @return A list of {@link ElementNameMatcher} that will be used to resolve
-   * polymorphism and inheritance.
+   * @return A list of {@link ElementNameMatcher} that will be used to resolve polymorphism and
+   * inheritance.
    */
   ElementNameMatcher[] typesByElement() default {};
-
 }

@@ -31,6 +31,7 @@ import java.util.Map;
  * @author Hannes Dorfmann
  * @since 1.0
  */
+@Deprecated
 public abstract class DelegatingTypeAdapter<T> implements TypeAdapter<T> {
 
   protected Map<String, AttributeBinder<T>> attributeBinders = new HashMap<>();
