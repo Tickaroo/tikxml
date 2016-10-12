@@ -22,7 +22,7 @@ import com.google.auto.service.AutoService;
 import com.tickaroo.tikxml.annotation.Xml;
 import com.tickaroo.tikxml.processor.field.AnnotatedClass;
 import com.tickaroo.tikxml.processor.field.AnnotatedClassImpl;
-import com.tickaroo.tikxml.processor.generator.TypeAdapterCodeGenerator2;
+import com.tickaroo.tikxml.processor.generator.TypeAdapterCodeGenerator;
 import com.tickaroo.tikxml.processor.scanning.AnnotationBasedRequiredDetector;
 import com.tickaroo.tikxml.processor.scanning.AnnotationDetector;
 import com.tickaroo.tikxml.processor.scanning.AnnotationScanner;
@@ -121,8 +121,8 @@ public class XmlProcessor extends AbstractProcessor {
         // Scan class
         scanner.scan(clazz);
 
-        TypeAdapterCodeGenerator2 generator =
-            new TypeAdapterCodeGenerator2(filer, elementUtils, primitiveTypeConverters);
+        TypeAdapterCodeGenerator generator =
+            new TypeAdapterCodeGenerator(filer, elementUtils, primitiveTypeConverters);
         generator.generateCode(clazz);
       }
     } catch (ProcessingException e) {
