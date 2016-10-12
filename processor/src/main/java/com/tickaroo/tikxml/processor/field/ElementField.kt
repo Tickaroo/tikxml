@@ -22,7 +22,7 @@ import com.squareup.javapoet.ClassName
 import com.squareup.javapoet.CodeBlock
 import com.squareup.javapoet.ParameterizedTypeName
 import com.squareup.javapoet.TypeSpec
-import com.tickaroo.tikxml.processor.generator.CodeGenUtils
+import com.tickaroo.tikxml.processor.generator.CodeGeneratorHelper
 import com.tickaroo.tikxml.processor.xml.XmlChildElement
 import java.util.*
 import javax.lang.model.element.VariableElement
@@ -39,14 +39,14 @@ open class ElementField(element: VariableElement, name: String, required: Boolea
 
     override fun isXmlElementAccessableFromOutsideTypeAdapter() = false
 
-    override fun generateReadXmlCode(codeGenUtils: CodeGenUtils): TypeSpec {
+    override fun generateReadXmlCode(codeGeneratorHelper: CodeGeneratorHelper): TypeSpec {
 
-        val fromXmlMethod = codeGenUtils.fromXmlMethodBuilder()
-                .addCode(accessPolicy.resolveAssignment("${CodeGenUtils.tikConfigParam}.getTypeAdapter(\$T.class).fromXml(${CodeGenUtils.readerParam}, ${CodeGenUtils.tikConfigParam})", ClassName.get(element.asType())))
+        val fromXmlMethod = codeGeneratorHelper.fromXmlMethodBuilder()
+                .addCode(accessResolver.resolveAssignment("${CodeGeneratorHelper.tikConfigParam}.getTypeAdapter(\$T.class).fromXml(${CodeGeneratorHelper.readerParam}, ${CodeGeneratorHelper.tikConfigParam})", ClassName.get(element.asType())))
                 .build()
 
         return TypeSpec.anonymousClassBuilder("")
-                .addSuperinterface(codeGenUtils.childElementBinderType)
+                .addSuperinterface(codeGeneratorHelper.childElementBinderType)
                 .addMethod(fromXmlMethod)
                 .build()
 
@@ -56,25 +56,25 @@ open class ElementField(element: VariableElement, name: String, required: Boolea
 class ListElementField(element: VariableElement, name: String, required: Boolean? = null, private val genericListType: TypeMirror) : ElementField(element, name, required) {
 
 
-    override fun generateReadXmlCode(codeGenUtils: CodeGenUtils): TypeSpec {
+    override fun generateReadXmlCode(codeGeneratorHelper: CodeGeneratorHelper): TypeSpec {
 
 
         val valueTypeAsArrayList = ParameterizedTypeName.get(ClassName.get(ArrayList::class.java), ClassName.get(genericListType))
 
 
-        val valueFromAdapter = "${CodeGenUtils.tikConfigParam}.getTypeAdapter(\$T.class).fromXml(${CodeGenUtils.readerParam}, ${CodeGenUtils.tikConfigParam})"
+        val valueFromAdapter = "${CodeGeneratorHelper.tikConfigParam}.getTypeAdapter(\$T.class).fromXml(${CodeGeneratorHelper.readerParam}, ${CodeGeneratorHelper.tikConfigParam})"
 
-        val fromXmlMethod = codeGenUtils.fromXmlMethodBuilder()
+        val fromXmlMethod = codeGeneratorHelper.fromXmlMethodBuilder()
                 .addCode(CodeBlock.builder()
-                        .beginControlFlow("if (${accessPolicy.resolveGetter()} == null)")
-                        .add(accessPolicy.resolveAssignment("new \$T()", valueTypeAsArrayList))
+                        .beginControlFlow("if (${accessResolver.resolveGetter()} == null)")
+                        .add(accessResolver.resolveAssignment("new \$T()", valueTypeAsArrayList))
                         .endControlFlow()
                         .build())
-                .addStatement("${accessPolicy.resolveGetter()}.add((\$T) $valueFromAdapter )", ClassName.get(genericListType), ClassName.get(genericListType))
+                .addStatement("${accessResolver.resolveGetter()}.add((\$T) $valueFromAdapter )", ClassName.get(genericListType), ClassName.get(genericListType))
                 .build()
 
         return TypeSpec.anonymousClassBuilder("")
-                .addSuperinterface(codeGenUtils.childElementBinderType)
+                .addSuperinterface(codeGeneratorHelper.childElementBinderType)
                 .addMethod(fromXmlMethod)
                 .build()
 

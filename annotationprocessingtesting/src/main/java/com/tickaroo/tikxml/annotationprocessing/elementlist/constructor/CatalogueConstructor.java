@@ -20,21 +20,20 @@ package com.tickaroo.tikxml.annotationprocessing.elementlist.constructor;
 
 import com.tickaroo.tikxml.annotation.Element;
 import com.tickaroo.tikxml.annotation.Path;
-import com.tickaroo.tikxml.annotation.ScanMode;
 import com.tickaroo.tikxml.annotation.Xml;
 import java.util.List;
 
 /**
  * @author Hannes Dorfmann
  */
-@Xml(scanMode = ScanMode.ANNOTATIONS_ONLY, name = "catalogue")
+@Xml
 public class CatalogueConstructor {
 
   private List<BookConstructor> books;
 
   public CatalogueConstructor(
       @Path("books")
-      @Element List<BookConstructor> books) {
+      @Element(name = "book") List<BookConstructor> books) {
     this.books = books;
   }
 

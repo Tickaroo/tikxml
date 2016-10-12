@@ -19,7 +19,6 @@
 package com.tickaroo.tikxml.annotationprocessing.propertyelement.constructor;
 
 import com.tickaroo.tikxml.annotation.PropertyElement;
-import com.tickaroo.tikxml.annotation.ScanMode;
 import com.tickaroo.tikxml.annotation.Xml;
 import com.tickaroo.tikxml.annotationprocessing.DateConverter;
 import java.util.Date;
@@ -27,7 +26,7 @@ import java.util.Date;
 /**
  * @author Hannes Dorfmann
  */
-@Xml(scanMode = ScanMode.ANNOTATIONS_ONLY)
+@Xml
 public class PropertyItemConstructor {
   private String aString;
   private int anInt;
@@ -56,7 +55,7 @@ public class PropertyItemConstructor {
     this.longWrapper = longWrapper;
   }
 
-  public String getaString() {
+  public String getAString() {
     return aString;
   }
 
@@ -64,19 +63,19 @@ public class PropertyItemConstructor {
     return anInt;
   }
 
-  public boolean isaBoolean() {
+  public boolean isABoolean() {
     return aBoolean;
   }
 
-  public double getaDouble() {
+  public double getADouble() {
     return aDouble;
   }
 
-  public long getaLong() {
+  public long getALong() {
     return aLong;
   }
 
-  public Date getaDate() {
+  public Date getADate() {
     return aDate;
   }
 

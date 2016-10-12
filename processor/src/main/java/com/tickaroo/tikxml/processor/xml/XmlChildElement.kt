@@ -19,7 +19,7 @@
 package com.tickaroo.tikxml.processor.xml
 
 import com.squareup.javapoet.TypeSpec
-import com.tickaroo.tikxml.processor.generator.CodeGenUtils
+import com.tickaroo.tikxml.processor.generator.CodeGeneratorHelper
 
 /**
  *
@@ -29,6 +29,6 @@ interface XmlChildElement : XmlElement {
 
     val name: String
 
-    fun generateReadXmlCode(codeGenUtils: CodeGenUtils): TypeSpec
+    fun generateReadXmlCode(codeGeneratorHelper: CodeGeneratorHelper): TypeSpec
 
 }

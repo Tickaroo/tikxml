@@ -19,14 +19,14 @@
 package com.tickaroo.tikxml.processor;
 
 import com.google.auto.service.AutoService;
-import com.tickaroo.tikxml.annotation.ScanMode;
 import com.tickaroo.tikxml.annotation.Xml;
 import com.tickaroo.tikxml.processor.field.AnnotatedClass;
 import com.tickaroo.tikxml.processor.field.AnnotatedClassImpl;
 import com.tickaroo.tikxml.processor.generator.TypeAdapterCodeGenerator2;
 import com.tickaroo.tikxml.processor.scanning.AnnotationBasedRequiredDetector;
-import com.tickaroo.tikxml.processor.scanning.FieldDetectorStrategyFactory;
-import com.tickaroo.tikxml.processor.scanning.FieldScanner;
+import com.tickaroo.tikxml.processor.scanning.AnnotationDetector;
+import com.tickaroo.tikxml.processor.scanning.AnnotationScanner;
+import com.tickaroo.tikxml.processor.scanning.DefaultAnnotationDetector;
 import java.util.HashSet;
 import java.util.Set;
 import javax.annotation.processing.AbstractProcessor;
@@ -56,14 +56,13 @@ public class XmlProcessor extends AbstractProcessor {
   /**
    * The default scan mode
    */
-  private static final String OPTION_DEFAULT_SCAN_MODE = "defaultScanMode";
   private static final String OPTION_TYPE_CONVERTER_FOR_PRIMITIVES = "primitiveTypeConverters";
 
   private Messager messager;
   private Filer filer;
   private Elements elementUtils;
   private Types typeUtils;
-  private FieldDetectorStrategyFactory fieldDetectorStrategyFactory;
+  private AnnotationDetector annotationDetector;
 
   @Override
   public synchronized void init(ProcessingEnvironment processingEnv) {
@@ -72,7 +71,7 @@ public class XmlProcessor extends AbstractProcessor {
     filer = processingEnv.getFiler();
     elementUtils = processingEnv.getElementUtils();
     typeUtils = processingEnv.getTypeUtils();
-    fieldDetectorStrategyFactory = new FieldDetectorStrategyFactory(elementUtils, typeUtils,
+    annotationDetector = new DefaultAnnotationDetector(elementUtils, typeUtils,
         new AnnotationBasedRequiredDetector());
   }
 
@@ -86,7 +85,6 @@ public class XmlProcessor extends AbstractProcessor {
   @Override
   public Set<String> getSupportedOptions() {
     Set<String> options = new HashSet<>();
-    options.add(OPTION_DEFAULT_SCAN_MODE);
     options.add(OPTION_TYPE_CONVERTER_FOR_PRIMITIVES);
     return options;
   }
@@ -101,36 +99,13 @@ public class XmlProcessor extends AbstractProcessor {
 
     try {
 
-      // Read options
-      String optionScanAsString = processingEnv.getOptions().get(OPTION_DEFAULT_SCAN_MODE);
-      ScanMode defaultScanMode;
-      if (optionScanAsString == null || optionScanAsString.length() == 0) {
-        defaultScanMode = ScanMode.ANNOTATIONS_ONLY;
-      } else {
-        try {
-          defaultScanMode = ScanMode.valueOf(optionScanAsString);
-        } catch (Exception e) {
-          throw new ProcessingException(null,
-              "The option '%s' is not allowed. Must either be %s or %s",
-              OPTION_DEFAULT_SCAN_MODE, optionScanAsString, ScanMode.ANNOTATIONS_ONLY.toString(),
-              ScanMode.COMMON_CASE.toString());
-        }
-      }
-
-      if (defaultScanMode == ScanMode.DEFAULT) {
-        throw new ProcessingException(null,
-            "The option '%s' is not allowed. Must either be %s or %s",
-            OPTION_DEFAULT_SCAN_MODE, optionScanAsString, ScanMode.ANNOTATIONS_ONLY.toString(),
-            ScanMode.COMMON_CASE.toString());
-      }
-
       String primitiveTypeConverterOptions =
           processingEnv.getOptions().get(OPTION_TYPE_CONVERTER_FOR_PRIMITIVES);
       Set<String> primitiveTypeConverters =
           readPrimitiveTypeConverterOptions(primitiveTypeConverterOptions);
 
-      FieldScanner scanner =
-          new FieldScanner(elementUtils, typeUtils, fieldDetectorStrategyFactory);
+      AnnotationScanner scanner =
+          new AnnotationScanner(elementUtils, typeUtils, annotationDetector);
       Set<? extends Element> elementsAnnotatedWith = roundEnv.getElementsAnnotatedWith(Xml.class);
 
       for (Element element : elementsAnnotatedWith) {

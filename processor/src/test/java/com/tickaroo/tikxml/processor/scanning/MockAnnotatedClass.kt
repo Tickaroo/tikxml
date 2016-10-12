@@ -18,7 +18,6 @@
 
 package com.tickaroo.tikxml.processor.scanning
 
-import com.tickaroo.tikxml.annotation.ScanMode
 import com.tickaroo.tikxml.processor.field.AnnotatedClass
 import com.tickaroo.tikxml.processor.field.AttributeField
 import com.tickaroo.tikxml.processor.field.TextContentField
@@ -32,9 +31,9 @@ import javax.lang.model.element.TypeElement
  *
  * @author Hannes Dorfmann
  */
-class MockAnnotatedClass(override val element: TypeElement, override val scanMode: ScanMode, override val inheritance: Boolean = true, override val nameAsRoot: String = "", override val simpleClassName: String = "", override val qualifiedClassName: String = "") : AnnotatedClass {
+class MockAnnotatedClass(override val element: TypeElement, override val inheritance: Boolean = true, override val nameAsRoot: String = "", override val simpleClassName: String = "", override val qualifiedClassName: String = "") : AnnotatedClass {
 
-    constructor(scanMode: ScanMode) : this(Mockito.mock(TypeElement::class.java) as TypeElement, scanMode)
+    constructor() : this(Mockito.mock(TypeElement::class.java) as TypeElement)
 
     override var textContentField: TextContentField? = null
 

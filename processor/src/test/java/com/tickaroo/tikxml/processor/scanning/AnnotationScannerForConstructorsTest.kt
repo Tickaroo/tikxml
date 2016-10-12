@@ -29,13 +29,13 @@ import org.junit.Test
 import javax.tools.JavaFileObject
 
 /**
- * Tests [FieldScanner]:
+ * Tests [AnnotationScanner]:
  * - empty Consturctor
  * - Getter Methods
  * - Setter Methods
  * @author Hannes Dorfmann
  */
-class FieldScannerForConstructorsTest {
+class AnnotationScannerForConstructorsTest {
 
     @Test
     fun allConstructorParamsAnnotatedPublicVisibility1() {
@@ -202,7 +202,7 @@ class FieldScannerForConstructorsTest {
         Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
                 .that(componentFile).processedWith(XmlProcessor())
                 .failsToCompile()
-                .withErrorContaining("test.AnnotatedConstructorClass has TikXml annotated fields AND an annotated constructor AnnotatedConstructorClass(int) . That is not allowed! Either annotate fields or a constructor (but not a mix of both)")
+                .withErrorContaining("Conflict: field 'aString' in class test.ItemConstructor has the same xml attribute name 'aString' as the field 'aString' in class test.ItemConstructor. You can specify another name via annotations.")
     }
 
 

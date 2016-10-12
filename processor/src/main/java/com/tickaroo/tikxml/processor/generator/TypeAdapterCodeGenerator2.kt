@@ -55,14 +55,14 @@ class TypeAdapterCodeGenerator2(private val filer: Filer, private val elementUti
         val genericParamTypeAdapter = ParameterizedTypeName.get(ClassName.get(TypeAdapter::class.java), ClassName.get(annotatedClass.element))
 
         val customTypeConverterManager = CustomTypeConverterManager()
-        val codeGenUtils = CodeGenUtils(customTypeConverterManager, typeConvertersForPrimitives, parseIntoValueType)
+        val codeGenUtils = CodeGeneratorHelper(customTypeConverterManager, typeConvertersForPrimitives, parseIntoValueType)
 
         val constructorBuilder = MethodSpec.constructorBuilder()
                 .addModifiers(Modifier.PUBLIC)
                 .addCode(codeGenUtils.generateAttributeBinders(annotatedClass))
 
         for ((xmlName, xmlElement) in annotatedClass.childElements) {
-            constructorBuilder.addStatement("${CodeGenUtils.childElementBindersParam}.put(\$S, \$L)", xmlName, xmlElement.generateReadXmlCode(codeGenUtils))
+            constructorBuilder.addStatement("${CodeGeneratorHelper.childElementBindersParam}.put(\$S, \$L)", xmlName, xmlElement.generateReadXmlCode(codeGenUtils))
         }
 
 
@@ -113,7 +113,7 @@ class TypeAdapterCodeGenerator2(private val filer: Filer, private val elementUti
 
             // TODO use ArrayMap
             adapterClassBuilder.addField(
-                    FieldSpec.builder(attributeBinderMapField, CodeGenUtils.attributeBindersParam, Modifier.PRIVATE)
+                    FieldSpec.builder(attributeBinderMapField, CodeGeneratorHelper.attributeBindersParam, Modifier.PRIVATE)
                             .initializer("new  \$T()", attributeBinderHashMapField)
                             .build())
         }
@@ -126,7 +126,7 @@ class TypeAdapterCodeGenerator2(private val filer: Filer, private val elementUti
 
             // TODO use ArrayMap
             adapterClassBuilder.addField(
-                    FieldSpec.builder(childElementBinderMapField, CodeGenUtils.childElementBindersParam, Modifier.PRIVATE)
+                    FieldSpec.builder(childElementBinderMapField, CodeGeneratorHelper.childElementBindersParam, Modifier.PRIVATE)
                             .initializer("new  \$T()", childElementBinderHashMapField)
                             .build())
         }
@@ -144,9 +144,9 @@ class TypeAdapterCodeGenerator2(private val filer: Filer, private val elementUti
      */
     private inline fun generateFromXmlMethod(annotatedClass: AnnotatedClass): MethodSpec.Builder {
 
-        val reader = CodeGenUtils.readerParam
-        val config = CodeGenUtils.tikConfigParam
-        val value = CodeGenUtils.valueParam
+        val reader = CodeGeneratorHelper.readerParam
+        val config = CodeGeneratorHelper.tikConfigParam
+        val value = CodeGeneratorHelper.valueParam
         val targetClassToParseInto = getClassToParseInto(annotatedClass)
         val textContentStringBuilder = "textContentBuilder"
 
@@ -171,7 +171,7 @@ class TypeAdapterCodeGenerator2(private val filer: Filer, private val elementUti
             // consume attributes
             builder.beginControlFlow("while(\$L.hasAttribute())", reader)
                     .addStatement("String attributeName = \$L.nextAttributeName()", reader)
-                    .addStatement("\$T attributeBinder = ${CodeGenUtils.attributeBindersParam}.get(attributeName)", ParameterizedTypeName.get(ClassName.get(AttributeBinder::class.java), targetClassToParseInto))
+                    .addStatement("\$T attributeBinder = ${CodeGeneratorHelper.attributeBindersParam}.get(attributeName)", ParameterizedTypeName.get(ClassName.get(AttributeBinder::class.java), targetClassToParseInto))
                     .beginControlFlow("if (attributeBinder != null)")
                     .addStatement("attributeBinder.fromXml(\$L, \$L, \$L)", reader, config, value)
                     .nextControlFlow("else")
@@ -214,7 +214,7 @@ class TypeAdapterCodeGenerator2(private val filer: Filer, private val elementUti
 
                     .addStatement("\$L.beginElement()", reader)
                     .addStatement("String elementName = \$L.nextElementName()", reader)
-                    .addStatement("\$T childElementBinder = \$L.get(elementName)", ParameterizedTypeName.get(ClassName.get(ChildElementBinder::class.java), targetClassToParseInto), CodeGenUtils.childElementBindersParam)
+                    .addStatement("\$T childElementBinder = \$L.get(elementName)", ParameterizedTypeName.get(ClassName.get(ChildElementBinder::class.java), targetClassToParseInto), CodeGeneratorHelper.childElementBindersParam)
                     .beginControlFlow("if (childElementBinder != null)")
                     .addStatement("childElementBinder.fromXml(\$L, \$L, \$L)", reader, config, value)
                     .addStatement("\$L.endElement()", reader)
@@ -279,7 +279,7 @@ class TypeAdapterCodeGenerator2(private val filer: Filer, private val elementUti
         // assign Text Content
         if (annotatedClass.hasTextContent()) {
             val field = annotatedClass.textContentField!!
-            builder.addCode(field.accessPolicy.resolveAssignment("$textContentStringBuilder.toString()"))
+            builder.addCode(field.accessResolver.resolveAssignment("$textContentStringBuilder.toString()"))
             // TODO constructor support
         }
 
@@ -302,9 +302,9 @@ class TypeAdapterCodeGenerator2(private val filer: Filer, private val elementUti
 
     private inline fun generateToXmlMethod(annotatedClass: AnnotatedClass): MethodSpec.Builder {
 
-        val writer = CodeGenUtils.writerParam
-        val config = CodeGenUtils.tikConfigParam
-        val value = CodeGenUtils.valueParam
+        val writer = CodeGeneratorHelper.writerParam
+        val config = CodeGeneratorHelper.tikConfigParam
+        val value = CodeGeneratorHelper.valueParam
 
         val builder = MethodSpec.methodBuilder("toXml")
                 .addModifiers(Modifier.PUBLIC)

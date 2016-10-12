@@ -34,10 +34,10 @@ import javax.lang.model.util.Elements
 import javax.lang.model.util.Types
 
 /**
- * A [FieldScanner] that scans the element only for annotations
+ * A [AnnotationScanner] that scans the element by checking for TikXml annotations
  * @author Hannes Dorfmann
  */
-open class AnnotationOnlyFieldDetectorStrategy(protected val elementUtils: Elements, protected val typeUtils: Types, protected val requiredDetector: RequiredDetector) : FieldDetectorStrategy {
+open class DefaultAnnotationDetector(protected val elementUtils: Elements, protected val typeUtils: Types, protected val requiredDetector: RequiredDetector) : AnnotationDetector {
 
     val listTypeMirror: TypeMirror
 
@@ -324,9 +324,6 @@ open class AnnotationOnlyFieldDetectorStrategy(protected val elementUtils: Eleme
             throw ProcessingException(variableElement, "The type $typeElement must be a sub type of ${variableType}. Otherwise this type cannot be used in @${ElementNameMatcher::class.simpleName} to resolve polymorphism");
         }
 
-        var emptyConstructorFount = false
-        var annotatedConstructorFound = false
-
         // TODO Is this constructor check really needed? Seems to be redundand / duplicated since it will also be checked in FieldScanner
         for (method in typeElement.enclosedElements) {
             if (typeElement.isSamePackageAs(variableElement, elementUtils) && method.isEmptyConstructorWithMinimumPackageVisibility()) {
@@ -337,9 +334,14 @@ open class AnnotationOnlyFieldDetectorStrategy(protected val elementUtils: Eleme
                 return
             }
 
-            // Check for TikXml Annotated only constructor
-            if (!method.isEmptyConstructor() && (method as ExecutableElement).parameters.filter { !(it as VariableElement).hasTikXmlAnnotation() }.isEmpty()) {
-                return
+            // Check for TikXml annotated constructor (all parameters are annotated with TikXml annotations)
+            if (method.isConstructor()) {
+                val constructor = (method as ExecutableElement)
+                if (constructor.parameters.isNotEmpty()
+                        && constructor.parameters.filter { !(it as VariableElement).hasTikXmlAnnotation() }.isEmpty()) {
+                    return
+                }
+
             }
 
         }

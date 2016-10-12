@@ -1,7 +1,6 @@
 package com.tickaroo.tikxml.annotationprocessing.attribute.constructor;
 
 import com.tickaroo.tikxml.annotation.Attribute;
-import com.tickaroo.tikxml.annotation.ScanMode;
 import com.tickaroo.tikxml.annotation.Xml;
 import com.tickaroo.tikxml.annotationprocessing.DateConverter;
 import java.util.Date;
@@ -9,7 +8,7 @@ import java.util.Date;
 /**
  * @author Hannes Dorfmann
  */
-@Xml(scanMode = ScanMode.ANNOTATIONS_ONLY)
+@Xml
 public class ItemConstructor {
 
   private String aString;

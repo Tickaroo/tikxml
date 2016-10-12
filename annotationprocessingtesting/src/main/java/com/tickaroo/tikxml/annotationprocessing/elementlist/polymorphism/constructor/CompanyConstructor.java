@@ -21,7 +21,6 @@ package com.tickaroo.tikxml.annotationprocessing.elementlist.polymorphism.constr
 import com.tickaroo.tikxml.annotation.Element;
 import com.tickaroo.tikxml.annotation.ElementNameMatcher;
 import com.tickaroo.tikxml.annotation.PropertyElement;
-import com.tickaroo.tikxml.annotation.ScanMode;
 import com.tickaroo.tikxml.annotation.Xml;
 import com.tickaroo.tikxml.annotationprocessing.elementlist.polymorphism.Person;
 import java.util.List;
@@ -29,7 +28,7 @@ import java.util.List;
 /**
  * @author Hannes Dorfmann
  */
-@Xml(scanMode = ScanMode.ANNOTATIONS_ONLY, name = "company")
+@Xml
 public class CompanyConstructor {
 
   private String name;
@@ -39,8 +38,8 @@ public class CompanyConstructor {
 
   public CompanyConstructor(@PropertyElement String name,
       @Element(typesByElement = {
-          @ElementNameMatcher(type = BossConstructor.class),
-          @ElementNameMatcher(type = EmployeeConstructor.class),
+          @ElementNameMatcher(type = BossConstructor.class, name = "boss"),
+          @ElementNameMatcher(type = EmployeeConstructor.class, name = "employee"),
       }) List<Person> persons) {
     this.name = name;
     this.persons = persons;

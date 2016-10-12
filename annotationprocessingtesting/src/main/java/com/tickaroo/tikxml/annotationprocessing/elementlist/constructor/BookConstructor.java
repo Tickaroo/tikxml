@@ -20,7 +20,6 @@ package com.tickaroo.tikxml.annotationprocessing.elementlist.constructor;
 
 import com.tickaroo.tikxml.annotation.Attribute;
 import com.tickaroo.tikxml.annotation.PropertyElement;
-import com.tickaroo.tikxml.annotation.ScanMode;
 import com.tickaroo.tikxml.annotation.Xml;
 import com.tickaroo.tikxml.annotationprocessing.DateConverter;
 import java.util.Date;
@@ -28,7 +27,7 @@ import java.util.Date;
 /**
  * @author Hannes Dorfmann
  */
-@Xml(scanMode = ScanMode.ANNOTATIONS_ONLY, name = "book")
+@Xml
 public class BookConstructor {
 
   private int id;

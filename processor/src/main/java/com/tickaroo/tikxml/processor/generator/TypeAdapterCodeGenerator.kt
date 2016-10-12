@@ -44,7 +44,7 @@ class TypeAdapterCodeGenerator(private val filer: Filer, private val elementUtil
         val genericParamTypeAdapter = ParameterizedTypeName.get(ClassName.get(DelegatingTypeAdapter::class.java), annotatedClassType)
 
         val customTypeConverterManager = CustomTypeConverterManager()
-        val codeGenUtils = CodeGenUtils(customTypeConverterManager, typeConvertersForPrimitives, annotatedClassType)
+        val codeGenUtils = CodeGeneratorHelper(customTypeConverterManager, typeConvertersForPrimitives, annotatedClassType)
 
         val assignTextContentBuilder = codeGenUtils.assignTextContentMethodBuilder()
 
@@ -52,7 +52,7 @@ class TypeAdapterCodeGenerator(private val filer: Filer, private val elementUtil
             // val textContentElement = annotatedClass.textContentField!!.element
             // TODO FieldAccessPolicy
             val field = annotatedClass.textContentField!!
-            assignTextContentBuilder.addCode(field.accessPolicy.resolveAssignment(CodeGenUtils.textContentParam))
+            assignTextContentBuilder.addCode(field.accessResolver.resolveAssignment(CodeGeneratorHelper.textContentParam))
         }
 
 
@@ -70,7 +70,7 @@ class TypeAdapterCodeGenerator(private val filer: Filer, private val elementUtil
                 .addCode(codeGenUtils.generateAttributeBinders(annotatedClass))
 
         for ((xmlName, xmlElement) in annotatedClass.childElements) {
-            constructorBuilder.addStatement("${CodeGenUtils.childElementBindersParam}.put(\$S, \$L)", xmlName, xmlElement.generateReadXmlCode(codeGenUtils))
+            constructorBuilder.addStatement("${CodeGeneratorHelper.childElementBindersParam}.put(\$S, \$L)", xmlName, xmlElement.generateReadXmlCode(codeGenUtils))
         }
 
 

@@ -44,14 +44,6 @@ public @interface Xml {
   String name() default "";
 
   /**
-   * Specify how TikXml will determine the mapping between xml and java classes by scanning {@link
-   * Xml} annotated classes.
-   *
-   * @return The {@link ScanMode}. Default mode is {@link ScanMode#COMMON_CASE}.
-   */
-  ScanMode scanMode() default ScanMode.DEFAULT;
-
-  /**
    * Indicates whether or not we should also scan the fields from super classes all the way up in
    * the inheritance three of this class.
    */

@@ -23,8 +23,8 @@ import com.squareup.javapoet.CodeBlock
 import com.squareup.javapoet.ParameterizedTypeName
 import com.squareup.javapoet.TypeSpec
 import com.tickaroo.tikxml.processor.ProcessingException
-import com.tickaroo.tikxml.processor.field.access.FieldAccessPolicy
-import com.tickaroo.tikxml.processor.generator.CodeGenUtils
+import com.tickaroo.tikxml.processor.field.access.FieldAccessResolver
+import com.tickaroo.tikxml.processor.generator.CodeGeneratorHelper
 import java.util.*
 import javax.lang.model.element.VariableElement
 import javax.lang.model.type.TypeMirror
@@ -34,14 +34,14 @@ import javax.lang.model.type.TypeMirror
  * @author Hannes Dorfmann
  */
 open class PolymorphicElementField(element: VariableElement, name: String, required: Boolean?, val typeElementNameMatcher: List<PolymorphicTypeElementNameMatcher>) : ElementField(element, name, required) {
-    override fun generateReadXmlCode(codeGenUtils: CodeGenUtils): TypeSpec {
-        return codeGenUtils.generateNestedChildElementBinder(this)
+    override fun generateReadXmlCode(codeGeneratorHelper: CodeGeneratorHelper): TypeSpec {
+        return codeGeneratorHelper.generateNestedChildElementBinder(this)
     }
 }
 
 class PolymorphicListElementField(element: VariableElement, name: String, required: Boolean?, typeElementNameMatcher: List<PolymorphicTypeElementNameMatcher>, val genericListTypeMirror: TypeMirror) : PolymorphicElementField(element, name, required, typeElementNameMatcher) {
 
-    override fun generateReadXmlCode(codeGenUtils: CodeGenUtils): TypeSpec {
+    override fun generateReadXmlCode(codeGeneratorHelper: CodeGeneratorHelper): TypeSpec {
         throw ProcessingException(element, "Oops, en error has occurred while generating reading xml code for $this. Please fill an issue at https://github.com/Tickaroo/tikxml/issues")
     }
 }
@@ -49,18 +49,18 @@ class PolymorphicListElementField(element: VariableElement, name: String, requir
 /**
  * This kind of element will be used to replace a [PolymorphicElementField]
  */
-open class PolymorphicSubstitutionField(element: VariableElement, override val typeMirror: TypeMirror, override var accessPolicy: FieldAccessPolicy, name: String, required: Boolean? = null) : ElementField(element, name, required) {
+open class PolymorphicSubstitutionField(element: VariableElement, override val typeMirror: TypeMirror, override var accessResolver: FieldAccessResolver, name: String, required: Boolean? = null) : ElementField(element, name, required) {
 
     override fun isXmlElementAccessableFromOutsideTypeAdapter(): Boolean = false
 
-    override fun generateReadXmlCode(codeGenUtils: CodeGenUtils): TypeSpec {
+    override fun generateReadXmlCode(codeGeneratorHelper: CodeGeneratorHelper): TypeSpec {
 
-        val fromXmlMethod = codeGenUtils.fromXmlMethodBuilder()
-                .addCode(accessPolicy.resolveAssignment("${CodeGenUtils.tikConfigParam}.getTypeAdapter(\$T.class).fromXml(${CodeGenUtils.readerParam}, ${CodeGenUtils.tikConfigParam})", ClassName.get(typeMirror)))
+        val fromXmlMethod = codeGeneratorHelper.fromXmlMethodBuilder()
+                .addCode(accessResolver.resolveAssignment("${CodeGeneratorHelper.tikConfigParam}.getTypeAdapter(\$T.class).fromXml(${CodeGeneratorHelper.readerParam}, ${CodeGeneratorHelper.tikConfigParam})", ClassName.get(typeMirror)))
                 .build()
 
         return TypeSpec.anonymousClassBuilder("")
-                .addSuperinterface(codeGenUtils.childElementBinderType)
+                .addSuperinterface(codeGeneratorHelper.childElementBinderType)
                 .addMethod(fromXmlMethod)
                 .build()
     }
@@ -70,27 +70,27 @@ open class PolymorphicSubstitutionField(element: VariableElement, override val t
 /**
  * This kind of element will be used to replace a [PolymorphicElementField] but for List elements
  */
-class PolymorphicSubstitutionListField(element: VariableElement, typeMirror: TypeMirror, accessPolicy: FieldAccessPolicy, name: String, private val genericListTypeMirror: TypeMirror, required: Boolean? = null) : PolymorphicSubstitutionField(element, typeMirror, accessPolicy, name, required) {
+class PolymorphicSubstitutionListField(element: VariableElement, typeMirror: TypeMirror, accessResolver: FieldAccessResolver, name: String, private val genericListTypeMirror: TypeMirror, required: Boolean? = null) : PolymorphicSubstitutionField(element, typeMirror, accessResolver, name, required) {
 
 
-    override fun generateReadXmlCode(codeGenUtils: CodeGenUtils): TypeSpec {
+    override fun generateReadXmlCode(codeGeneratorHelper: CodeGeneratorHelper): TypeSpec {
 
         val valueTypeAsArrayList = ParameterizedTypeName.get(ClassName.get(ArrayList::class.java), ClassName.get(genericListTypeMirror))
 
-        val valueFromAdapter = "${CodeGenUtils.tikConfigParam}.getTypeAdapter(\$T.class).fromXml(${CodeGenUtils.readerParam}, ${CodeGenUtils.tikConfigParam})"
+        val valueFromAdapter = "${CodeGeneratorHelper.tikConfigParam}.getTypeAdapter(\$T.class).fromXml(${CodeGeneratorHelper.readerParam}, ${CodeGeneratorHelper.tikConfigParam})"
 
-        val fromXmlMethod = codeGenUtils.fromXmlMethodBuilder()
+        val fromXmlMethod = codeGeneratorHelper.fromXmlMethodBuilder()
                 .addCode(CodeBlock.builder()
-                        .beginControlFlow("if (${accessPolicy.resolveGetter()} == null)")
-                        .add(accessPolicy.resolveAssignment("new \$T()", valueTypeAsArrayList))
+                        .beginControlFlow("if (${accessResolver.resolveGetter()} == null)")
+                        .add(accessResolver.resolveAssignment("new \$T()", valueTypeAsArrayList))
                         .endControlFlow()
                         .build())
                 .addStatement("\$T v = $valueFromAdapter", ClassName.get(typeMirror), ClassName.get(typeMirror))
-                .addStatement("${accessPolicy.resolveGetter()}.add(v)")
+                .addStatement("${accessResolver.resolveGetter()}.add(v)")
                 .build()
 
         return TypeSpec.anonymousClassBuilder("")
-                .addSuperinterface(codeGenUtils.childElementBinderType)
+                .addSuperinterface(codeGeneratorHelper.childElementBinderType)
                 .addMethod(fromXmlMethod)
                 .build()
     }

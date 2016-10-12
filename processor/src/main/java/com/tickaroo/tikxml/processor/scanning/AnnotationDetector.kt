@@ -23,10 +23,10 @@ import com.tickaroo.tikxml.processor.field.TextContentField
 import javax.lang.model.element.VariableElement
 
 /**
- * Provides a method to specify that a given field is mapped from xml document to java class and vice versa
+ * Provides a method to specify if a given java element (like a field or a constructor parameter) can be mapped from xml document to java class and vice versa
  * @author Hannes Dorfmann
  */
-interface FieldDetectorStrategy {
+interface AnnotationDetector {
 
     /**
      * Checks if the given field should be mapped from xml document (write as xml or read from xml input),

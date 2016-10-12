@@ -19,13 +19,12 @@
 package com.tickaroo.tikxml.annotationprocessing.element.polymorphism.constructor;
 
 import com.tickaroo.tikxml.annotation.PropertyElement;
-import com.tickaroo.tikxml.annotation.ScanMode;
 import com.tickaroo.tikxml.annotation.Xml;
 
 /**
  * @author Hannes Dorfmann
  */
-@Xml(scanMode = ScanMode.ANNOTATIONS_ONLY)
+@Xml
 public class JournalistConstructor extends WriterConstructor {
 
   private int age;

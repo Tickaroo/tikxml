@@ -20,13 +20,12 @@ package com.tickaroo.tikxml.annotationprocessing.element.polymorphism.constructo
 
 import com.tickaroo.tikxml.annotation.Element;
 import com.tickaroo.tikxml.annotation.ElementNameMatcher;
-import com.tickaroo.tikxml.annotation.ScanMode;
 import com.tickaroo.tikxml.annotation.Xml;
 
 /**
  * @author Hannes Dorfmann
  */
-@Xml(scanMode = ScanMode.ANNOTATIONS_ONLY)
+@Xml
 public class PaperConstructor {
 
   private WriterConstructor writer;

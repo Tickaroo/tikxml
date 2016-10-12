@@ -18,10 +18,13 @@
 
 package com.tickaroo.tikxml.processor.scanning
 
-import com.tickaroo.tikxml.annotation.*
+import com.tickaroo.tikxml.annotation.Attribute
+import com.tickaroo.tikxml.annotation.Element
+import com.tickaroo.tikxml.annotation.PropertyElement
+import com.tickaroo.tikxml.annotation.Xml
 import com.tickaroo.tikxml.processor.ProcessingException
 import com.tickaroo.tikxml.processor.field.*
-import com.tickaroo.tikxml.processor.field.access.FieldAccessPolicy
+import com.tickaroo.tikxml.processor.field.access.FieldAccessResolver
 import com.tickaroo.tikxml.processor.utils.*
 import com.tickaroo.tikxml.processor.xml.XmlChildElement
 import java.util.*
@@ -32,11 +35,11 @@ import javax.lang.model.util.Elements
 import javax.lang.model.util.Types
 
 /**
- * Scans an [com.tickaroo.tikxml.annotation.Xml] annotated class and fulfills the  [AnnotatedClass]
+ * Scans an [com.tickaroo.tikxml.annotation.Xml] annotated class and fulfills the  [AnnotatedClass] by using [AnnotationDetector]
  * @author Hannes Dorfmann
  * @since 1.0
  */
-class FieldScanner(protected val elementUtils: Elements, protected val typeUtils: Types, private val fieldDetectorStrategyFactory: FieldDetectorStrategyFactory) {
+class AnnotationScanner(protected val elementUtils: Elements, protected val typeUtils: Types, private val annotationDetector: AnnotationDetector) {
 
     /**
      * Scans the child element of the passed [AnnotatedClass] to find [com.tickaroo.tikxml.processor.field.NamedField]
@@ -73,7 +76,7 @@ class FieldScanner(protected val elementUtils: Elements, protected val typeUtils
         // Function to
         val checkAccessPolicyOrDeferGetterSetterCheck = fun(element: VariableElement, field: Field): Boolean {
             if (element.hasMinimumPackageVisibilityModifiers()) {
-                field.accessPolicy = FieldAccessPolicy.MinPackageVisibilityFieldAccessPolicy(field.element)
+                field.accessResolver = FieldAccessResolver.MinPackageVisibilityFieldAccessResolver(field.element)
                 return true
             } else {
                 fieldWithMethodAccessRequired.add(field) // processed afterwards
@@ -88,10 +91,9 @@ class FieldScanner(protected val elementUtils: Elements, protected val typeUtils
             } else if (it.isConstructor() && !it.isEmptyConstructor()) {
                 // check for Annotated Constructors
                 val constructor = it as ExecutableElement
-                val fieldDetectorStrategy = fieldDetectorStrategyFactory.getStrategy(ScanMode.ANNOTATIONS_ONLY);
                 var foundXmlAnnotation = 0
                 constructor.parameters.forEach {
-                    val mappableField = fillAnnotatedClass(annotatedClass, it, fieldDetectorStrategy, checkAccessPolicyOrDeferGetterSetterCheck)
+                    val mappableField = fillAnnotatedClass(annotatedClass, it, checkAccessPolicyOrDeferGetterSetterCheck)
                     if (mappableField != null) {
                         foundXmlAnnotation++
                         annotatedConstructorFields.add(mappableField)
@@ -124,8 +126,7 @@ class FieldScanner(protected val elementUtils: Elements, protected val typeUtils
                 methodsMap.put(method.simpleName.toString(), method)
             } else if (it.isField()) {
                 val xmlAnnotation = currentElement.getAnnotation(Xml::class.java) ?: throw ProcessingException(currentElement, "The class ${annotatedClass.qualifiedClassName} should be annotated with @${Xml::class.simpleName}. This is an internal error. Please file an issue on github: https://github.com/Tickaroo/tikxml/issues") // Should be impossible
-                val fieldDetectorStrategy = fieldDetectorStrategyFactory.getStrategy(xmlAnnotation.scanMode)
-                val field = fillAnnotatedClass(annotatedClass, it as VariableElement, fieldDetectorStrategy, checkAccessPolicyOrDeferGetterSetterCheck)
+                val field = fillAnnotatedClass(annotatedClass, it as VariableElement, checkAccessPolicyOrDeferGetterSetterCheck)
                 if (field != null) {
                     annotatedFields++
                 }
@@ -161,7 +162,7 @@ class FieldScanner(protected val elementUtils: Elements, protected val typeUtils
                 }
 
                 // Set access policy
-                it.accessPolicy = FieldAccessPolicy.GetterSetterFieldAccessPolicy(getter, setter)
+                it.accessResolver = FieldAccessResolver.GetterSetterFieldAccessResolver(getter, setter)
             }
         }
         return annotatedConstructor != null
@@ -274,9 +275,9 @@ class FieldScanner(protected val elementUtils: Elements, protected val typeUtils
      * Scans for xml mappable fields. If mappable field has been found, it will be added to internal class
      * @return true if a mappable Element has been found, otherwise false
      */
-    private inline fun fillAnnotatedClass(annotatedClass: AnnotatedClass, it: VariableElement, detectorStrategy: FieldDetectorStrategy, checkAccessPolicyOrDeferGetterSetterCheck: (VariableElement, Field) -> Boolean): Field? {
+    private inline fun fillAnnotatedClass(annotatedClass: AnnotatedClass, it: VariableElement, checkAccessPolicyOrDeferGetterSetterCheck: (VariableElement, Field) -> Boolean): Field? {
         // TODO support for @TextContent + @Path
-        val textContentField = detectorStrategy.isXmlTextContent(it)
+        val textContentField = annotationDetector.isXmlTextContent(it)
 
         // TextContent Field
         if (annotatedClass.textContentField == null && textContentField != null) {
@@ -286,7 +287,7 @@ class FieldScanner(protected val elementUtils: Elements, protected val typeUtils
             checkAccessPolicyOrDeferGetterSetterCheck(it, textContentField)
         }
 
-        val field: NamedField? = detectorStrategy.isXmlField(it)
+        val field: NamedField? = annotationDetector.isXmlField(it)
         if (field != null) {
 
             if (textContentField != null) {
@@ -311,14 +312,14 @@ class FieldScanner(protected val elementUtils: Elements, protected val typeUtils
                 is PolymorphicListElementField -> {
                     val path = PathDetector.getSegments(field.element)
                     for ((xmlElementName, typeMirror) in field.typeElementNameMatcher) {
-                        annotatedClass.addChildElement(PolymorphicSubstitutionListField(field.element, typeMirror, field.accessPolicy, xmlElementName, field.genericListTypeMirror, field.required), path)
+                        annotatedClass.addChildElement(PolymorphicSubstitutionListField(field.element, typeMirror, field.accessResolver, xmlElementName, field.genericListTypeMirror, field.required), path)
                     }
                 }
 
                 is PolymorphicElementField ->
                     // Insert PolymorphicSubstitution instead of the original field.
                     for ((xmlElementName, typeMirror) in field.typeElementNameMatcher) {
-                        annotatedClass.addChildElement(PolymorphicSubstitutionField(field.element, typeMirror, field.accessPolicy, xmlElementName, field.required), PathDetector.getSegments(field.element))
+                        annotatedClass.addChildElement(PolymorphicSubstitutionField(field.element, typeMirror, field.accessResolver, xmlElementName, field.required), PathDetector.getSegments(field.element))
                     }
 
                 is XmlChildElement -> annotatedClass.addChildElement(field, PathDetector.getSegments(field.element))
@@ -345,10 +346,11 @@ class FieldScanner(protected val elementUtils: Elements, protected val typeUtils
         if (fieldName.length == 1) {
             // a should be getA()
             builder.append(fieldName.toUpperCase())
-        } else if (fieldName[0].isLowerCase() && fieldName[1].isUpperCase()) {
+        } /*else if (fieldName[0].isLowerCase() && fieldName[1].isUpperCase()) {
             // aString should be getaString()
             builder.append(fieldName)
-        } else {
+
+        }*/ else {
             // foo should be getFoo()
             builder.append(Character.toUpperCase(fieldName[0]))
             builder.append(fieldName.substring(1))

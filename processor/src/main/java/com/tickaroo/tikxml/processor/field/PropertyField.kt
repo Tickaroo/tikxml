@@ -22,7 +22,7 @@ import com.squareup.javapoet.ClassName
 import com.squareup.javapoet.FieldSpec
 import com.squareup.javapoet.ParameterizedTypeName
 import com.squareup.javapoet.TypeSpec
-import com.tickaroo.tikxml.processor.generator.CodeGenUtils
+import com.tickaroo.tikxml.processor.generator.CodeGeneratorHelper
 import com.tickaroo.tikxml.processor.xml.XmlChildElement
 import java.util.*
 import javax.lang.model.element.Modifier
@@ -38,35 +38,35 @@ class PropertyField(element: VariableElement, name: String, required: Boolean? =
 
     override fun isXmlElementAccessableFromOutsideTypeAdapter() = true
 
-    override fun generateReadXmlCode(codeGenUtils: CodeGenUtils): TypeSpec {
+    override fun generateReadXmlCode(codeGeneratorHelper: CodeGeneratorHelper): TypeSpec {
 
         if (!hasAttributes()) {
-            val fromXmlMethod = codeGenUtils.fromXmlMethodBuilder()
-                    .addCode(codeGenUtils.ignoreAttributes())
-                    .addCode(codeGenUtils.assignViaTypeConverterOrPrimitive(element, CodeGenUtils.AssignmentType.ELEMENT, accessPolicy, converterQualifiedName))
+            val fromXmlMethod = codeGeneratorHelper.fromXmlMethodBuilder()
+                    .addCode(codeGeneratorHelper.ignoreAttributes())
+                    .addCode(codeGeneratorHelper.assignViaTypeConverterOrPrimitive(element, CodeGeneratorHelper.AssignmentType.ELEMENT, accessResolver, converterQualifiedName))
                     .build()
 
 
             return TypeSpec.anonymousClassBuilder("")
-                    .addSuperinterface(codeGenUtils.childElementBinderType)
+                    .addSuperinterface(codeGeneratorHelper.childElementBinderType)
                     .addMethod(fromXmlMethod)
                     .build()
         }
 
 
-        val fromXmlMethod = codeGenUtils.fromXmlMethodBuilder()
-                .addCode(codeGenUtils.assignViaTypeConverterOrPrimitive(element, CodeGenUtils.AssignmentType.ELEMENT, accessPolicy, converterQualifiedName))
+        val fromXmlMethod = codeGeneratorHelper.fromXmlMethodBuilder()
+                .addCode(codeGeneratorHelper.assignViaTypeConverterOrPrimitive(element, CodeGeneratorHelper.AssignmentType.ELEMENT, accessResolver, converterQualifiedName))
                 .build()
 
         // Multiple attributes
-        val attributeMapType = ParameterizedTypeName.get(ClassName.get(Map::class.java), ClassName.get(String::class.java), codeGenUtils.attributeBinderType)
-        val attributeHashMapType = ParameterizedTypeName.get(ClassName.get(Map::class.java), ClassName.get(String::class.java), codeGenUtils.attributeBinderType)
+        val attributeMapType = ParameterizedTypeName.get(ClassName.get(Map::class.java), ClassName.get(String::class.java), codeGeneratorHelper.attributeBinderType)
+        val attributeHashMapType = ParameterizedTypeName.get(ClassName.get(Map::class.java), ClassName.get(String::class.java), codeGeneratorHelper.attributeBinderType)
         return TypeSpec.anonymousClassBuilder("")
-                .addSuperinterface(codeGenUtils.nestedChildElementBinderType)
-                .addField(FieldSpec.builder(attributeMapType, CodeGenUtils.attributeBindersParam, Modifier.PRIVATE)
+                .addSuperinterface(codeGeneratorHelper.nestedChildElementBinderType)
+                .addField(FieldSpec.builder(attributeMapType, CodeGeneratorHelper.attributeBindersParam, Modifier.PRIVATE)
                         .initializer("new \$T()", attributeHashMapType)
                         .build())
-                .addInitializerBlock(codeGenUtils.generateAttributeBinders(this))
+                .addInitializerBlock(codeGeneratorHelper.generateAttributeBinders(this))
                 .addMethod(fromXmlMethod)
                 .build()
 

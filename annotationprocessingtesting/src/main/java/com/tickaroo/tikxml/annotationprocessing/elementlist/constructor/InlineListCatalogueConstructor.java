@@ -19,14 +19,13 @@
 package com.tickaroo.tikxml.annotationprocessing.elementlist.constructor;
 
 import com.tickaroo.tikxml.annotation.Element;
-import com.tickaroo.tikxml.annotation.ScanMode;
 import com.tickaroo.tikxml.annotation.Xml;
 import java.util.List;
 
 /**
  * @author Hannes Dorfmann
  */
-@Xml(scanMode = ScanMode.ANNOTATIONS_ONLY)
+@Xml
 public class InlineListCatalogueConstructor {
 
 

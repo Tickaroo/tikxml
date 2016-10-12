@@ -22,7 +22,7 @@ import com.squareup.javapoet.*
 import com.tickaroo.tikxml.TikXmlConfig
 import com.tickaroo.tikxml.TypeConverterNotFoundException
 import com.tickaroo.tikxml.XmlReader
-import com.tickaroo.tikxml.processor.field.access.FieldAccessPolicy
+import com.tickaroo.tikxml.processor.field.access.FieldAccessResolver
 import com.tickaroo.tikxml.processor.utils.*
 import com.tickaroo.tikxml.processor.xml.XmlElement
 import com.tickaroo.tikxml.typeadapter.AttributeBinder
@@ -37,7 +37,7 @@ import javax.lang.model.element.Modifier
  *
  * @author Hannes Dorfmann
  */
-class CodeGenUtils(val customTypeConverterManager: CustomTypeConverterManager, val typeConvertersForPrimitives: Set<String>, val  valueType: ClassName) {
+class CodeGeneratorHelper(val customTypeConverterManager: CustomTypeConverterManager, val typeConvertersForPrimitives: Set<String>, val  valueType: ClassName) {
 
 
     // Constants
@@ -80,7 +80,7 @@ class CodeGenUtils(val customTypeConverterManager: CustomTypeConverterManager, v
 
             val fromXmlMethodBuilder = fromXmlMethodBuilder()
 
-            fromXmlMethodBuilder.addCode(assignViaTypeConverterOrPrimitive(attributeField.element, AssignmentType.ATTRIBUTE, attributeField.accessPolicy, attributeField.converterQualifiedName))
+            fromXmlMethodBuilder.addCode(assignViaTypeConverterOrPrimitive(attributeField.element, AssignmentType.ATTRIBUTE, attributeField.accessResolver, attributeField.converterQualifiedName))
 
 
             val anonymousAttributeBinder = TypeSpec.anonymousClassBuilder("")
@@ -99,7 +99,7 @@ class CodeGenUtils(val customTypeConverterManager: CustomTypeConverterManager, v
     /**
      * get the assignment statement for reading attributes
      */
-    fun assignViaTypeConverterOrPrimitive(element: Element, assignmentType: AssignmentType, accessPolicy: FieldAccessPolicy, customTypeConverterQualifiedClassName: String?): CodeBlock {
+    fun assignViaTypeConverterOrPrimitive(element: Element, assignmentType: AssignmentType, accessResolver: FieldAccessResolver, customTypeConverterQualifiedClassName: String?): CodeBlock {
 
         val type = element.asType()
         val xmlReaderMethodPrefix = assignmentType.xmlReaderMethodPrefix()
@@ -107,7 +107,7 @@ class CodeGenUtils(val customTypeConverterManager: CustomTypeConverterManager, v
 
         val surroundWithTryCatch = fun(assignmentStatement: String) = CodeBlock.builder()
                 .beginControlFlow("try")
-                .add(accessPolicy.resolveAssignment(assignmentStatement))
+                .add(accessResolver.resolveAssignment(assignmentStatement))
                 .nextControlFlow("catch(\$T e)", ClassName.get(TypeConverterNotFoundException::class.java))
                 .addStatement("throw e")
                 .nextControlFlow("catch(\$T e)", ClassName.get(Exception::class.java))
@@ -131,7 +131,7 @@ class CodeGenUtils(val customTypeConverterManager: CustomTypeConverterManager, v
 
             }
 
-            return accessPolicy.resolveAssignment("$readerParam.$xmlReaderMethodPrefix()")
+            return accessResolver.resolveAssignment("$readerParam.$xmlReaderMethodPrefix()")
         }
 
         if (type.isBoolean()) {
@@ -143,7 +143,7 @@ class CodeGenUtils(val customTypeConverterManager: CustomTypeConverterManager, v
                 return surroundWithTryCatch("$tikConfigParam.getTypeConverter(boolean.class).read($readerParam.$xmlReaderMethodPrefix())")
             }
 
-            return accessPolicy.resolveAssignment("$readerParam.${xmlReaderMethodPrefix}AsBoolean()")
+            return accessResolver.resolveAssignment("$readerParam.${xmlReaderMethodPrefix}AsBoolean()")
         }
 
         if (type.isDouble()) {
@@ -156,7 +156,7 @@ class CodeGenUtils(val customTypeConverterManager: CustomTypeConverterManager, v
                 return surroundWithTryCatch("$tikConfigParam.getTypeConverter(double.class).read($readerParam.${xmlReaderMethodPrefix}())")
             }
 
-            return accessPolicy.resolveAssignment("$readerParam.${xmlReaderMethodPrefix}AsDouble()")
+            return accessResolver.resolveAssignment("$readerParam.${xmlReaderMethodPrefix}AsDouble()")
         }
 
         if (type.isInt()) {
@@ -169,7 +169,7 @@ class CodeGenUtils(val customTypeConverterManager: CustomTypeConverterManager, v
                 return surroundWithTryCatch("$tikConfigParam.getTypeConverter(int.class).read($readerParam.${xmlReaderMethodPrefix}())")
             }
 
-            return accessPolicy.resolveAssignment("$readerParam.${xmlReaderMethodPrefix}AsInt()")
+            return accessResolver.resolveAssignment("$readerParam.${xmlReaderMethodPrefix}AsInt()")
         }
 
         if (type.isLong()) {
@@ -182,7 +182,7 @@ class CodeGenUtils(val customTypeConverterManager: CustomTypeConverterManager, v
                 return surroundWithTryCatch("$tikConfigParam.getTypeConverter(long.class).read($readerParam.${xmlReaderMethodPrefix}())")
             }
 
-            return accessPolicy.resolveAssignment("$readerParam.${xmlReaderMethodPrefix}AsLong()")
+            return accessResolver.resolveAssignment("$readerParam.${xmlReaderMethodPrefix}AsLong()")
         }
 
         //
@@ -207,7 +207,7 @@ class CodeGenUtils(val customTypeConverterManager: CustomTypeConverterManager, v
             val childBinderTypeMap = ParameterizedTypeName.get(ClassName.get(HashMap::class.java), ClassName.get(String::class.java), childElementBinderType)
             initializerBuilder.addStatement("$childElementBindersParam = new \$T()", childBinderTypeMap);
             for ((xmlName, xmlElement) in element.childElements) {
-                initializerBuilder.addStatement("${CodeGenUtils.childElementBindersParam}.put(\$S, \$L)", xmlName, xmlElement.generateReadXmlCode(this))
+                initializerBuilder.addStatement("${CodeGeneratorHelper.childElementBindersParam}.put(\$S, \$L)", xmlName, xmlElement.generateReadXmlCode(this))
             }
         }
 

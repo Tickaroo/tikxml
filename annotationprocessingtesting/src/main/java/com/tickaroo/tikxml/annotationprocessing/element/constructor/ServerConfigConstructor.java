@@ -20,13 +20,12 @@ package com.tickaroo.tikxml.annotationprocessing.element.constructor;
 
 import com.tickaroo.tikxml.annotation.Attribute;
 import com.tickaroo.tikxml.annotation.PropertyElement;
-import com.tickaroo.tikxml.annotation.ScanMode;
 import com.tickaroo.tikxml.annotation.Xml;
 
 /**
  * @author Hannes Dorfmann
  */
-@Xml(scanMode = ScanMode.ANNOTATIONS_ONLY, name = "serverConfig")
+@Xml
 public class ServerConfigConstructor {
 
   private boolean enabled;

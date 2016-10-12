@@ -21,7 +21,6 @@ package com.tickaroo.tikxml.annotationprocessing.propertyelement.constructor;
 import com.tickaroo.tikxml.TikXml;
 import com.tickaroo.tikxml.annotationprocessing.DateConverter;
 import com.tickaroo.tikxml.annotationprocessing.TestUtils;
-import com.tickaroo.tikxml.annotationprocessing.propertyelement.PropertyItemWithGetterSetters;
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.Date;
@@ -40,12 +39,12 @@ public class PropertyElementTest {
 
     Date date = DateConverter.format.parse("1988-03-04");
 
-    Assert.assertEquals("foo", item.getaString());
+    Assert.assertEquals("foo", item.getAString());
     Assert.assertEquals(123, item.getAnInt());
-    Assert.assertEquals(true, item.isaBoolean());
-    Assert.assertEquals(23.42, item.getaDouble(), 0);
-    Assert.assertEquals(2147483648L, item.getaLong());
-    Assert.assertEquals(date, item.getaDate());
+    Assert.assertEquals(true, item.isABoolean());
+    Assert.assertEquals(23.42, item.getADouble(), 0);
+    Assert.assertEquals(2147483648L, item.getALong());
+    Assert.assertEquals(date, item.getADate());
 
     Assert.assertEquals(123, (int) item.getIntWrapper());
     Assert.assertEquals(true, item.getBooleanWrapper());
@@ -61,7 +60,7 @@ public class PropertyElementTest {
         xml.read(TestUtils.sourceForFile("property_item_with_attributes.xml"),
             PropertyItemConstructor.class);
 
-    Assert.assertEquals("foo", item.getaString());
+    Assert.assertEquals("foo", item.getAString());
   }
 
   @Test

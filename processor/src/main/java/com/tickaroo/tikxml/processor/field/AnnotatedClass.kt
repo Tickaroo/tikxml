@@ -18,7 +18,6 @@
 
 package com.tickaroo.tikxml.processor.field
 
-import com.tickaroo.tikxml.annotation.ScanMode
 import com.tickaroo.tikxml.annotation.Xml
 import com.tickaroo.tikxml.processor.ProcessingException
 import com.tickaroo.tikxml.processor.xml.XmlChildElement
@@ -37,7 +36,6 @@ interface AnnotatedClass : XmlRootElement {
 
     override val element: TypeElement
     override val nameAsRoot: String
-    val scanMode: ScanMode
     val inheritance: Boolean
     val simpleClassName: String
     val qualifiedClassName: String
@@ -57,7 +55,6 @@ class AnnotatedClassImpl
 
     override val element: TypeElement
 
-    override val scanMode: ScanMode
     override val inheritance: Boolean
     override val nameAsRoot: String
     override val simpleClassName: String
@@ -74,7 +71,6 @@ class AnnotatedClassImpl
         qualifiedClassName = element.qualifiedName.toString()
 
         val xmlAnnotation = element.getAnnotation(Xml::class.java)
-        scanMode = xmlAnnotation.scanMode
         inheritance = xmlAnnotation.inheritance
         nameAsRoot = xmlAnnotation.name
 

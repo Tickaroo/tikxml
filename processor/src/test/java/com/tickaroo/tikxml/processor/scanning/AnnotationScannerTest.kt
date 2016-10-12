@@ -28,13 +28,13 @@ import org.junit.Test
 import javax.tools.JavaFileObject
 
 /**
- * Tests [FieldScanner]:
+ * Tests [AnnotationScanner]:
  * - empty Consturctor
  * - Getter Methods
  * - Setter Methods
  * @author Hannes Dorfmann
  */
-class FieldScannerTest {
+class AnnotationScannerTest {
 
     @Test
     fun noPublicConstructor() {

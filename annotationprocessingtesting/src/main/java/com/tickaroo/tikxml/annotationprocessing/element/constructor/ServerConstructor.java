@@ -20,19 +20,18 @@ package com.tickaroo.tikxml.annotationprocessing.element.constructor;
 
 import com.tickaroo.tikxml.annotation.Attribute;
 import com.tickaroo.tikxml.annotation.Element;
-import com.tickaroo.tikxml.annotation.ScanMode;
 import com.tickaroo.tikxml.annotation.Xml;
 
 /**
  * @author Hannes Dorfmann
  */
-@Xml(scanMode = ScanMode.ANNOTATIONS_ONLY, name = "server")
+@Xml
 public class ServerConstructor {
   private String name;
   private ServerConfigConstructor config;
 
   public ServerConstructor(@Attribute String name,
-      @Element ServerConfigConstructor config) {
+      @Element(name = "serverConfig") ServerConfigConstructor config) {
     this.name = name;
     this.config = config;
   }

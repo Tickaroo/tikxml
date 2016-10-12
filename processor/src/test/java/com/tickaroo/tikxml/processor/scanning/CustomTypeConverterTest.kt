@@ -25,7 +25,6 @@ import com.google.testing.compile.JavaSourcesSubject
 import com.tickaroo.tikxml.TypeConverter
 import com.tickaroo.tikxml.annotation.Attribute
 import com.tickaroo.tikxml.annotation.PropertyElement
-import com.tickaroo.tikxml.annotation.ScanMode
 import com.tickaroo.tikxml.annotation.Xml
 import com.tickaroo.tikxml.processor.XmlProcessor
 import org.junit.Test
@@ -42,7 +41,7 @@ class CustomTypeConverterTest {
         val componentFile = JavaFileObjects.forSourceLines("test.MyDateConverter",
                 "package test;",
                 "",
-                "@${Xml::class.java.canonicalName}(scanMode = ${ScanMode::class.qualifiedName}.${ScanMode.ANNOTATIONS_ONLY})",
+                "@${Xml::class.java.canonicalName}",
                 "class CustomTypeAdapterOnAttribute {",
                 "   @${Attribute::class.qualifiedName}",
                 "   ${Date::class.qualifiedName} foo;",
@@ -65,7 +64,7 @@ class CustomTypeConverterTest {
         val componentFile = JavaFileObjects.forSourceLines("test.MyDateConverter",
                 "package test;",
                 "",
-                "@${Xml::class.java.canonicalName}(scanMode = ${ScanMode::class.qualifiedName}.${ScanMode.ANNOTATIONS_ONLY})",
+                "@${Xml::class.java.canonicalName}",
                 "class CustomTypeAdapterOnAttribute {",
                 "   @${PropertyElement::class.qualifiedName}",
                 "   ${Date::class.qualifiedName} foo;",
