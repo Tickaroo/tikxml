@@ -975,12 +975,5 @@ class Book {
 }
 ```
 
-Data classes are supported too by annotating the constructor:
+Data classes are not supported yet, because of [this issue](https://youtrack.jetbrains.com/issue/KT-14328#tab=Comments)
 
-```kotlin
-@Xml
-data class Book (
-    @Attribute val id : Integer,
-    @Element val author : Author
-)
-```
