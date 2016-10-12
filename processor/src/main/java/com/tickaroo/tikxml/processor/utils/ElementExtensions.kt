@@ -18,6 +18,9 @@
 
 package com.tickaroo.tikxml.processor.utils
 
+import com.tickaroo.tikxml.annotation.Attribute
+import com.tickaroo.tikxml.annotation.PropertyElement
+import com.tickaroo.tikxml.annotation.TextContent
 import java.util.*
 import javax.lang.model.element.*
 import javax.lang.model.type.TypeKind
@@ -136,7 +139,11 @@ fun Element.isMethodWithOneParameterOfType(type: TypeMirror, typeUtils: Types) =
  */
 fun Element.isParameterlessMethod() = isMethod() && (this as ExecutableElement).parameters.isEmpty()
 
-fun VariableElement.getSurroundingClass() = enclosingElement as TypeElement
+fun VariableElement.getSurroundingClass() = when (enclosingElement) {
+    is TypeElement -> enclosingElement as TypeElement
+    is ExecutableElement -> enclosingElement.enclosingElement as TypeElement
+    else -> throw IllegalArgumentException("Unexpected enclosing element $enclosingElement for $this")
+}
 
 fun VariableElement.getSurroundingClassQualifiedName() = getSurroundingClass().qualifiedName.toString()
 
@@ -158,3 +165,11 @@ fun TypeElement.getSuperClasses(typeUtils: Types): List<TypeElement> {
     }
     return superClasses
 }
+
+/**
+ * Checks whether or not this element has at least one TikXml Annotation like @[Attribute]
+ */
+fun VariableElement.hasTikXmlAnnotation() = getAnnotation(Attribute::class.java) != null
+        || getAnnotation(PropertyElement::class.java) != null
+        || getAnnotation(com.tickaroo.tikxml.annotation.Element::class.java) != null
+        || getAnnotation(TextContent::class.java) != null

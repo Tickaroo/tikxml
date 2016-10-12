@@ -26,7 +26,7 @@ import javax.lang.model.util.Types
  * Detects and instantiates the concrete [FieldScanner]
  * @author Hannes Dorfmann
  */
-class FieldDetectorStrategyFactory(private val elementUtils: Elements, private val typeUtils: Types, private val requiredDetector: RequiredDetector) {
+class FieldDetectorStrategyFactory(elementUtils: Elements, typeUtils: Types, requiredDetector: RequiredDetector) {
 
     // Visible for testing
     private val commonCaseScanStrategy = CommonCaseFieldDetectorStrategy(elementUtils, typeUtils, requiredDetector)
@@ -44,7 +44,7 @@ class FieldDetectorStrategyFactory(private val elementUtils: Elements, private v
     /**
      * Maps the [ScanMode] to a [FieldScanner]
      */
-    private fun strategyForScanMode(scanMode: ScanMode) = when (scanMode) {
+    private inline fun strategyForScanMode(scanMode: ScanMode) = when (scanMode) {
         ScanMode.COMMON_CASE -> commonCaseScanStrategy
         ScanMode.ANNOTATIONS_ONLY -> annotationOnlyScanStrategy
         ScanMode.DEFAULT -> commonCaseScanStrategy

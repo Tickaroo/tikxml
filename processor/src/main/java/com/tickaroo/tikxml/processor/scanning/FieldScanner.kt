@@ -18,10 +18,7 @@
 
 package com.tickaroo.tikxml.processor.scanning
 
-import com.tickaroo.tikxml.annotation.Attribute
-import com.tickaroo.tikxml.annotation.Element
-import com.tickaroo.tikxml.annotation.PropertyElement
-import com.tickaroo.tikxml.annotation.Xml
+import com.tickaroo.tikxml.annotation.*
 import com.tickaroo.tikxml.processor.ProcessingException
 import com.tickaroo.tikxml.processor.field.*
 import com.tickaroo.tikxml.processor.field.access.FieldAccessPolicy
@@ -47,29 +44,34 @@ class FieldScanner(protected val elementUtils: Elements, protected val typeUtils
     @Throws(ProcessingException::class)
     fun scan(annotatedClass: AnnotatedClass) {
 
-        var currentElement: TypeElement = annotatedClass.element
+        val currentElement: TypeElement = annotatedClass.element
 
         // Scan the currently annotated class
-        doScan(annotatedClass, currentElement)
+        val hasAnnotatedConstructor = doScan(annotatedClass, currentElement)
 
-        if (annotatedClass.inheritance) {
+        if (!hasAnnotatedConstructor && annotatedClass.inheritance) {
             // Scan super classes with @Xml annotation
             currentElement.getSuperClasses(typeUtils)
                     .filter { it.getAnnotation(Xml::class.java) != null }
                     .forEach { doScan(annotatedClass, it) }
         }
-
-
     }
 
-    private fun doScan(annotatedClass: AnnotatedClass, currentElement: TypeElement) {
+    /**
+     * Scan a class for annotated fields and constructors.
+     * @return true, if the scanned TypeElement has an annotated constructor, otherwise false
+     */
+    private fun doScan(annotatedClass: AnnotatedClass, currentElement: TypeElement): Boolean {
 
         val fieldWithMethodAccessRequired = ArrayList<Field>()
         val methodsMap = HashMap<String, ExecutableElement>()
         var constructorFound = false
+        var annotatedConstructor: ExecutableElement? = null
+        val annotatedConstructorFields = ArrayList<Field>()
+        var annotatedFields = 0
 
         // Function to
-        fun checkAccessPolicyOrDeferGetterSetterCheck(element: VariableElement, field: Field): Boolean {
+        val checkAccessPolicyOrDeferGetterSetterCheck = fun(element: VariableElement, field: Field): Boolean {
             if (element.hasMinimumPackageVisibilityModifiers()) {
                 field.accessPolicy = FieldAccessPolicy.MinPackageVisibilityFieldAccessPolicy(field.element)
                 return true
@@ -83,38 +85,49 @@ class FieldScanner(protected val elementUtils: Elements, protected val typeUtils
 
             if (it.isEmptyConstructorWithMinimumPackageVisibility()) {
                 constructorFound = true
+            } else if (it.isConstructor() && !it.isEmptyConstructor()) {
+                // check for Annotated Constructors
+                val constructor = it as ExecutableElement
+                val fieldDetectorStrategy = fieldDetectorStrategyFactory.getStrategy(ScanMode.ANNOTATIONS_ONLY);
+                var foundXmlAnnotation = 0
+                constructor.parameters.forEach {
+                    val mappableField = fillAnnotatedClass(annotatedClass, it, fieldDetectorStrategy, checkAccessPolicyOrDeferGetterSetterCheck)
+                    if (mappableField != null) {
+                        foundXmlAnnotation++
+                        annotatedConstructorFields.add(mappableField)
+                    }
+                }
+                // check if constructor contains a mix of mappable (xml annotated) parameters and not mappable which is not allowed
+                // Either all parameters are mappable or none of them is
+                if (foundXmlAnnotation == constructor.parameters.size) {
+
+                    if (!constructor.hasMinimumPackageVisibilityModifiers()) {
+                        throw ProcessingException(constructor, "The constructor $constructor in class ${annotatedClass.qualifiedClassName} is annotated with TikXml annotations and therefore must have at least package visibility to be able to be invoked from TikXml")
+                    }
+
+                    if (annotatedClass.inheritance) {
+                        // For annotated classes we have to scan inheritance tree for methods
+                        annotatedClass.element.getSuperClasses(typeUtils).flatMap {
+                            it.enclosedElements.filter { method -> method.isGetterMethodWithMinimumPackageVisibility() }.map { it as ExecutableElement }
+                        }.forEach { methodsMap.put(it.simpleName.toString(), it) }
+                    }
+
+                    annotatedConstructor = constructor
+                    constructorFound = true
+                } else if (foundXmlAnnotation > 0) {
+                    throw ProcessingException(constructor, "The constructor $constructor in class ${annotatedClass.qualifiedClassName} contains a mix of TikXml annotated parameters and not annotated parameters." +
+                            "That is not allowed! Either annotate all parameters or none of them")
+                } // Otherwise it was an empty constructor.
+
             } else if (it.isGetterMethodWithMinimumPackageVisibility() || it.isSetterMethodWithMinimumPackageVisibility()) {
                 val method = it as ExecutableElement
                 methodsMap.put(method.simpleName.toString(), method)
             } else if (it.isField()) {
-
                 val xmlAnnotation = currentElement.getAnnotation(Xml::class.java) ?: throw ProcessingException(currentElement, "The class ${annotatedClass.qualifiedClassName} should be annotated with @${Xml::class.simpleName}. This is an internal error. Please file an issue on github: https://github.com/Tickaroo/tikxml/issues") // Should be impossible
-
                 val fieldDetectorStrategy = fieldDetectorStrategyFactory.getStrategy(xmlAnnotation.scanMode)
-
-                // TODO support for @TextContent + @Path
-                val textContentField = fieldDetectorStrategy.isXmlTextContent(it as VariableElement)
-
-                // TextContent Field
-                if (annotatedClass.textContentField == null && textContentField != null) {
-
-                    // Only take the first @TextContent field if there are multiple in the inheritance tree
-                    annotatedClass.textContentField = textContentField
-                    checkAccessPolicyOrDeferGetterSetterCheck(it, textContentField)
-                }
-
-                val field: NamedField? = fieldDetectorStrategy.isXmlField(it)
+                val field = fillAnnotatedClass(annotatedClass, it as VariableElement, fieldDetectorStrategy, checkAccessPolicyOrDeferGetterSetterCheck)
                 if (field != null) {
-
-                    if (textContentField != null) {
-                        // @TextContent annotation and @Attribute, @PropertyElement or @Element at the same time
-                        throw ProcessingException(it, "Field '$it' is marked as TextContent and another xml element like @${Attribute::class.simpleName}, @${PropertyElement::class.simpleName} or @${Element::class.simpleName} at the same time which is not allowed. A field can only be exactly one of those types.")
-                    }
-
-                    // needs setter and getter?
-                    if (checkAccessPolicyOrDeferGetterSetterCheck(it, field)) {
-                        addFieldToAnnotatedClass(annotatedClass, field)
-                    }
+                    annotatedFields++
                 }
             }
         }
@@ -125,33 +138,72 @@ class FieldScanner(protected val elementUtils: Elements, protected val typeUtils
                     "must provide an empty (parameterless) constructor with minimum default (package) visibility")
         }
 
-        // Search for getters and setters
-        fieldWithMethodAccessRequired.forEach {
+        if (annotatedConstructor != null) {
 
-            val element = it.element
-            val elementName: String = element.simpleName.toString()
-            val nameWithoutHungarian = getFieldNameWithoutHungarianNotation(element)
-
-            var getter = findGetterForField(element, nameWithoutHungarian, "get", methodsMap)
-            if (getter == null) {
-                getter = findGetterForHungarianField(element, elementName, "get", methodsMap)
-                if (getter == null) {
-                    getter = findGetterForHungarianFieldUpperCase(element, elementName, "get", methodsMap)
-                }
+            if (annotatedFields > 0) {
+                throw ProcessingException(annotatedConstructor, "${annotatedClass.qualifiedClassName} has TikXml annotated fields AND an annotated constructor $annotatedConstructor . That is not allowed! Either annotate fields or a constructor (but not a mix of both)")
             }
 
-            // Test with "is" prefix
-            if (getter == null && element.asType().isBoolean()) {
-                getter = findGetterForField(element, nameWithoutHungarian, "is", methodsMap)
+            // Check if all constructor annotated fields have a getter method
+            annotatedConstructorFields.forEach { checkGetter(it, methodsMap, true) }
+
+            annotatedClass.annotatedConstructor = annotatedConstructor
+
+        } else {
+            // Not annotated constructor
+            // Search for getters and setters
+            fieldWithMethodAccessRequired.forEach {
+                val getter = checkGetter(it, methodsMap, false)
+                val setter = checkSetter(it, methodsMap)
+
+                if (it is NamedField) {
+                    addFieldToAnnotatedClass(annotatedClass, it)
+                }
+
+                // Set access policy
+                it.accessPolicy = FieldAccessPolicy.GetterSetterFieldAccessPolicy(getter, setter)
+            }
+        }
+        return annotatedConstructor != null
+    }
+
+    /**
+     * Searches for a getter method for the given field
+     */
+    fun checkGetter(field: Field, methodsMap: Map<String, ExecutableElement>, constructorAnnotatedField: Boolean): ExecutableElement {
+        val element = field.element
+        val elementName: String = element.simpleName.toString()
+        val nameWithoutHungarian = getFieldNameWithoutHungarianNotation(element)
+
+        var getter = findGetterForField(element, nameWithoutHungarian, "get", methodsMap)
+        if (getter == null) {
+            getter = findGetterForHungarianField(element, elementName, "get", methodsMap)
+            if (getter == null) {
+                getter = findGetterForHungarianFieldUpperCase(element, elementName, "get", methodsMap)
+            }
+        }
+
+        // Test with "is" prefix
+        if (getter == null && element.asType().isBoolean()) {
+            getter = findGetterForField(element, nameWithoutHungarian, "is", methodsMap)
+            if (getter == null) {
+                getter = findGetterForHungarianField(element, elementName, "is", methodsMap)
                 if (getter == null) {
-                    getter = findGetterForHungarianField(element, elementName, "is", methodsMap)
-                    if (getter == null) {
-                        getter = findGetterForHungarianFieldUpperCase(element, elementName, "is", methodsMap)
-                    }
+                    getter = findGetterForHungarianFieldUpperCase(element, elementName, "is", methodsMap)
                 }
             }
+        }
 
-            if (getter == null) {
+        if (getter == null) {
+            if (constructorAnnotatedField) {
+                val constructor = element.enclosingElement
+                throw ProcessingException(element, "The constructor parameter '${element}' "
+                        + "in constructor $constructor in class ${(constructor.enclosingElement as TypeElement).qualifiedName.toString()} "
+                        + " is annotated with a TikXml annotation. Therefore a getter method"
+                        + " with minimum package visibility"
+                        + " with the name ${bestMethodName(elementName, "get")}() or ${bestMethodName(elementName, "is")}() "
+                        + "in case of a boolean must be provided. Unfortunately, there is no such getter method. Please provide one!")
+            } else {
                 throw ProcessingException(element, "The field '${element.simpleName.toString()}' "
                         + "in class ${(element.enclosingElement as TypeElement).qualifiedName.toString()} "
                         + "has private or protected visibility. Hence a corresponding getter method must be provided"
@@ -159,61 +211,99 @@ class FieldScanner(protected val elementUtils: Elements, protected val typeUtils
                         + " with the name ${bestMethodName(elementName, "get")}() or ${bestMethodName(elementName, "is")}() "
                         + "in case of a boolean. Unfortunately, there is no such getter method. Please provide one!")
             }
-
-            if (!getter.isParameterlessMethod()) {
-                throw ProcessingException(element, "The getter method '${getter.toString()}' for field '${element.simpleName.toString()}'"
-                        + "in class ${element.getSurroundingClassQualifiedName()} "
-                        + "must be parameterless (zero parameters).")
-            }
-
-            if (getter.isProtected() || getter.isPrivate() || (getter.isDefaultVisibility() && !getter.isSamePackageAs(element, elementUtils))) {
-                throw ProcessingException(element, "The getter method '${getter.toString()}' for field '${element.simpleName.toString()}' "
-                        + "in class ${element.getSurroundingClassQualifiedName()} "
-                        + "must have minimum package visibility (or public visibility if this is a super class in a different package)")
-
-            }
-
-            // Setter method
-            var setter = findMethodForField(nameWithoutHungarian, "set", methodsMap)
-            if (setter == null) {
-                setter = findMethodForHungarianField(elementName, "set", methodsMap)
-                if (setter == null) {
-                    setter = findMethodForHungarianFieldUpperCase(elementName, "set", methodsMap)
-                }
-            }
-
-            if (setter == null) {
-                throw ProcessingException(element, "The field '${element.simpleName.toString()}' "
-                        + "in class ${(element.enclosingElement as TypeElement).qualifiedName.toString()} "
-                        + "has private or protected visibility. Hence a corresponding setter method must be provided "
-                        + " with the name ${bestMethodName(elementName, "set")}(${element.asType()}) and "
-                        + "minimum package visibility (or public visibility if this is a super class in a different package)"
-                        + "Unfortunately, there is no such setter method. Please provide one!")
-            }
-
-            if (!setter.isMethodWithOneParameterOfType(element.asType(), typeUtils)) {
-                throw ProcessingException(element, "The setter method '${setter.toString()}' for field '${element.simpleName.toString()}' "
-                        + "in class ${element.getSurroundingClassQualifiedName()} "
-                        + "must have exactly one parameter of type '${element.asType()}'")
-            }
-
-            if (setter.isProtected() || setter.isPrivate() || (setter.isDefaultVisibility() && !setter.isSamePackageAs(element, elementUtils))) {
-                throw ProcessingException(element, "The setter method '${setter.toString()}' for field '${element.simpleName.toString()}'"
-                        + "in class ${element.getSurroundingClassQualifiedName()} "
-                        + "must have minimum package visibility (or public visibility if this is a super class in a different package)")
-
-            }
-
-            if (it is NamedField) {
-                addFieldToAnnotatedClass(annotatedClass, it)
-            }
-
-            // Set access policy
-            it.accessPolicy = FieldAccessPolicy.GetterSetterFieldAccessPolicy(getter, setter)
         }
+
+        if (!getter.isParameterlessMethod()) {
+            throw ProcessingException(element, "The getter method '${getter.toString()}' for field '${element.simpleName.toString()}'"
+                    + "in class ${element.getSurroundingClassQualifiedName()} "
+                    + "must be parameterless (zero parameters).")
+        }
+
+        if (getter.isProtected() || getter.isPrivate() || (getter.isDefaultVisibility() && !getter.isSamePackageAs(element, elementUtils))) {
+            throw ProcessingException(element, "The getter method '${getter.toString()}' for field '${element.simpleName.toString()}' "
+                    + "in class ${element.getSurroundingClassQualifiedName()} "
+                    + "must have minimum package visibility (or public visibility if this is a super class in a different package)")
+
+        }
+
+        return getter
     }
 
-    private fun addFieldToAnnotatedClass(annotatedClass: AnnotatedClass, field: NamedField): Unit =
+    /**
+     * Searches for a setter method for the given field
+     */
+    fun checkSetter(field: Field, methodsMap: Map<String, ExecutableElement>): ExecutableElement {
+        val element = field.element
+        val elementName: String = element.simpleName.toString()
+        val nameWithoutHungarian = getFieldNameWithoutHungarianNotation(element)
+
+        // Setter method
+        var setter = findMethodForField(nameWithoutHungarian, "set", methodsMap)
+        if (setter == null) {
+            setter = findMethodForHungarianField(elementName, "set", methodsMap)
+            if (setter == null) {
+                setter = findMethodForHungarianFieldUpperCase(elementName, "set", methodsMap)
+            }
+        }
+
+        if (setter == null) {
+            throw ProcessingException(element, "The field '${element.simpleName.toString()}' "
+                    + "in class ${(element.enclosingElement as TypeElement).qualifiedName.toString()} "
+                    + "has private or protected visibility. Hence a corresponding setter method must be provided "
+                    + " with the name ${bestMethodName(elementName, "set")}(${element.asType()}) and "
+                    + "minimum package visibility (or public visibility if this is a super class in a different package)"
+                    + "Unfortunately, there is no such setter method. Please provide one!")
+        }
+
+        if (!setter.isMethodWithOneParameterOfType(element.asType(), typeUtils)) {
+            throw ProcessingException(element, "The setter method '${setter.toString()}' for field '${element.simpleName.toString()}' "
+                    + "in class ${element.getSurroundingClassQualifiedName()} "
+                    + "must have exactly one parameter of type '${element.asType()}'")
+        }
+
+        if (setter.isProtected() || setter.isPrivate() || (setter.isDefaultVisibility() && !setter.isSamePackageAs(element, elementUtils))) {
+            throw ProcessingException(element, "The setter method '${setter.toString()}' for field '${element.simpleName.toString()}'"
+                    + "in class ${element.getSurroundingClassQualifiedName()} "
+                    + "must have minimum package visibility (or public visibility if this is a super class in a different package)")
+
+        }
+        return setter
+    }
+
+    /**
+     * Scans for xml mappable fields. If mappable field has been found, it will be added to internal class
+     * @return true if a mappable Element has been found, otherwise false
+     */
+    private inline fun fillAnnotatedClass(annotatedClass: AnnotatedClass, it: VariableElement, detectorStrategy: FieldDetectorStrategy, checkAccessPolicyOrDeferGetterSetterCheck: (VariableElement, Field) -> Boolean): Field? {
+        // TODO support for @TextContent + @Path
+        val textContentField = detectorStrategy.isXmlTextContent(it)
+
+        // TextContent Field
+        if (annotatedClass.textContentField == null && textContentField != null) {
+
+            // Only take the first @TextContent field if there are multiple in the inheritance tree
+            annotatedClass.textContentField = textContentField
+            checkAccessPolicyOrDeferGetterSetterCheck(it, textContentField)
+        }
+
+        val field: NamedField? = detectorStrategy.isXmlField(it)
+        if (field != null) {
+
+            if (textContentField != null) {
+                // @TextContent annotation and @Attribute, @PropertyElement or @Element at the same time
+                throw ProcessingException(it, "Field '$it' is marked as TextContent and another xml element like @${Attribute::class.simpleName}, @${PropertyElement::class.simpleName} or @${Element::class.simpleName} at the same time which is not allowed. A field can only be exactly one of those types.")
+            }
+
+            // needs setter and getter?
+            if (checkAccessPolicyOrDeferGetterSetterCheck(it, field)) {
+                addFieldToAnnotatedClass(annotatedClass, field)
+            }
+        }
+
+        return field
+    }
+
+    private inline fun addFieldToAnnotatedClass(annotatedClass: AnnotatedClass, field: NamedField): Unit =
             when (field) {
 
                 is AttributeField -> annotatedClass.addAttribute(field, PathDetector.getSegments(field.element))
@@ -239,22 +329,27 @@ class FieldScanner(protected val elementUtils: Elements, protected val typeUtils
     /**
      * Finds a method for a field. Removes hungarion notation. If field name was mFoo this method checks for a method called setFoo()
      */
-    private fun findMethodForField(fieldName: String, methodNamePrefix: String, setterAndGetters: Map<String, ExecutableElement>): ExecutableElement? {
+    private inline fun findMethodForField(fieldName: String, methodNamePrefix: String, setterAndGetters: Map<String, ExecutableElement>): ExecutableElement? {
         val methodName = bestMethodName(fieldName, methodNamePrefix)
         return setterAndGetters[methodName]
     }
 
-    private fun findGetterForField(fieldElement: VariableElement, fieldName: String, methodNamePrefix: String, setterAndGetters: Map<String, ExecutableElement>): ExecutableElement? {
+    private inline fun findGetterForField(fieldElement: VariableElement, fieldName: String, methodNamePrefix: String, setterAndGetters: Map<String, ExecutableElement>): ExecutableElement? {
 
         val method = findMethodForField(fieldName, methodNamePrefix, setterAndGetters) ?: return null
         return if (typeUtils.isSameType(method.returnType, fieldElement.asType())) method else null
     }
 
-    private fun bestMethodName(fieldName: String, methodNamePrefix: String): String {
+    private inline fun bestMethodName(fieldName: String, methodNamePrefix: String): String {
         val builder = StringBuilder(methodNamePrefix)
         if (fieldName.length == 1) {
+            // a should be getA()
             builder.append(fieldName.toUpperCase())
+        } else if (fieldName[0].isLowerCase() && fieldName[1].isUpperCase()) {
+            // aString should be getaString()
+            builder.append(fieldName)
         } else {
+            // foo should be getFoo()
             builder.append(Character.toUpperCase(fieldName[0]))
             builder.append(fieldName.substring(1))
         }
@@ -265,7 +360,7 @@ class FieldScanner(protected val elementUtils: Elements, protected val typeUtils
     /**
      * If field name was mFoo this method checks for a method called setmFoo()
      */
-    private fun findMethodForHungarianField(fieldName: String, methodNamePrefix: String, setterAndGetters: Map<String, ExecutableElement>): ExecutableElement? {
+    private inline fun findMethodForHungarianField(fieldName: String, methodNamePrefix: String, setterAndGetters: Map<String, ExecutableElement>): ExecutableElement? {
 
 
         // Search for setter method with hungarian notion check
@@ -277,7 +372,7 @@ class FieldScanner(protected val elementUtils: Elements, protected val typeUtils
         return null;
     }
 
-    private fun findGetterForHungarianField(fieldElement: VariableElement, fieldName: String, methodNamePrefix: String, setterAndGetters: Map<String, ExecutableElement>): ExecutableElement? {
+    private inline fun findGetterForHungarianField(fieldElement: VariableElement, fieldName: String, methodNamePrefix: String, setterAndGetters: Map<String, ExecutableElement>): ExecutableElement? {
         val method = findMethodForHungarianField(fieldName, methodNamePrefix, setterAndGetters) ?: return null
         return if (typeUtils.isSameType(method.returnType, fieldElement.asType())) method else null
     }
@@ -285,7 +380,7 @@ class FieldScanner(protected val elementUtils: Elements, protected val typeUtils
     /**
      * If field name was mFoo this method checks for a method called setMFoo()
      */
-    private fun findMethodForHungarianFieldUpperCase(fieldName: String, methodNamePrefix: String, setterAndGetters: Map<String, ExecutableElement>): ExecutableElement? {
+    private inline fun findMethodForHungarianFieldUpperCase(fieldName: String, methodNamePrefix: String, setterAndGetters: Map<String, ExecutableElement>): ExecutableElement? {
 
         // Search for setter method with hungarian notion check
         if (fieldName.length > 1 && fieldName.matches(Regex("m[A-Z].*"))) {
@@ -298,13 +393,13 @@ class FieldScanner(protected val elementUtils: Elements, protected val typeUtils
         return null
     }
 
-    private fun findGetterForHungarianFieldUpperCase(fieldElement: VariableElement, fieldName: String, methodNamePrefix: String, setterAndGetters: Map<String, ExecutableElement>): ExecutableElement? {
+    private inline fun findGetterForHungarianFieldUpperCase(fieldElement: VariableElement, fieldName: String, methodNamePrefix: String, setterAndGetters: Map<String, ExecutableElement>): ExecutableElement? {
 
         val method = findMethodForHungarianFieldUpperCase(fieldName, methodNamePrefix, setterAndGetters) ?: return null
         return if (typeUtils.isSameType(method.returnType, fieldElement.asType())) method else null
     }
 
-    private fun getFieldNameWithoutHungarianNotation(element: VariableElement): String {
+    private inline fun getFieldNameWithoutHungarianNotation(element: VariableElement): String {
         val name = element.simpleName.toString()
         if (name.matches(Regex("^m[A-Z]{1}"))) {
             return name.substring(1, 2).toLowerCase();
@@ -313,7 +408,6 @@ class FieldScanner(protected val elementUtils: Elements, protected val typeUtils
         }
         return name;
     }
-
 }
 
 

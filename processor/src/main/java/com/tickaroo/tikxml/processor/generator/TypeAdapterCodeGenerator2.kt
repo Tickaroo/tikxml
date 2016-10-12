@@ -41,17 +41,21 @@ import javax.lang.model.util.Elements
  */
 class TypeAdapterCodeGenerator2(private val filer: Filer, private val elementUtils: Elements, private val typeConvertersForPrimitives: Set<String>) {
 
+    /**
+     * The name of the class that holds some value when we have to parse xml into a constructor
+     */
+    private val VALUE_HOLDER_CLASS_NAME = "ValueHolder"
 
     /**
      * Generates an [com.tickaroo.tikxml.TypeAdapter] for the given class
      */
     fun generateCode(annotatedClass: AnnotatedClass) {
 
-        val annotatedClassType = getClassToParseInto(annotatedClass)
-        val genericParamTypeAdapter = ParameterizedTypeName.get(ClassName.get(TypeAdapter::class.java), annotatedClassType)
+        val parseIntoValueType = getClassToParseInto(annotatedClass)
+        val genericParamTypeAdapter = ParameterizedTypeName.get(ClassName.get(TypeAdapter::class.java), ClassName.get(annotatedClass.element))
 
         val customTypeConverterManager = CustomTypeConverterManager()
-        val codeGenUtils = CodeGenUtils(customTypeConverterManager, typeConvertersForPrimitives, annotatedClassType)
+        val codeGenUtils = CodeGenUtils(customTypeConverterManager, typeConvertersForPrimitives, parseIntoValueType)
 
         val constructorBuilder = MethodSpec.constructorBuilder()
                 .addModifiers(Modifier.PUBLIC)
@@ -69,6 +73,16 @@ class TypeAdapterCodeGenerator2(private val filer: Filer, private val elementUti
                 .addModifiers(Modifier.PUBLIC)
                 .addSuperinterface(genericParamTypeAdapter)
 
+
+        // Uses an annotated constructor, so generate a value holder class
+        val annotatedConstructor = annotatedClass.annotatedConstructor
+        if (annotatedConstructor != null) {
+            val valueHolderBuilder = TypeSpec.classBuilder(VALUE_HOLDER_CLASS_NAME).addModifiers(Modifier.STATIC)
+            annotatedConstructor.parameters.forEach {
+                valueHolderBuilder.addField(ClassName.get(it.asType()), it.simpleName.toString())
+            }
+            adapterClassBuilder.addType(valueHolderBuilder.build())
+        }
 
         generateFields(annotatedClass, adapterClassBuilder, customTypeConverterManager)
 
@@ -197,7 +211,7 @@ class TypeAdapterCodeGenerator2(private val filer: Filer, private val elementUti
 
             builder.beginControlFlow("while(true)")
                     .beginControlFlow("if (\$L.hasElement())", reader)
-                    
+
                     .addStatement("\$L.beginElement()", reader)
                     .addStatement("String elementName = \$L.nextElementName()", reader)
                     .addStatement("\$T childElementBinder = \$L.get(elementName)", ParameterizedTypeName.get(ClassName.get(ChildElementBinder::class.java), targetClassToParseInto), CodeGenUtils.childElementBindersParam)
@@ -269,9 +283,20 @@ class TypeAdapterCodeGenerator2(private val filer: Filer, private val elementUti
             // TODO constructor support
         }
 
-        // TODO Constructor support: copy value to constructor
-        builder.addStatement("return \$L", value)
-
+        val annotatedConstructor = annotatedClass.annotatedConstructor
+        if (annotatedConstructor != null) {
+            val stringBuilder = StringBuilder("return new \$T(");
+            annotatedConstructor.parameters.forEachIndexed { i, parameter ->
+                stringBuilder.append("$value.${parameter.simpleName}")
+                if (i < annotatedConstructor.parameters.size -1){
+                    stringBuilder.append(", ")
+                }
+            }
+            stringBuilder.append(")")
+            builder.addStatement(stringBuilder.toString(), ClassName.get(annotatedClass.element))
+        } else {
+            builder.addStatement("return \$L", value)
+        }
         return builder;
     }
 
@@ -297,9 +322,11 @@ class TypeAdapterCodeGenerator2(private val filer: Filer, private val elementUti
      * Get the Type that is used for generic types like [AttributeBinder] and [ChildElementBinder] to parse into that.
      */
     private inline fun getClassToParseInto(annotatedClass: AnnotatedClass) =
-            if (annotatedClass.annotatedConstructor) {
-                throw UnsupportedOperationException("Not implemented yet")
-                // TODO return type of not generated Helper
+            if (annotatedClass.annotatedConstructor != null) {
+                // ClassName.get(annotatedClass.element.g)get(annotatedClass.element.qualifiedName.toString() + "$" + VALUE_HOLDER_CLASS_NAME)
+                val packageElement = elementUtils.getPackageOf(annotatedClass.element)
+                // ClassName.get(if (packageElement == null) "" else packageElement.toString(), annotatedClass.simpleClassName + TypeAdapter.GENERATED_CLASS_SUFFIX + "." + VALUE_HOLDER_CLASS_NAME)
+                ClassName.get("", VALUE_HOLDER_CLASS_NAME)
             } else {
                 ClassName.get(annotatedClass.element)
             }

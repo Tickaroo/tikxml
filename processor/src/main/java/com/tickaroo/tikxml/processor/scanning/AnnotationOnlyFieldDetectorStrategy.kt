@@ -26,6 +26,7 @@ import com.tickaroo.tikxml.processor.field.*
 import com.tickaroo.tikxml.processor.utils.*
 import java.util.*
 import javax.lang.model.element.ElementKind
+import javax.lang.model.element.ExecutableElement
 import javax.lang.model.element.TypeElement
 import javax.lang.model.element.VariableElement
 import javax.lang.model.type.*
@@ -36,7 +37,7 @@ import javax.lang.model.util.Types
  * A [FieldScanner] that scans the element only for annotations
  * @author Hannes Dorfmann
  */
-open class AnnotationOnlyFieldDetectorStrategy(protected val elementUtils: Elements, protected val  typeUtils: Types, protected val requiredDetector: RequiredDetector) : FieldDetectorStrategy {
+open class AnnotationOnlyFieldDetectorStrategy(protected val elementUtils: Elements, protected val typeUtils: Types, protected val requiredDetector: RequiredDetector) : FieldDetectorStrategy {
 
     val listTypeMirror: TypeMirror
 
@@ -171,7 +172,7 @@ open class AnnotationOnlyFieldDetectorStrategy(protected val elementUtils: Eleme
                     // A simple element without polymorphism
 
                     // Interfaces not allowed with no name matchers to resolve polymorphism
-                    if ( typeUtils.asElement(element.asType()).kind == ElementKind.INTERFACE ) {
+                    if (typeUtils.asElement(element.asType()).kind == ElementKind.INTERFACE) {
                         throw ProcessingException(element, "The type of field '${element.simpleName}' in class ${element.enclosingElement} is an interface. Since interfaces cannot be instantiated you have to specify which class should be instantiated (resolve polymorphism) manually by @${Element::class.simpleName}( typesByElement = ... )")
                     }
 
@@ -249,7 +250,7 @@ open class AnnotationOnlyFieldDetectorStrategy(protected val elementUtils: Eleme
                 val typeClass = matcher.type
                 val typeElement = elementUtils.getTypeElement(typeClass.qualifiedName)
 
-                checkPublicClassWithEmptyConstructor(element, typeElement)
+                checkPublicClassWithEmptyConstructorOrAnnotatedConstructor(element, typeElement)
                 checkTargetClassXmlAnnotated(typeElement)
                 val xmlElementName = if (matcher.name.isEmpty()) {
                     getXmlElementName(typeElement)
@@ -273,7 +274,7 @@ open class AnnotationOnlyFieldDetectorStrategy(protected val elementUtils: Eleme
 
                 val typeElement = (typeMirror as DeclaredType).asElement() as TypeElement
 
-                checkPublicClassWithEmptyConstructor(element, typeElement)
+                checkPublicClassWithEmptyConstructorOrAnnotatedConstructor(element, typeElement)
                 checkTargetClassXmlAnnotated(typeElement)
 
                 val xmlElementName = if (matcher.name.isEmpty()) {
@@ -298,7 +299,7 @@ open class AnnotationOnlyFieldDetectorStrategy(protected val elementUtils: Eleme
     /**
      * Checks if a the typeElement is a public class (or default package visibility if in same package as variableElement)
      */
-    private fun checkPublicClassWithEmptyConstructor(variableElement: VariableElement, typeElement: TypeElement) {
+    private fun checkPublicClassWithEmptyConstructorOrAnnotatedConstructor(variableElement: VariableElement, typeElement: TypeElement) {
 
         if (!typeElement.isClass()) {
             throw ProcessingException(variableElement, "@${ElementNameMatcher::class.simpleName} only allows classes. $typeElement is a not a class!")
@@ -323,6 +324,10 @@ open class AnnotationOnlyFieldDetectorStrategy(protected val elementUtils: Eleme
             throw ProcessingException(variableElement, "The type $typeElement must be a sub type of ${variableType}. Otherwise this type cannot be used in @${ElementNameMatcher::class.simpleName} to resolve polymorphism");
         }
 
+        var emptyConstructorFount = false
+        var annotatedConstructorFound = false
+
+        // TODO Is this constructor check really needed? Seems to be redundand / duplicated since it will also be checked in FieldScanner
         for (method in typeElement.enclosedElements) {
             if (typeElement.isSamePackageAs(variableElement, elementUtils) && method.isEmptyConstructorWithMinimumPackageVisibility()) {
                 return
@@ -331,10 +336,17 @@ open class AnnotationOnlyFieldDetectorStrategy(protected val elementUtils: Eleme
             if (typeElement.isPublic() && typeElement.isEmptyConstructor()) {
                 return
             }
+
+            // Check for TikXml Annotated only constructor
+            if (!method.isEmptyConstructor() && (method as ExecutableElement).parameters.filter { !(it as VariableElement).hasTikXmlAnnotation() }.isEmpty()) {
+                return
+            }
+
         }
 
 
-        throw ProcessingException(variableElement, "Class $typeElement used in @${ElementNameMatcher::class.simpleName} must provide an public empty (parameter-less) constructor")
+        throw ProcessingException(variableElement, "Class $typeElement used in @${ElementNameMatcher::
+        class.simpleName} must provide an public empty (parameter-less) constructor")
     }
 
     /**

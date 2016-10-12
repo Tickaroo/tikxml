@@ -25,6 +25,7 @@ import com.tickaroo.tikxml.processor.field.TextContentField
 import com.tickaroo.tikxml.processor.xml.XmlChildElement
 import org.mockito.Mockito
 import java.util.*
+import javax.lang.model.element.ExecutableElement
 import javax.lang.model.element.TypeElement
 
 /**
@@ -42,5 +43,5 @@ class MockAnnotatedClass(override val element: TypeElement, override val scanMod
 
     override fun isXmlElementAccessableFromOutsideTypeAdapter(): Boolean = true
 
-    override val annotatedConstructor: Boolean = false;
+    override var annotatedConstructor: ExecutableElement? = null;
 }

@@ -26,6 +26,7 @@ import com.tickaroo.tikxml.processor.xml.XmlRootElement
 import java.util.*
 import javax.lang.model.element.Element
 import javax.lang.model.element.ElementKind
+import javax.lang.model.element.ExecutableElement
 import javax.lang.model.element.TypeElement
 
 /**
@@ -40,11 +41,8 @@ interface AnnotatedClass : XmlRootElement {
     val inheritance: Boolean
     val simpleClassName: String
     val qualifiedClassName: String
-
     var textContentField: TextContentField?
-
-    val annotatedConstructor : Boolean
-
+    var annotatedConstructor: ExecutableElement?
 }
 
 /**
@@ -64,7 +62,7 @@ class AnnotatedClassImpl
     override val nameAsRoot: String
     override val simpleClassName: String
     override val qualifiedClassName: String
-    override val annotatedConstructor: Boolean = false; // TODO implement that
+    override var annotatedConstructor: ExecutableElement? = null; // TODO implement that
 
     override var textContentField: TextContentField? = null
 
@@ -82,7 +80,7 @@ class AnnotatedClassImpl
 
     }
 
-    private fun checkValidClass(element: Element) {
+    private inline fun checkValidClass(element: Element) {
 
         if (element.kind != ElementKind.CLASS) {
             throw ProcessingException(element, "Only classes can be annotated with " +

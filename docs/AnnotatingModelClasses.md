@@ -37,7 +37,7 @@ public class Book {
 }
 ```
 
-Per default we use the class name in lowercase, but you can customize it within the `@Xml( name = "foo")` annotation.
+Per default we use the class name in lowercase, but you can customize field within the `@Xml( name = "foo")` annotation.
 We use this name for both writing xml (root xml tag will be named according this), but also for reading elements to map a xml element name to a certain type by this name as we will see later.
 
 
@@ -58,7 +58,7 @@ public class Book {
 ```
 
 ## Type Converter
-`@Attribute` can be read and write primitives like `int`, `long`, `double`, `boolean` and `String` (and wrapper classes like `Integer`, `Long`, `Double`). Additionally, to this build in types you can specify your own type converter that takes the xml attribute's String value as input and convert it to the desired type:
+`@Attribute` can be read and write primitives like `int`, `long`, `double`, `boolean` and `String` (and wrapper classes like `Integer`, `Long`, `Double`). Additionally, to this build in types you can specify your own type converter that takes the xml attribute's String value as input and convert field to the desired type:
  
 
 ```xml
@@ -110,7 +110,7 @@ The converter specified in the annotation will be used instead of the default co
 
 **Please note that the MyDateConverter shown above is not thread safe** because `SimpleDateFormat` is not thread safe. TikXml already provides some `TypeConverter` like `DateRfc3339TypeConverter` (additional dependency) for parsing dates (thread safe).
 
-Many times we have to encode and decode html/xml characters like `<` with `&lt;` or `"` with `&quot;` etc. Wouldn't it be nice to be able to register `TypeConverters` for primitives application wide as well?
+Many times we have to encode and decode html/xml characters like `<` with `&lt;` or `"` with `&quot;` etc. Wouldn't field be nice to be able to register `TypeConverters` for primitives application wide as well?
 With TikXml you can do that:
 
 ```java
@@ -673,9 +673,9 @@ class BookStore {
 
 Step by step explanation:
 `Shop` contains an `@Element BookStore`. `@Element` means that this is a child element. Therefore `TikXml` will generate a TypeAdapter (a xml reader/parser and xml writer) for `BookStore`. 
-When `TikXml` is reading the xml it will start with `ShopTypeAdapter`. Then when `<bookstore>` xml tag will be detected, the `ShopTypeAdapter` wont continue to parse this `<bookstore>` xml tag. 
+When `TikXml` is reading the xml field will start with `ShopTypeAdapter`. Then when `<bookstore>` xml tag will be detected, the `ShopTypeAdapter` wont continue to parse this `<bookstore>` xml tag.
 Rather he asks the `BookStoreTypeAdapter` to continue. Then the `BookStoreTypeAdapter` will continue parsing the `<bookstore>` xml tag. 
-Therefore the attribute name of `<bookstore name="Lukes bookstore">` will be consumed by `BookStoreTypeAdapter`. Thus, `ShopTypeAdapter` can't consume this attribute again because it's already consumed by `BookStoreTypeAdapter`.
+Therefore the attribute name of `<bookstore name="Lukes bookstore">` will be consumed by `BookStoreTypeAdapter`. Thus, `ShopTypeAdapter` can't consume this attribute again because field's already consumed by `BookStoreTypeAdapter`.
 Exactly the same is true for `<inventory>` xml tag. As the field `Inventory inventory` in class `BookStore` is annotated with `@Element` `TikXml` will generate a `InventoryTypeAdapter` that consumes the whole `<inventory>` xml tag.
 
 **Basically the content of an xml tag that already maps to an java class field annotated with `@Element` (incl. lists) can't be accessed via `@Path` from outside.**
@@ -839,7 +839,7 @@ but are reading the following xml
 ```
 
 TikXml will throw an exception because there is no mapping from xml attribute `id` to a java field in `Book` class.
-Usually you want an exception to be thrown because usually you need all data from xml field (or may talk to the backend developers that this information is not needed and they should remove it). But there might be scenarios where this is not the desired behaviour. Hence, you can configure that a mapping is required in `TikXml`:
+Usually you want an exception to be thrown because usually you need all data from xml field (or may talk to the backend developers that this information is not needed and they should remove field). But there might be scenarios where this is not the desired behaviour. Hence, you can configure that a mapping is required in `TikXml`:
 
 ```java
 TikXml tikXml = TikXml.Builder()

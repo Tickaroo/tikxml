@@ -28,7 +28,14 @@ import javax.lang.model.element.VariableElement
  * (via getter-setter or same field is directly visible)
  * @author Hannes Dorfmann
  */
-sealed abstract class FieldAccessPolicy {
+sealed class FieldAccessPolicy {
+
+    abstract fun resolveAssignment(assignValue: String, argument: Any? = null): CodeBlock
+
+    abstract fun resolveGetter(): String
+
+    abstract fun resolveSetter(): String
+
 
     /**
      * Can't access the underlying field directly, hence we need to use the public getter and setter
@@ -61,11 +68,23 @@ sealed abstract class FieldAccessPolicy {
         override fun resolveSetter() = "${CodeGenUtils.valueParam}.$element"
     }
 
+    /**
+     * Specifies that an annotated field is accessible via constructor (to set value) and a getter method to read a value
 
-    abstract fun resolveAssignment(assignValue: String, argument: Any? = null): CodeBlock
+    class ConstructorAndGetterAccessPolicy(private val getter: ExecutableElement) : FieldAccessPolicy(){
 
-    abstract fun resolveGetter(): String
+        override fun resolveAssignment(assignValue: String, argument: Any?) =
+                CodeBlock.builder()
+                        .addStatement("${CodeGenUtils.valueParam}.${setter.simpleName}($assignValue)", argument)
+                        .build()
 
-    abstract fun resolveSetter(): String
+        override fun resolveGetter() =
+                "${CodeGenUtils.valueParam}.${getter.simpleName}()"
+
+        override fun resolveSetter() = ""
+
+    }
+     */
+
 
 }

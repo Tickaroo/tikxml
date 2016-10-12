@@ -32,7 +32,7 @@ compile 'com.tickaroo.tikxml:retrofit-converter:0.5.5-SNAPSHOT'
 ```
 
 # Benchmark
-We did benchmark on this early version of TikXml to compare it's results with other popular xml parsers like SimpleXml and Jackson.
+We did benchmark on this early version of TikXml to compare field's results with other popular xml parsers like SimpleXml and Jackson.
 TikXml is working around 1,9 times faster than jackson and 4,3 times faster than SimpleXml by also having a low memory footprint:
 ![Benchmark](https://raw.githubusercontent.com/Tickaroo/tikxml/master/docs/Benchmark.png)
 
