@@ -37,7 +37,7 @@ import kotlin.text.split
 object PathDetector {
 
     private val PATH_SEGMENT_DIVIDER = '/'
-    private val SEGMENT_REGEX = Regex("\\w+")
+    private val SEGMENT_REGEX = Regex("[\\w:]+")
 
 
     fun extractPathSegments(element: VariableElement, pathAsString: String): List<String> {
