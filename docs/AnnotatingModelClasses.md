@@ -1,9 +1,9 @@
 # Annotating Model Classes
 `TikXml` uses annotation processing to generate the xml serializer / deserializer (parser) for java model classes (POJO).
-We have to provide a _mapping_ from java class to xml. This is done by annotating the java class. Basically you can annotate fields of your model class.
+We have to provide a _mapping_ from java class to xml. This is done by annotating the java class. Basically you can annotate fields (or constructor parameters, see dedicated section at the end of this document) of your model class.
 Since the generated serializer / deserializer will be in the same package as the original java model class your fields must be either:
 
-- not _private_ or _protected_. In other words fields must be _public_ or have _default_ (package) visibility. Furthermore fields can not be _static_ or _final_.
+- not _private_ or _protected_. In other words fields must be _public_ or have _default_ (package) visibility. Furthermore fields cannot be _static_ or _final_.
  ```java
    public class Book {
    
@@ -393,7 +393,7 @@ to read a xml document like this:
 ```xml
 <book id="111">
   <title>Android for Dummies</title>
-  <journ>  <!-- maps to clas Journalist -->
+  <journ>  <!-- maps to class Journalist -->
     <firstname>Hannes</firstname>
     <lastname>Dorfmann</lastname>
     <newspaper_publisher>New York Times</newspaper_publisher>
@@ -479,7 +479,7 @@ and
 ```
 
 You can define arbitrary many `@ElementNameMatcher` to resolve polymorphism. 
-Since resolution of polymorphism is done by **checking the xml element name** the `<book>` can only have 
+Since resolution of polymorphism is done by **checking the xml element name (tag name)** the `<book>` can only have
 one single `<author />` tag, because we can't use xml element's name as property anymore (as we did with `@PropertyElement`).
 
 Therefore something like this is not valid:
@@ -784,40 +784,119 @@ class Author extends Person {
 
 If we parse an `Author` from a XML document then the text content will be parsed only into `Author.authorDescription`, whereas if we parse a `Person` the text content will be parsed into `Person.description`.
 
-## Scan Modes
-As you see there are quite some annotations. Usually programmers are lazy people. Therefore we provide two modes.
- 1. **ANNOTATIONS_ONLY**: This means that only fields with annotations like `@Attribute`, `@Element`, `@PropertyElement`, `@TextContent` will be used. Any other fields are not be taken into account when scanning for xml mappings.
- 2. **COMMON_CASE**: The "common case" means all primitive java data types (like int, double, string) are mapped to xml attributes (is equal to
-annotating class fields with `@Attribute`. All non primitive types (in other words objects) are mapped to child objects (is equal to annotating class fields with {@link
-  Example: 
- 
-  ```xml
-   <book id="123" title="Effective java"> `
-    <author>...</author> 
-   </book> ``
-  ```
-  By using COMMON_CASE you don't have to write much annotations:
-  
-  ```java
-  @Xml(mode = ScanMode.COMMON_CASE) 
-  class Book { 
-    int id;          // Doesn't need an @Attribute
-    String title;    // Doesn't need an @Attribute 
-    Author author;   // Doesn't need an @Element
-    
-    @IgnoreXml
-    double calculatedPrice; // Will be ignored
-  }
-  ```
+## Support for constructors
+Instead of annotating fields we can also annotate constructor parameters:
 
-Per default **ANNOTATIONS_ONLY** will be used. You can specify default Scan Mode globally for all your `@Xml` annotated classes by setting up the annotation processor option like this:
-```groovy 
-apt {
-  arguments {
-    defaultScanMode "ANNOTATION_ONLY"  // or "COMMON_CASE"
+```java
+@Xml
+public class Book {
+
+  private String id;
+  private String title;
+  private Author author;
+
+  public Book(@Attribute String id,
+              @Path("some/path") @PropertyElement String title,
+              @Element(
+                  typesByElement = {
+                    @ElementNameMatcher(type = Author.class),
+                    @ElementNameMatcher(type = Journalist.class)
+                  })
+                 Author author) {
+
+    this.id = id;
+    this.title = title;
+    this.author = author;
+  }
+
+  public String getId(){ return id; }
+
+  public String getTitle(){ return title; }
+
+  public Author getAuthor(){ return author; }
+}
+```
+As you see **you must** provide a getter method for each annotated constructor parameter with minimum package visibility because when serializing (writing xml from a java object)
+TikXml has to access the values somehow. This is done by getters and java naming conventions (like a annotated constructor parameter `foo` must have a getter `getFoo()`).
+
+You are **not allowed to mix annotated fields and annotated constructos** as we consider this as bad practice. So something like this is not allowed:
+
+```java
+@Xml
+public class Book {
+
+  @Attribute String id;   // Not allowed
+  private String title;
+
+  public Book(@PropertyElement String name) { // Not allowed
+    this.name = name;
   }
 }
 ```
+
+Either use annotations for each field or use annotations for constructor parameters, but you cannot mix both.
+
+Furthermore, you are not allowed to create a constructor with parameters are mixed with and without annotations:
+
+```java
+@Xml
+public class Book {
+
+  public Book(@PropertyElement String name, int foo) { // Not allowed, foo has no annotation
+    ...
+  }
+}
+```
+Either annotate all constructor parameters with TikXml annotations (like @Attribute etc.) or none of the constructor parameters.
+
+However, you can have multiple constructors without TikXml annotations but you must have exactly one parameter:
+
+```java
+@Xml
+public class Book {
+
+  public Book(@Attribute String id, @PropertyElement String name) {  // allowed
+    ...
+  }
+
+  public Book(Book book) {  // allowed
+    ...
+  }
+}
+```
+
+Regarding inheritance and annotated constructor parameters: In contrast to annotated fields, inheritance hierarchy will not be scanned.
+You have to provide a constructor and call the super constructor manually like this:
+
+```java
+@Xml
+class Writer {
+
+  private String id;
+
+  public Writer(@Attribute id){
+    this.id = id;
+  }
+
+  public String getId(){
+    return id;
+  }
+}
+
+class Author extends Writer {
+  private String name;
+
+  public Author (@Attribute id, @PropertyElement String name){
+      super(id);
+      this.name = name;
+  }
+
+  public String getName(){
+    return name;
+  }
+}
+```
+
 
 ## Required mapping
 Per default a mapping from XML to java class is required. That means, if you have the following java class:
@@ -883,7 +962,7 @@ As already said, this is not supported (yet) because of performance reasons.
 ```
 
 # Kotlin
-Kotlin is supported, except `data classes`
+Kotlin is supported:
 
 ```kotlin
 @Xml
@@ -894,4 +973,14 @@ class Book {
   @Element 
   lateinit var author : Author  // Also works with lateinit
 }
+```
+
+Data classes are supported too by annotating the constructor:
+
+```kotlin
+@Xml
+data class Book (
+    @Attribute val id : Integer,
+    @Element val author : Author
+)
 ```

@@ -90,6 +90,7 @@ class AnnotationScanner(protected val elementUtils: Elements, protected val type
                 constructorFound = true
             } else if (it.isConstructor() && !it.isEmptyConstructor()) {
                 // check for Annotated Constructors
+
                 val constructor = it as ExecutableElement
                 var foundXmlAnnotation = 0
                 constructor.parameters.forEach {
@@ -112,6 +113,11 @@ class AnnotationScanner(protected val elementUtils: Elements, protected val type
                         annotatedClass.element.getSuperClasses(typeUtils).flatMap {
                             it.enclosedElements.filter { method -> method.isGetterMethodWithMinimumPackageVisibility() }.map { it as ExecutableElement }
                         }.forEach { methodsMap.put(it.simpleName.toString(), it) }
+                    }
+
+                    // Only one annotated constructor is allowed: Already an annotated constructor found
+                    if (annotatedConstructor != null) {
+                        throw ProcessingException(annotatedConstructor, "Only one constructor with TikXml annotated parameters is allowed but found multiple constructors with annotated parameters in class ${annotatedClass.qualifiedClassName}:    1) $annotatedConstructor    2) $constructor")
                     }
 
                     annotatedConstructor = constructor

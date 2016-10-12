@@ -32,7 +32,6 @@ import javax.tools.JavaFileObject
  * Tests [AnnotationScanner]:
  * - empty Consturctor
  * - Getter Methods
- * - Setter Methods
  * @author Hannes Dorfmann
  */
 class AnnotationScannerForConstructorsTest {
@@ -163,8 +162,48 @@ class AnnotationScannerForConstructorsTest {
                 .withErrorContaining("test.AnnotatedConstructorClass has TikXml annotated fields AND an annotated constructor AnnotatedConstructorClass(int) . That is not allowed! Either annotate fields or a constructor (but not a mix of both)")
     }
 
-    // TODO repeat tests for other Annotations types
+    @Test
+    fun twoAnnotatedConstructors() {
+        val componentFile = JavaFileObjects.forSourceLines("test.NoConstructorClass",
+                "package test;",
+                "",
+                "import ${Xml::class.java.canonicalName};",
+                "import ${Attribute::class.java.canonicalName};",
+                "",
+                "@${Xml::class.java.simpleName}",
+                "class AnnotatedConstructorClass { ",
+                "    public AnnotatedConstructorClass(@${Attribute::class.java.simpleName} int other) {} ",
+                "    public AnnotatedConstructorClass(@${Attribute::class.java.simpleName} String foo) {} ",
+                "    public String getFoo(){ return null; } ",
+                "    public int getOther(){ return 0; } ",
+                "}")
 
+        Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
+                .that(componentFile).processedWith(XmlProcessor())
+                .failsToCompile()
+                .withErrorContaining("Only one constructor with TikXml annotated parameters is allowed but found multiple constructors with annotated parameters in class test.AnnotatedConstructorClass:    1) AnnotatedConstructorClass(int)    2) AnnotatedConstructorClass(java.lang.String)")
+    }
+
+    @Test
+    fun multipleConstructorsButOnlyOneAnnotated() {
+        val componentFile = JavaFileObjects.forSourceLines("test.NoConstructorClass",
+                "package test;",
+                "",
+                "import ${Xml::class.java.canonicalName};",
+                "import ${Attribute::class.java.canonicalName};",
+                "",
+                "@${Xml::class.java.simpleName}",
+                "class AnnotatedConstructorClass { ",
+                "    public AnnotatedConstructorClass(@${Attribute::class.java.simpleName} int other) {} ",
+                "    public AnnotatedConstructorClass(String foo) {} ",
+                "    public AnnotatedConstructorClass() {} ",
+                "    public int getOther(){ return 0; } ",
+                "}")
+
+        Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
+                .that(componentFile).processedWith(XmlProcessor())
+                .compilesWithoutError()
+    }
 
     @Test
     fun constructorsAndFieldsAnnotated2() {
@@ -204,7 +243,5 @@ class AnnotationScannerForConstructorsTest {
                 .failsToCompile()
                 .withErrorContaining("Conflict: field 'aString' in class test.ItemConstructor has the same xml attribute name 'aString' as the field 'aString' in class test.ItemConstructor. You can specify another name via annotations.")
     }
-
-
 
 }
