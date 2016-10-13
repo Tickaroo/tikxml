@@ -18,9 +18,29 @@
 
 package com.tickaroo.tikxml;
 
+import java.io.Closeable;
+import java.io.IOException;
+
 /**
  * @author Hannes Dorfmann
  * @since 1.0
  */
-public class XmlWriter {
+public class XmlWriter implements Closeable{
+
+  @Override public void close() throws IOException {
+    // TODO implmenet
+  }
+
+  public void beginElement(String elementTagName) throws IOException{
+
+  }
+
+  public void endElement() throws IOException{
+
+  }
+
+  public void attribute(String attributeName, String value) throws IOException {
+    // TODO others
+  }
+
 }
