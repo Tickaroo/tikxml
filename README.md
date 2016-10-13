@@ -19,16 +19,16 @@ repositories {
 ```
 
 ```groovy
-compile 'com.tickaroo.tikxml:annotation:0.6.0-SNAPSHOT'
-compile 'com.tickaroo.tikxml:core:0.6.0-SNAPSHOT'
+compile 'com.tickaroo.tikxml:annotation:0.6.1-SNAPSHOT'
+compile 'com.tickaroo.tikxml:core:0.6.1-SNAPSHOT'
 
-apt 'com.tickaroo.tikxml:processor:0.6.0-SNAPSHOT'
+apt 'com.tickaroo.tikxml:processor:0.6.1-SNAPSHOT'
 ```
 
 For retrofit2:
 
 ```groovy
-compile 'com.tickaroo.tikxml:retrofit-converter:0.6.0-SNAPSHOT'
+compile 'com.tickaroo.tikxml:retrofit-converter:0.6.1-SNAPSHOT'
 ```
 
 # Benchmark
@@ -36,7 +36,7 @@ We did benchmark on this early version of TikXml to compare field's results with
 TikXml is working around 1,9 times faster than jackson and 4,3 times faster than SimpleXml by also having a low memory footprint:
 ![Benchmark](https://raw.githubusercontent.com/Tickaroo/tikxml/master/docs/Benchmark.png)
 
-TikXml has been built on top of Okio and therefore highly optimized for Retrofit2.
+TikXml has been built on top of Okio and therefore is highly optimized for Retrofit2.
 
 # License
 
