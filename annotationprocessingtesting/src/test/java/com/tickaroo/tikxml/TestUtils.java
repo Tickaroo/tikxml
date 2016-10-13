@@ -16,9 +16,8 @@
  *
  */
 
-package com.tickaroo.tikxml.annotationprocessing;
+package com.tickaroo.tikxml;
 
-import com.tickaroo.tikxml.XmlReader;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;

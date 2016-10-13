@@ -1,0 +1,9 @@
+<team id="14" countryId="D" shortName="Bayern" longName="Bayern München"
+    iconSmall="smallIcon"
+    iconBig="bigIcon" defaultLeagueId="1" lat="48.101861"
+    lng="11.572654">
+        
+  <stadium id="531" name="Allianz-Arena" city="München" lat="48.218826"
+      lng="11.624672"/> <!-- this tag will be skipped -->
+  skip some unwanted text content
+</team>

@@ -19,7 +19,7 @@
 package com.tickaroo.tikxml.annotationprocessing.element;
 
 import com.tickaroo.tikxml.TikXml;
-import com.tickaroo.tikxml.annotationprocessing.TestUtils;
+import com.tickaroo.tikxml.TestUtils;
 import java.io.IOException;
 import org.junit.Assert;
 import org.junit.Test;

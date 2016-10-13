@@ -260,6 +260,7 @@ class TypeAdapterCodeGenerator(private val filer: Filer, private val elementUtil
                             " to java class. Have you annotated such a field in your java class to map this xml attribute? Otherwise you can turn this error message off with TikXml.Builder().exceptionOnUnreadXml(false).build().")
                     .endControlFlow() // End if throw exception
                     .beginControlFlow("while(\$L.hasElement())", reader)
+                    .addStatement("\$L.beginElement()", reader)
                     .addStatement("\$L.skipRemainingElement()", reader)
                     .endControlFlow() // End while skiping element
                     // Skip Text Content
