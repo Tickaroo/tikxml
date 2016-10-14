@@ -20,6 +20,9 @@ package com.tickaroo.tikxml;
 
 import java.io.Closeable;
 import java.io.IOException;
+import okio.BufferedSink;
+
+import static com.tickaroo.tikxml.XmlScope.NONEMPTY_DOCUMENT;
 
 /**
  * @author Hannes Dorfmann
@@ -27,8 +30,54 @@ import java.io.IOException;
  */
 public class XmlWriter implements Closeable{
 
+  /** The output data, containing at most one top-level array or object. */
+  private final BufferedSink sink;
+
+  private int[] stack = new int[32];
+  private int stackSize = 0;
+
+  private XmlWriter(BufferedSink sink) {
+    if (sink == null) {
+      throw new NullPointerException("sink == null");
+    }
+    this.sink = sink;
+  }
+
+  private void push(int newTop) {
+    if (stackSize == stack.length) {
+      int[] newStack = new int[stackSize * 2];
+      System.arraycopy(stack, 0, newStack, 0, stackSize);
+      stack = newStack;
+    }
+    stack[stackSize++] = newTop;
+  }
+
+  /**
+   * Returns the value on the top of the stack.
+   */
+  private int peek() {
+    if (stackSize == 0) {
+      throw new IllegalStateException("JsonWriter is closed.");
+    }
+    return stack[stackSize - 1];
+  }
+
+  /**
+   * Replace the value on the top of the stack with the given value.
+   */
+  private void replaceTop(int topOfStack) {
+    stack[stackSize - 1] = topOfStack;
+  }
+
+
   @Override public void close() throws IOException {
-    // TODO implmenet
+    sink.close();
+
+    int size = stackSize;
+    if (size > 1 || size == 1 && stack[size - 1] != NONEMPTY_DOCUMENT) {
+      throw new IOException("Incomplete document");
+    }
+    stackSize = 0;
   }
 
   public void beginElement(String elementTagName) throws IOException{
@@ -36,6 +85,10 @@ public class XmlWriter implements Closeable{
   }
 
   public void endElement() throws IOException{
+
+  }
+
+  public void textContent() throws IOException {
 
   }
 
