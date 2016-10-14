@@ -23,5 +23,7 @@ elif [ "$TRAVIS_BRANCH" != "$BRANCH" ]; then
 else
   echo "Deploying snapshot..."
   mvn clean source:jar javadoc:jar deploy --settings=".buildscript/settings.xml" -Dmaven.test.skip=true
+  OUTPUT=`mvn -q -Dexec.executable="echo" -Dexec.args='${project.version}' --non-recursive exec:exec`
+  export POM_VERSION=OUTPUT
   echo "Snapshot deployed!"
 fi

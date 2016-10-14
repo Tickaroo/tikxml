@@ -25,9 +25,9 @@ notifications:
     rooms:
       - secure: "I+VFrrCgl50vPU2KuBLwoZBUgv3dqrkiazW9EaWOUbvTBBn13A9zi8ScP3elUksz5dkwCCAtVlLqUzVqsqFYPTSI0nA39M+sWzuXHa/oV5DUKX99vQQRVMH3Eas88hPe+7Y4DQoSu6TUgX391CvQmkCchuVCRIB57gon3z0Fg1eIXKOkevQC1h5mJ0bnAaPa6XfmPlfDukMJmbFQZL7cX7zKFTmh5CMc/WwyhCS2fd1Lns8trBAqHDr4fGry0mDGCLfCYw9hf9GJpTORvlnE2BbigqJa1FQq/iPL1/Xpl7VNWO92t8iMN+mkNC79c/+L5gZClUhqM++uXnNxD8jjrnxjHa+j5hzi76fZ5XzMucT/2H+h/5grTWXKeL5iiyGu15hJtVPa0kiPKr8G2UKFL/QCK+qncpeygQIMTAd1RHpQTgvQyh0xhDNtQrwHfWRFzR/aRLoEs1SIhle3m8OEXcAagONZGh6ubIcYvg8GQA/nNZp+25Q+JQOiVgP15MzCrNibzNTR/3bJ3OgysCEAtV17W40ax5rep9U5QOJ/i6LhMxk5PUszMDwmumnyAf1t+qXmLudpXqJFDr04csW7yvh+Pqpg+ciYU4NV2CVRl0QTbES6+knQyo0Vv8/IvhXNsbuDRFJXINZSJS53I0aSww1cmozFHN0Vx/heoxzMIZw="
     template:
-      - '%{repository}#%{build_number} (%{branch} - %{commit} : %{author}): %{message} (<a href="%{build_url}">Details</a>/<a href="%{compare_url}">Change view</a>)'
+      - '%{repository}: %{POM_VERSION} #%{build_number} (%{branch} - %{commit} : %{author}): %{message} (<a href="%{build_url}">Details</a>/<a href="%{compare_url}">Change view</a>)'
     format: html
-      
+
 sudo: false
 
 cache:
