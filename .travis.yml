@@ -2,9 +2,7 @@ language: java
 
 before_install:
  - chmod +x .buildscript/deploy_snapshot.sh
- - export POM_VERSION=`mvn -q -Dexec.executable="echo" -Dexec.args='${project.version}' --non-recursive exec:exec`
- - echo "$env.POM_VERSION"
- - echo $POM_VERSION
+ - chmod +x .buildscript/snapshot_deployed_notification.sh
 
 jdk:
   - oraclejdk7
@@ -17,19 +15,11 @@ env:
   global:
     - secure: "VlIloQ91nXr4icmqcbpwP1h+NEP1ahijuEJr1TDqfO4gXGFfxHr7cPyo5V5qGoJQNFIIDctIIj66b6PiIZN7+1u3P1XaKsc0H+37pfvFIn4CnHoN3ccZaSLtfl9ZSScuPmmYg3DsbPkGFX7DzoyOY8k7PqSKtFmk97Fst/mIrLS7GO33Q7AhMhhzW/MmcPLAvOLMPdmo8CbJREVoeL52M6AhO++SEN5BuVydUWYF742tSI5E3ZV57KBoFwA4HrkuCDSTSn1Ts1m213xXAW5D1MmGYUcUi7bGK5CkkxzLLT8jA2Aam7sWaJO32ty8niG2vvqLTN+I/9ldf/rjMukE6dmFF09UoIBlVitWuqFuP9cJsE8r5mzy/FwVnq63Y7QhnGDc7fVjqVw79T/iIgfk0NX3yEAfUz1cZF8SHqui4KRRLQtKCAUy55LUq0N3ij+9J2GIn6eCUfO7A1hK8UJn7idsBwDXcscZUcGC1KT/lLnaPOUWtBXZR78Q5ltja9e1z2bTTjaR5zYaOvufhf40ARATRwSfWO5eIL/nDs+nmQl8yxDQjpZyA/xBtNHVPH6JJiZtWtW8xVYEDZjMJRpS9DShMsukIZ4px7Sn9dhwc66nK79QFWC01f74bTR/WpBeA8ksvKpKmBU/Z8q5NlohBWeh/SzWuGa3qT2e56aWWsY="
     - secure: "0C9wwnG2FTD/1fwaxUie9tvoA/ISuw7pAqXjAd+9Z+LPGWIxoraTtH2VwphTmDxk4eL6B/UIAVVrVrG8B5mkK34L2Tkm+cpZiGRmLXf+hQjJBFMQA+uDcbdSd+6IPOmbQjfMrfpxkmXCdhZN//1/ntfMu/CcerNHjJ9XRiAKYdLZexinU2RvjXW7cpqABE7LlcuXiauIMQ0+zQoJa1l0EskA6DVQdya/Q8F9zbwhlZ5IMpTOHXOXTxAF+gXdxxC9NAga2nO11jz64fIgw3Kw0WhO+jHqqrhzSGrVl0HjRIqSXMw5Tk5IfbDELx0tl+qfwRbAVLmhLs2c5xLkaSpmlYwyV6Bpbvu9f3bAkbT1FzkIR2b0kcnhrsxoFlJxiid/uLZgk7xepj2Jb0jATQwPFi4Zhv9kXdFiDXd8rLTsFwz0UF2vLYiWxbjBD7KpGrZQKNT+tmGRaPaGozBZssYS+JQOPD2DoGvEkRkTIEVUwQCnSPrdoEjZ2W6UfK1nbWyt/TiHlB4/8ddcNZX0ff/geydin5kZWQXFlpw0jVwLO9dxCY4nMUmdS52Fe9xdem70r3mGSbgVS7hqlhgZyfS/pVOkpAtkNU6LM2HzR0OKoyoLwRnUJmBBtyBwAoCmydydw9pMOj1303VF8SWRHAaMm8o/U5HBszrXH1jkmMf9uSo="
+    - secure: "Nvp4a73GqnIoLP6MIRhF3Sd6BquEUno4y3JFgkBq+vODtYsnvyWRezeybBeiRLkw1swBdohJB1bjPulp3EGqmryTCXuslGk2Dgt7QZvIb4BeJobCKPDCzGenqawfWPtyQCdAmZqxTgOqlvMKS3K93bG9ZeQhpCULcPx8LYSjC7fF62d/9eTwWyNtwS1qffG6WlMwH0TMde+0rNbR4oZoYxe0v8rVJZMx5srCs2Y+G57k04wf6YjdMGMVjYxnZ/5hSGzClzGj/TvaDOaCPjM2mLZQ5TBph41LRm29H9ku8iWkdC+2NV71/1KMnT6gNCGmEO0Ai+LPJ5VXDQrTfSd2AuGCA6uDNgcpqEgpuRnyK/p81mqd1C2lwwXLA/sJXd33Cc9c9WYTSa0EeCAXyq2+Pt+e2zG1H85YKgdrnp4GV29o4fUDXd82+Vg04P/g1BOfJBLsFoG5aXOD3PwuRi/FZT63uDUk4CrTFvMnY/gL9chr9h9NIqsFxozCuQgD5cKTh8u03+avX7ukYDjzuF/QfeHQQ2n+ZfYLWsqtpbSh5h42IYEQIx954QpyxA8O/cektTiFSVYUL8TBDDmeShtJxG9/yR4eeqMh7mHIYp1WnLVeJbh9x3rbHzg+9nJkpYjkNI6LPdC/2BK6alVkuchwyzlMFDSt4tbMVgsb2HZyYAA="
 
 branches:
   except:
     - gh-pages
-
-notifications:
-  email: false
-  hipchat:
-    rooms:
-      - secure: "I+VFrrCgl50vPU2KuBLwoZBUgv3dqrkiazW9EaWOUbvTBBn13A9zi8ScP3elUksz5dkwCCAtVlLqUzVqsqFYPTSI0nA39M+sWzuXHa/oV5DUKX99vQQRVMH3Eas88hPe+7Y4DQoSu6TUgX391CvQmkCchuVCRIB57gon3z0Fg1eIXKOkevQC1h5mJ0bnAaPa6XfmPlfDukMJmbFQZL7cX7zKFTmh5CMc/WwyhCS2fd1Lns8trBAqHDr4fGry0mDGCLfCYw9hf9GJpTORvlnE2BbigqJa1FQq/iPL1/Xpl7VNWO92t8iMN+mkNC79c/+L5gZClUhqM++uXnNxD8jjrnxjHa+j5hzi76fZ5XzMucT/2H+h/5grTWXKeL5iiyGu15hJtVPa0kiPKr8G2UKFL/QCK+qncpeygQIMTAd1RHpQTgvQyh0xhDNtQrwHfWRFzR/aRLoEs1SIhle3m8OEXcAagONZGh6ubIcYvg8GQA/nNZp+25Q+JQOiVgP15MzCrNibzNTR/3bJ3OgysCEAtV17W40ax5rep9U5QOJ/i6LhMxk5PUszMDwmumnyAf1t+qXmLudpXqJFDr04csW7yvh+Pqpg+ciYU4NV2CVRl0QTbES6+knQyo0Vv8/IvhXNsbuDRFJXINZSJS53I0aSww1cmozFHN0Vx/heoxzMIZw="
-    template:
-      - '%{repository}#%{build_number} %{env.POM_VERSION} %{$POM_VERSION} (%{branch} - %{commit} : %{author}): %{message} (<a href="%{build_url}">Details</a>/<a href="%{compare_url}">Change view</a>)'
-    format: html
 
 sudo: false
 
