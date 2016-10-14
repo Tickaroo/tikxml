@@ -10,6 +10,7 @@ jdk:
 
 after_success:
   - .buildscript/deploy_snapshot.sh
+  - .buildscript/snapshot_deployed_notification.sh
 
 env:
   global:
