@@ -244,4 +244,41 @@ class AnnotationScannerForConstructorsTest {
                 .withErrorContaining("Conflict: field 'aString' in class test.ItemConstructor has the same xml attribute name 'aString' as the field 'aString' in class test.ItemConstructor. You can specify another name via annotations.")
     }
 
+
+    @Test
+    fun booleanConstructorParameter1() {
+        val componentFile = JavaFileObjects.forSourceLines("test.NoConstructorClass",
+                "package test;",
+                "",
+                "import ${Xml::class.java.canonicalName};",
+                "import ${Attribute::class.java.canonicalName};",
+                "",
+                "@${Xml::class.java.simpleName}",
+                "class AnnotatedConstructorClass { AnnotatedConstructorClass(@${Attribute::class.java.simpleName} boolean attribute) {}",
+                "    boolean isAttribute(){return false;}",
+                "}")
+
+        Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
+                .that(componentFile).processedWith(XmlProcessor())
+                .compilesWithoutError()
+    }
+
+    @Test
+    fun booleanConstructorParameterWithIsPrefixInParameterName() {
+        val componentFile = JavaFileObjects.forSourceLines("test.NoConstructorClass",
+                "package test;",
+                "",
+                "import ${Xml::class.java.canonicalName};",
+                "import ${Attribute::class.java.canonicalName};",
+                "",
+                "@${Xml::class.java.simpleName}",
+                "class AnnotatedConstructorClass { AnnotatedConstructorClass(@${Attribute::class.java.simpleName} boolean isAttribute) {}",
+                "    boolean isAttribute(){return false;}",
+                "}")
+
+        Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
+                .that(componentFile).processedWith(XmlProcessor())
+                .compilesWithoutError()
+    }
+
 }

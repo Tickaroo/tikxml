@@ -41,6 +41,8 @@ import javax.lang.model.util.Types
  */
 class AnnotationScanner(protected val elementUtils: Elements, protected val typeUtils: Types, private val annotationDetector: AnnotationDetector) {
 
+    val booleanFieldRegex = Regex("is[A-Z].*")
+
     /**
      * Scans the child element of the passed [AnnotatedClass] to find [com.tickaroo.tikxml.processor.field.NamedField]
      */
@@ -348,21 +350,35 @@ class AnnotationScanner(protected val elementUtils: Elements, protected val type
     }
 
     private inline fun bestMethodName(fieldName: String, methodNamePrefix: String): String {
-        val builder = StringBuilder(methodNamePrefix)
+
         if (fieldName.length == 1) {
             // a should be getA()
+            val builder = StringBuilder(methodNamePrefix)
             builder.append(fieldName.toUpperCase())
+            return builder.toString()
+
         } /*else if (fieldName[0].isLowerCase() && fieldName[1].isUpperCase()) {
             // aString should be getaString()
             builder.append(fieldName)
 
-        }*/ else {
+        }*/
+
+        else if (methodNamePrefix === "is" && fieldName.matches(booleanFieldRegex)) {
+            // field isFoo shoule be isFoo()
+            return fieldName
+        } else if (methodNamePrefix === "set" && fieldName.matches(booleanFieldRegex)) {
+            // field isFoo should be setFoo()
+            val builder = StringBuilder(methodNamePrefix)
+            builder.append(fieldName.substring(2))
+            return builder.toString()
+        } else {
+
             // foo should be getFoo()
+            val builder = StringBuilder(methodNamePrefix)
             builder.append(Character.toUpperCase(fieldName[0]))
             builder.append(fieldName.substring(1))
+            return builder.toString()
         }
-
-        return builder.toString()
     }
 
     /**
