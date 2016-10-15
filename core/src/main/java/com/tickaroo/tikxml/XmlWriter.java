@@ -36,6 +36,15 @@ public class XmlWriter implements Closeable{
   private int[] stack = new int[32];
   private int stackSize = 0;
 
+  private String[] pathNames = new String[32];
+  private int[] pathIndices = new int[32];
+
+
+  {
+    stack[stackSize++] = XmlScope.EMPTY_DOCUMENT;
+  }
+
+
   private XmlWriter(BufferedSink sink) {
     if (sink == null) {
       throw new NullPointerException("sink == null");
@@ -52,12 +61,13 @@ public class XmlWriter implements Closeable{
     stack[stackSize++] = newTop;
   }
 
+
   /**
    * Returns the value on the top of the stack.
    */
   private int peek() {
     if (stackSize == 0) {
-      throw new IllegalStateException("JsonWriter is closed.");
+      throw new IllegalStateException("XML Writer is closed.");
     }
     return stack[stackSize - 1];
   }
