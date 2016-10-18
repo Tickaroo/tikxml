@@ -17,6 +17,8 @@
  */
 package com.tickaroo.tikxml;
 
+import java.io.IOException;
+
 /**
  * Lexical scoping elements within a XML reader or writer.
  *
@@ -46,12 +48,36 @@ final class XmlScope {
    */
   static final int ELEMENT_CONTENT = 5;
 
-
   /**
    * A document that's been closed and cannot be accessed.
    */
   static final int CLOSED = 6;
 
+  /**
+   * Prints the XmlScope (mainly for debugging) for the element that is on top of the stack
+   *
+   * @param stackSize The size of the stack
+   * @param stack The stack itself
+   * @return String representing the XmlScope on top of the stack
+   */
+  static String getTopStackElementAsToken(int stackSize, int stack[]) throws IOException {
+    switch (stack[stackSize - 1]) {
+      case ELEMENT_OPENING:
+        return "ELEMENT_OPENING";
+      case EMPTY_DOCUMENT:
+        return "EMPTY_DOCUMENT";
+      case NONEMPTY_DOCUMENT:
+        return "NONEMPTY_DOCUMENT";
+      case ELEMENT_ATTRIBUTE:
+        return "ELEMENT_ATTRIBUTE";
+      case ELEMENT_CONTENT:
+        return "ELEMENT_CONTENT";
+      case CLOSED:
+        return "CLOSED";
+      default:
+        throw new IOException("Unexpected token on top of the stack. Was " + stack[stackSize - 1]);
+    }
+  }
 
   /**
    * Renders the path in a JSON document to a string. The {@code pathNames} and {@code pathIndices}

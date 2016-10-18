@@ -17,6 +17,8 @@
  */
 package com.tickaroo.tikxml;
 
+import java.io.IOException;
+
 /**
  * Thrown when the data in a XML document doesn't match the data expected by the caller. For
  * example, suppose the application expects an xml element attribute value but the XML document
@@ -29,19 +31,9 @@ package com.tickaroo.tikxml;
  * @author Hannes Dorfmann
  * @since 1.0
  */
-public final class XmlDataException extends RuntimeException {
-  public XmlDataException() {
-  }
+public final class XmlDataException extends IOException {
 
   public XmlDataException(String message) {
     super(message);
-  }
-
-  public XmlDataException(Throwable cause) {
-    super(cause);
-  }
-
-  public XmlDataException(String message, Throwable cause) {
-    super(message, cause);
   }
 }
