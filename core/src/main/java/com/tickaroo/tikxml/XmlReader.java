@@ -1124,6 +1124,5 @@ public class XmlReader implements Closeable {
      * Indicates that we have reached the end of the document
      */
     END_OF_DOCUMENT
-
   }
 }
