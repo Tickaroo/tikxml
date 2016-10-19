@@ -32,10 +32,9 @@ sealed class FieldAccessResolver {
 
     abstract fun resolveAssignment(assignValue: String, argument: Any? = null): CodeBlock
 
-    abstract fun resolveGetter(): String
+    abstract fun resolveGetterForReadingXml(): String
 
-    abstract fun resolveSetter(): String
-
+    abstract fun resolveGetterForWritingXml(): String
 
     /**
      * Can't access the underlying field directly, hence we need to use the public getter and setter
@@ -47,10 +46,10 @@ sealed class FieldAccessResolver {
                         .addStatement("${CodeGeneratorHelper.valueParam}.${setter.simpleName}($assignValue)", argument)
                         .build()
 
-        override fun resolveGetter() =
+        override fun resolveGetterForReadingXml() =
                 "${CodeGeneratorHelper.valueParam}.${getter.simpleName}()"
 
-        override fun resolveSetter() = ""
+        override fun resolveGetterForWritingXml() = "${CodeGeneratorHelper.valueParam}.${getter.simpleName}()"
     }
 
     /**
@@ -60,31 +59,27 @@ sealed class FieldAccessResolver {
 
         override fun resolveAssignment(assignValue: String, argument: Any?) =
                 CodeBlock.builder()
-                        .addStatement("${resolveSetter()} = $assignValue", argument)
+                        .addStatement("${CodeGeneratorHelper.valueParam}.$element = $assignValue", argument)
                         .build()
 
-        override fun resolveGetter() = "${CodeGeneratorHelper.valueParam}.$element"
+        override fun resolveGetterForReadingXml() = "${CodeGeneratorHelper.valueParam}.$element"
 
-        override fun resolveSetter() = "${CodeGeneratorHelper.valueParam}.$element"
+        override fun resolveGetterForWritingXml() = "${CodeGeneratorHelper.valueParam}.$element"
     }
 
     /**
-     * Specifies that an annotated field is accessible via constructor (to set value) and a getter method to read a value
-
-    class ConstructorAndGetterAccessPolicy(private val getter: ExecutableElement) : FieldAccessPolicy(){
+     * Policy that can access the field directly because it has at least package visibility
+     */
+    class ConstructorAndGetterFieldAccessResolver(private val element: VariableElement, private val getter: ExecutableElement) : FieldAccessResolver() {
 
         override fun resolveAssignment(assignValue: String, argument: Any?) =
                 CodeBlock.builder()
-                        .addStatement("${CodeGenUtils.valueParam}.${setter.simpleName}($assignValue)", argument)
+                        .addStatement("${CodeGeneratorHelper.valueParam}.$element = $assignValue", argument)
                         .build()
 
-        override fun resolveGetter() =
-                "${CodeGenUtils.valueParam}.${getter.simpleName}()"
+        override fun resolveGetterForReadingXml() = "${CodeGeneratorHelper.valueParam}.$element"
 
-        override fun resolveSetter() = ""
-
+        override fun resolveGetterForWritingXml() = "${CodeGeneratorHelper.valueParam}.${getter.simpleName}()"
     }
-     */
-
 
 }

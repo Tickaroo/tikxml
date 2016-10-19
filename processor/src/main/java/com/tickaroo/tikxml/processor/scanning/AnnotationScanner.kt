@@ -154,7 +154,10 @@ class AnnotationScanner(protected val elementUtils: Elements, protected val type
             }
 
             // Check if all constructor annotated fields have a getter method
-            annotatedConstructorFields.forEach { checkGetter(it, methodsMap, true) }
+            annotatedConstructorFields.forEach {
+                val getter = checkGetter(it, methodsMap, true)
+                it.accessResolver = FieldAccessResolver.ConstructorAndGetterFieldAccessResolver(it.element, getter)
+            }
 
             annotatedClass.annotatedConstructor = annotatedConstructor
 
@@ -366,7 +369,6 @@ class AnnotationScanner(protected val elementUtils: Elements, protected val type
             builder.append(fieldName)
 
         }*/
-
         else if (methodNamePrefix === "is" && fieldName.matches(booleanFieldRegex)) {
             // field isFoo shoule be isFoo()
             return fieldName

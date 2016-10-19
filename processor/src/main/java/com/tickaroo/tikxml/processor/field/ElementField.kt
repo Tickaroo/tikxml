@@ -66,11 +66,11 @@ class ListElementField(element: VariableElement, name: String, required: Boolean
 
         val fromXmlMethod = codeGeneratorHelper.fromXmlMethodBuilder()
                 .addCode(CodeBlock.builder()
-                        .beginControlFlow("if (${accessResolver.resolveGetter()} == null)")
+                        .beginControlFlow("if (${accessResolver.resolveGetterForReadingXml()} == null)")
                         .add(accessResolver.resolveAssignment("new \$T()", valueTypeAsArrayList))
                         .endControlFlow()
                         .build())
-                .addStatement("${accessResolver.resolveGetter()}.add((\$T) $valueFromAdapter )", ClassName.get(genericListType), ClassName.get(genericListType))
+                .addStatement("${accessResolver.resolveGetterForReadingXml()}.add((\$T) $valueFromAdapter )", ClassName.get(genericListType), ClassName.get(genericListType))
                 .build()
 
         return TypeSpec.anonymousClassBuilder("")

@@ -81,12 +81,12 @@ class PolymorphicSubstitutionListField(element: VariableElement, typeMirror: Typ
 
         val fromXmlMethod = codeGeneratorHelper.fromXmlMethodBuilder()
                 .addCode(CodeBlock.builder()
-                        .beginControlFlow("if (${accessResolver.resolveGetter()} == null)")
+                        .beginControlFlow("if (${accessResolver.resolveGetterForReadingXml()} == null)")
                         .add(accessResolver.resolveAssignment("new \$T()", valueTypeAsArrayList))
                         .endControlFlow()
                         .build())
                 .addStatement("\$T v = $valueFromAdapter", ClassName.get(typeMirror), ClassName.get(typeMirror))
-                .addStatement("${accessResolver.resolveGetter()}.add(v)")
+                .addStatement("${accessResolver.resolveGetterForReadingXml()}.add(v)")
                 .build()
 
         return TypeSpec.anonymousClassBuilder("")
