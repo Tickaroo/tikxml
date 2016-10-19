@@ -927,7 +927,6 @@ class AnnotationScannerTest {
                 .withErrorContaining("Conflict: field 'element' in class PolymorphicElement is in conflict with PolymorphicElement. Maybe both have the same xml name 'a' (you can change that via annotations) or @${Path::class.simpleName} is causing this conflict.")
     }
 
-
     @Test
     fun privateBooleanFieldWithGetterAndSetters() {
         val componentFile = JavaFileObjects.forSourceLines("test.NoConstructorClass",
@@ -961,6 +960,24 @@ class AnnotationScannerTest {
                 "    @${Attribute::class.java.simpleName} private boolean isAttribute;",
                 "    boolean isAttribute(){return false;}",
                 "    void setAttribute(boolean s){}",
+                "}")
+
+        Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
+                .that(componentFile).processedWith(XmlProcessor())
+                .compilesWithoutError()
+    }
+
+    @Test
+    fun validTextContentOnly() {
+        val componentFile = JavaFileObjects.forSourceLines("test.NoConstructorClass",
+                "package test;",
+                "",
+                "import ${Xml::class.java.canonicalName};",
+                "import ${TextContent::class.java.canonicalName};",
+                "",
+                "@${Xml::class.java.simpleName}",
+                "class AnnotatedConstructorClass {",
+                "    @${TextContent::class.java.simpleName} String someContent;",
                 "}")
 
         Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())

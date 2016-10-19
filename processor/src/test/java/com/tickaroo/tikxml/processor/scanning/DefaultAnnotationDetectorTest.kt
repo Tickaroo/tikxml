@@ -164,7 +164,7 @@ class DefaultAnnotationDetectorTest {
         Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
                 .that(componentFile).processedWith(XmlProcessor())
                 .failsToCompile()
-                .withErrorContaining("Field 'aField' is marked as TextContent and another xml element like @Attribute, @PropertyElement or @Element at the same time which is not allowed. A field can only be exactly one of those types.")
+                .withErrorContaining("Fields can ONLY be annotated with one of the following annotations @Attribute, @PropertyElement, @Element or @TextContent  and not multiple of them! The field aField in class test.MultipleAnnotations4 is annotated with more than one of these annotations. You must annotate a field with exactly one of these annotations (not multiple)!")
     }
 
     @Test
@@ -183,7 +183,7 @@ class DefaultAnnotationDetectorTest {
         Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
                 .that(componentFile).processedWith(XmlProcessor())
                 .failsToCompile()
-                .withErrorContaining("Field 'aField' is marked as TextContent and another xml element like @Attribute, @PropertyElement or @Element at the same time which is not allowed. A field can only be exactly one of those types.")
+                .withErrorContaining("Fields can ONLY be annotated with one of the following annotations @Attribute, @PropertyElement, @Element or @TextContent  and not multiple of them! The field aField in class test.MultipleAnnotations4 is annotated with more than one of these annotations. You must annotate a field with exactly one of these annotations (not multiple)!")
     }
 
     @Test

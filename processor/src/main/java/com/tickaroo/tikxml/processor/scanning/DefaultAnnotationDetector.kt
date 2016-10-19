@@ -64,10 +64,11 @@ open class DefaultAnnotationDetector(protected val elementUtils: Elements, prote
     override fun isXmlTextContent(element: VariableElement): TextContentField? =
             if (ignoreField(element)) null
             else {
-                if (isTextContentAnnotated(element)) {
+                if (isTextContentAnnotated(element) && isXmlField(element) == null) {
                     if (!element.asType().isString()) {
                         throw ProcessingException(element, "Only type String is supported for @${TextContent::class.simpleName} but field '$element' in class ${element.getSurroundingClassQualifiedName()} is not of type String")
                     }
+
                     TextContentField(element, requiredDetector.isRequired(element))
                 } else
                     null
@@ -85,6 +86,7 @@ open class DefaultAnnotationDetector(protected val elementUtils: Elements, prote
         val attributeAnnotation = element.getAnnotation(Attribute::class.java)
         val propertyAnnotation = element.getAnnotation(PropertyElement::class.java)
         val elementAnnotation = element.getAnnotation(Element::class.java)
+        val textContent = element.getAnnotation(TextContent::class.java)
 
         if (attributeAnnotation != null) {
             annotationFound++;
@@ -98,6 +100,10 @@ open class DefaultAnnotationDetector(protected val elementUtils: Elements, prote
             annotationFound++
         }
 
+        if (textContent != null) {
+            annotationFound++
+        }
+
         // No annotations
         if (annotationFound == 0) {
             return null
@@ -107,10 +113,14 @@ open class DefaultAnnotationDetector(protected val elementUtils: Elements, prote
             // More than one annotation is not allowed
             throw ProcessingException(element, "Fields can ONLY be annotated with one of the "
                     + "following annotations @${Attribute::class.simpleName}, "
-                    + "@${PropertyElement::class.simpleName} or @${Element::class.simpleName} "
+                    + "@${PropertyElement::class.simpleName}, @${Element::class.simpleName} or @${TextContent::class.simpleName}  "
                     + "and not multiple of them! The field ${element.simpleName.toString()} in class "
                     + "${(element.enclosingElement as TypeElement).qualifiedName} is annotated with more than one of these annotations. You must annotate a field with exactly one of these annotations (not multiple)!")
         }
+
+        // In the case that only text content annotation has been found
+        if (textContent != null && annotationFound == 1)
+            return null;
 
 
         if (attributeAnnotation != null) {
@@ -219,6 +229,7 @@ open class DefaultAnnotationDetector(protected val elementUtils: Elements, prote
             }
 
         }
+
 
         throw ProcessingException(element, "Unknown annotation detected! I'm sorry, this should not happen. Please file an issue on github https://github.com/Tickaroo/tikxml/issues ")
     }

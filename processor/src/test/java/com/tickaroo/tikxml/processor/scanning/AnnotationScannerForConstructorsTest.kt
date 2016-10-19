@@ -23,6 +23,7 @@ import com.google.testing.compile.JavaFileObjects
 import com.google.testing.compile.JavaSourceSubjectFactory
 import com.google.testing.compile.JavaSourcesSubject
 import com.tickaroo.tikxml.annotation.Attribute
+import com.tickaroo.tikxml.annotation.TextContent
 import com.tickaroo.tikxml.annotation.Xml
 import com.tickaroo.tikxml.processor.XmlProcessor
 import org.junit.Test
@@ -244,7 +245,6 @@ class AnnotationScannerForConstructorsTest {
                 .withErrorContaining("Conflict: field 'aString' in class test.ItemConstructor has the same xml attribute name 'aString' as the field 'aString' in class test.ItemConstructor. You can specify another name via annotations.")
     }
 
-
     @Test
     fun booleanConstructorParameter1() {
         val componentFile = JavaFileObjects.forSourceLines("test.NoConstructorClass",
@@ -281,4 +281,22 @@ class AnnotationScannerForConstructorsTest {
                 .compilesWithoutError()
     }
 
+    @Test
+    fun validTextContentOnly() {
+        val componentFile = JavaFileObjects.forSourceLines("test.NoConstructorClass",
+                "package test;",
+                "",
+                "import ${Xml::class.java.canonicalName};",
+                "import ${TextContent::class.java.canonicalName};",
+                "",
+                "@${Xml::class.java.simpleName}",
+                "class AnnotatedConstructorClass {",
+                "    public AnnotatedConstructorClass(@${TextContent::class.java.simpleName} String someContent){}",
+                "    public String getSomeContent(){return null;}",
+                "}")
+
+        Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
+                .that(componentFile).processedWith(XmlProcessor())
+                .compilesWithoutError()
+    }
 }

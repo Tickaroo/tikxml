@@ -207,7 +207,7 @@ class TypeAdapterCodeGenerator(private val filer: Filer, private val elementUtil
         //
         // Read child elements and text content
         //
-        if (annotatedClass.hasChildElements() || annotatedClass.hasChildElements()) {
+        if (annotatedClass.hasChildElements() && annotatedClass.hasTextContent()) {
 
             builder.beginControlFlow("while(true)")
                     .beginControlFlow("if (\$L.hasElement())", reader)
@@ -219,8 +219,8 @@ class TypeAdapterCodeGenerator(private val filer: Filer, private val elementUtil
                     .addStatement("childElementBinder.fromXml(\$L, \$L, \$L)", reader, config, value)
                     .addStatement("\$L.endElement()", reader)
                     .nextControlFlow("else if (\$L.exceptionOnUnreadXml())", config)
-                    .addStatement("throw new \$T(\$S+elementName+\$L.getPath()+\$S)", IOException::class.java,
-                            "Could not map the xml element with the tag name at path '",
+                    .addStatement("throw new \$T(\$S+ \$L.getPath()+\$S)", IOException::class.java,
+                            "Could not map the xml element with the tag name <\" +elementName+ \"> at path '",
                             reader,
                             "' to java class. Have you annotated such a field in your java class to map this xml attribute? Otherwise you can turn this error message off with TikXml.Builder().exceptionOnUnreadXml(false).build().")
                     .nextControlFlow("else")
@@ -246,9 +246,66 @@ class TypeAdapterCodeGenerator(private val filer: Filer, private val elementUtil
                     .endControlFlow() // End else
                     .endControlFlow() // End while
 
+        } else if (annotatedClass.hasChildElements()) { // Only Child elements, no text content
+
+
+            builder.beginControlFlow("while(true)")
+                    .beginControlFlow("if (\$L.hasElement())", reader)
+
+                    .addStatement("\$L.beginElement()", reader)
+                    .addStatement("String elementName = \$L.nextElementName()", reader)
+                    .addStatement("\$T childElementBinder = \$L.get(elementName)", ParameterizedTypeName.get(ClassName.get(ChildElementBinder::class.java), targetClassToParseInto), CodeGeneratorHelper.childElementBindersParam)
+                    .beginControlFlow("if (childElementBinder != null)")
+                    .addStatement("childElementBinder.fromXml(\$L, \$L, \$L)", reader, config, value)
+                    .addStatement("\$L.endElement()", reader)
+                    .nextControlFlow("else if (\$L.exceptionOnUnreadXml())", config)
+                    .addStatement("throw new \$T(\$S+ \$L.getPath()+\$S)", IOException::class.java,
+                            "Could not map the xml element with the tag name <\" +elementName+ \"> at path '",
+                            reader,
+                            "' to java class. Have you annotated such a field in your java class to map this xml attribute? Otherwise you can turn this error message off with TikXml.Builder().exceptionOnUnreadXml(false).build().")
+                    .nextControlFlow("else")
+                    .addStatement("\$L.skipRemainingElement()", reader)
+                    .endControlFlow() // end else skip remaining element
+
+                    .nextControlFlow("else if (\$L.hasTextContent())", reader)
+                    .beginControlFlow("if (\$L.exceptionOnUnreadXml())", config)
+                    .addStatement("throw new \$T(\$S+\$L.getPath()+\$S)", IOException::class.java,
+                            "Could not map the xml element's text content at path '",
+                            reader,
+                            " to java class. Have you annotated such a field in your java class to map the xml element's text content? Otherwise you can turn this error message off with TikXml.Builder().exceptionOnUnreadXml(false).build().")
+                    .endControlFlow()
+                    .addStatement("\$L.skipTextContent()", reader)
+                    .nextControlFlow("else")
+                    .addStatement("break") // quite while loop
+                    .endControlFlow() // End else
+                    .endControlFlow() // End while
+
+        } else if (annotatedClass.hasTextContent()) { // Text Content only , no Child elements
+
+            builder.beginControlFlow("while(true)")
+
+                    .beginControlFlow("if (\$L.hasElement())", reader)
+                    .addStatement("\$L.beginElement()", reader)
+                    .addStatement("String elementName = \$L.nextElementName()", reader)
+                    .beginControlFlow("if (\$L.exceptionOnUnreadXml())", config)
+                    .addStatement("throw new \$T(\$S+ \$L.getPath()+\$S)", IOException::class.java,
+                            "Could not map the xml element with the tag name <\" +elementName+ \"> at path '",
+                            reader,
+                            "' to java class. Have you annotated such a field in your java class to map this xml attribute? Otherwise you can turn this error message off with TikXml.Builder().exceptionOnUnreadXml(false).build().")
+                    .nextControlFlow("else")
+                    .addStatement("\$L.skipRemainingElement()", reader)
+                    .endControlFlow() // end else skip remaining element
+
+                    .nextControlFlow("else if (\$L.hasTextContent())", reader)
+                    .addStatement("\$L.append(\$L.nextTextContent())", textContentStringBuilder, reader)
+
+                    .nextControlFlow("else")
+                    .addStatement("break") // quite while loop
+                    .endControlFlow() // End else
+                    .endControlFlow() // End while
 
         } else {
-            // Skip child elements and text content
+            // No child elements and no text content (so skip both)
             builder.beginControlFlow("while (\$L.hasElement() || \$L.hasTextContent())", reader, reader)
                     .beginControlFlow("if (\$L.hasElement())", reader)
                     .beginControlFlow("if (\$L.exceptionOnUnreadXml())", config)
@@ -289,7 +346,7 @@ class TypeAdapterCodeGenerator(private val filer: Filer, private val elementUtil
             val stringBuilder = StringBuilder("return new \$T(");
             annotatedConstructor.parameters.forEachIndexed { i, parameter ->
                 stringBuilder.append("$value.${parameter.simpleName}")
-                if (i < annotatedConstructor.parameters.size -1){
+                if (i < annotatedConstructor.parameters.size - 1) {
                     stringBuilder.append(", ")
                 }
             }

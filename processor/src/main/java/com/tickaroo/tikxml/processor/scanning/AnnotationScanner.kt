@@ -290,9 +290,12 @@ class AnnotationScanner(protected val elementUtils: Elements, protected val type
         // TextContent Field
         if (annotatedClass.textContentField == null && textContentField != null) {
 
+            // TODO check for multiple text content definition in one class / constructor
+
             // Only take the first @TextContent field if there are multiple in the inheritance tree
             annotatedClass.textContentField = textContentField
             checkAccessPolicyOrDeferGetterSetterCheck(it, textContentField)
+            return textContentField
         }
 
         val field: NamedField? = annotationDetector.isXmlField(it)
@@ -300,6 +303,7 @@ class AnnotationScanner(protected val elementUtils: Elements, protected val type
 
             if (textContentField != null) {
                 // @TextContent annotation and @Attribute, @PropertyElement or @Element at the same time
+                // TODO I think this is dead code (will never be reached)
                 throw ProcessingException(it, "Field '$it' is marked as TextContent and another xml element like @${Attribute::class.simpleName}, @${PropertyElement::class.simpleName} or @${Element::class.simpleName} at the same time which is not allowed. A field can only be exactly one of those types.")
             }
 

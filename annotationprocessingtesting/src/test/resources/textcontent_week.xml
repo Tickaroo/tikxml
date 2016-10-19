@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!--
+<?xml version="1.0" encoding="UTF-8" ?><!--
   ~ Copyright (C) 2015 Hannes Dorfmann
   ~ Copyright (C) 2015 Tickaroo, Inc.
   ~
@@ -16,23 +15,12 @@
   ~ limitations under the License.
   ~
   -->
-
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <parent>
-    <artifactId>parent</artifactId>
-    <groupId>com.tickaroo.tikxml</groupId>
-    <version>0.6.4-SNAPSHOT</version>
-  </parent>
-  <modelVersion>4.0.0</modelVersion>
-
-  <artifactId>converters</artifactId>
-  <packaging>pom</packaging>
-  <modules>
-    <module>htmlescape</module>
-    <module>date-rfc3339</module>
-  </modules>
-
-
-</project>
+<week>
+  <day>Monday</day>
+  <day>Tuesday</day>
+  <day>Wednesday</day>
+  <day>Thursday</day>
+  <day>Friday</day>
+  <day>Saturday</day>
+  <day>Sunday</day>
+</week>
