@@ -20,6 +20,7 @@ package com.tickaroo.tikxml.processor.scanning
 
 import com.tickaroo.tikxml.processor.field.AnnotatedClass
 import com.tickaroo.tikxml.processor.field.AttributeField
+import com.tickaroo.tikxml.processor.field.Namespace
 import com.tickaroo.tikxml.processor.field.TextContentField
 import com.tickaroo.tikxml.processor.xml.XmlChildElement
 import org.mockito.Mockito
@@ -43,4 +44,6 @@ class MockAnnotatedClass(override val element: TypeElement, override val inherit
     override fun isXmlElementAccessableFromOutsideTypeAdapter(): Boolean = true
 
     override var annotatedConstructor: ExecutableElement? = null;
+
+    override val writeNamespaces: List<Namespace> = emptyList()
 }

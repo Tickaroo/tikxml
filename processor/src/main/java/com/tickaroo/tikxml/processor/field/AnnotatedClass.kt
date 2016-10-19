@@ -20,6 +20,7 @@ package com.tickaroo.tikxml.processor.field
 
 import com.tickaroo.tikxml.annotation.Xml
 import com.tickaroo.tikxml.processor.ProcessingException
+import com.tickaroo.tikxml.processor.XmlCharacters
 import com.tickaroo.tikxml.processor.xml.XmlChildElement
 import com.tickaroo.tikxml.processor.xml.XmlRootElement
 import java.util.*
@@ -41,6 +42,7 @@ interface AnnotatedClass : XmlRootElement {
     val qualifiedClassName: String
     var textContentField: TextContentField?
     var annotatedConstructor: ExecutableElement?
+    val writeNamespaces: List<Namespace>
 }
 
 /**
@@ -62,6 +64,7 @@ class AnnotatedClassImpl
     override var annotatedConstructor: ExecutableElement? = null; // TODO implement that
 
     override var textContentField: TextContentField? = null
+    override val writeNamespaces: List<Namespace>
 
     init {
         checkValidClass(e)
@@ -72,7 +75,38 @@ class AnnotatedClassImpl
 
         val xmlAnnotation = element.getAnnotation(Xml::class.java)
         inheritance = xmlAnnotation.inheritance
-        nameAsRoot = xmlAnnotation.name
+
+        nameAsRoot =
+                if (xmlAnnotation.name.isEmpty()) {
+                    if (simpleClassName.length <= 1) {
+                        simpleClassName.decapitalize()
+                    } else {
+                        simpleClassName[0].toLowerCase() + simpleClassName.substring(1)
+                    }
+                } else {
+                    xmlAnnotation.name
+                }
+
+        if (xmlAnnotation.writeNamespaces.isEmpty()) {
+            writeNamespaces = emptyList()
+        } else {
+            val namespaces = ArrayList<Namespace>();
+            for (namespace in xmlAnnotation.writeNamespaces) {
+                // check if namespace definition is valid
+                if (XmlCharacters.containsXmlCharacter(namespace))
+                    throw ProcessingException(element, "@${Xml::class.simpleName} annotated class $simpleClassName contains an illegal namespace definition $namespace . The following characters are not allowed: < > \" ' to be used in a namespace definition");
+
+                val parts = namespace.split("=")
+                if (parts.isEmpty())
+                    namespaces.add(Namespace.DefaultNamespace(namespace))
+                else if (parts.size == 2)
+                    namespaces.add(Namespace.PrefixedNamespace(parts[0], parts[1]))
+                else throw ProcessingException(element, "@${Xml::class.simpleName} annotated class $simpleClassName contains an illegal namespace definition: $namespace because it contains more than 1 equals sign (=) character")
+
+            }
+
+            writeNamespaces = namespaces
+        }
 
     }
 
@@ -89,4 +123,10 @@ class AnnotatedClassImpl
     override fun isXmlElementAccessableFromOutsideTypeAdapter(): Boolean = true
 
     override fun hasTextContent() = textContentField != null
+
+}
+
+sealed class Namespace(val uri: String) {
+    class PrefixedNamespace(val prefix: String, uri: String) : Namespace(uri)
+    class DefaultNamespace(uri: String) : Namespace(uri)
 }

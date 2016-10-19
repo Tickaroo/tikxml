@@ -984,4 +984,98 @@ class AnnotationScannerTest {
                 .that(componentFile).processedWith(XmlProcessor())
                 .compilesWithoutError()
     }
+
+    @Test
+    fun writeNamespaceContainsDoubleQuote() {
+
+        val componentFile = JavaFileObjects.forSourceLines("test.NoConstructorClass",
+                "package test;",
+                "",
+                "import ${Xml::class.java.canonicalName};",
+                "import ${Attribute::class.java.canonicalName};",
+                "",
+                "@${Xml::class.java.simpleName}(writeNamespaces = {\"\\\"http://test.com\\\"\"})",
+                "class NamespaceClass {",
+                "}")
+
+        Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
+                .that(componentFile).processedWith(XmlProcessor())
+                .failsToCompile()
+                .withErrorContaining("@Xml annotated class NamespaceClass contains an illegal namespace definition \"http://test.com\" . The following characters are not allowed: < > \" ' to be used in a namespace definition")
+    }
+
+
+    @Test
+    fun writeNamespaceContainsGreaterChar() {
+
+        val componentFile = JavaFileObjects.forSourceLines("test.NoConstructorClass",
+                "package test;",
+                "",
+                "import ${Xml::class.java.canonicalName};",
+                "import ${Attribute::class.java.canonicalName};",
+                "",
+                "@${Xml::class.java.simpleName}(writeNamespaces = {\"a=http<://test.com\"})",
+                "class NamespaceClass {",
+                "}")
+
+        Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
+                .that(componentFile).processedWith(XmlProcessor())
+                .failsToCompile()
+                .withErrorContaining("@Xml annotated class NamespaceClass contains an illegal namespace definition a=http<://test.com . The following characters are not allowed: < > \" ' to be used in a namespace definition")
+    }
+
+    @Test
+    fun writeNamespaceContainsLessChar() {
+
+        val componentFile = JavaFileObjects.forSourceLines("test.NoConstructorClass",
+                "package test;",
+                "",
+                "import ${Xml::class.java.canonicalName};",
+                "import ${Attribute::class.java.canonicalName};",
+                "",
+                "@${Xml::class.java.simpleName}(writeNamespaces = {\"a>=http://test.com\"})",
+                "class NamespaceClass {",
+                "}")
+
+        Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
+                .that(componentFile).processedWith(XmlProcessor())
+                .failsToCompile()
+                .withErrorContaining("@Xml annotated class NamespaceClass contains an illegal namespace definition a>=http://test.com . The following characters are not allowed: < > \" ' to be used in a namespace definition")
+    }
+
+    @Test
+    fun writeNamespaceContainsSingleQuote() {
+
+        val componentFile = JavaFileObjects.forSourceLines("test.NoConstructorClass",
+                "package test;",
+                "",
+                "import ${Xml::class.java.canonicalName};",
+                "import ${Attribute::class.java.canonicalName};",
+                "",
+                "@${Xml::class.java.simpleName}(writeNamespaces = {\"a=http://test.'com\"})",
+                "class NamespaceClass {",
+                "}")
+
+        Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
+                .that(componentFile).processedWith(XmlProcessor())
+                .failsToCompile()
+                .withErrorContaining("@Xml annotated class NamespaceClass contains an illegal namespace definition a=http://test.'com . The following characters are not allowed: < > \" ' to be used in a namespace definition")
+    }
+
+    @Test
+    fun writeNamespaceContainsMultipleEqualsSigns() {
+        val componentFile = JavaFileObjects.forSourceLines("test.NoConstructorClass",
+                "package test;",
+                "",
+                "import ${Xml::class.java.canonicalName};",
+                "import ${Attribute::class.java.canonicalName};",
+                "",
+                "@${Xml::class.java.simpleName}(writeNamespaces = {\"a=b=http://test.com\"})",
+                "class NamespaceClass {",
+                "}")
+
+        Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
+                .that(componentFile).processedWith(XmlProcessor())
+                .failsToCompile()
+                .withErrorContaining("contains an illegal namespace definition: a=b=http://test.com because it contains more than 1 equals sign (=) character")   }
 }

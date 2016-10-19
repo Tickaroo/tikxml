@@ -48,4 +48,19 @@ public @interface Xml {
    * the inheritance three of this class.
    */
   boolean inheritance() default true;
+
+  /**
+   * Specify the namespace URI as an array of strings. <p> Example:
+   * <pre>
+   *    {@code @Xml(writeNamespaces = { "http://foo.com", "m=http://other.com"} }
+   *    class Foo { ... }
+   *   </pre>
+   * This will write a xml namespace definition like that:
+   * <pre>
+   *     {@code <foo xmlns="http://foo.com" xmlns:m="http://other.com" />}
+   *   </pre>
+   * </p> So basically the syntax is prefix=uri. If you don't define a prefix, the default xmlns
+   * namespace definition will be written.
+   */
+  String[] writeNamespaces() default {};
 }
