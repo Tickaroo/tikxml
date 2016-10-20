@@ -173,6 +173,8 @@ Another Problem in XML is that we can't distinguish between `empty string ""` or
 In that does that mean that we want to map this value to `empty string ""` or `null`. In TikXml this will map to the empty string. If you want to express `null` then simply don't write the xml tag `<element></element>` in your xml file.
 In case that you want to map such an empty xml tag to `boolean` TikXml returns `false` and for number types like `int`, `double` etc. `0` will be returned.
 
+Reading and writing text as CDATA is supported. While reading CDATA just works out of the box for writing you have to enable that explicitly with `@PropertyElement(writeAsCData=true)`
+
 ## Child Elements
 In XML you can nest child element in elements. You have already seen that in `@PropertyElement`. 
 However, property elements are there read just the text content of an element and meant to be used 
@@ -783,6 +785,8 @@ class Author extends Person {
 ```
 
 If we parse an `Author` from a XML document then the text content will be parsed only into `Author.authorDescription`, whereas if we parse a `Person` the text content will be parsed into `Person.description`.
+
+Reading and writing text as CDATA is supported with `@TextContent`. While reading CDATA just works out of the box for writing you have to enable that explicitly with `@TextContent(writeAsCData=true)`
 
 ## Support for constructors
 Instead of annotating fields we can also annotate constructor parameters:

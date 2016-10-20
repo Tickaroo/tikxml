@@ -67,4 +67,12 @@ import java.lang.annotation.Target;
 @Documented
 @Target({ElementType.FIELD, ElementType.PARAMETER})
 public @interface TextContent {
+
+
+  /**
+   * Write this ElementProperties value as CDATA when generating XML?
+   *
+   * @return true if CDATA, otherwise false
+   */
+  boolean writeAsCData() default false;
 }

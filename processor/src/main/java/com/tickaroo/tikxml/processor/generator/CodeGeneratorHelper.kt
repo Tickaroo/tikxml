@@ -37,7 +37,7 @@ import javax.lang.model.element.Modifier
  *
  * @author Hannes Dorfmann
  */
-class CodeGeneratorHelper(val customTypeConverterManager: CustomTypeConverterManager, val typeConvertersForPrimitives: Set<String>, val  valueType: ClassName) {
+class CodeGeneratorHelper(val customTypeConverterManager: CustomTypeConverterManager, val typeConvertersForPrimitives: Set<String>, val valueType: ClassName) {
 
 
     // Constants
@@ -221,13 +221,13 @@ class CodeGeneratorHelper(val customTypeConverterManager: CustomTypeConverterMan
 
     fun ignoreAttributes() = CodeBlock.builder()
             .beginControlFlow("if (!$tikConfigParam.$tikConfigMethodExceptionOnUnreadXml())")
-                .beginControlFlow("while ($readerParam.hasAttribute())")
-                    .addStatement("$readerParam.skipAttribute()")
-                .endControlFlow()
+            .beginControlFlow("while ($readerParam.hasAttribute())")
+            .addStatement("$readerParam.skipAttribute()")
+            .endControlFlow()
             .nextControlFlow("else")
-                .beginControlFlow("if($readerParam.hasAttribute())")
-                    .addStatement("throw new \$T(\"Unread attribute '\"+ reader.nextAttributeName()+\"' at path \"+ $readerParam.getPath())", ClassName.get(IOException::class.java))
-                .endControlFlow()
+            .beginControlFlow("if($readerParam.hasAttribute())")
+            .addStatement("throw new \$T(\"Unread attribute '\"+ reader.nextAttributeName()+\"' at path \"+ $readerParam.getPath())", ClassName.get(IOException::class.java))
+            .endControlFlow()
             .endControlFlow()
             .build()
 
@@ -247,6 +247,115 @@ class CodeGeneratorHelper(val customTypeConverterManager: CustomTypeConverterMan
             .addParameter(valueType, valueParam)
 
     /**
+     * Generates the code to write attributes as xml
+     */
+    fun writeAttributesAsXml(currentElement: XmlElement): CodeBlock {
+
+        val builder = CodeBlock.builder()
+        for ((xmlElementName, attributeField) in currentElement.attributes) {
+            builder.add(writeViaTypeConverterOrPrimitive(attributeField.element, AssignmentType.ATTRIBUTE, attributeField.accessResolver, attributeField.converterQualifiedName))
+        }
+
+        return builder.build()
+    }
+
+    /**
+     * write the value of an attribute or
+     */
+    fun writeViaTypeConverterOrPrimitive(element: Element, assignmentType: AssignmentType, accessResolver: FieldAccessResolver, customTypeConverterQualifiedClassName: String?): CodeBlock {
+
+        // TODO implement
+        val type = element.asType()
+        val xmlReaderMethodPrefix = assignmentType.xmlReaderMethodPrefix()
+
+
+        val surroundWithTryCatch = fun(assignmentStatement: String) = CodeBlock.builder()
+                .beginControlFlow("try")
+                .add(accessResolver.resolveAssignment(assignmentStatement))
+                .nextControlFlow("catch(\$T e)", ClassName.get(TypeConverterNotFoundException::class.java))
+                .addStatement("throw e")
+                .nextControlFlow("catch(\$T e)", ClassName.get(Exception::class.java))
+                .addStatement("throw new \$T(e)", ClassName.get(IOException::class.java))
+                .endControlFlow()
+                .build()
+
+        //
+        // Use custom type converter?
+        //
+        if (customTypeConverterQualifiedClassName != null) {
+            return surroundWithTryCatch("${customTypeConverterManager.getFieldNameForConverter(customTypeConverterQualifiedClassName)}.read($readerParam.$xmlReaderMethodPrefix())")
+        }
+
+        //
+        // Primitives
+        //
+        if (type.isString()) {
+            if (typeConvertersForPrimitives.contains(String::class.java.canonicalName)) {
+                return surroundWithTryCatch("$tikConfigParam.getTypeConverter(java.lang.String.class).read($readerParam.$xmlReaderMethodPrefix())")
+
+            }
+
+            return accessResolver.resolveAssignment("$readerParam.$xmlReaderMethodPrefix()")
+        }
+
+        if (type.isBoolean()) {
+            if (typeConvertersForPrimitives.contains(String::class.java.canonicalName)) {
+                return surroundWithTryCatch("$tikConfigParam.getTypeConverter(java.lang.Boolean.class).read($readerParam.$xmlReaderMethodPrefix())")
+            }
+
+            if (typeConvertersForPrimitives.contains("boolean")) {
+                return surroundWithTryCatch("$tikConfigParam.getTypeConverter(boolean.class).read($readerParam.$xmlReaderMethodPrefix())")
+            }
+
+            return accessResolver.resolveAssignment("$readerParam.${xmlReaderMethodPrefix}AsBoolean()")
+        }
+
+        if (type.isDouble()) {
+
+            if (typeConvertersForPrimitives.contains(Double::class.java.canonicalName)) {
+                return surroundWithTryCatch("$tikConfigParam.getTypeConverter(java.lang.Double.class).read($readerParam.${xmlReaderMethodPrefix}())")
+            }
+
+            if (typeConvertersForPrimitives.contains("double")) {
+                return surroundWithTryCatch("$tikConfigParam.getTypeConverter(double.class).read($readerParam.${xmlReaderMethodPrefix}())")
+            }
+
+            return accessResolver.resolveAssignment("$readerParam.${xmlReaderMethodPrefix}AsDouble()")
+        }
+
+        if (type.isInt()) {
+
+            if (typeConvertersForPrimitives.contains(Integer::class.java.canonicalName)) {
+                return surroundWithTryCatch("$tikConfigParam.getTypeConverter(java.lang.Integer.class).read($readerParam.${xmlReaderMethodPrefix}())")
+            }
+
+            if (typeConvertersForPrimitives.contains("int")) {
+                return surroundWithTryCatch("$tikConfigParam.getTypeConverter(int.class).read($readerParam.${xmlReaderMethodPrefix}())")
+            }
+
+            return accessResolver.resolveAssignment("$readerParam.${xmlReaderMethodPrefix}AsInt()")
+        }
+
+        if (type.isLong()) {
+
+            if (typeConvertersForPrimitives.contains(Long::class.java.canonicalName)) {
+                return surroundWithTryCatch("$tikConfigParam.getTypeConverter(java.lang.Long.class).read($readerParam.${xmlReaderMethodPrefix}())")
+            }
+
+            if (typeConvertersForPrimitives.contains("long")) {
+                return surroundWithTryCatch("$tikConfigParam.getTypeConverter(long.class).read($readerParam.${xmlReaderMethodPrefix}())")
+            }
+
+            return accessResolver.resolveAssignment("$readerParam.${xmlReaderMethodPrefix}AsLong()")
+        }
+
+        //
+        // Use typeconveter from TikConfig
+        //
+        return surroundWithTryCatch("$tikConfigParam.getTypeConverter($type.class).read($readerParam.${xmlReaderMethodPrefix}())")
+    }
+
+    /**
      * Used to specify whether we are going to assign an xml attribute or an xml element text content
      */
     enum class AssignmentType {
@@ -256,6 +365,11 @@ class CodeGeneratorHelper(val customTypeConverterManager: CustomTypeConverterMan
         fun xmlReaderMethodPrefix() = when (this) {
             ATTRIBUTE -> "nextAttributeValue"
             ELEMENT -> "nextTextContent"
+        }
+
+        fun xmlWriterMethodPrefix() = when (this){
+            ATTRIBUTE -> "attribute"
+            ELEMENT -> "textContent"
         }
     }
 

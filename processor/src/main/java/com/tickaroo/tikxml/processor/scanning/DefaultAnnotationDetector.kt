@@ -69,7 +69,8 @@ open class DefaultAnnotationDetector(protected val elementUtils: Elements, prote
                         throw ProcessingException(element, "Only type String is supported for @${TextContent::class.simpleName} but field '$element' in class ${element.getSurroundingClassQualifiedName()} is not of type String")
                     }
 
-                    TextContentField(element, requiredDetector.isRequired(element))
+                    val annotation = element.getAnnotation(TextContent::class.java)
+                    TextContentField(element, requiredDetector.isRequired(element), annotation.writeAsCData)
                 } else
                     null
             }
@@ -136,6 +137,7 @@ open class DefaultAnnotationDetector(protected val elementUtils: Elements, prote
             val converterChecker = PropertyElementConverterChecker()
             return PropertyField(element,
                     nameFromAnnotationOrField(propertyAnnotation.name, element),
+                    propertyAnnotation.writeAsCData,
                     requiredDetector.isRequired(element),
                     converterChecker.getQualifiedConverterName(element, propertyAnnotation))
         }

@@ -97,4 +97,11 @@ public @interface PropertyElement {
    * @return The TypeConverter class to use
    */
   Class<? extends TypeConverter> converter() default TypeConverter.NoneTypeConverter.class;
+
+  /**
+   * Write this ElementProperties value as CDATA when generating XML?
+   *
+   * @return true if CDATA, otherwise false
+   */
+  boolean writeAsCData() default false;
 }
