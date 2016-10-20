@@ -253,7 +253,7 @@ class CodeGeneratorHelper(val customTypeConverterManager: CustomTypeConverterMan
 
         val builder = CodeBlock.builder()
         for ((xmlElementName, attributeField) in currentElement.attributes) {
-            builder.add(writeViaTypeConverterOrPrimitive(attributeField.element, AssignmentType.ATTRIBUTE, attributeField.accessResolver, attributeField.converterQualifiedName))
+            builder.add(writeAttributeViaTypeConverterOrPrimitive(attributeField.name, attributeField.element, attributeField.accessResolver, attributeField.converterQualifiedName))
         }
 
         return builder.build()
@@ -262,28 +262,57 @@ class CodeGeneratorHelper(val customTypeConverterManager: CustomTypeConverterMan
     /**
      * write the value of an attribute or
      */
-    fun writeViaTypeConverterOrPrimitive(element: Element, assignmentType: AssignmentType, accessResolver: FieldAccessResolver, customTypeConverterQualifiedClassName: String?): CodeBlock {
+    fun writeAttributeViaTypeConverterOrPrimitive(attributeName: String, element: Element, accessResolver: FieldAccessResolver, customTypeConverterQualifiedClassName: String?): CodeBlock {
 
-        // TODO implement
         val type = element.asType()
-        val xmlReaderMethodPrefix = assignmentType.xmlReaderMethodPrefix()
+        val xmlWriterMethod = "attribute"
 
 
-        val surroundWithTryCatch = fun(assignmentStatement: String) = CodeBlock.builder()
-                .beginControlFlow("try")
-                .add(accessResolver.resolveAssignment(assignmentStatement))
-                .nextControlFlow("catch(\$T e)", ClassName.get(TypeConverterNotFoundException::class.java))
-                .addStatement("throw e")
-                .nextControlFlow("catch(\$T e)", ClassName.get(Exception::class.java))
-                .addStatement("throw new \$T(e)", ClassName.get(IOException::class.java))
-                .endControlFlow()
-                .build()
+        val surroundWithTryCatch = fun(writeStatement: String): CodeBlock {
+            val builder = CodeBlock.builder()
+
+            if (!element.asType().isPrimitive()) {
+                // Only write values if they are not null, otherwise don't write values as xml
+                builder.beginControlFlow("if (${accessResolver.resolveGetterForWritingXml()} != null)")
+            }
+
+            builder.beginControlFlow("try")
+                    .addStatement(writeStatement)
+                    .nextControlFlow("catch(\$T e)", ClassName.get(TypeConverterNotFoundException::class.java))
+                    .addStatement("throw e")
+                    .nextControlFlow("catch(\$T e)", ClassName.get(Exception::class.java))
+                    .addStatement("throw new \$T(e)", ClassName.get(IOException::class.java))
+                    .endControlFlow()
+
+            if (!element.asType().isPrimitive()) {
+                // Only write values if they are not null, otherwise don't write values as xml
+                builder.endControlFlow()
+            }
+            return builder.build()
+        }
+
+        fun writeValueWithoutConverter(): CodeBlock {
+            val builder = CodeBlock.builder()
+
+            if (!element.asType().isPrimitive()) {
+                // Only write values if they are not null, otherwise don't write values as xml
+                builder.beginControlFlow("if (${accessResolver.resolveGetterForWritingXml()} != null)")
+            }
+
+            builder.addStatement("$writerParam.$xmlWriterMethod(\"$attributeName\", ${accessResolver.resolveGetterForWritingXml()})")
+
+            if (!element.asType().isPrimitive()) {
+                // Only write values if they are not null, otherwise don't write values as xml
+                builder.endControlFlow()
+            }
+            return builder.build();
+        }
 
         //
         // Use custom type converter?
         //
         if (customTypeConverterQualifiedClassName != null) {
-            return surroundWithTryCatch("${customTypeConverterManager.getFieldNameForConverter(customTypeConverterQualifiedClassName)}.read($readerParam.$xmlReaderMethodPrefix())")
+            return surroundWithTryCatch("$writerParam.$xmlWriterMethod(\"$attributeName\", ${customTypeConverterManager.getFieldNameForConverter(customTypeConverterQualifiedClassName)}.write(${accessResolver.resolveGetterForWritingXml()}))")
         }
 
         //
@@ -291,68 +320,67 @@ class CodeGeneratorHelper(val customTypeConverterManager: CustomTypeConverterMan
         //
         if (type.isString()) {
             if (typeConvertersForPrimitives.contains(String::class.java.canonicalName)) {
-                return surroundWithTryCatch("$tikConfigParam.getTypeConverter(java.lang.String.class).read($readerParam.$xmlReaderMethodPrefix())")
-
+                return surroundWithTryCatch("$writerParam.$xmlWriterMethod(\"$attributeName\", $tikConfigParam.getTypeConverter(java.lang.String.class).write(${accessResolver.resolveGetterForWritingXml()}))")
             }
 
-            return accessResolver.resolveAssignment("$readerParam.$xmlReaderMethodPrefix()")
+            return writeValueWithoutConverter()
         }
 
         if (type.isBoolean()) {
             if (typeConvertersForPrimitives.contains(String::class.java.canonicalName)) {
-                return surroundWithTryCatch("$tikConfigParam.getTypeConverter(java.lang.Boolean.class).read($readerParam.$xmlReaderMethodPrefix())")
+                return surroundWithTryCatch("$writerParam.$xmlWriterMethod(\"$attributeName\", $tikConfigParam.getTypeConverter(java.lang.Boolean.class).write(${accessResolver.resolveGetterForWritingXml()}))")
             }
 
             if (typeConvertersForPrimitives.contains("boolean")) {
-                return surroundWithTryCatch("$tikConfigParam.getTypeConverter(boolean.class).read($readerParam.$xmlReaderMethodPrefix())")
+                return surroundWithTryCatch("$writerParam.$xmlWriterMethod(\"$attributeName\", $tikConfigParam.getTypeConverter(boolean.class).write(${accessResolver.resolveGetterForWritingXml()}))")
             }
 
-            return accessResolver.resolveAssignment("$readerParam.${xmlReaderMethodPrefix}AsBoolean()")
+            return writeValueWithoutConverter()
         }
 
         if (type.isDouble()) {
 
             if (typeConvertersForPrimitives.contains(Double::class.java.canonicalName)) {
-                return surroundWithTryCatch("$tikConfigParam.getTypeConverter(java.lang.Double.class).read($readerParam.${xmlReaderMethodPrefix}())")
+                return surroundWithTryCatch("$writerParam.$xmlWriterMethod(\"$attributeName\", $tikConfigParam.getTypeConverter(java.lang.Double.class).write(${accessResolver.resolveGetterForWritingXml()}))")
             }
 
             if (typeConvertersForPrimitives.contains("double")) {
-                return surroundWithTryCatch("$tikConfigParam.getTypeConverter(double.class).read($readerParam.${xmlReaderMethodPrefix}())")
+                return surroundWithTryCatch("$writerParam.$xmlWriterMethod(\"$attributeName\", $tikConfigParam.getTypeConverter(double.class).write(${accessResolver.resolveGetterForWritingXml()}))")
             }
 
-            return accessResolver.resolveAssignment("$readerParam.${xmlReaderMethodPrefix}AsDouble()")
+            return writeValueWithoutConverter()
         }
 
         if (type.isInt()) {
 
             if (typeConvertersForPrimitives.contains(Integer::class.java.canonicalName)) {
-                return surroundWithTryCatch("$tikConfigParam.getTypeConverter(java.lang.Integer.class).read($readerParam.${xmlReaderMethodPrefix}())")
+                return surroundWithTryCatch("$writerParam.$xmlWriterMethod(\"$attributeName\", $tikConfigParam.getTypeConverter(java.lang.Integer.class).write(${accessResolver.resolveGetterForWritingXml()}))")
             }
 
             if (typeConvertersForPrimitives.contains("int")) {
-                return surroundWithTryCatch("$tikConfigParam.getTypeConverter(int.class).read($readerParam.${xmlReaderMethodPrefix}())")
+                return surroundWithTryCatch("$writerParam.$xmlWriterMethod(\"$attributeName\", $tikConfigParam.getTypeConverter(int.class).write(${accessResolver.resolveGetterForWritingXml()}))")
             }
 
-            return accessResolver.resolveAssignment("$readerParam.${xmlReaderMethodPrefix}AsInt()")
+            return writeValueWithoutConverter()
         }
 
         if (type.isLong()) {
 
             if (typeConvertersForPrimitives.contains(Long::class.java.canonicalName)) {
-                return surroundWithTryCatch("$tikConfigParam.getTypeConverter(java.lang.Long.class).read($readerParam.${xmlReaderMethodPrefix}())")
+                return surroundWithTryCatch("$writerParam.$xmlWriterMethod(\"$attributeName\", $tikConfigParam.getTypeConverter(java.lang.Long.class).write(${accessResolver.resolveGetterForWritingXml()}))")
             }
 
             if (typeConvertersForPrimitives.contains("long")) {
-                return surroundWithTryCatch("$tikConfigParam.getTypeConverter(long.class).read($readerParam.${xmlReaderMethodPrefix}())")
+                return surroundWithTryCatch("$writerParam.$xmlWriterMethod(\"$attributeName\", $tikConfigParam.getTypeConverter(long.class).write(${accessResolver.resolveGetterForWritingXml()}))")
             }
 
-            return accessResolver.resolveAssignment("$readerParam.${xmlReaderMethodPrefix}AsLong()")
+            return writeValueWithoutConverter()
         }
 
         //
         // Use typeconveter from TikConfig
         //
-        return surroundWithTryCatch("$tikConfigParam.getTypeConverter($type.class).read($readerParam.${xmlReaderMethodPrefix}())")
+        return surroundWithTryCatch("$writerParam.$xmlWriterMethod(\"$attributeName\", $tikConfigParam.getTypeConverter($type.class).write(${accessResolver.resolveGetterForWritingXml()}))")
     }
 
     /**
@@ -361,15 +389,11 @@ class CodeGeneratorHelper(val customTypeConverterManager: CustomTypeConverterMan
     enum class AssignmentType {
         ATTRIBUTE,
         ELEMENT;
+        // TODO CDATA
 
         fun xmlReaderMethodPrefix() = when (this) {
             ATTRIBUTE -> "nextAttributeValue"
             ELEMENT -> "nextTextContent"
-        }
-
-        fun xmlWriterMethodPrefix() = when (this){
-            ATTRIBUTE -> "attribute"
-            ELEMENT -> "textContent"
         }
     }
 

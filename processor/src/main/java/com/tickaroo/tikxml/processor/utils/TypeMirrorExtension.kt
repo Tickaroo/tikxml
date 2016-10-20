@@ -24,7 +24,7 @@ import javax.lang.model.type.TypeMirror
 /**
  * Also treats String as primitive. Includes primitive wrappers
  */
-fun TypeMirror.isPrimitive() = when (kind) {
+fun TypeMirror.isPrimitiveInclWrapper() = when (kind) {
     TypeKind.BOOLEAN -> true
     TypeKind.CHAR -> true
     TypeKind.DOUBLE -> true
@@ -43,6 +43,8 @@ fun TypeMirror.isPrimitive() = when (kind) {
         else -> false
     }
 }
+
+fun TypeMirror.isPrimitive() = kind.isPrimitive
 
 fun TypeMirror.isBoolean() =
         if (kind == TypeKind.BOOLEAN) true

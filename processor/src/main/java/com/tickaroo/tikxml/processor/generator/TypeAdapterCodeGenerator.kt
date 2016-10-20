@@ -23,6 +23,7 @@ import com.tickaroo.tikxml.TikXmlConfig
 import com.tickaroo.tikxml.XmlReader
 import com.tickaroo.tikxml.XmlWriter
 import com.tickaroo.tikxml.processor.field.AnnotatedClass
+import com.tickaroo.tikxml.processor.field.Namespace
 import com.tickaroo.tikxml.typeadapter.AttributeBinder
 import com.tickaroo.tikxml.typeadapter.ChildElementBinder
 import com.tickaroo.tikxml.typeadapter.TypeAdapter
@@ -88,7 +89,7 @@ class TypeAdapterCodeGenerator(private val filer: Filer, private val elementUtil
 
         adapterClassBuilder.addMethod(constructorBuilder.build())
                 .addMethod(generateFromXmlMethod(annotatedClass).build())
-                .addMethod(generateToXmlMethod(annotatedClass).build())
+                .addMethod(generateToXmlMethod(annotatedClass, codeGenUtils).build())
 
 
         val packageElement = elementUtils.getPackageOf(annotatedClass.element)
@@ -358,7 +359,10 @@ class TypeAdapterCodeGenerator(private val filer: Filer, private val elementUtil
         return builder;
     }
 
-    private inline fun generateToXmlMethod(annotatedClass: AnnotatedClass): MethodSpec.Builder {
+    /**
+     * Generates the method that is responsible to a object as xml
+     */
+    private inline fun generateToXmlMethod(annotatedClass: AnnotatedClass, codeGenHelper: CodeGeneratorHelper): MethodSpec.Builder {
 
         val writer = CodeGeneratorHelper.writerParam
         val config = CodeGeneratorHelper.tikConfigParam
@@ -372,6 +376,25 @@ class TypeAdapterCodeGenerator(private val filer: Filer, private val elementUtil
                 .addParameter(TikXmlConfig::class.java, config)
                 .addParameter(ClassName.get(annotatedClass.element), value)
                 .addException(IOException::class.java)
+                .beginControlFlow("if ($value != null)")
+                // Only write values if they are not null
+                .addStatement("$writer.beginElement(\$S)", annotatedClass.nameAsRoot)
+                .apply {
+                    // Write the namespace
+                    for (namespace in annotatedClass.writeNamespaces) {
+                        when (namespace) {
+                            is Namespace.DefaultNamespace -> addStatement("$writer.namespace(\$S)", namespace.uri)
+                            is Namespace.PrefixedNamespace -> addStatement("$writer.namespace(\$S, \$S)", namespace.prefix, namespace.uri)
+                        }
+                    }
+                }
+                .apply {
+                    // write xml attributes
+                    addCode(codeGenHelper.writeAttributesAsXml(annotatedClass))
+                }
+                .addStatement("$writer.endElement()")
+                .endControlFlow() // End only write values if they are not null
+
 
         return builder
     }
