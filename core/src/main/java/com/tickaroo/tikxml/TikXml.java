@@ -56,6 +56,15 @@ public final class TikXml {
     }
 
     /**
+     * Should the default xml declaration be written at the beginning of the xml document?
+     * {@code <?xml version="1.0" encoding="UTF-8"?>}
+     */
+    public Builder writeDefaultXmlDeclaration(boolean writeDeclaration) {
+      config.writeDefaultXmlDeclaration = writeDeclaration;
+      return this;
+    }
+
+    /**
      * Adds an type converter for the given class
      *
      * @param clazz The class you want to register a TypeConverter for
@@ -109,6 +118,13 @@ public final class TikXml {
   }
 
   public <T> void write(BufferedSink sink, T valueToWrite) throws IOException {
-    throw new UnsupportedOperationException("Writing xml is not implemented yet");
+    XmlWriter writer = XmlWriter.of(sink);
+
+    if (config.writeDefaultXmlDeclaration()) {
+      writer.xmlDeclaration();
+    }
+
+    TypeAdapter<T> adapter = config.getTypeAdapter((Class<T>) valueToWrite.getClass());
+    adapter.toXml(writer, config, valueToWrite, null);
   }
 }

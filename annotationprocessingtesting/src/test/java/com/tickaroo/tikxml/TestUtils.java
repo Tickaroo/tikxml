@@ -21,10 +21,11 @@ package com.tickaroo.tikxml;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.nio.charset.Charset;
 import okio.Buffer;
 import okio.BufferedSource;
 import okio.Okio;
-import org.junit.Assert;
+import org.junit.*;
 
 /**
  * @author Hannes Dorfmann
@@ -48,6 +49,10 @@ public class TestUtils {
     return Okio.buffer(Okio.source(new File(getResourcePath(filePath))));
   }
 
+  public static BufferedSource sourceFrom(String xml) {
+    return new Buffer().writeUtf8(xml);
+  }
+
 
   /**
    * Get the resource path
@@ -59,4 +64,12 @@ public class TestUtils {
   }
 
 
+  /**
+   * Converts the buffers content to a String
+   * @param buffer
+   * @return
+   */
+  public static String bufferToString(Buffer buffer) {
+    return buffer.readString(Charset.defaultCharset());
+  }
 }

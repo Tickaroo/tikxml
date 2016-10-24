@@ -31,6 +31,7 @@ public final class TikXmlConfig {
   boolean exceptionOnUnreadXml = true;
   TypeConverters typeConverters = new TypeConverters();
   TypeAdapters typeAdapters = new TypeAdapters();
+  boolean writeDefaultXmlDeclaration = true;
 
   TikXmlConfig() {
   }
@@ -46,6 +47,16 @@ public final class TikXmlConfig {
   }
 
   /**
+   * Should the default xml declaration be written
+   * {@code <?xml version="1.0" encoding="UTF-8"?>}
+   *
+   * @return true if should be written, otherwise false
+   */
+  public boolean writeDefaultXmlDeclaration() {
+    return writeDefaultXmlDeclaration;
+  }
+
+  /**
    * Query a {@link TypeConverter} for a given class
    *
    * @param clazz The class you want a type converter for
@@ -54,10 +65,10 @@ public final class TikXmlConfig {
    * @throws TypeConverterNotFoundException Thrown if no TypeConverter has been found for the given
    * class
    */
-  public <T> TypeConverter<T> getTypeConverter(Class<T> clazz) throws TypeConverterNotFoundException {
+  public <T> TypeConverter<T> getTypeConverter(Class<T> clazz)
+      throws TypeConverterNotFoundException {
     return typeConverters.get(clazz);
   }
-
 
   /**
    * Get the {@link TypeAdapter} for a given class
@@ -71,5 +82,4 @@ public final class TikXmlConfig {
   public <T> TypeAdapter<T> getTypeAdapter(Class<T> clazz) throws TypeAdapterNotFoundException {
     return typeAdapters.get(clazz);
   }
-
 }

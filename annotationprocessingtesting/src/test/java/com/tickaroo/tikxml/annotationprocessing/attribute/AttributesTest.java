@@ -18,14 +18,14 @@
 
 package com.tickaroo.tikxml.annotationprocessing.attribute;
 
+import com.tickaroo.tikxml.TestUtils;
 import com.tickaroo.tikxml.TikXml;
 import com.tickaroo.tikxml.annotationprocessing.DateConverter;
-import com.tickaroo.tikxml.TestUtils;
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.Date;
-import org.junit.Assert;
-import org.junit.Test;
+import okio.Buffer;
+import org.junit.*;
 
 /**
  * @author Hannes Dorfmann
@@ -34,8 +34,10 @@ public class AttributesTest {
 
   @Test
   public void fieldAccess() throws IOException, ParseException {
-    TikXml xml = new TikXml.Builder().exceptionOnUnreadXml(true).build();
+    TikXml xml =
+        new TikXml.Builder().exceptionOnUnreadXml(true).writeDefaultXmlDeclaration(true).build();
 
+    // Reading test
     Item item = xml.read(TestUtils.sourceForFile("attributes.xml"), Item.class);
 
     Date date = DateConverter.format.parse("1988-03-04");
@@ -52,14 +54,25 @@ public class AttributesTest {
     Assert.assertEquals(23.42, item.doubleWrapper, 0);
     Assert.assertEquals(2147483648L, (long) item.longWrapper);
 
-  }
+    // Writing xml test
+    Buffer buffer = new Buffer();
+    xml.write(buffer, item);
 
+    String xmlStr =
+        "<?xml version=\"1.0\" encoding=\"UTF-8\"?><item aBoolean=\"true\" longWrapper=\"2147483648\" aString=\"foo\" intWrapper=\"123\" aLong=\"2147483648\" anInt=\"123\" aDate=\"1988-03-04\" aDouble=\"23.42\" doubleWrapper=\"23.42\" booleanWrapper=\"true\"/>";
+    Assert.assertEquals(xmlStr, TestUtils.bufferToString(buffer));
+
+    Item item2 = xml.read(TestUtils.sourceFrom(xmlStr), Item.class);
+    Assert.assertEquals(item, item2);
+  }
 
   @Test
   public void settersGetters() throws IOException, ParseException {
     TikXml xml = new TikXml.Builder().exceptionOnUnreadXml(true).build();
 
-    ItemWithGetterSetters item = xml.read(TestUtils.sourceForFile("attributes.xml"), ItemWithGetterSetters.class);
+    // Test reading xml
+    ItemWithGetterSetters item =
+        xml.read(TestUtils.sourceForFile("attributes.xml"), ItemWithGetterSetters.class);
 
     Date date = DateConverter.format.parse("1988-03-04");
 
@@ -75,6 +88,15 @@ public class AttributesTest {
     Assert.assertEquals(23.42, item.getDoubleWrapper(), 0);
     Assert.assertEquals(2147483648L, (long) item.getLongWrapper());
 
-  }
+    // Writing xml test
+    Buffer buffer = new Buffer();
+    xml.write(buffer, item);
 
+    String xmlStr =
+        "<?xml version=\"1.0\" encoding=\"UTF-8\"?><item aBoolean=\"true\" longWrapper=\"2147483648\" aString=\"foo\" intWrapper=\"123\" aLong=\"2147483648\" anInt=\"123\" aDate=\"1988-03-04\" aDouble=\"23.42\" doubleWrapper=\"23.42\" booleanWrapper=\"true\"/>";
+    Assert.assertEquals(xmlStr, TestUtils.bufferToString(buffer));
+
+    ItemWithGetterSetters item2 = xml.read(TestUtils.sourceFrom(xmlStr), ItemWithGetterSetters.class);
+    Assert.assertEquals(item, item2);
+  }
 }
