@@ -367,6 +367,7 @@ class TypeAdapterCodeGenerator(private val filer: Filer, private val elementUtil
         val writer = CodeGeneratorHelper.writerParam
         val config = CodeGeneratorHelper.tikConfigParam
         val value = CodeGeneratorHelper.valueParam
+        val overridingXmlElementTagName = "overridingXmlElementTagName"
 
         val builder = MethodSpec.methodBuilder("toXml")
                 .addModifiers(Modifier.PUBLIC)
@@ -375,10 +376,15 @@ class TypeAdapterCodeGenerator(private val filer: Filer, private val elementUtil
                 .addParameter(XmlWriter::class.java, writer)
                 .addParameter(TikXmlConfig::class.java, config)
                 .addParameter(ClassName.get(annotatedClass.element), value)
+                .addParameter(String::class.java, overridingXmlElementTagName)
                 .addException(IOException::class.java)
                 .beginControlFlow("if ($value != null)")
                 // Only write values if they are not null
+                .beginControlFlow("if ($overridingXmlElementTagName == null)")
                 .addStatement("$writer.beginElement(\$S)", annotatedClass.nameAsRoot)
+                .nextControlFlow("else")
+                .addStatement("$writer.beginElement($overridingXmlElementTagName)")
+                .endControlFlow()
                 .apply {
                     // Write the namespace
                     for (namespace in annotatedClass.writeNamespaces) {
@@ -391,6 +397,18 @@ class TypeAdapterCodeGenerator(private val filer: Filer, private val elementUtil
                 .apply {
                     // write xml attributes
                     addCode(codeGenHelper.writeAttributesAsXml(annotatedClass))
+                }
+                .apply {
+                    // Generate code for child elements
+                    annotatedClass.childElements.forEach { it.value.generateWriteXmlCode(codeGenHelper) }
+                }
+                .apply {
+                    // TextContent
+                    val textContentField = annotatedClass.textContentField
+                    if (textContentField != null) {
+                        // TODO support for textcontent and type converters
+                        codeGenHelper.writeTextContentViaTypeConverterOrPrimitive(textContentField.element, textContentField.accessResolver, null, textContentField.writeAsCData)
+                    }
                 }
                 .addStatement("$writer.endElement()")
                 .endControlFlow() // End only write values if they are not null

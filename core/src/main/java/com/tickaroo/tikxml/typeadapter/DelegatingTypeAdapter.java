@@ -169,7 +169,7 @@ public abstract class DelegatingTypeAdapter<T> implements TypeAdapter<T> {
   }
 
   @Override
-  public void toXml(XmlWriter writer, TikXmlConfig config, T value) throws IOException {
+  public void toXml(XmlWriter writer, TikXmlConfig config, T value, String overridingXmlElementTagName) throws IOException {
 
   }
 }

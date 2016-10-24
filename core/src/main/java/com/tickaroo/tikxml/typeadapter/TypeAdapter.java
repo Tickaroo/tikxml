@@ -38,12 +38,10 @@ import java.io.IOException;
  */
 public interface TypeAdapter<T> {
 
-
   /**
    * This name will be used as class suffix for the generated TypeAdapter by annotation processing
    */
   String GENERATED_CLASS_SUFFIX = "$$TypeAdapter";
-
 
   /**
    * Read a java object from xml document
@@ -56,10 +54,17 @@ public interface TypeAdapter<T> {
   T fromXml(XmlReader reader, TikXmlConfig config) throws IOException;
 
   /**
+   * Writes a java object as xml
+   *
    * @param writer The {@link XmlWriter} to write xml
    * @param config The {@link TikXmlConfig} where you can access {@link TypeConverter} etc.
    * @param value The value to write as xml
+   * @param overridingXmlElementTagName If this parameter is not null then this string should be
+   * used as the xml elements tag name (instead of the default one) like {@code <someName> }. This
+   * is used when you explicitly want to set a different name i.e. {@code @Element(name =
+   * "someName")} Annotation instead of using the default tag name
    * @throws IOException
    */
-  void toXml(XmlWriter writer, TikXmlConfig config, T value) throws IOException;
+  void toXml(XmlWriter writer, TikXmlConfig config, T value, String overridingXmlElementTagName)
+      throws IOException;
 }

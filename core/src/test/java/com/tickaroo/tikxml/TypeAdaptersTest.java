@@ -62,7 +62,7 @@ public class TypeAdaptersTest {
     }
 
     @Override
-    public void toXml(XmlWriter writer, TikXmlConfig config, Object value) {
+    public void toXml(XmlWriter writer, TikXmlConfig config, Object value, String overridingXmlElementTagName) {
 
     }
   }

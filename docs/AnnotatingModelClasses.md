@@ -901,6 +901,58 @@ class Author extends Writer {
 }
 ```
 
+## Namespaces
+TikXml only has limited support for namespaces. The problem is that namespaces can be changed and overridden dynamically by every xml element like:
+```xml
+<foo xmlns:a="http://foo.com">
+  <a:bar a="http://bar.com">
+    <other xmlns:a="http://other.com">
+      <a:first a:attr="123 />  <!-- namespace other.com -->
+    </other>
+    <a:second />  <!-- still namespace other.com -->
+  </a:bar>
+```
+As you see, the problem is that namespace of `<a:second>` is `other.com`, even if from a hierarchycal point of view
+`<a:second>` is a child of `<a:bar a="http://bar.com">`. Since the namespace definitions are changing at runtime while reading xml,
+we would have to adjust the internal TikXml mapping of xml namespaces every time we read a xml element.
+Not only that this will add more complexity to TikXml and make multi threaded usage of TikXml harder or memory inefficient, but it also
+contradicts with the principle of compile time annotation processing.
+
+Thus, TikXml treats namespaces as any usual name by simply using the namespace prefix as part of the name (TikXml doesn't macht namespace uri's).
+Example:
+
+```xml
+<person xmlns:a="foo.com" a:id="123">
+  <a:firstname>Hannes</a:firstname>
+  <a:lastname>Dorfmann</a:lastname>
+</person>
+```
+
+has to be annotated with:
+
+```java
+@Xml(writeNamespaces={"a=foo.com"})
+class Person{
+  @Attribute(name="a:id") int id;
+  @PropertyElement("a:firstname") String firstname;
+  @PropertyElement("a:lastname") String lastname;
+}
+```
+
+`@Xml(writeNamespaces={"a=foo.com"})` specifies that this xml namespace definition has to be written when
+serializing a java object to xml. `writeNamespaces` can contain arbitarry many namespace definition like `@Xml(writeNamespaces={"prefix1=uri1", "prefix2=uri2"})`.
+If you want to write the default namespace definition like
+```xml
+<persion xmlns="http://default.com" />
+```
+you simply add a uri (without prefix and equals sign) to `writeNameSpaces` like this:
+
+```java
+@Xml(writeNamespaces={"default.com"})
+```
+
+As the name already suggests, `writeNamespaces` will only be taken into account when writing xml and not when reading.
+While reading xml TikXml just ignores `xmlns` namespace definitions (will not throw an exception even if `exceptionOnUnreadXml(true)` set to true).
 
 ## Required mapping
 Per default a mapping from XML to java class is required. That means, if you have the following java class:

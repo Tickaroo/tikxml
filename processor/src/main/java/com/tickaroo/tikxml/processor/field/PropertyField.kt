@@ -18,11 +18,9 @@
 
 package com.tickaroo.tikxml.processor.field
 
-import com.squareup.javapoet.ClassName
-import com.squareup.javapoet.FieldSpec
-import com.squareup.javapoet.ParameterizedTypeName
-import com.squareup.javapoet.TypeSpec
+import com.squareup.javapoet.*
 import com.tickaroo.tikxml.processor.generator.CodeGeneratorHelper
+import com.tickaroo.tikxml.processor.utils.ifValueNotNullCheck
 import com.tickaroo.tikxml.processor.xml.XmlChildElement
 import java.util.*
 import javax.lang.model.element.Modifier
@@ -32,7 +30,7 @@ import javax.lang.model.element.VariableElement
  * This class represents a field annotated with [com.tickaroo.tikxml.annotation.PropertyElement]
  * @author Hannes Dorfmann
  */
-class PropertyField(element: VariableElement, name: String, val writeAsCData : Boolean = false, required: Boolean? = null, val converterQualifiedName: String? = null) : NamedField(element, name, required), XmlChildElement {
+class PropertyField(element: VariableElement, name: String, val writeAsCData: Boolean = false, required: Boolean? = null, val converterQualifiedName: String? = null) : NamedField(element, name, required), XmlChildElement {
     override val attributes = LinkedHashMap<String, AttributeField>()
     override val childElements = LinkedHashMap<String, XmlChildElement>()
 
@@ -72,4 +70,14 @@ class PropertyField(element: VariableElement, name: String, val writeAsCData : B
 
 
     }
+
+    override fun generateWriteXmlCode(codeGeneratorHelper: CodeGeneratorHelper) =
+            CodeBlock.builder()
+                    .ifValueNotNullCheck(accessResolver) {
+                        codeGeneratorHelper.writeBeginElementAndAttributes(this@PropertyField)
+                        codeGeneratorHelper.writeTextContentViaTypeConverterOrPrimitive(element, accessResolver, converterQualifiedName, writeAsCData)
+                        addStatement("${CodeGeneratorHelper.writerParam}.endElement()")
+                    }
+                    .build()
+
 }

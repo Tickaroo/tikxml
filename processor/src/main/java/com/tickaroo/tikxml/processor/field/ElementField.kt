@@ -23,6 +23,7 @@ import com.squareup.javapoet.CodeBlock
 import com.squareup.javapoet.ParameterizedTypeName
 import com.squareup.javapoet.TypeSpec
 import com.tickaroo.tikxml.processor.generator.CodeGeneratorHelper
+import com.tickaroo.tikxml.processor.utils.ifValueNotNullCheck
 import com.tickaroo.tikxml.processor.xml.XmlChildElement
 import java.util.*
 import javax.lang.model.element.VariableElement
@@ -51,6 +52,14 @@ open class ElementField(element: VariableElement, name: String, required: Boolea
                 .build()
 
     }
+
+    override fun generateWriteXmlCode(codeGeneratorHelper: CodeGeneratorHelper): CodeBlock {
+        return CodeBlock.builder()
+                .ifValueNotNullCheck(accessResolver) {
+                    codeGeneratorHelper.writeDelegateToTypeAdapters(element.asType(), accessResolver, name) // TODO optimize name. Set it null if name is not different from default name
+                }
+                .build()
+    }
 }
 
 class ListElementField(element: VariableElement, name: String, required: Boolean? = null, private val genericListType: TypeMirror) : ElementField(element, name, required) {
@@ -67,7 +76,7 @@ class ListElementField(element: VariableElement, name: String, required: Boolean
         val fromXmlMethod = codeGeneratorHelper.fromXmlMethodBuilder()
                 .addCode(CodeBlock.builder()
                         .beginControlFlow("if (${accessResolver.resolveGetterForReadingXml()} == null)")
-                        .add(accessResolver.resolveAssignment("new \$T()", valueTypeAsArrayList))
+                        .add(accessResolver.resolveAssignment("new \$T()", valueTypeAsArrayList)) // TODO remove this
                         .endControlFlow()
                         .build())
                 .addStatement("${accessResolver.resolveGetterForReadingXml()}.add((\$T) $valueFromAdapter )", ClassName.get(genericListType), ClassName.get(genericListType))
@@ -79,5 +88,24 @@ class ListElementField(element: VariableElement, name: String, required: Boolean
                 .build()
 
     }
+
+    override fun generateWriteXmlCode(codeGeneratorHelper: CodeGeneratorHelper) =
+            CodeBlock.builder()
+                    .ifValueNotNullCheck(accessResolver) {
+
+                        val listType = ParameterizedTypeName.get(element.asType())
+                        val sizeVariableName = codeGeneratorHelper.uniqueVariableName("listSize")
+                        val listVariableName = codeGeneratorHelper.uniqueVariableName("list")
+                        val itemVariableName = codeGeneratorHelper.uniqueVariableName("item");
+
+
+                        addStatement("\$T $listVariableName = ${accessResolver.resolveGetterForWritingXml()}", listType)
+                        addStatement("int $sizeVariableName = $listVariableName.size()")
+                        beginControlFlow("for (int i =0; i<$sizeVariableName; i++")
+                        addStatement("\$T $itemVariableName = $listVariableName.get(i)", ClassName.get(genericListType))
+                        addStatement("${CodeGeneratorHelper.tikConfigParam}.getTypeAdapter(\$T.class).toXml(${CodeGeneratorHelper.writerParam}, ${CodeGeneratorHelper.tikConfigParam}, $itemVariableName, $name)", ClassName.get(genericListType))
+                        endControlFlow()
+                    }
+                    .build()
 
 }

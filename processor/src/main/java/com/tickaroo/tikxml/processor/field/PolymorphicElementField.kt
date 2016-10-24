@@ -25,6 +25,7 @@ import com.squareup.javapoet.TypeSpec
 import com.tickaroo.tikxml.processor.ProcessingException
 import com.tickaroo.tikxml.processor.field.access.FieldAccessResolver
 import com.tickaroo.tikxml.processor.generator.CodeGeneratorHelper
+import com.tickaroo.tikxml.processor.utils.ifValueNotNullCheck
 import java.util.*
 import javax.lang.model.element.VariableElement
 import javax.lang.model.type.TypeMirror
@@ -34,14 +35,28 @@ import javax.lang.model.type.TypeMirror
  * @author Hannes Dorfmann
  */
 open class PolymorphicElementField(element: VariableElement, name: String, required: Boolean?, val typeElementNameMatcher: List<PolymorphicTypeElementNameMatcher>) : ElementField(element, name, required) {
+
     override fun generateReadXmlCode(codeGeneratorHelper: CodeGeneratorHelper): TypeSpec {
         return codeGeneratorHelper.generateNestedChildElementBinder(this)
     }
+
+    override fun generateWriteXmlCode(codeGeneratorHelper: CodeGeneratorHelper) =
+            CodeBlock.builder()
+                    .ifValueNotNullCheck(accessResolver) {
+                        val varName = codeGeneratorHelper.uniqueVariableName("tmp")
+                        addStatement("\$T $varName = ${accessResolver.resolveGetterForWritingXml()}", ClassName.get(element.asType()))
+                        add(codeGeneratorHelper.writeResolvePolymorphismAndDelegteToTypedpters(varName, typeElementNameMatcher))
+                    }
+                    .build()
 }
 
 class PolymorphicListElementField(element: VariableElement, name: String, required: Boolean?, typeElementNameMatcher: List<PolymorphicTypeElementNameMatcher>, val genericListTypeMirror: TypeMirror) : PolymorphicElementField(element, name, required, typeElementNameMatcher) {
 
     override fun generateReadXmlCode(codeGeneratorHelper: CodeGeneratorHelper): TypeSpec {
+        throw ProcessingException(element, "Oops, en error has occurred while generating reading xml code for $this. Please fill an issue at https://github.com/Tickaroo/tikxml/issues")
+    }
+
+    override fun generateWriteXmlCode(codeGeneratorHelper: CodeGeneratorHelper): CodeBlock {
         throw ProcessingException(element, "Oops, en error has occurred while generating reading xml code for $this. Please fill an issue at https://github.com/Tickaroo/tikxml/issues")
     }
 }
@@ -65,6 +80,13 @@ open class PolymorphicSubstitutionField(element: VariableElement, override val t
                 .build()
     }
 
+    override fun generateWriteXmlCode(codeGeneratorHelper: CodeGeneratorHelper): CodeBlock {
+        return CodeBlock.builder()
+                .ifValueNotNullCheck(accessResolver) {
+                    codeGeneratorHelper.writeDelegateToTypeAdapters(element.asType(), accessResolver, name) // TODO optimize name. Set it null if name is not different from default name
+                }
+                .build()
+    }
 }
 
 /**
@@ -81,7 +103,7 @@ class PolymorphicSubstitutionListField(element: VariableElement, typeMirror: Typ
 
         val fromXmlMethod = codeGeneratorHelper.fromXmlMethodBuilder()
                 .addCode(CodeBlock.builder()
-                        .beginControlFlow("if (${accessResolver.resolveGetterForReadingXml()} == null)")
+                        .beginControlFlow("if (${accessResolver.resolveGetterForReadingXml()} == null)") // TODO remove this
                         .add(accessResolver.resolveAssignment("new \$T()", valueTypeAsArrayList))
                         .endControlFlow()
                         .build())
@@ -94,6 +116,8 @@ class PolymorphicSubstitutionListField(element: VariableElement, typeMirror: Typ
                 .addMethod(fromXmlMethod)
                 .build()
     }
+
+
 
 }
 

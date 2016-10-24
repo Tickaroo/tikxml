@@ -71,7 +71,7 @@ public class BookTypeAdapter implements TypeAdapter<Book> {
   }
 
   @Override
-  public void toXml(XmlWriter writer, TikXmlConfig config, Book value) throws IOException {
+  public void toXml(XmlWriter writer, TikXmlConfig config, Book value, String overridingXmlElementTagName) throws IOException {
 
   }
 }

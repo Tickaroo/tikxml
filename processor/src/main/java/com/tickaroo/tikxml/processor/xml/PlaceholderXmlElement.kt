@@ -18,9 +18,11 @@
 
 package com.tickaroo.tikxml.processor.xml
 
+import com.squareup.javapoet.CodeBlock
 import com.squareup.javapoet.TypeSpec
 import com.tickaroo.tikxml.processor.field.AttributeField
 import com.tickaroo.tikxml.processor.generator.CodeGeneratorHelper
+import com.tickaroo.tikxml.processor.utils.endXmlElement
 import com.tickaroo.tikxml.processor.utils.getSurroundingClassQualifiedName
 import java.util.*
 import javax.lang.model.element.Element
@@ -50,4 +52,15 @@ class PlaceholderXmlElement(override val name: String, override val element: Ele
     override fun generateReadXmlCode(codeGeneratorHelper: CodeGeneratorHelper): TypeSpec {
         return codeGeneratorHelper.generateNestedChildElementBinder(this)
     }
+
+    override fun generateWriteXmlCode(codeGeneratorHelper: CodeGeneratorHelper) =
+            CodeBlock.builder()
+                    .add(codeGeneratorHelper.writeBeginElementAndAttributes(this))
+                    .apply {
+                        for ((name, childElement) in childElements) {
+                            childElement.generateWriteXmlCode(codeGeneratorHelper)
+                        }
+                    }
+                    .endXmlElement()
+                    .build()
 }

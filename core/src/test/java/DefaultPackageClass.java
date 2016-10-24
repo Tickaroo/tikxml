@@ -17,9 +17,9 @@
  */
 
 import com.tickaroo.tikxml.TikXmlConfig;
-import com.tickaroo.tikxml.typeadapter.TypeAdapter;
 import com.tickaroo.tikxml.XmlReader;
 import com.tickaroo.tikxml.XmlWriter;
+import com.tickaroo.tikxml.typeadapter.TypeAdapter;
 import java.io.IOException;
 
 /**
@@ -38,7 +38,8 @@ public class DefaultPackageClass {
     }
 
     @Override
-    public void toXml(XmlWriter writer, TikXmlConfig config, DefaultPackageClass value) throws IOException {
+    public void toXml(XmlWriter writer, TikXmlConfig config, DefaultPackageClass value,
+        String overridingXmlElementTagNames) throws IOException {
 
     }
   }

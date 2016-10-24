@@ -37,7 +37,7 @@ public class SampleClass {
     }
 
     @Override
-    public void toXml(XmlWriter writer, TikXmlConfig config, SampleClass value) {
+    public void toXml(XmlWriter writer, TikXmlConfig config, SampleClass value, String overridingXmlElementTagName) {
 
     }
   }
