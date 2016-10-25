@@ -27,4 +27,17 @@ import com.tickaroo.tikxml.annotation.Xml;
 @Xml
 public abstract class Writer {
   @PropertyElement String name;
+
+  @Override public boolean equals(Object o) {
+    if (this == o) return true;
+    if (!(o instanceof Writer)) return false;
+
+    Writer writer = (Writer) o;
+
+    return name != null ? name.equals(writer.name) : writer.name == null;
+  }
+
+  @Override public int hashCode() {
+    return name != null ? name.hashCode() : 0;
+  }
 }

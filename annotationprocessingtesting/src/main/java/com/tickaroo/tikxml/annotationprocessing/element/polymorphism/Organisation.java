@@ -28,4 +28,20 @@ import com.tickaroo.tikxml.annotation.Xml;
 public class Organisation extends Writer {
 
   @PropertyElement String address;
+
+  @Override public boolean equals(Object o) {
+    if (this == o) return true;
+    if (!(o instanceof Organisation)) return false;
+    if (!super.equals(o)) return false;
+
+    Organisation that = (Organisation) o;
+
+    return address != null ? address.equals(that.address) : that.address == null;
+  }
+
+  @Override public int hashCode() {
+    int result = super.hashCode();
+    result = 31 * result + (address != null ? address.hashCode() : 0);
+    return result;
+  }
 }

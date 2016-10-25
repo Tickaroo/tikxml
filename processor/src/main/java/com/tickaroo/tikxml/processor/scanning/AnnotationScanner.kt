@@ -157,6 +157,9 @@ class AnnotationScanner(protected val elementUtils: Elements, protected val type
             annotatedConstructorFields.forEach {
                 val getter = checkGetter(it, methodsMap, true)
                 it.accessResolver = FieldAccessResolver.ConstructorAndGetterFieldAccessResolver(it.element, getter)
+                if (it is PolymorphicElementField){
+                    it.substitutions.forEach { sub -> sub.accessResolver = it.accessResolver }
+                }
             }
 
             annotatedClass.annotatedConstructor = annotatedConstructor
@@ -327,14 +330,18 @@ class AnnotationScanner(protected val elementUtils: Elements, protected val type
                 is PolymorphicListElementField -> {
                     val path = PathDetector.getSegments(field.element)
                     for ((xmlElementName, typeMirror) in field.typeElementNameMatcher) {
-                        annotatedClass.addChildElement(PolymorphicSubstitutionListField(field.element, typeMirror, field.accessResolver, xmlElementName, field.genericListTypeMirror, field.required), path)
+                        val sub = PolymorphicSubstitutionListField(field.element, typeMirror, field.accessResolver, xmlElementName, field.genericListTypeMirror, field.required)
+                        field.substitutions.add(sub)
+                        annotatedClass.addChildElement(sub, path)
                     }
                 }
 
                 is PolymorphicElementField ->
                     // Insert PolymorphicSubstitution instead of the original field.
                     for ((xmlElementName, typeMirror) in field.typeElementNameMatcher) {
-                        annotatedClass.addChildElement(PolymorphicSubstitutionField(field.element, typeMirror, field.accessResolver, xmlElementName, field.required), PathDetector.getSegments(field.element))
+                        val sub = PolymorphicSubstitutionField(field.element, typeMirror, field.accessResolver, xmlElementName, field.required, field.typeMirror)
+                        field.substitutions.add(sub)
+                        annotatedClass.addChildElement(sub, PathDetector.getSegments(field.element))
                     }
 
                 is XmlChildElement -> annotatedClass.addChildElement(field, PathDetector.getSegments(field.element))

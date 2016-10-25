@@ -22,11 +22,7 @@ import java.io.IOException;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
 import okhttp3.mockwebserver.RecordedRequest;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.*;
 import retrofit2.Call;
 import retrofit2.Response;
 import retrofit2.Retrofit;
@@ -55,9 +51,8 @@ public class TikXmlConverterFactoryTest {
   }
 
   @Test
-  @Ignore // TODO enable once writing is done
   public void test() throws InterruptedException, IOException, UnsupportedOperationException {
-    server.enqueue(new MockResponse().setBody("<person><name>Hannes</name></person>"));
+    server.enqueue(new MockResponse().setBody("<<?xml version=\"1.0\" encoding=\"UTF-8\"?>person><name>Hannes</name></person>"));
 
     Person person = new Person();
     person.name = "outgoingName";
@@ -69,7 +64,7 @@ public class TikXmlConverterFactoryTest {
     Assert.assertEquals("Hannes", responsePerson.name);
 
     RecordedRequest request = server.takeRequest();
-    Assert.assertEquals("<person><name>outgoingName</name></person>", request.getBody().readUtf8());
+    Assert.assertEquals("<?xml version=\"1.0\" encoding=\"UTF-8\"?><person><name>outgoingName</name></person>", request.getBody().readUtf8());
     Assert.assertEquals("application/xml; charset=UTF-8", request.getHeader("Content-Type"));
   }
 }

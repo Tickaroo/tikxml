@@ -18,10 +18,11 @@
 
 package com.tickaroo.tikxml.annotationprocessing.propertyelement;
 
-import com.tickaroo.tikxml.TikXml;
 import com.tickaroo.tikxml.TestUtils;
+import com.tickaroo.tikxml.TikXml;
 import java.io.IOException;
 import java.text.ParseException;
+import okio.Buffer;
 import org.junit.*;
 
 /**
@@ -37,6 +38,19 @@ public class EmptyPropertyElementTest {
         xml.read(TestUtils.sourceForFile("empty_property_tag.xml"),
             EmptyStringPropertyElement.class);
     Assert.assertEquals("", item.empty);
+
+    // Write XML
+    // Writing tests
+    Buffer buffer = new Buffer();
+    xml.write(buffer, item);
+
+    String xmlStr =
+        "<?xml version=\"1.0\" encoding=\"UTF-8\"?><emptyPropertyTag><empty></empty></emptyPropertyTag>";
+    Assert.assertEquals(xmlStr, TestUtils.bufferToString(buffer));
+
+    EmptyStringPropertyElement item2 =
+        xml.read(TestUtils.sourceFrom(xmlStr), EmptyStringPropertyElement.class);
+    Assert.assertEquals(item, item2);
   }
 
   @Test
@@ -46,6 +60,19 @@ public class EmptyPropertyElementTest {
     EmptyIntPropertyElement item =
         xml.read(TestUtils.sourceForFile("empty_property_tag.xml"), EmptyIntPropertyElement.class);
     Assert.assertEquals(0, item.empty);
+
+    // Write XML
+    // Writing tests
+    Buffer buffer = new Buffer();
+    xml.write(buffer, item);
+
+    String xmlStr =
+        "<?xml version=\"1.0\" encoding=\"UTF-8\"?><emptyPropertyTag><empty>0</empty></emptyPropertyTag>";
+    Assert.assertEquals(xmlStr, TestUtils.bufferToString(buffer));
+
+    EmptyIntPropertyElement item2 =
+        xml.read(TestUtils.sourceFrom(xmlStr), EmptyIntPropertyElement.class);
+    Assert.assertEquals(item, item2);
   }
 
   @Test
@@ -55,6 +82,19 @@ public class EmptyPropertyElementTest {
     EmptyLongPropertyElement item =
         xml.read(TestUtils.sourceForFile("empty_property_tag.xml"), EmptyLongPropertyElement.class);
     Assert.assertEquals(0, item.empty);
+
+    // Write XML
+    // Writing tests
+    Buffer buffer = new Buffer();
+    xml.write(buffer, item);
+
+    String xmlStr =
+        "<?xml version=\"1.0\" encoding=\"UTF-8\"?><emptyPropertyTag><empty>0</empty></emptyPropertyTag>";
+    Assert.assertEquals(xmlStr, TestUtils.bufferToString(buffer));
+
+    EmptyLongPropertyElement item2 =
+        xml.read(TestUtils.sourceFrom(xmlStr), EmptyLongPropertyElement.class);
+    Assert.assertEquals(item, item2);
   }
 
   @Test
@@ -65,6 +105,19 @@ public class EmptyPropertyElementTest {
         xml.read(TestUtils.sourceForFile("empty_property_tag.xml"),
             EmptyDoublePropertyElement.class);
     Assert.assertEquals(0, 0, item.empty);
+
+    // Write XML
+    // Writing tests
+    Buffer buffer = new Buffer();
+    xml.write(buffer, item);
+
+    String xmlStr =
+        "<?xml version=\"1.0\" encoding=\"UTF-8\"?><emptyPropertyTag><empty>0.0</empty></emptyPropertyTag>";
+    Assert.assertEquals(xmlStr, TestUtils.bufferToString(buffer));
+
+    EmptyDoublePropertyElement item2 =
+        xml.read(TestUtils.sourceFrom(xmlStr), EmptyDoublePropertyElement.class);
+    Assert.assertEquals(item, item2);
   }
 
   @Test
@@ -75,5 +128,18 @@ public class EmptyPropertyElementTest {
         xml.read(TestUtils.sourceForFile("empty_property_tag.xml"),
             EmptyBooleanPropertyElement.class);
     Assert.assertEquals(false, item.empty);
+
+    // Write XML
+    // Writing tests
+    Buffer buffer = new Buffer();
+    xml.write(buffer, item);
+
+    String xmlStr =
+        "<?xml version=\"1.0\" encoding=\"UTF-8\"?><emptyPropertyTag><empty>false</empty></emptyPropertyTag>";
+    Assert.assertEquals(xmlStr, TestUtils.bufferToString(buffer));
+
+    EmptyBooleanPropertyElement item2 =
+        xml.read(TestUtils.sourceFrom(xmlStr), EmptyBooleanPropertyElement.class);
+    Assert.assertEquals(item, item2);
   }
 }

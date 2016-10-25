@@ -34,4 +34,17 @@ public class Paper {
           @ElementNameMatcher(type = Organisation.class)
       }
   ) Writer writer;
+
+  @Override public boolean equals(Object o) {
+    if (this == o) return true;
+    if (!(o instanceof Paper)) return false;
+
+    Paper paper = (Paper) o;
+
+    return writer != null ? writer.equals(paper.writer) : paper.writer == null;
+  }
+
+  @Override public int hashCode() {
+    return writer != null ? writer.hashCode() : 0;
+  }
 }

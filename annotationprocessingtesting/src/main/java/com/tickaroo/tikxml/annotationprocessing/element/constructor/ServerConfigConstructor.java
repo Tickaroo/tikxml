@@ -25,7 +25,7 @@ import com.tickaroo.tikxml.annotation.Xml;
 /**
  * @author Hannes Dorfmann
  */
-@Xml
+@Xml(name = "config")
 public class ServerConfigConstructor {
 
   private boolean enabled;
@@ -42,5 +42,21 @@ public class ServerConfigConstructor {
 
   public String getIp() {
     return ip;
+  }
+
+  @Override public boolean equals(Object o) {
+    if (this == o) return true;
+    if (!(o instanceof ServerConfigConstructor)) return false;
+
+    ServerConfigConstructor that = (ServerConfigConstructor) o;
+
+    if (enabled != that.enabled) return false;
+    return ip != null ? ip.equals(that.ip) : that.ip == null;
+  }
+
+  @Override public int hashCode() {
+    int result = (enabled ? 1 : 0);
+    result = 31 * result + (ip != null ? ip.hashCode() : 0);
+    return result;
   }
 }

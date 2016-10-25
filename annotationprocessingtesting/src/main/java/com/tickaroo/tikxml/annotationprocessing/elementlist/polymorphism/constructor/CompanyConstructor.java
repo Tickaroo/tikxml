@@ -28,13 +28,11 @@ import java.util.List;
 /**
  * @author Hannes Dorfmann
  */
-@Xml
+@Xml(name = "company")
 public class CompanyConstructor {
 
   private String name;
-
-  private
-  List<Person> persons;
+  private List<Person> persons;
 
   public CompanyConstructor(@PropertyElement String name,
       @Element(typesByElement = {
@@ -51,5 +49,21 @@ public class CompanyConstructor {
 
   public List<Person> getPersons() {
     return persons;
+  }
+
+  @Override public boolean equals(Object o) {
+    if (this == o) return true;
+    if (!(o instanceof CompanyConstructor)) return false;
+
+    CompanyConstructor that = (CompanyConstructor) o;
+
+    if (name != null ? !name.equals(that.name) : that.name != null) return false;
+    return persons != null ? persons.equals(that.persons) : that.persons == null;
+  }
+
+  @Override public int hashCode() {
+    int result = name != null ? name.hashCode() : 0;
+    result = 31 * result + (persons != null ? persons.hashCode() : 0);
+    return result;
   }
 }

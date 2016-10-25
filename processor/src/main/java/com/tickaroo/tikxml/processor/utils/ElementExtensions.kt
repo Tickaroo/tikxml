@@ -173,3 +173,8 @@ fun VariableElement.hasTikXmlAnnotation() = getAnnotation(Attribute::class.java)
         || getAnnotation(PropertyElement::class.java) != null
         || getAnnotation(com.tickaroo.tikxml.annotation.Element::class.java) != null
         || getAnnotation(TextContent::class.java) != null
+
+/**
+ * Checks whether or not a certain element is a list
+ */
+fun Element.isList() = asType().toString().startsWith("java.util.List");

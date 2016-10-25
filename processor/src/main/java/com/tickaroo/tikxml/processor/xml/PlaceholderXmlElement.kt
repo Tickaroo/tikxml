@@ -58,7 +58,7 @@ class PlaceholderXmlElement(override val name: String, override val element: Ele
                     .add(codeGeneratorHelper.writeBeginElementAndAttributes(this))
                     .apply {
                         for ((name, childElement) in childElements) {
-                            childElement.generateWriteXmlCode(codeGeneratorHelper)
+                            add(childElement.generateWriteXmlCode(codeGeneratorHelper))
                         }
                     }
                     .endXmlElement()

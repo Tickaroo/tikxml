@@ -28,4 +28,17 @@ import com.tickaroo.tikxml.annotation.Xml;
 public class Employee implements Person {
 
   @PropertyElement String name;
+
+  @Override public boolean equals(Object o) {
+    if (this == o) return true;
+    if (!(o instanceof Employee)) return false;
+
+    Employee employee = (Employee) o;
+
+    return name != null ? name.equals(employee.name) : employee.name == null;
+  }
+
+  @Override public int hashCode() {
+    return name != null ? name.hashCode() : 0;
+  }
 }

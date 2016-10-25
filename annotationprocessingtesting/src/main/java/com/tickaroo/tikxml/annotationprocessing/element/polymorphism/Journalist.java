@@ -28,4 +28,20 @@ import com.tickaroo.tikxml.annotation.Xml;
 public class Journalist extends Writer {
 
   @PropertyElement int age;
+
+  @Override public boolean equals(Object o) {
+    if (this == o) return true;
+    if (!(o instanceof Journalist)) return false;
+    if (!super.equals(o)) return false;
+
+    Journalist that = (Journalist) o;
+
+    return age == that.age;
+  }
+
+  @Override public int hashCode() {
+    int result = super.hashCode();
+    result = 31 * result + age;
+    return result;
+  }
 }

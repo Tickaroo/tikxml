@@ -18,12 +18,12 @@
 
 package com.tickaroo.tikxml.annotationprocessing.elementlist.polymorphism;
 
-import com.tickaroo.tikxml.TikXml;
 import com.tickaroo.tikxml.TestUtils;
+import com.tickaroo.tikxml.TikXml;
 import java.io.IOException;
 import java.text.ParseException;
-import org.junit.Assert;
-import org.junit.Test;
+import okio.Buffer;
+import org.junit.*;
 
 /**
  * @author Hannes Dorfmann
@@ -55,6 +55,18 @@ public class CompanyTest {
 
     employee = (Employee) company.persons.get(3);
     Assert.assertEquals("Bodo", employee.name);
+
+    // Write XML
+    // Writing tests
+    Buffer buffer = new Buffer();
+    xml.write(buffer, company);
+
+    String xmlStr =
+       "<?xml version=\"1.0\" encoding=\"UTF-8\"?><company><boss firstName=\"Naomi\" lastName=\"Owusu\"/><employee><name>Hannes</name></employee><employee><name>Lukas</name></employee><employee><name>Bodo</name></employee><name>Tickaroo</name></company>";
+    Assert.assertEquals(xmlStr, TestUtils.bufferToString(buffer));
+
+    Company company2 = xml.read(TestUtils.sourceFrom(xmlStr), Company.class);
+    Assert.assertEquals(company, company2);
   }
 
 }

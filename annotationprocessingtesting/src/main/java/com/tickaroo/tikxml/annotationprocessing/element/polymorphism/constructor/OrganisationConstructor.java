@@ -37,4 +37,17 @@ public class OrganisationConstructor extends WriterConstructor {
   public String getAddress() {
     return address;
   }
+
+  @Override public boolean equals(Object o) {
+    if (this == o) return true;
+    if (!(o instanceof OrganisationConstructor)) return false;
+
+    OrganisationConstructor that = (OrganisationConstructor) o;
+
+    return address != null ? address.equals(that.address) : that.address == null;
+  }
+
+  @Override public int hashCode() {
+    return address != null ? address.hashCode() : 0;
+  }
 }

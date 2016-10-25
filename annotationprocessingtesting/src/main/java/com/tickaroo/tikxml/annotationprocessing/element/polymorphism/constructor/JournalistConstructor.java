@@ -37,4 +37,17 @@ public class JournalistConstructor extends WriterConstructor {
   public int getAge() {
     return age;
   }
+
+  @Override public boolean equals(Object o) {
+    if (this == o) return true;
+    if (!(o instanceof JournalistConstructor)) return false;
+
+    JournalistConstructor that = (JournalistConstructor) o;
+
+    return age == that.age;
+  }
+
+  @Override public int hashCode() {
+    return age;
+  }
 }

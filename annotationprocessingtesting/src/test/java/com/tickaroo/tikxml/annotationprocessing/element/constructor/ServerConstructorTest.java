@@ -18,9 +18,10 @@
 
 package com.tickaroo.tikxml.annotationprocessing.element.constructor;
 
-import com.tickaroo.tikxml.TikXml;
 import com.tickaroo.tikxml.TestUtils;
+import com.tickaroo.tikxml.TikXml;
 import java.io.IOException;
+import okio.Buffer;
 import org.junit.*;
 
 /**
@@ -30,11 +31,24 @@ public class ServerConstructorTest {
 
   @Test
   public void test() throws IOException {
-    TikXml xml = new TikXml.Builder().exceptionOnUnreadXml(true).build();
+    TikXml xml = new TikXml.Builder().exceptionOnUnreadXml(true).writeDefaultXmlDeclaration(false).build();
     ServerConstructor server = xml.read(TestUtils.sourceForFile("server.xml"), ServerConstructor.class);
 
     Assert.assertEquals("fooServer", server.getName());
     Assert.assertTrue(server.getConfig().isEnabled());
     Assert.assertEquals("127.0.0.1", server.getConfig().getIp());
+
+    // Writing xml test
+
+    Buffer buffer = new Buffer();
+    xml.write(buffer, server);
+
+    String xmlStr =
+        "<server name=\"fooServer\"><serverConfig enabled=\"true\"><ip>127.0.0.1</ip></serverConfig></server>";
+    Assert.assertEquals(xmlStr, TestUtils.bufferToString(buffer));
+
+    ServerConstructor server2 = xml.read(TestUtils.sourceFrom(xmlStr), ServerConstructor.class);
+    Assert.assertEquals(server, server2);
+
   }
 }

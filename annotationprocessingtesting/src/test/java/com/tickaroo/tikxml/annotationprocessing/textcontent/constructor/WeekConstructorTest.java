@@ -4,6 +4,7 @@ import com.tickaroo.tikxml.TestUtils;
 import com.tickaroo.tikxml.TikXml;
 import java.io.IOException;
 import java.text.ParseException;
+import okio.Buffer;
 import org.junit.*;
 
 /**
@@ -25,6 +26,17 @@ public class WeekConstructorTest {
     Assert.assertEquals("Saturday", week.getDays().get(5).getName());
     Assert.assertEquals("Sunday", week.getDays().get(6).getName());
 
+
+    // Writing xml test
+    Buffer buffer = new Buffer();
+    xml.write(buffer, week);
+
+    String xmlStr =
+        "<?xml version=\"1.0\" encoding=\"UTF-8\"?><week><day>Monday</day><day>Tuesday</day><day>Wednesday</day><day>Thursday</day><day>Friday</day><day>Saturday</day><day>Sunday</day></week>";
+    Assert.assertEquals(xmlStr, TestUtils.bufferToString(buffer));
+
+    WeekConstructor week2 = xml.read(TestUtils.sourceFrom(xmlStr), WeekConstructor.class);
+    Assert.assertEquals(week, week2);
   }
 
 }

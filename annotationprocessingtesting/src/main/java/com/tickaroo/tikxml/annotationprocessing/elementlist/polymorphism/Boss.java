@@ -28,4 +28,21 @@ import com.tickaroo.tikxml.annotation.Xml;
 public class Boss implements Person {
   @Attribute String firstName;
   @Attribute String lastName;
+
+  @Override public boolean equals(Object o) {
+    if (this == o) return true;
+    if (!(o instanceof Boss)) return false;
+
+    Boss boss = (Boss) o;
+
+    if (firstName != null ? !firstName.equals(boss.firstName) : boss.firstName != null)
+      return false;
+    return lastName != null ? lastName.equals(boss.lastName) : boss.lastName == null;
+  }
+
+  @Override public int hashCode() {
+    int result = firstName != null ? firstName.hashCode() : 0;
+    result = 31 * result + (lastName != null ? lastName.hashCode() : 0);
+    return result;
+  }
 }

@@ -7,4 +7,8 @@ import com.tickaroo.tikxml.annotation.Xml;
  */
 @Xml(name = "empty")
 public class EmptyTag {
+
+  @Override public boolean equals(Object obj) {
+    return obj instanceof EmptyTag;
+  }
 }

@@ -18,14 +18,14 @@
 
 package com.tickaroo.tikxml.annotationprocessing.propertyelement;
 
+import com.tickaroo.tikxml.TestUtils;
 import com.tickaroo.tikxml.TikXml;
 import com.tickaroo.tikxml.annotationprocessing.DateConverter;
-import com.tickaroo.tikxml.TestUtils;
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.Date;
-import org.junit.Assert;
-import org.junit.Test;
+import okio.Buffer;
+import org.junit.*;
 
 /**
  * @author Hannes Dorfmann
@@ -51,6 +51,18 @@ public class PropertyElementTest {
     Assert.assertEquals(true, item.booleanWrapper);
     Assert.assertEquals(23.42, item.doubleWrapper, 0);
     Assert.assertEquals(2147483648L, (long) item.longWrapper);
+
+    // Write XML
+    // Writing tests
+    Buffer buffer = new Buffer();
+    xml.write(buffer, item);
+
+    String xmlStr =
+        "<?xml version=\"1.0\" encoding=\"UTF-8\"?><item><aBoolean>true</aBoolean><longWrapper>2147483648</longWrapper><aString>foo</aString><intWrapper>123</intWrapper><aLong>2147483648</aLong><anInt>123</anInt><aDate>1988-03-04</aDate><aDouble>23.42</aDouble><doubleWrapper>23.42</doubleWrapper><booleanWrapper>true</booleanWrapper></item>";
+    Assert.assertEquals(xmlStr, TestUtils.bufferToString(buffer));
+
+    PropertyItem item2 = xml.read(TestUtils.sourceFrom(xmlStr), PropertyItem.class);
+    Assert.assertEquals(item, item2);
   }
 
   @Test
@@ -73,6 +85,19 @@ public class PropertyElementTest {
     Assert.assertEquals(true, item.getBooleanWrapper());
     Assert.assertEquals(23.42, item.getDoubleWrapper(), 0);
     Assert.assertEquals(2147483648L, (long) item.getLongWrapper());
+
+    // Write XML
+    // Writing tests
+    Buffer buffer = new Buffer();
+    xml.write(buffer, item);
+
+    String xmlStr =
+        "<?xml version=\"1.0\" encoding=\"UTF-8\"?><item><aBoolean>true</aBoolean><longWrapper>2147483648</longWrapper><aString>foo</aString><intWrapper>123</intWrapper><aLong>2147483648</aLong><anInt>123</anInt><aDate>1988-03-04</aDate><aDouble>23.42</aDouble><doubleWrapper>23.42</doubleWrapper><booleanWrapper>true</booleanWrapper></item>";
+    Assert.assertEquals(xmlStr, TestUtils.bufferToString(buffer));
+
+    PropertyItemWithGetterSetters item2 =
+        xml.read(TestUtils.sourceFrom(xmlStr), PropertyItemWithGetterSetters.class);
+    Assert.assertEquals(item, item2);
   }
 
   @Test
@@ -84,6 +109,19 @@ public class PropertyElementTest {
             PropertyItemWithGetterSetters.class);
 
     Assert.assertEquals("foo", item.getAString());
+
+    // Write XML
+    // Writing tests
+    Buffer buffer = new Buffer();
+    xml.write(buffer, item);
+
+    String xmlStr =
+        "<?xml version=\"1.0\" encoding=\"UTF-8\"?><item><aBoolean>false</aBoolean><aString>foo</aString><aLong>0</aLong><anInt>0</anInt><aDouble>0.0</aDouble></item>";
+    Assert.assertEquals(xmlStr, TestUtils.bufferToString(buffer));
+
+    PropertyItemWithGetterSetters item2 =
+        xml.read(TestUtils.sourceFrom(xmlStr), PropertyItemWithGetterSetters.class);
+    Assert.assertEquals(item, item2);
   }
 
   @Test

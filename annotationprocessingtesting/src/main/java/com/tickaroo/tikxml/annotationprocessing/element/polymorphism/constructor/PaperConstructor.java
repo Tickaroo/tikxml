@@ -25,7 +25,7 @@ import com.tickaroo.tikxml.annotation.Xml;
 /**
  * @author Hannes Dorfmann
  */
-@Xml
+@Xml(name = "paper")
 public class PaperConstructor {
 
   private WriterConstructor writer;
@@ -42,5 +42,18 @@ public class PaperConstructor {
 
   public WriterConstructor getWriter() {
     return writer;
+  }
+
+  @Override public boolean equals(Object o) {
+    if (this == o) return true;
+    if (!(o instanceof PaperConstructor)) return false;
+
+    PaperConstructor that = (PaperConstructor) o;
+
+    return writer != null ? writer.equals(that.writer) : that.writer == null;
+  }
+
+  @Override public int hashCode() {
+    return writer != null ? writer.hashCode() : 0;
   }
 }

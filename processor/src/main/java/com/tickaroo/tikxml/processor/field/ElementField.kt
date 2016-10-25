@@ -55,8 +55,8 @@ open class ElementField(element: VariableElement, name: String, required: Boolea
 
     override fun generateWriteXmlCode(codeGeneratorHelper: CodeGeneratorHelper): CodeBlock {
         return CodeBlock.builder()
-                .ifValueNotNullCheck(accessResolver) {
-                    codeGeneratorHelper.writeDelegateToTypeAdapters(element.asType(), accessResolver, name) // TODO optimize name. Set it null if name is not different from default name
+                .ifValueNotNullCheck(this) {
+                    add(codeGeneratorHelper.writeDelegateToTypeAdapters(element.asType(), accessResolver, name)) // TODO optimize name. Set it null if name is not different from default name
                 }
                 .build()
     }
@@ -91,19 +91,19 @@ class ListElementField(element: VariableElement, name: String, required: Boolean
 
     override fun generateWriteXmlCode(codeGeneratorHelper: CodeGeneratorHelper) =
             CodeBlock.builder()
-                    .ifValueNotNullCheck(accessResolver) {
+                    .ifValueNotNullCheck(this) {
 
                         val listType = ParameterizedTypeName.get(element.asType())
-                        val sizeVariableName = codeGeneratorHelper.uniqueVariableName("listSize")
-                        val listVariableName = codeGeneratorHelper.uniqueVariableName("list")
-                        val itemVariableName = codeGeneratorHelper.uniqueVariableName("item");
+                        val sizeVariableName = "listSize"
+                        val listVariableName = "list"
+                        val itemVariableName = "item";
 
 
                         addStatement("\$T $listVariableName = ${accessResolver.resolveGetterForWritingXml()}", listType)
                         addStatement("int $sizeVariableName = $listVariableName.size()")
-                        beginControlFlow("for (int i =0; i<$sizeVariableName; i++")
+                        beginControlFlow("for (int i =0; i<$sizeVariableName; i++)")
                         addStatement("\$T $itemVariableName = $listVariableName.get(i)", ClassName.get(genericListType))
-                        addStatement("${CodeGeneratorHelper.tikConfigParam}.getTypeAdapter(\$T.class).toXml(${CodeGeneratorHelper.writerParam}, ${CodeGeneratorHelper.tikConfigParam}, $itemVariableName, $name)", ClassName.get(genericListType))
+                        addStatement("${CodeGeneratorHelper.tikConfigParam}.getTypeAdapter(\$T.class).toXml(${CodeGeneratorHelper.writerParam}, ${CodeGeneratorHelper.tikConfigParam}, $itemVariableName, \$S)", ClassName.get(genericListType), name)
                         endControlFlow()
                     }
                     .build()

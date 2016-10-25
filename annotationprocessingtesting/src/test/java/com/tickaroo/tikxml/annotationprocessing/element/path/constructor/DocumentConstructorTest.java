@@ -1,8 +1,9 @@
 package com.tickaroo.tikxml.annotationprocessing.element.path.constructor;
 
-import com.tickaroo.tikxml.TikXml;
 import com.tickaroo.tikxml.TestUtils;
+import com.tickaroo.tikxml.TikXml;
 import java.io.IOException;
+import okio.Buffer;
 import org.junit.*;
 
 /**
@@ -17,6 +18,19 @@ public class DocumentConstructorTest {
         xml.read(TestUtils.sourceForFile("element_with_tag_to_skip_with_path.xml"), DocumentConstructor.class);
     Assert.assertNotNull(document);
     Assert.assertNotNull(document.getImage());
+
+
+
+    // Writing xml test
+    Buffer buffer = new Buffer();
+    xml.write(buffer, document);
+
+    String xmlStr =
+        "<?xml version=\"1.0\" encoding=\"UTF-8\"?><document><toSkip><image/></toSkip></document>";
+    Assert.assertEquals(xmlStr, TestUtils.bufferToString(buffer));
+
+    DocumentConstructor document2 = xml.read(TestUtils.sourceFrom(xmlStr), DocumentConstructor.class);
+    Assert.assertEquals(document, document2);
   }
 
   @Test
@@ -26,6 +40,18 @@ public class DocumentConstructorTest {
         xml.read(TestUtils.sourceForFile("element_with_tag_with_attributes_to_skip_with_path.xml"), DocumentConstructor.class);
     Assert.assertNotNull(document);
     Assert.assertNotNull(document.getImage());
+
+
+    // Writing xml test
+    Buffer buffer = new Buffer();
+    xml.write(buffer, document);
+
+    String xmlStr =
+        "<?xml version=\"1.0\" encoding=\"UTF-8\"?><document><toSkip><image/></toSkip></document>";
+    Assert.assertEquals(xmlStr, TestUtils.bufferToString(buffer));
+
+    DocumentConstructor document2 = xml.read(TestUtils.sourceFrom(xmlStr), DocumentConstructor.class);
+    Assert.assertEquals(document, document2);
 
   }
 }

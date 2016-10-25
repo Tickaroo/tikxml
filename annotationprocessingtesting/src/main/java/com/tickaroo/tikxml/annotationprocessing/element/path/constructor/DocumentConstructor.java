@@ -8,7 +8,7 @@ import com.tickaroo.tikxml.annotationprocessing.element.path.Image;
 /**
  * @author Hannes Dorfmann
  */
-@Xml
+@Xml(name = "document")
 public class DocumentConstructor {
 
   private Image image;
@@ -19,5 +19,18 @@ public class DocumentConstructor {
 
   public Image getImage() {
     return image;
+  }
+
+  @Override public boolean equals(Object o) {
+    if (this == o) return true;
+    if (!(o instanceof DocumentConstructor)) return false;
+
+    DocumentConstructor that = (DocumentConstructor) o;
+
+    return image != null ? image.equals(that.image) : that.image == null;
+  }
+
+  @Override public int hashCode() {
+    return image != null ? image.hashCode() : 0;
   }
 }

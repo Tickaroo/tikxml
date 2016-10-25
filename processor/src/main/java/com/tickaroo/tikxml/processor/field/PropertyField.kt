@@ -73,9 +73,9 @@ class PropertyField(element: VariableElement, name: String, val writeAsCData: Bo
 
     override fun generateWriteXmlCode(codeGeneratorHelper: CodeGeneratorHelper) =
             CodeBlock.builder()
-                    .ifValueNotNullCheck(accessResolver) {
-                        codeGeneratorHelper.writeBeginElementAndAttributes(this@PropertyField)
-                        codeGeneratorHelper.writeTextContentViaTypeConverterOrPrimitive(element, accessResolver, converterQualifiedName, writeAsCData)
+                    .ifValueNotNullCheck(this) {
+                        add(codeGeneratorHelper.writeBeginElementAndAttributes(this@PropertyField))
+                        add(codeGeneratorHelper.writeTextContentViaTypeConverterOrPrimitive(element, accessResolver, converterQualifiedName, writeAsCData))
                         addStatement("${CodeGeneratorHelper.writerParam}.endElement()")
                     }
                     .build()

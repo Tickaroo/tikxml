@@ -36,23 +36,25 @@ import javax.lang.model.type.TypeMirror
  */
 open class PolymorphicElementField(element: VariableElement, name: String, required: Boolean?, val typeElementNameMatcher: List<PolymorphicTypeElementNameMatcher>) : ElementField(element, name, required) {
 
+    val substitutions = ArrayList<PolymorphicSubstitutionField>()
+
     override fun generateReadXmlCode(codeGeneratorHelper: CodeGeneratorHelper): TypeSpec {
         return codeGeneratorHelper.generateNestedChildElementBinder(this)
     }
 
     override fun generateWriteXmlCode(codeGeneratorHelper: CodeGeneratorHelper) =
             CodeBlock.builder()
-                    .ifValueNotNullCheck(accessResolver) {
+                    .ifValueNotNullCheck(this) {
                         val varName = codeGeneratorHelper.uniqueVariableName("tmp")
                         addStatement("\$T $varName = ${accessResolver.resolveGetterForWritingXml()}", ClassName.get(element.asType()))
-                        add(codeGeneratorHelper.writeResolvePolymorphismAndDelegteToTypedpters(varName, typeElementNameMatcher))
+                        add(codeGeneratorHelper.writeResolvePolymorphismAndDelegteToTypeAdpters(varName, typeElementNameMatcher))
                     }
                     .build()
 }
 
 class PolymorphicListElementField(element: VariableElement, name: String, required: Boolean?, typeElementNameMatcher: List<PolymorphicTypeElementNameMatcher>, val genericListTypeMirror: TypeMirror) : PolymorphicElementField(element, name, required, typeElementNameMatcher) {
 
-    override fun generateReadXmlCode(codeGeneratorHelper: CodeGeneratorHelper): TypeSpec {
+   override fun generateReadXmlCode(codeGeneratorHelper: CodeGeneratorHelper): TypeSpec {
         throw ProcessingException(element, "Oops, en error has occurred while generating reading xml code for $this. Please fill an issue at https://github.com/Tickaroo/tikxml/issues")
     }
 
@@ -64,7 +66,7 @@ class PolymorphicListElementField(element: VariableElement, name: String, requir
 /**
  * This kind of element will be used to replace a [PolymorphicElementField]
  */
-open class PolymorphicSubstitutionField(element: VariableElement, override val typeMirror: TypeMirror, override var accessResolver: FieldAccessResolver, name: String, required: Boolean? = null) : ElementField(element, name, required) {
+open class PolymorphicSubstitutionField(element: VariableElement, override val typeMirror: TypeMirror, override var accessResolver: FieldAccessResolver, name: String, required: Boolean? = null, val originalElementTypeMirror: TypeMirror) : ElementField(element, name, required) {
 
     override fun isXmlElementAccessableFromOutsideTypeAdapter(): Boolean = false
 
@@ -82,8 +84,8 @@ open class PolymorphicSubstitutionField(element: VariableElement, override val t
 
     override fun generateWriteXmlCode(codeGeneratorHelper: CodeGeneratorHelper): CodeBlock {
         return CodeBlock.builder()
-                .ifValueNotNullCheck(accessResolver) {
-                    codeGeneratorHelper.writeDelegateToTypeAdapters(element.asType(), accessResolver, name) // TODO optimize name. Set it null if name is not different from default name
+                .ifValueNotNullCheck(this) {
+                    add(codeGeneratorHelper.writeDelegateToTypeAdapters(element.asType(), accessResolver, name)) // TODO optimize name. Set it null if name is not different from default name
                 }
                 .build()
     }
@@ -92,7 +94,7 @@ open class PolymorphicSubstitutionField(element: VariableElement, override val t
 /**
  * This kind of element will be used to replace a [PolymorphicElementField] but for List elements
  */
-class PolymorphicSubstitutionListField(element: VariableElement, typeMirror: TypeMirror, accessResolver: FieldAccessResolver, name: String, private val genericListTypeMirror: TypeMirror, required: Boolean? = null) : PolymorphicSubstitutionField(element, typeMirror, accessResolver, name, required) {
+class PolymorphicSubstitutionListField(element: VariableElement, typeMirror: TypeMirror, accessResolver: FieldAccessResolver, name: String, val genericListTypeMirror: TypeMirror, required: Boolean? = null) : PolymorphicSubstitutionField(element, typeMirror, accessResolver, name, required, element.asType()) {
 
 
     override fun generateReadXmlCode(codeGeneratorHelper: CodeGeneratorHelper): TypeSpec {
@@ -116,8 +118,6 @@ class PolymorphicSubstitutionListField(element: VariableElement, typeMirror: Typ
                 .addMethod(fromXmlMethod)
                 .build()
     }
-
-
 
 }
 

@@ -22,9 +22,7 @@ import com.google.common.truth.Truth
 import com.google.testing.compile.JavaFileObjects
 import com.google.testing.compile.JavaSourceSubjectFactory
 import com.google.testing.compile.JavaSourcesSubject
-import com.tickaroo.tikxml.annotation.Attribute
-import com.tickaroo.tikxml.annotation.TextContent
-import com.tickaroo.tikxml.annotation.Xml
+import com.tickaroo.tikxml.annotation.*
 import com.tickaroo.tikxml.processor.XmlProcessor
 import org.junit.Test
 import javax.tools.JavaFileObject
@@ -298,5 +296,37 @@ class AnnotationScannerForConstructorsTest {
         Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
                 .that(componentFile).processedWith(XmlProcessor())
                 .compilesWithoutError()
+    }
+
+    @Test
+    fun elementListWildcardSuperInterfaceWithPolymorphism() {
+        val componentFile = JavaFileObjects.forSourceLines("test.ElementListWildcardInterfaceWithPolymorphism",
+                "package test;",
+                "",
+                "@${Xml::class.java.canonicalName}",
+                "class ElementListWildcardInterfaceWithPolymorphism {",
+                "   public ElementListWildcardInterfaceWithPolymorphism(",
+                "   @${Element::class.java.canonicalName}(",
+                "       typesByElement = {",
+                "       @${ElementNameMatcher::class.qualifiedName}(name=\"foo\" , type=GrandParent.class),",
+                "       @${ElementNameMatcher::class.qualifiedName}(name=\"bar\" , type=Parent.class),",
+                "    })",
+                "   java.util.List<? super GrandParent> aList) {}",
+                "   public java.util.List<? super GrandParent> getAList(){return null;}",
+                "}",
+                "",
+                "@${Xml::class.java.canonicalName}",
+                "class GrandParent {}",
+                "@${Xml::class.java.canonicalName}",
+                "class Parent extends GrandParent {}",
+                "@${Xml::class.java.canonicalName}",
+                "class Child extends Parent {}"
+        )
+
+
+        Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
+                .that(componentFile).processedWith(XmlProcessor())
+                .compilesWithoutError()
+
     }
 }

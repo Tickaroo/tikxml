@@ -25,9 +25,22 @@ import java.util.List;
 /**
  * @author Hannes Dorfmann
  */
-@Xml
+@Xml(name = "catalogue")
 public class InlineListCatalogue {
 
   @Element(name = "book")
   List<Book> books;
+
+  @Override public boolean equals(Object o) {
+    if (this == o) return true;
+    if (!(o instanceof InlineListCatalogue)) return false;
+
+    InlineListCatalogue that = (InlineListCatalogue) o;
+
+    return books != null ? books.equals(that.books) : that.books == null;
+  }
+
+  @Override public int hashCode() {
+    return books != null ? books.hashCode() : 0;
+  }
 }

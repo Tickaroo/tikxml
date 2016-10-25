@@ -26,7 +26,7 @@ import java.util.Date;
 /**
  * @author Hannes Dorfmann
  */
-@Xml
+@Xml(name = "item")
 public class PropertyItemWithGetterSetters {
 
   @PropertyElement private String aString;
@@ -118,5 +118,48 @@ public class PropertyItemWithGetterSetters {
 
   public void setLongWrapper(Long longWrapper) {
     this.longWrapper = longWrapper;
+  }
+
+  @Override public boolean equals(Object o) {
+    if (this == o) return true;
+    if (!(o instanceof PropertyItemWithGetterSetters)) return false;
+
+    PropertyItemWithGetterSetters that = (PropertyItemWithGetterSetters) o;
+
+    if (anInt != that.anInt) return false;
+    if (aBoolean != that.aBoolean) return false;
+    if (Double.compare(that.aDouble, aDouble) != 0) return false;
+    if (aLong != that.aLong) return false;
+    if (aString != null ? !aString.equals(that.aString) : that.aString != null) return false;
+    if (aDate != null ? !aDate.equals(that.aDate) : that.aDate != null) return false;
+    if (intWrapper != null ? !intWrapper.equals(that.intWrapper) : that.intWrapper != null) {
+      return false;
+    }
+    if (booleanWrapper != null ? !booleanWrapper.equals(that.booleanWrapper)
+        : that.booleanWrapper != null) {
+      return false;
+    }
+    if (doubleWrapper != null ? !doubleWrapper.equals(that.doubleWrapper)
+        : that.doubleWrapper != null) {
+      return false;
+    }
+    return longWrapper != null ? longWrapper.equals(that.longWrapper) : that.longWrapper == null;
+  }
+
+  @Override public int hashCode() {
+    int result;
+    long temp;
+    result = aString != null ? aString.hashCode() : 0;
+    result = 31 * result + anInt;
+    result = 31 * result + (aBoolean ? 1 : 0);
+    temp = Double.doubleToLongBits(aDouble);
+    result = 31 * result + (int) (temp ^ (temp >>> 32));
+    result = 31 * result + (int) (aLong ^ (aLong >>> 32));
+    result = 31 * result + (aDate != null ? aDate.hashCode() : 0);
+    result = 31 * result + (intWrapper != null ? intWrapper.hashCode() : 0);
+    result = 31 * result + (booleanWrapper != null ? booleanWrapper.hashCode() : 0);
+    result = 31 * result + (doubleWrapper != null ? doubleWrapper.hashCode() : 0);
+    result = 31 * result + (longWrapper != null ? longWrapper.hashCode() : 0);
+    return result;
   }
 }

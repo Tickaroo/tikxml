@@ -32,4 +32,17 @@ public class Catalogue {
   @Path("books")
   @Element
   List<Book> books;
+
+  @Override public boolean equals(Object o) {
+    if (this == o) return true;
+    if (!(o instanceof Catalogue)) return false;
+
+    Catalogue catalogue = (Catalogue) o;
+
+    return books != null ? books.equals(catalogue.books) : catalogue.books == null;
+  }
+
+  @Override public int hashCode() {
+    return books != null ? books.hashCode() : 0;
+  }
 }

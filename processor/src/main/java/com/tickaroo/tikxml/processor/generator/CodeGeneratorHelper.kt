@@ -22,6 +22,7 @@ import com.squareup.javapoet.*
 import com.tickaroo.tikxml.TikXmlConfig
 import com.tickaroo.tikxml.TypeConverterNotFoundException
 import com.tickaroo.tikxml.XmlReader
+import com.tickaroo.tikxml.annotation.ElementNameMatcher
 import com.tickaroo.tikxml.processor.field.PolymorphicTypeElementNameMatcher
 import com.tickaroo.tikxml.processor.field.access.FieldAccessResolver
 import com.tickaroo.tikxml.processor.utils.*
@@ -416,11 +417,12 @@ class CodeGeneratorHelper(val customTypeConverterManager: CustomTypeConverterMan
      */
     fun writeDelegateToTypeAdapters(type: TypeMirror, accessResolver: FieldAccessResolver, overridingXmlElementName: String?) =
             CodeBlock.builder().addStatement("$tikConfigParam.getTypeAdapter(\$T.class).toXml($writerParam, $tikConfigParam, ${accessResolver.resolveGetterForWritingXml()}, ${if (overridingXmlElementName == null) "null" else "\"$overridingXmlElementName\""})", ClassName.get(type))
+                    .build()
 
     /**
      * Writes the code to generate xml by generating to the corresponding type adapter depending on the type of the element
      */
-    fun writeResolvePolymorphismAndDelegteToTypedpters(variableName: String, typeElementNameMatcher: List<PolymorphicTypeElementNameMatcher>) =
+    fun writeResolvePolymorphismAndDelegteToTypeAdpters(variableName: String, typeElementNameMatcher: List<PolymorphicTypeElementNameMatcher>) =
             CodeBlock.builder()
                     .apply {
 
@@ -430,13 +432,16 @@ class CodeGeneratorHelper(val customTypeConverterManager: CustomTypeConverterMan
                             } else {
                                 nextControlFlow("else if ($variableName instanceof \$T)", ClassName.get(nameMatcher.type))
                             }
-                            // TODO toXml Method needs an overriding xml parameter
-                            addStatement("$tikConfigParam.getTypeAdapter(\$T.class).toXml($writerParam, $tikConfigParam, $variableName, \$S)", ClassName.get(nameMatcher.type), nameMatcher.xmlElementName)
+                            addStatement("$tikConfigParam.getTypeAdapter(\$T.class).toXml($writerParam, $tikConfigParam, (\$T) $variableName, \$S)", ClassName.get(nameMatcher.type), ClassName.get(nameMatcher.type), nameMatcher.xmlElementName)
                         }
 
 
-                        if (typeElementNameMatcher.isNotEmpty())
+                        if (typeElementNameMatcher.isNotEmpty()) {
+                            nextControlFlow("else")
+                            addStatement("throw new \$T(\$S + $variableName + \$S)", ClassName.get(IOException::class.java), "Don't know how to write the element of type ", " as XML. Most likely you have forgotten to register for this type with @${ElementNameMatcher::class.simpleName} when resolving polymorphism.")
                             endControlFlow()
+                        }
+
                     }
                     .build()
 

@@ -20,4 +20,17 @@ public class WeekConstructor {
   public List<DayConstructor> getDays() {
     return days;
   }
+
+  @Override public boolean equals(Object o) {
+    if (this == o) return true;
+    if (!(o instanceof WeekConstructor)) return false;
+
+    WeekConstructor that = (WeekConstructor) o;
+
+    return days != null ? days.equals(that.days) : that.days == null;
+  }
+
+  @Override public int hashCode() {
+    return days != null ? days.hashCode() : 0;
+  }
 }

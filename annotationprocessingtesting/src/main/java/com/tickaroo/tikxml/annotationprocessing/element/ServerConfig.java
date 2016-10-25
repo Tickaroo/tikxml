@@ -30,4 +30,20 @@ public class ServerConfig {
 
   @Attribute boolean enabled;
   @PropertyElement String ip;
+
+  @Override public boolean equals(Object o) {
+    if (this == o) return true;
+    if (!(o instanceof ServerConfig)) return false;
+
+    ServerConfig that = (ServerConfig) o;
+
+    if (enabled != that.enabled) return false;
+    return ip != null ? ip.equals(that.ip) : that.ip == null;
+  }
+
+  @Override public int hashCode() {
+    int result = (enabled ? 1 : 0);
+    result = 31 * result + (ip != null ? ip.hashCode() : 0);
+    return result;
+  }
 }

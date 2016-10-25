@@ -18,12 +18,13 @@
 
 package com.tickaroo.tikxml.annotationprocessing.attribute.constructor;
 
+import com.tickaroo.tikxml.TestUtils;
 import com.tickaroo.tikxml.TikXml;
 import com.tickaroo.tikxml.annotationprocessing.DateConverter;
-import com.tickaroo.tikxml.TestUtils;
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.Date;
+import okio.Buffer;
 import org.junit.*;
 
 /**
@@ -32,7 +33,7 @@ import org.junit.*;
 public class AttributesConstructorTest {
 
   @Test
-  public void fieldAccess() throws IOException, ParseException {
+  public void constructorParams() throws IOException, ParseException {
     TikXml xml = new TikXml.Builder().exceptionOnUnreadXml(true).build();
 
     ItemConstructor item = xml.read(TestUtils.sourceForFile("attributes.xml"), ItemConstructor.class);
@@ -51,5 +52,17 @@ public class AttributesConstructorTest {
     Assert.assertEquals(23.42, item.getDoubleWrapper(), 0);
     Assert.assertEquals(2147483648L, (long) item.getLongWrapper());
 
+
+
+    // Writing xml test
+    Buffer buffer = new Buffer();
+    xml.write(buffer, item);
+
+    String xmlStr =
+        "<?xml version=\"1.0\" encoding=\"UTF-8\"?><item aBoolean=\"true\" longWrapper=\"2147483648\" aString=\"foo\" intWrapper=\"123\" aLong=\"2147483648\" anInt=\"123\" aDate=\"1988-03-04\" aDouble=\"23.42\" doubleWrapper=\"23.42\" booleanWrapper=\"true\"/>";
+    Assert.assertEquals(xmlStr, TestUtils.bufferToString(buffer));
+
+    ItemConstructor item2 = xml.read(TestUtils.sourceFrom(xmlStr), ItemConstructor.class);
+    Assert.assertEquals(item, item2);
   }
 }
