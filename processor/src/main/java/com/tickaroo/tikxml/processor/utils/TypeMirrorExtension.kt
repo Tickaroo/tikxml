@@ -35,7 +35,6 @@ fun TypeMirror.isPrimitiveInclWrapper() = when (kind) {
         "java.lang.Double" -> true
         "java.lang.Integer" -> true
         "java.lang.Boolean" -> true
-        "java.lang.Double" -> true
         "java.lang.Float" -> true
         "java.lang.String" -> true
         "java.lang.Character" -> true
