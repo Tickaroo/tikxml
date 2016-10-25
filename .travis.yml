@@ -5,7 +5,7 @@ before_install:
  - chmod +x .buildscript/snapshot_deployed_notification.sh
 
 jdk:
-  - oraclejdk7
+#  - oraclejdk7
   - oraclejdk8
 
 after_success:
