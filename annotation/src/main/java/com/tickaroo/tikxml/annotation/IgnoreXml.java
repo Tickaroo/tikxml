@@ -29,11 +29,11 @@ import java.lang.annotation.Target;
  * ignored while scanning
  *
  * @author Hannes Dorfmann
- * @see ScanMode#COMMON_CASE
  * @since 1.0
  */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
+@Deprecated
 public @interface IgnoreXml {
 }

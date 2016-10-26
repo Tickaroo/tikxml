@@ -46,6 +46,7 @@
     <module>benchmark</module>
     <module>converters</module>
     <module>autovalue</module>
+    <module>processor-common</module>
   </modules>
 
 
@@ -119,7 +120,7 @@
       <dependency>
         <groupId>com.squareup</groupId>
         <artifactId>javapoet</artifactId>
-        <version>1.6.0</version>
+        <version>1.7.0</version>
       </dependency>
 
       <dependency>

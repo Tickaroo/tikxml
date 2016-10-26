@@ -21,14 +21,13 @@ package com.tickaroo.tikxml.processor.converter
 import com.tickaroo.tikxml.TypeConverter
 import com.tickaroo.tikxml.processor.ProcessingException
 import java.lang.reflect.Modifier
+import javax.lang.model.element.Element
 import javax.lang.model.element.ElementKind
 import javax.lang.model.element.ExecutableElement
 import javax.lang.model.element.TypeElement
-import javax.lang.model.element.VariableElement
 import javax.lang.model.type.DeclaredType
 import javax.lang.model.type.MirroredTypeException
 import javax.lang.model.type.TypeKind
-import kotlin.collections.isEmpty
 import kotlin.reflect.KClass
 
 /**
@@ -43,7 +42,7 @@ abstract class ConverterChecker<in T : Annotation> {
      * Checks if the given class is valid
      * @return null if no TypeConverter should be used, otherwise the full qualified name of the type converter
      */
-    fun getQualifiedConverterName(element: VariableElement, annotation: T): String? {
+    fun getQualifiedConverterName(element: Element, annotation: T): String? {
 
         try {
             // Already compiled class

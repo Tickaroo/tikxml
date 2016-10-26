@@ -167,9 +167,35 @@ fun TypeElement.getSuperClasses(typeUtils: Types): List<TypeElement> {
 }
 
 /**
+ * Get a list of all super classes (exclusive java.lang.Object) by scanning inheritance tree from bottom to top
+ * and also includes all interfaces that this class implements or any other super class.
+ */
+fun TypeElement.getSuperClassesAndAllInterfaces(typeUtils: Types): List<TypeElement> {
+
+    val superClasses = ArrayList<TypeElement>()
+    var current = this
+    fun addInterfaces(element: TypeElement) {
+        if (element.interfaces != null && !element.interfaces.isEmpty()) {
+            element.interfaces.forEach {
+                superClasses.add(typeUtils.asElement(it) as TypeElement)
+            }
+        }
+    }
+
+    addInterfaces(current)
+
+    while (current.hasSuperClass()) {
+        current = typeUtils.asElement(current.superclass) as TypeElement
+        superClasses.add(current)
+        addInterfaces(current)
+    }
+    return superClasses
+}
+
+/**
  * Checks whether or not this element has at least one TikXml Annotation like @[Attribute]
  */
-fun VariableElement.hasTikXmlAnnotation() = getAnnotation(Attribute::class.java) != null
+fun Element.hasTikXmlAnnotation() = getAnnotation(Attribute::class.java) != null
         || getAnnotation(PropertyElement::class.java) != null
         || getAnnotation(com.tickaroo.tikxml.annotation.Element::class.java) != null
         || getAnnotation(TextContent::class.java) != null
