@@ -9,9 +9,9 @@ jdk:
   - oraclejdk8
 
 after_success:
+  - bash <(curl -s https://codecov.io/bash)
   - .buildscript/deploy_snapshot.sh
   - .buildscript/snapshot_deployed_notification.sh
-  - bash <(curl -s https://codecov.io/bash)
 
 env:
   global:
