@@ -23,6 +23,8 @@ import com.tickaroo.tikxml.TikXmlConfig
 import com.tickaroo.tikxml.TypeConverterNotFoundException
 import com.tickaroo.tikxml.XmlReader
 import com.tickaroo.tikxml.annotation.ElementNameMatcher
+import com.tickaroo.tikxml.processor.field.PolymorphicSubstitutionField
+import com.tickaroo.tikxml.processor.field.PolymorphicSubstitutionListField
 import com.tickaroo.tikxml.processor.field.PolymorphicTypeElementNameMatcher
 import com.tickaroo.tikxml.processor.field.access.FieldAccessResolver
 import com.tickaroo.tikxml.processor.utils.*
@@ -568,6 +570,52 @@ class CodeGeneratorHelper(val customTypeConverterManager: CustomTypeConverterMan
         //
         return surroundWithTryCatch("$writerParam.$xmlWriterMethod($tikConfigParam.getTypeConverter($type.class).write(${accessResolver.resolveGetterForWritingXml()}))")
     }
+
+    /**
+     * Generates the code tat is able to resolve polymorphism for lists, polymorphic elements or by simply forwarding code generation to the child.
+     */
+    fun writeChildrenByResolvingPolymorphismElementsOrFieldsOrDelegateToChildCodeGenerator(xmlElement: XmlElement) =
+            CodeBlock.builder().apply {
+                xmlElement.childElements.values.groupBy { it.element }.forEach {
+
+                    val first = it.value[0]
+                    if (it.key.isList() && first is PolymorphicSubstitutionListField) {
+
+                        // Resolve polymorphism on list items
+                        val listType = ClassName.get(first.originalElementTypeMirror)
+                        val sizeVariableName = "listSize"
+                        val listVariableName = "list"
+                        val itemVariableName = "item";
+                        val elementTypeMatchers: List<PolymorphicTypeElementNameMatcher> = it.value.map {
+                            val i = it as PolymorphicSubstitutionListField
+                            PolymorphicTypeElementNameMatcher(i.name, i.typeMirror)
+                        }
+
+                        beginControlFlow("if (${first.accessResolver.resolveGetterForWritingXml()}!= null)")
+                        addStatement("\$T $listVariableName = ${first.accessResolver.resolveGetterForWritingXml()}", listType)
+                        addStatement("int $sizeVariableName = $listVariableName.size()")
+                        beginControlFlow("for (int i =0; i<$sizeVariableName; i++)")
+                        addStatement("\$T $itemVariableName = $listVariableName.get(i)", ClassName.get(Object::class.java))
+                        add(writeResolvePolymorphismAndDelegteToTypeAdpters(itemVariableName, elementTypeMatchers)) // does the if instance of checks
+                        endControlFlow() // end for loop
+                        endControlFlow() // end != null check
+
+                    } else if (first is PolymorphicSubstitutionField) {
+                        // Resolve polymorphism for fields
+                        val elementTypeMatchers: List<PolymorphicTypeElementNameMatcher> = it.value.map {
+                            val i = it as PolymorphicSubstitutionField
+                            PolymorphicTypeElementNameMatcher(i.name, i.typeMirror)
+                        }
+                        beginControlFlow("if (${first.accessResolver.resolveGetterForWritingXml()} != null)")
+                        addStatement("\$T element = ${first.accessResolver.resolveGetterForWritingXml()}", ClassName.get(first.originalElementTypeMirror))  // does the if instance of checks
+                        add(writeResolvePolymorphismAndDelegteToTypeAdpters("element", elementTypeMatchers))
+                        endControlFlow() // end != null check
+
+                    } else {
+                        it.value.forEach { add(it.generateWriteXmlCode(this@CodeGeneratorHelper)) }
+                    }
+                }
+            }.build()
 
     /**
      * Used to specify whether we are going to assign an xml attribute or an xml element text content

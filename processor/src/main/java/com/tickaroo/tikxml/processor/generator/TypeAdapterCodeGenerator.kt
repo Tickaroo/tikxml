@@ -22,8 +22,8 @@ import com.squareup.javapoet.*
 import com.tickaroo.tikxml.TikXmlConfig
 import com.tickaroo.tikxml.XmlReader
 import com.tickaroo.tikxml.XmlWriter
-import com.tickaroo.tikxml.processor.field.*
-import com.tickaroo.tikxml.processor.utils.isList
+import com.tickaroo.tikxml.processor.field.AnnotatedClass
+import com.tickaroo.tikxml.processor.field.Namespace
 import com.tickaroo.tikxml.typeadapter.AttributeBinder
 import com.tickaroo.tikxml.typeadapter.ChildElementBinder
 import com.tickaroo.tikxml.typeadapter.TypeAdapter
@@ -400,45 +400,7 @@ class TypeAdapterCodeGenerator(private val filer: Filer, private val elementUtil
                 }
                 .apply {
                     // Generate code for child elements
-                    annotatedClass.childElements.values.groupBy { it.element }.forEach {
-
-                        val first = it.value[0]
-                        if (it.key.isList() && first is PolymorphicSubstitutionListField) {
-
-                            // Resolve polymorphism on list items
-                            val listType = ClassName.get(first.originalElementTypeMirror)
-                            val sizeVariableName = "listSize"
-                            val listVariableName = "list"
-                            val itemVariableName = "item";
-                            val elementTypeMatchers: List<PolymorphicTypeElementNameMatcher> = it.value.map {
-                                val i = it as PolymorphicSubstitutionListField
-                                PolymorphicTypeElementNameMatcher(i.name, i.typeMirror)
-                            }
-
-                            beginControlFlow("if (${first.accessResolver.resolveGetterForWritingXml()}!= null)")
-                            addStatement("\$T $listVariableName = ${first.accessResolver.resolveGetterForWritingXml()}", listType)
-                            addStatement("int $sizeVariableName = $listVariableName.size()")
-                            beginControlFlow("for (int i =0; i<$sizeVariableName; i++)")
-                            addStatement("\$T $itemVariableName = $listVariableName.get(i)", ClassName.get(Object::class.java))
-                            addCode(codeGenHelper.writeResolvePolymorphismAndDelegteToTypeAdpters(itemVariableName, elementTypeMatchers)) // does the if instance of checks
-                            endControlFlow() // end for loop
-                            endControlFlow() // end != null check
-
-                        } else if (first is PolymorphicSubstitutionField) {
-                            // Resolve polymorphism for fields
-                            val elementTypeMatchers: List<PolymorphicTypeElementNameMatcher> = it.value.map {
-                                val i = it as PolymorphicSubstitutionField
-                                PolymorphicTypeElementNameMatcher(i.name, i.typeMirror)
-                            }
-                            beginControlFlow("if (${first.accessResolver.resolveGetterForWritingXml()} != null)")
-                            addStatement("\$T element = ${first.accessResolver.resolveGetterForWritingXml()}", ClassName.get(first.originalElementTypeMirror))  // does the if instance of checks
-                            addCode(codeGenHelper.writeResolvePolymorphismAndDelegteToTypeAdpters("element", elementTypeMatchers))
-                            endControlFlow() // end != null check
-
-                        } else {
-                            it.value.forEach { addCode(it.generateWriteXmlCode(codeGenHelper)) }
-                        }
-                    }
+                    addCode(codeGenHelper.writeChildrenByResolvingPolymorphismElementsOrFieldsOrDelegateToChildCodeGenerator(annotatedClass))
                 }
                 .apply {
                     // TextContent
