@@ -427,12 +427,12 @@ class CodeGeneratorHelper(val customTypeConverterManager: CustomTypeConverterMan
     fun writeResolvePolymorphismAndDelegteToTypeAdpters(variableName: String, typeElementNameMatcher: List<PolymorphicTypeElementNameMatcher>) =
             CodeBlock.builder()
                     .apply {
-
+                        // Cannot be done with instanceof because then the inheritance hierarchy matters and so matters the order of the if checks
                         typeElementNameMatcher.forEachIndexed { i, nameMatcher ->
                             if (i == 0) {
-                                beginControlFlow("if ($variableName instanceof \$T)", ClassName.get(nameMatcher.type))
+                                beginControlFlow("if ($variableName.getClass() == \$T.class)", ClassName.get(nameMatcher.type))
                             } else {
-                                nextControlFlow("else if ($variableName instanceof \$T)", ClassName.get(nameMatcher.type))
+                                nextControlFlow("else if ($variableName.getClass() == \$T.class)", ClassName.get(nameMatcher.type))
                             }
                             addStatement("$tikConfigParam.getTypeAdapter(\$T.class).toXml($writerParam, $tikConfigParam, (\$T) $variableName, \$S)", ClassName.get(nameMatcher.type), ClassName.get(nameMatcher.type), nameMatcher.xmlElementName)
                         }

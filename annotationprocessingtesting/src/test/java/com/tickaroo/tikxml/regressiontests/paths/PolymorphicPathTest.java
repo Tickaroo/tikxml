@@ -56,7 +56,7 @@ public class PolymorphicPathTest {
     xml.write(buffer, company);
 
     String xmlStr =
-        "<?xml version=\"1.0\" encoding=\"UTF-8\"?><company><department><persons><boss><name>Boss</name><id>1</id></boss><person><id>2</id></person><person><id>3</id></person></persons></department></company>";
+        "<?xml version=\"1.0\" encoding=\"UTF-8\"?><company><department><persons><boss><name>Boss</name><id>1</id></boss><employee><name>Employee</name><id>2</id></employee><person><id>3</id></person></persons></department></company>";
     Assert.assertEquals(xmlStr, TestUtils.bufferToString(buffer));
 
     Company company2 = xml.read(TestUtils.sourceFrom(xmlStr), Company.class);
