@@ -102,7 +102,7 @@ class TypeAdapterCodeGenerator(private val filer: Filer, private val elementUtil
     /**
      * Generates the fields
      */
-    private inline fun generateFields(annotatedClass: AnnotatedClass, adapterClassBuilder: TypeSpec.Builder, customTypeConverterManager: CustomTypeConverterManager) {
+    private fun generateFields(annotatedClass: AnnotatedClass, adapterClassBuilder: TypeSpec.Builder, customTypeConverterManager: CustomTypeConverterManager) {
 
         val targetClassToParseInto = getClassToParseInto(annotatedClass)
 
@@ -143,7 +143,7 @@ class TypeAdapterCodeGenerator(private val filer: Filer, private val elementUtil
     /**
      * Generates the method to parse xml.
      */
-    private inline fun generateFromXmlMethod(annotatedClass: AnnotatedClass): MethodSpec.Builder {
+    private fun generateFromXmlMethod(annotatedClass: AnnotatedClass): MethodSpec.Builder {
 
         val reader = CodeGeneratorHelper.readerParam
         val config = CodeGeneratorHelper.tikConfigParam
@@ -362,7 +362,7 @@ class TypeAdapterCodeGenerator(private val filer: Filer, private val elementUtil
     /**
      * Generates the method that is responsible to a object as xml
      */
-    private inline fun generateToXmlMethod(annotatedClass: AnnotatedClass, codeGenHelper: CodeGeneratorHelper): MethodSpec.Builder {
+    private fun generateToXmlMethod(annotatedClass: AnnotatedClass, codeGenHelper: CodeGeneratorHelper): MethodSpec.Builder {
 
         val writer = CodeGeneratorHelper.writerParam
         val config = CodeGeneratorHelper.tikConfigParam
@@ -420,7 +420,7 @@ class TypeAdapterCodeGenerator(private val filer: Filer, private val elementUtil
     /**
      * Get the Type that is used for generic types like [AttributeBinder] and [ChildElementBinder] to parse into that.
      */
-    private inline fun getClassToParseInto(annotatedClass: AnnotatedClass) =
+    private fun getClassToParseInto(annotatedClass: AnnotatedClass) =
             if (annotatedClass.annotatedConstructor != null) {
                 // ClassName.get(annotatedClass.element.g)get(annotatedClass.element.qualifiedName.toString() + "$" + VALUE_HOLDER_CLASS_NAME)
                 val packageElement = elementUtils.getPackageOf(annotatedClass.element)
