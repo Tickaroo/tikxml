@@ -24,6 +24,7 @@ import java.lang.annotation.RetentionPolicy;
 
 /**
  * This annotation is used to resolve polymorphism by scanning for a certain xml tag
+ *
  * @author Hannes Dorfmann
  * @since 1.0
  */
@@ -31,7 +32,21 @@ import java.lang.annotation.RetentionPolicy;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ElementNameMatcher {
 
+  /**
+   * The name of the xml element. Whenever an element with this xml element (tag name) occurres it
+   * will be parsed into the class defined in {@link #type()}. This overrides the default name of
+   * the {@link Xml#name()} annotated class.
+   */
   String name() default "";
 
+  /**
+   * The type to which we want to parse into
+   */
   Class<?> type();
+
+  /**
+   * Should at compile time be checked if the annotated type ({@link #type()} is a valid TikXml annotated
+   * class (i.e. no abstract class, interface, etc.)
+   */
+  boolean compileTimeChecks() default true;
 }

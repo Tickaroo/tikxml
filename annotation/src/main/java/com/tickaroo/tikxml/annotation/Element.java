@@ -80,4 +80,10 @@ public @interface Element {
    * inheritance.
    */
   ElementNameMatcher[] typesByElement() default {};
+
+  /**
+   * Should at compile time be checked if the annotated element's type is a valid TikXml annotated
+   * class (i.e. no abstract class, interface, etc.)
+   */
+  boolean compileTimeChecks() default true;
 }

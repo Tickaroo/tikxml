@@ -1,5 +1,6 @@
 package com.tickaroo.tikxml.autovalue
 
+import com.google.auto.value.AutoValue
 import com.squareup.javapoet.*
 import com.tickaroo.tikxml.TikXmlConfig
 import com.tickaroo.tikxml.XmlReader
@@ -25,7 +26,14 @@ fun generateValueHolder(annotatedClass: AutoValueAnnotatedClass, elementUtils: E
                         .apply {
                             val annotation = annotatedClass.xmlAnnotation
                             if (annotation.name.isEmpty()) {
-                                addMember("name", "\$S", annotatedClass.autoValueClass.simpleName.toString())
+                                val simpleClassName = annotatedClass.autoValueClass.simpleName.toString();
+                                val decapitalizedName = if (simpleClassName.length <= 1) {
+                                    simpleClassName.decapitalize()
+                                } else {
+                                    simpleClassName[0].toLowerCase() + simpleClassName.substring(1)
+                                }
+
+                                addMember("name", "\$S", decapitalizedName)
                             } else {
                                 addMember("name", "\$S", annotation.name)
                             }
@@ -162,6 +170,14 @@ fun rewriteAnnotation(annotatedMethod: AnnotatedMethod<*>, annotatedClass: AutoV
 
                     if (annotation.name.isNotEmpty())
                         addMember("name", "\$S", annotation.name)
+
+                    if (!annotation.compileTimeChecks) {
+                        addMember("compileTimeChecks", "false")
+                    } else {
+                        // Disable compiletime checks if annotated element is an AutoValue element
+                        val returnTypeIsAutoValueType = elements.getTypeElement(annotatedMethod.type.toString()).getAnnotation(AutoValue::class.java) != null
+                        addMember("compileTimeChecks", "${!returnTypeIsAutoValueType}")
+                    }
 
                     val elementNameMatcher = annotation.typesByElement
                     if (elementNameMatcher.isNotEmpty()) {

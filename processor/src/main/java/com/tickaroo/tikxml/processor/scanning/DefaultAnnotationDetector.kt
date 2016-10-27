@@ -159,16 +159,19 @@ open class DefaultAnnotationDetector(protected val elementUtils: Elements, prote
                     val genericListType = getGenericTypeFromList(element)
                     val genericListTypeElement = typeUtils.asElement(genericListType) as TypeElement
 
-                    if (genericListTypeElement.isInterface()) {
-                        throw ProcessingException(element, "The generic list type of '$element' in class ${element.getSurroundingClassQualifiedName()} is an interface. Hence polymorphism must be resolved manually by using @${ElementNameMatcher::class.simpleName}.")
-                    }
+                    if (elementAnnotation.compileTimeChecks) {
 
-                    if (genericListTypeElement.isAbstract()) {
-                        throw ProcessingException(element, "The generic list type of '$element' in class ${element.getSurroundingClassQualifiedName()} is a abstrac class. Hence polymorphism must be resolved manually by using @${ElementNameMatcher::class.simpleName}.")
+                        if (genericListTypeElement.isInterface()) {
+                            throw ProcessingException(element, "The generic list type of '$element' in class ${element.getSurroundingClassQualifiedName()} is an interface. Hence polymorphism must be resolved manually by using @${ElementNameMatcher::class.simpleName}.")
+                        }
+
+                        if (genericListTypeElement.isAbstract()) {
+                            throw ProcessingException(element, "The generic list type of '$element' in class ${element.getSurroundingClassQualifiedName()} is a abstrac class. Hence polymorphism must be resolved manually by using @${ElementNameMatcher::class.simpleName}.")
+                        }
                     }
 
                     val elementName = if (elementAnnotation.name.isEmpty()) {
-                        getXmlElementNameOrThrowException(element, genericListTypeElement)
+                        getXmlElementNameOrThrowException(element, genericListTypeElement, elementAnnotation.compileTimeChecks)
                     } else {
                         elementAnnotation.name
                     }
@@ -183,18 +186,21 @@ open class DefaultAnnotationDetector(protected val elementUtils: Elements, prote
                 } else {
                     // A simple element without polymorphism
 
-                    // Interfaces not allowed with no name matchers to resolve polymorphism
-                    if (typeUtils.asElement(element.asType()).kind == ElementKind.INTERFACE) {
-                        throw ProcessingException(element, "The type of field '${element.simpleName}' in class ${element.enclosingElement} is an interface. Since interfaces cannot be instantiated you have to specify which class should be instantiated (resolve polymorphism) manually by @${Element::class.simpleName}( typesByElement = ... )")
-                    }
+                    if (elementAnnotation.compileTimeChecks) {
 
-                    // abstract classes not allowed with no name matchers to resolve polymorphism
-                    if (typeUtils.asElement(element.asType()).isAbstract()) {
-                        throw ProcessingException(element, "The type of field '${element.simpleName}' in class ${element.enclosingElement} is an abstract class. Since abstract classes cannot no be instantiated you have to specify which class should be instantiated (resolve polymorphism) manually by @${Element::class.simpleName}( typesByElement = ... )")
+                        // Interfaces not allowed with no name matchers to resolve polymorphism
+                        if (typeUtils.asElement(element.asType()).kind == ElementKind.INTERFACE) {
+                            throw ProcessingException(element, "The type of field '${element.simpleName}' in class ${element.enclosingElement} is an interface. Since interfaces cannot be instantiated you have to specify which class should be instantiated (resolve polymorphism) manually by @${Element::class.simpleName}( typesByElement = ... )")
+                        }
+
+                        // abstract classes not allowed with no name matchers to resolve polymorphism
+                        if (typeUtils.asElement(element.asType()).isAbstract()) {
+                            throw ProcessingException(element, "The type of field '${element.simpleName}' in class ${element.enclosingElement} is an abstract class. Since abstract classes cannot no be instantiated you have to specify which class should be instantiated (resolve polymorphism) manually by @${Element::class.simpleName}( typesByElement = ... )")
+                        }
                     }
 
                     val elementName = if (elementAnnotation.name.isEmpty()) {
-                        getXmlElementNameOrThrowException(element, (element.asType() as DeclaredType).asElement() as TypeElement)
+                        getXmlElementNameOrThrowException(element, (element.asType() as DeclaredType).asElement() as TypeElement, elementAnnotation.compileTimeChecks)
                     } else {
                         elementAnnotation.name
                     }
@@ -401,19 +407,19 @@ open class DefaultAnnotationDetector(protected val elementUtils: Elements, prote
     /**
      * Get the xmlElement name which is either @Xml(name = "foo") property or the class name decapitalize (first letter in lower case)
      */
-    protected fun getXmlElementNameOrThrowException(field: VariableElement, typeElement: TypeElement): String {
+    protected fun getXmlElementNameOrThrowException(field: VariableElement, typeElement: TypeElement, compileTimeChecks: Boolean): String {
 
         val xmlAnnotation = typeElement.getAnnotation(Xml::class.java)
 
-        if (xmlAnnotation == null) {
+        if (xmlAnnotation == null && compileTimeChecks) {
             throw ProcessingException(field, "The type ${typeElement.qualifiedName} used for field '$field' in ${field.getSurroundingClassQualifiedName()} can't be used, because is not annotated with @${Xml::class.simpleName}. Annotate ${typeElement.qualifiedName} with @${Xml::class.simpleName}!")
         } else {
             return getXmlElementName(typeElement, xmlAnnotation)
         }
     }
 
-    private fun getXmlElementName(typeElement: TypeElement, xmlAnnotation: Xml = typeElement.getAnnotation(Xml::class.java)!!) =
-            if (xmlAnnotation.name.isEmpty()) {
+    private fun getXmlElementName(typeElement: TypeElement, xmlAnnotation: Xml? = typeElement.getAnnotation(Xml::class.java)!!) =
+            if (xmlAnnotation == null || xmlAnnotation.name.isEmpty()) {
                 typeElement.simpleName.toString().decapitalize()
             } else {
                 xmlAnnotation.name
