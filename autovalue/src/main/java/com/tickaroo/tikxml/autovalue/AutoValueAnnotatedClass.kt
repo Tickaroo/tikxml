@@ -12,5 +12,5 @@ data class AutoValueAnnotatedClass(
         val autoValueClass: TypeElement,
         val xmlAnnotation: Xml,
         val propertyMethods: List<AnnotatedMethod<*>>) {
-    val valueHolderClassName = autoValueClass.simpleName.toString() + "\$\$TikXmlValueHolder"
+    val valueHolderClassName = autoValueClass.simpleName.toString() + "TikXmlValueHolder"
 }

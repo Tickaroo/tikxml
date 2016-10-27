@@ -122,11 +122,11 @@ public final class TikXml {
       XmlWriter writer = XmlWriter.of(sink);
 
     try {
+
+      TypeAdapter<T> adapter = config.getTypeAdapter((Class<T>) valueToWrite.getClass());
       if (config.writeDefaultXmlDeclaration()) {
         writer.xmlDeclaration();
       }
-
-      TypeAdapter<T> adapter = config.getTypeAdapter((Class<T>) valueToWrite.getClass());
       adapter.toXml(writer, config, valueToWrite, null);
     } finally {
       writer.close();

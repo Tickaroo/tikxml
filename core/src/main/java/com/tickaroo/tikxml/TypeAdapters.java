@@ -32,6 +32,7 @@ import java.util.Map;
  */
 final class TypeAdapters {
 
+  private final static String AUTO_VALUE_NAME_PREFIX = "\\$*AutoValue_.+";
   private final Map<Type, TypeAdapter<?>> adaptersCache = new HashMap<Type, TypeAdapter<?>>();
 
   TypeAdapters() {
@@ -82,12 +83,36 @@ final class TypeAdapters {
         qualifiedTypeAdapterClassName.append(clazz.getSimpleName());
         qualifiedTypeAdapterClassName.append(TypeAdapter.GENERATED_CLASS_SUFFIX);
 
-        Class<TypeAdapter<T>> adapterClass =
-            (Class<TypeAdapter<T>>) Class.forName(qualifiedTypeAdapterClassName.toString());
-        TypeAdapter<T> adapterInstance = adapterClass.newInstance();
-        adaptersCache.put(clazz, adapterInstance);
-        return adapterInstance;
-      } catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
+        try {
+          Class<TypeAdapter<T>> adapterClass =
+              (Class<TypeAdapter<T>>) Class.forName(qualifiedTypeAdapterClassName.toString());
+
+          TypeAdapter<T> adapterInstance = adapterClass.newInstance();
+          adaptersCache.put(clazz, adapterInstance);
+          return adapterInstance;
+        } catch (ClassNotFoundException e) {
+          if (clazz.getSimpleName().matches(AUTO_VALUE_NAME_PREFIX)) {
+            // Special case for Auto_Value generated classe we have to scan the inheritance hierarchy
+            Class<?> superClass = clazz.getSuperclass();
+            if (superClass != null) {
+              TypeAdapter<T> superClassAdapter = get(superClass);
+              adaptersCache.put(clazz, superClassAdapter);
+              return superClassAdapter;
+            } else {
+              // No more super class
+              throw new TypeAdapterNotFoundException("No TypeAdapter for class "
+                  + clazz.getCanonicalName()
+                  + " found. Expected name of the type adapter is "
+                  + qualifiedTypeAdapterClassName.toString(), e);
+            }
+          } else {
+            throw new TypeAdapterNotFoundException("No TypeAdapter for class "
+                + clazz.getCanonicalName()
+                + " found. Expected name of the type adapter is "
+                + qualifiedTypeAdapterClassName.toString(), e);
+          }
+        }
+      } catch (InstantiationException | IllegalAccessException e) {
         throw new TypeAdapterNotFoundException("No TypeAdapter for class "
             + clazz.getCanonicalName()
             + " found. Expected name of the type adapter is "

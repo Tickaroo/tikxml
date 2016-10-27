@@ -81,7 +81,7 @@ fun toAnnotatedMethod(propertyName: String, element: ExecutableElement): Annotat
             throw ProcessingException(element, "@${Path::class.simpleName} can't be used with @${TextContent::class.simpleName} at $element in class ${(element.enclosingElement as TypeElement).qualifiedName}")
         }
 
-        return AnnotatedMethod.TextContentMethod(element.asType(), propertyName, textContent)
+        return AnnotatedMethod.TextContentMethod(element, element.returnType, propertyName, textContent)
     }
 
 
@@ -89,18 +89,18 @@ fun toAnnotatedMethod(propertyName: String, element: ExecutableElement): Annotat
 
         // Checks if the converter is valid, return value is not needed to proceed
         AttributeConverterChecker().getQualifiedConverterName(element, attributeAnnotation)
-        return AnnotatedMethod.AttributeMethod(element.asType(), propertyName, attributeAnnotation, pathAnnotation)
+        return AnnotatedMethod.AttributeMethod(element, element.returnType, propertyName, attributeAnnotation, pathAnnotation)
     }
 
     if (propertyAnnotation != null) {
         // Checks if the converter is valid, return value is not needed to proceed
         PropertyElementConverterChecker().getQualifiedConverterName(element, propertyAnnotation)
-        return AnnotatedMethod.PropertyElementMethod(element.asType(), propertyName, propertyAnnotation, pathAnnotation)
+        return AnnotatedMethod.PropertyElementMethod(element, element.returnType, propertyName, propertyAnnotation, pathAnnotation)
     }
 
 
     if (elementAnnotation != null) {
-        return AnnotatedMethod.ElementMethod(element.asType(), propertyName, elementAnnotation, pathAnnotation)
+        return AnnotatedMethod.ElementMethod(element, element.returnType, propertyName, elementAnnotation, pathAnnotation)
     }
 
     throw ProcessingException(element, "Unknown annotation detected! I'm sorry, this should not happen. Please file an issue on github https://github.com/Tickaroo/tikxml/issues ")

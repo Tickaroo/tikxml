@@ -50,15 +50,15 @@ public class TikXmlAutoValueExtension extends AutoValueExtension {
           Filer filer = context.processingEnvironment().getFiler();
 
           JavaFile.builder(context.packageName(),
-              TypeAdapterGeneratorKt.generateValueHolder(annotatedClass))
+              AutoValueTypeAdapterCodeGeneratorKt.generateValueHolder(annotatedClass,
+                  context.processingEnvironment().getElementUtils()))
               .build()
               .writeTo(filer);
 
           JavaFile.builder(context.packageName(),
-              TypeAdapterGeneratorKt.generateTypeAdapter(annotatedClass))
+              AutoValueTypeAdapterCodeGeneratorKt.generateTypeAdapter(annotatedClass))
               .build()
               .writeTo(filer);
-
         } catch (IOException e) {
           throw new ProcessingException(annotatedClass.getAutoValueClass(),
               "Error while generating code for " + annotatedClass.getAutoValueClass()
