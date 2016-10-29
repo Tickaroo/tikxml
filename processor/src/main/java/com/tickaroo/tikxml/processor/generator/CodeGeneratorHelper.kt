@@ -581,7 +581,7 @@ class CodeGeneratorHelper(val customTypeConverterManager: CustomTypeConverterMan
                 xmlElement.childElements.values.groupBy { it.element }.forEach {
 
                     val first = it.value[0]
-                    if (it.key.isList() && first is PolymorphicSubstitutionListField) {
+                    if (first is PolymorphicSubstitutionListField) {
 
                         // Resolve polymorphism on list items
                         val listType = ClassName.get(first.originalElementTypeMirror)

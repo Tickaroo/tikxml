@@ -221,8 +221,8 @@ class TypeAdapterCodeGenerator(private val filer: Filer, private val elementUtil
                     .addStatement("childElementBinder.fromXml(\$L, \$L, \$L)", reader, config, value)
                     .addStatement("\$L.endElement()", reader)
                     .nextControlFlow("else if (\$L.exceptionOnUnreadXml())", config)
-                    .addStatement("throw new \$T(\$S+ \$L.getPath()+\$S)", IOException::class.java,
-                            "Could not map the xml element with the tag name <\" +elementName+ \"> at path '",
+                    .addStatement("throw new \$T(\$S + \$L + \$S + \$L.getPath()+\$S)", IOException::class.java,
+                            "Could not map the xml element with the tag name <", "elementName", "> at path '",
                             reader,
                             "' to java class. Have you annotated such a field in your java class to map this xml attribute? Otherwise you can turn this error message off with TikXml.Builder().exceptionOnUnreadXml(false).build().")
                     .nextControlFlow("else")
@@ -261,8 +261,8 @@ class TypeAdapterCodeGenerator(private val filer: Filer, private val elementUtil
                     .addStatement("childElementBinder.fromXml(\$L, \$L, \$L)", reader, config, value)
                     .addStatement("\$L.endElement()", reader)
                     .nextControlFlow("else if (\$L.exceptionOnUnreadXml())", config)
-                    .addStatement("throw new \$T(\$S+ \$L.getPath()+\$S)", IOException::class.java,
-                            "Could not map the xml element with the tag name <\" +elementName+ \"> at path '",
+                    .addStatement("throw new \$T(\$S + \$L + \$S + \$L.getPath()+\$S)", IOException::class.java,
+                            "Could not map the xml element with the tag name <", "elementName", "> at path '",
                             reader,
                             "' to java class. Have you annotated such a field in your java class to map this xml attribute? Otherwise you can turn this error message off with TikXml.Builder().exceptionOnUnreadXml(false).build().")
                     .nextControlFlow("else")
@@ -290,8 +290,8 @@ class TypeAdapterCodeGenerator(private val filer: Filer, private val elementUtil
                     .addStatement("\$L.beginElement()", reader)
                     .addStatement("String elementName = \$L.nextElementName()", reader)
                     .beginControlFlow("if (\$L.exceptionOnUnreadXml())", config)
-                    .addStatement("throw new \$T(\$S+ \$L.getPath()+\$S)", IOException::class.java,
-                            "Could not map the xml element with the tag name <\" +elementName+ \"> at path '",
+                    .addStatement("throw new \$T(\$S + \$L + \$S + \$L.getPath()+\$S)", IOException::class.java,
+                            "Could not map the xml element with the tag name <", "elementName", "> at path '",
                             reader,
                             "' to java class. Have you annotated such a field in your java class to map this xml attribute? Otherwise you can turn this error message off with TikXml.Builder().exceptionOnUnreadXml(false).build().")
                     .nextControlFlow("else")

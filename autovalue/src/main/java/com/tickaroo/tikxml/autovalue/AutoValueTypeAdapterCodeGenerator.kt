@@ -65,7 +65,7 @@ fun generateValueHolder(annotatedClass: AutoValueAnnotatedClass, elementUtils: E
                     annotatedClass.propertyMethods.forEach {
                         addField(FieldSpec.builder(ClassName.get(it.type), it.methodName)
                                 .apply { if (it.pathAnnotation != null) addAnnotation(AnnotationSpec.get(it.pathAnnotation)) }
-                                .addAnnotation(rewriteAnnotation(it, annotatedClass, elementUtils))
+                                .addAnnotation(rewriteAnnotation(it, elementUtils))
                                 .build())
                     }
                 }
@@ -139,7 +139,7 @@ fun generateTypeAdapter(annotatedClass: AutoValueAnnotatedClass) =
                 }
                 .build()
 
-fun rewriteAnnotation(annotatedMethod: AnnotatedMethod<*>, annotatedClass: AutoValueAnnotatedClass, elements: Elements): AnnotationSpec =
+fun rewriteAnnotation(annotatedMethod: AnnotatedMethod<*>, elements: Elements): AnnotationSpec =
         when (annotatedMethod) {
 
             is AnnotatedMethod.AttributeMethod -> {
@@ -182,7 +182,10 @@ fun rewriteAnnotation(annotatedMethod: AnnotatedMethod<*>, annotatedClass: AutoV
                         addMember("compileTimeChecks", "false")
                     } else {
                         // Disable compiletime checks if annotated element is an AutoValue element
-                        val returnTypeIsAutoValueType = elements.getTypeElement(annotatedMethod.type.toString()).getAnnotation(AutoValue::class.java) != null
+                        val typeElement = elements.getTypeElement(annotatedMethod.type.toString()) // TODO why can this be null?
+                        val returnTypeIsAutoValueType = if (typeElement != null) {
+                            typeElement.getAnnotation(AutoValue::class.java) != null
+                        } else true
                         addMember("compileTimeChecks", "${!returnTypeIsAutoValueType}")
                     }
 

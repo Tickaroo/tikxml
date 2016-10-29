@@ -1004,7 +1004,6 @@ class AnnotationScannerTest {
                 .withErrorContaining("@Xml annotated class NamespaceClass contains an illegal namespace definition \"http://test.com\" . The following characters are not allowed: < > \" ' to be used in a namespace definition")
     }
 
-
     @Test
     fun writeNamespaceContainsGreaterChar() {
 
@@ -1077,5 +1076,43 @@ class AnnotationScannerTest {
         Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
                 .that(componentFile).processedWith(XmlProcessor())
                 .failsToCompile()
-                .withErrorContaining("contains an illegal namespace definition: a=b=http://test.com because it contains more than 1 equals sign (=) character")   }
+                .withErrorContaining("contains an illegal namespace definition: a=b=http://test.com because it contains more than 1 equals sign (=) character")
+    }
+
+    @Test
+    fun elementList() {
+        val componentFile = JavaFileObjects.forSourceLines("test.ElementList",
+
+                "@${Xml::class.qualifiedName}",
+                "class ElementList {",
+                "   @${Element::class.qualifiedName}",
+                "   java.util.List<A> element;",
+                "}",
+                "",
+                "@${Xml::class.qualifiedName}",
+                "class A {} "
+        )
+        Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
+                .that(componentFile)
+                .processedWith(XmlProcessor())
+                .compilesWithoutError()
+    }
+
+    @Test
+    fun elementListNoCompileTimeChecks() {
+        val componentFile = JavaFileObjects.forSourceLines("test.ElementList",
+
+                "@${Xml::class.qualifiedName}",
+                "class ElementList {",
+                "   @${Element::class.qualifiedName}(compileTimeChecks=false)",
+                "   java.util.List<A> element;",
+                "}",
+                "",
+                "abstract class A {} "
+        )
+        Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
+                .that(componentFile)
+                .processedWith(XmlProcessor())
+                .compilesWithoutError()
+    }
 }

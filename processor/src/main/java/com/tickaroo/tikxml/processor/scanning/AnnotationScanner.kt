@@ -157,7 +157,7 @@ class AnnotationScanner(protected val elementUtils: Elements, protected val type
             annotatedConstructorFields.forEach {
                 val getter = checkGetter(it, methodsMap, true)
                 it.accessResolver = FieldAccessResolver.ConstructorAndGetterFieldAccessResolver(it.element, getter)
-                if (it is PolymorphicElementField){
+                if (it is PolymorphicElementField) {
                     it.substitutions.forEach { sub -> sub.accessResolver = it.accessResolver }
                 }
             }
@@ -322,7 +322,7 @@ class AnnotationScanner(protected val elementUtils: Elements, protected val type
         return field
     }
 
-    private inline fun addFieldToAnnotatedClass(annotatedClass: AnnotatedClass, field: NamedField): Unit =
+    private fun addFieldToAnnotatedClass(annotatedClass: AnnotatedClass, field: NamedField): Unit =
             when (field) {
 
                 is AttributeField -> annotatedClass.addAttribute(field, PathDetector.getSegments(field.element))
@@ -336,14 +336,14 @@ class AnnotationScanner(protected val elementUtils: Elements, protected val type
                     }
                 }
 
-                is PolymorphicElementField ->
+                is PolymorphicElementField -> {
                     // Insert PolymorphicSubstitution instead of the original field.
                     for ((xmlElementName, typeMirror) in field.typeElementNameMatcher) {
                         val sub = PolymorphicSubstitutionField(field.element, typeMirror, field.accessResolver, xmlElementName, field.required, field.typeMirror)
                         field.substitutions.add(sub)
                         annotatedClass.addChildElement(sub, PathDetector.getSegments(field.element))
                     }
-
+                }
                 is XmlChildElement -> annotatedClass.addChildElement(field, PathDetector.getSegments(field.element))
 
                 else -> throw IllegalArgumentException("Oops, unexpected element type $field. This should never happen. Please fill an issue here: https://github.com/Tickaroo/tikxml/issues")
@@ -352,18 +352,18 @@ class AnnotationScanner(protected val elementUtils: Elements, protected val type
     /**
      * Finds a method for a field. Removes hungarion notation. If field name was mFoo this method checks for a method called setFoo()
      */
-    private inline fun findMethodForField(fieldName: String, methodNamePrefix: String, setterAndGetters: Map<String, ExecutableElement>): ExecutableElement? {
+    private fun findMethodForField(fieldName: String, methodNamePrefix: String, setterAndGetters: Map<String, ExecutableElement>): ExecutableElement? {
         val methodName = bestMethodName(fieldName, methodNamePrefix)
         return setterAndGetters[methodName]
     }
 
-    private inline fun findGetterForField(fieldElement: VariableElement, fieldName: String, methodNamePrefix: String, setterAndGetters: Map<String, ExecutableElement>): ExecutableElement? {
+    private fun findGetterForField(fieldElement: VariableElement, fieldName: String, methodNamePrefix: String, setterAndGetters: Map<String, ExecutableElement>): ExecutableElement? {
 
         val method = findMethodForField(fieldName, methodNamePrefix, setterAndGetters) ?: return null
         return if (typeUtils.isSameType(method.returnType, fieldElement.asType())) method else null
     }
 
-    private inline fun bestMethodName(fieldName: String, methodNamePrefix: String): String {
+    private fun bestMethodName(fieldName: String, methodNamePrefix: String): String {
 
         if (fieldName.length == 1) {
             // a should be getA()
@@ -397,7 +397,7 @@ class AnnotationScanner(protected val elementUtils: Elements, protected val type
     /**
      * If field name was mFoo this method checks for a method called setmFoo()
      */
-    private inline fun findMethodForHungarianField(fieldName: String, methodNamePrefix: String, setterAndGetters: Map<String, ExecutableElement>): ExecutableElement? {
+    private fun findMethodForHungarianField(fieldName: String, methodNamePrefix: String, setterAndGetters: Map<String, ExecutableElement>): ExecutableElement? {
 
 
         // Search for setter method with hungarian notion check
@@ -409,7 +409,7 @@ class AnnotationScanner(protected val elementUtils: Elements, protected val type
         return null;
     }
 
-    private inline fun findGetterForHungarianField(fieldElement: VariableElement, fieldName: String, methodNamePrefix: String, setterAndGetters: Map<String, ExecutableElement>): ExecutableElement? {
+    private fun findGetterForHungarianField(fieldElement: VariableElement, fieldName: String, methodNamePrefix: String, setterAndGetters: Map<String, ExecutableElement>): ExecutableElement? {
         val method = findMethodForHungarianField(fieldName, methodNamePrefix, setterAndGetters) ?: return null
         return if (typeUtils.isSameType(method.returnType, fieldElement.asType())) method else null
     }
@@ -417,7 +417,7 @@ class AnnotationScanner(protected val elementUtils: Elements, protected val type
     /**
      * If field name was mFoo this method checks for a method called setMFoo()
      */
-    private inline fun findMethodForHungarianFieldUpperCase(fieldName: String, methodNamePrefix: String, setterAndGetters: Map<String, ExecutableElement>): ExecutableElement? {
+    private fun findMethodForHungarianFieldUpperCase(fieldName: String, methodNamePrefix: String, setterAndGetters: Map<String, ExecutableElement>): ExecutableElement? {
 
         // Search for setter method with hungarian notion check
         if (fieldName.length > 1 && fieldName.matches(Regex("m[A-Z].*"))) {
@@ -430,13 +430,13 @@ class AnnotationScanner(protected val elementUtils: Elements, protected val type
         return null
     }
 
-    private inline fun findGetterForHungarianFieldUpperCase(fieldElement: VariableElement, fieldName: String, methodNamePrefix: String, setterAndGetters: Map<String, ExecutableElement>): ExecutableElement? {
+    private fun findGetterForHungarianFieldUpperCase(fieldElement: VariableElement, fieldName: String, methodNamePrefix: String, setterAndGetters: Map<String, ExecutableElement>): ExecutableElement? {
 
         val method = findMethodForHungarianFieldUpperCase(fieldName, methodNamePrefix, setterAndGetters) ?: return null
         return if (typeUtils.isSameType(method.returnType, fieldElement.asType())) method else null
     }
 
-    private inline fun getFieldNameWithoutHungarianNotation(element: VariableElement): String {
+    private fun getFieldNameWithoutHungarianNotation(element: VariableElement): String {
         val name = element.simpleName.toString()
         if (name.matches(Regex("^m[A-Z]{1}"))) {
             return name.substring(1, 2).toLowerCase();

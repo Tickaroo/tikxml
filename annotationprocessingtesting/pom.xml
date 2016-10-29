@@ -38,7 +38,7 @@
 
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>autovalue</artifactId>
+      <artifactId>auto-value-tikxml</artifactId>
       <version>${project.version}</version>
     </dependency>
 

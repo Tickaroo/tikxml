@@ -246,7 +246,8 @@ open class DefaultAnnotationDetector(protected val elementUtils: Elements, prote
      * Checks whether or not thy element is of type (or subtype) java.util.List
      */
     protected fun isList(element: VariableElement): Boolean {
-        return typeUtils.isAssignable(element.asType(), listTypeMirror)
+       // return typeUtils.isAssignable(element.asType(), listTypeMirror)
+        return element.isList()
     }
 
     private fun getPolymorphicTypes(element: VariableElement, matcherAnnotations: Array<ElementNameMatcher>): List<PolymorphicTypeElementNameMatcher> {

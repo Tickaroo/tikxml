@@ -238,7 +238,7 @@ class DefaultAnnotationDetectorTest {
         Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
                 .that(componentFile).processedWith(XmlProcessor())
                 .failsToCompile()
-                .withErrorContaining("The type java.lang.Object used for field 'aList' in test.InlineListOnArrayListType can't be used, because is not annotated with @${Xml::class.simpleName}. Annotate java.lang.Object with @${Xml::class.simpleName}!")
+                .withErrorContaining("The type java.util.ArrayList used for field 'aList' in test.InlineListOnArrayListType can't be used, because is not annotated with @${Xml::class.simpleName}. Annotate java.util.ArrayList with @${Xml::class.simpleName}!")
     }
 
     @Test
