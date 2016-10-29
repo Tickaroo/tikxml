@@ -72,6 +72,12 @@
             <artifactId>javapoet</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>20.0-rc1</version>
+        </dependency>
+
         <!-- Testing -->
         <dependency>
             <groupId>com.google.testing.compile</groupId>

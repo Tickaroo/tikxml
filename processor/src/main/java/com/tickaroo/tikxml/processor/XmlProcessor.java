@@ -122,7 +122,7 @@ public class XmlProcessor extends AbstractProcessor {
         scanner.scan(clazz);
 
         TypeAdapterCodeGenerator generator =
-            new TypeAdapterCodeGenerator(filer, elementUtils, primitiveTypeConverters);
+            new TypeAdapterCodeGenerator(filer, elementUtils, typeUtils, primitiveTypeConverters);
         generator.generateCode(clazz);
       }
     } catch (ProcessingException e) {

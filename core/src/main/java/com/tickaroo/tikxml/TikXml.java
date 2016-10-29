@@ -119,17 +119,12 @@ public final class TikXml {
 
   public <T> void write(BufferedSink sink, T valueToWrite) throws IOException {
 
-      XmlWriter writer = XmlWriter.of(sink);
+    XmlWriter writer = XmlWriter.of(sink);
 
-    try {
-
-      TypeAdapter<T> adapter = config.getTypeAdapter((Class<T>) valueToWrite.getClass());
-      if (config.writeDefaultXmlDeclaration()) {
-        writer.xmlDeclaration();
-      }
-      adapter.toXml(writer, config, valueToWrite, null);
-    } finally {
-      writer.close();
+    TypeAdapter<T> adapter = config.getTypeAdapter((Class<T>) valueToWrite.getClass());
+    if (config.writeDefaultXmlDeclaration()) {
+      writer.xmlDeclaration();
     }
+    adapter.toXml(writer, config, valueToWrite, null);
   }
 }

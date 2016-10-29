@@ -23,6 +23,7 @@ import com.tickaroo.tikxml.TikXmlConfig
 import com.tickaroo.tikxml.TypeConverterNotFoundException
 import com.tickaroo.tikxml.XmlReader
 import com.tickaroo.tikxml.annotation.ElementNameMatcher
+import com.tickaroo.tikxml.processor.ProcessingException
 import com.tickaroo.tikxml.processor.field.PolymorphicSubstitutionField
 import com.tickaroo.tikxml.processor.field.PolymorphicSubstitutionListField
 import com.tickaroo.tikxml.processor.field.PolymorphicTypeElementNameMatcher
@@ -38,12 +39,14 @@ import java.util.*
 import javax.lang.model.element.Element
 import javax.lang.model.element.Modifier
 import javax.lang.model.type.TypeMirror
+import javax.lang.model.util.Elements
+import javax.lang.model.util.Types
 
 /**
  *
  * @author Hannes Dorfmann
  */
-class CodeGeneratorHelper(val customTypeConverterManager: CustomTypeConverterManager, val typeConvertersForPrimitives: Set<String>, val valueType: ClassName) {
+class CodeGeneratorHelper(val customTypeConverterManager: CustomTypeConverterManager, val typeConvertersForPrimitives: Set<String>, val valueType: ClassName, val elementUtils: Elements, val typeUtils: Types) {
 
 
     // Constants
@@ -255,13 +258,6 @@ class CodeGeneratorHelper(val customTypeConverterManager: CustomTypeConverterMan
             .addParameter(valueType, valueParam)
             .addException(IOException::class.java)
 
-    fun assignTextContentMethodBuilder() = MethodSpec.methodBuilder("assignTextContent")
-            .addAnnotation(Override::class.java)
-            .addModifiers(Modifier.PROTECTED)
-            .addParameter(TikXmlConfig::class.java, tikConfigParam)
-            .addParameter(String::class.java, textContentParam)
-            .addParameter(valueType, valueParam)
-
     /**
      * Generates the code to write attributes as xml
      */
@@ -427,12 +423,18 @@ class CodeGeneratorHelper(val customTypeConverterManager: CustomTypeConverterMan
     fun writeResolvePolymorphismAndDelegteToTypeAdpters(variableName: String, typeElementNameMatcher: List<PolymorphicTypeElementNameMatcher>) =
             CodeBlock.builder()
                     .apply {
+
+
                         // Cannot be done with instanceof because then the inheritance hierarchy matters and so matters the order of the if checks
-                        typeElementNameMatcher.forEachIndexed { i, nameMatcher ->
+                        val orderdByInheritanceHierarchy = orderByInheritanceHierarchy(typeElementNameMatcher, elementUtils, typeUtils)
+                        if (orderdByInheritanceHierarchy.size != typeElementNameMatcher.size) {
+                            throw ProcessingException(null, "Oops: an unexpected exception has occurred while determining the correct order for inheritance hierarchy. Please file an issue at https://github.com/Tickaroo/tikxml/issues . Some debug information: ordered hierarchy elements: ${orderdByInheritanceHierarchy.size} ;  TypeElementMatcher size ${typeElementNameMatcher.size} ; ordered hierarchy list: ${orderdByInheritanceHierarchy} ; TypeElementMatcher list ${typeElementNameMatcher}")
+                        }
+                        orderdByInheritanceHierarchy.forEachIndexed { i, nameMatcher ->
                             if (i == 0) {
-                                beginControlFlow("if ($variableName.getClass() == \$T.class)", ClassName.get(nameMatcher.type))
+                                beginControlFlow("if ($variableName instanceof \$T)", ClassName.get(nameMatcher.type))
                             } else {
-                                nextControlFlow("else if ($variableName.getClass() == \$T.class)", ClassName.get(nameMatcher.type))
+                                nextControlFlow("else if ($variableName instanceof \$T)", ClassName.get(nameMatcher.type))
                             }
                             addStatement("$tikConfigParam.getTypeAdapter(\$T.class).toXml($writerParam, $tikConfigParam, (\$T) $variableName, \$S)", ClassName.get(nameMatcher.type), ClassName.get(nameMatcher.type), nameMatcher.xmlElementName)
                         }
@@ -629,5 +631,4 @@ class CodeGeneratorHelper(val customTypeConverterManager: CustomTypeConverterMan
             ELEMENT -> "nextTextContent"
         }
     }
-
 }

@@ -33,6 +33,7 @@ import java.util.Map
 import javax.annotation.processing.Filer
 import javax.lang.model.element.Modifier
 import javax.lang.model.util.Elements
+import javax.lang.model.util.Types
 
 /**
  * This class takes an [com.tickaroo.tikxml.processor.field.AnnotatedClass] as input
@@ -40,7 +41,7 @@ import javax.lang.model.util.Elements
  * @author Hannes Dorfmann
  * @since 1.0
  */
-class TypeAdapterCodeGenerator(private val filer: Filer, private val elementUtils: Elements, private val typeConvertersForPrimitives: Set<String>) {
+class TypeAdapterCodeGenerator(private val filer: Filer, private val elementUtils: Elements, private val typeUtils: Types, private val typeConvertersForPrimitives: Set<String>) {
 
     /**
      * The name of the class that holds some value when we have to parse xml into a constructor
@@ -56,7 +57,7 @@ class TypeAdapterCodeGenerator(private val filer: Filer, private val elementUtil
         val genericParamTypeAdapter = ParameterizedTypeName.get(ClassName.get(TypeAdapter::class.java), ClassName.get(annotatedClass.element))
 
         val customTypeConverterManager = CustomTypeConverterManager()
-        val codeGenUtils = CodeGeneratorHelper(customTypeConverterManager, typeConvertersForPrimitives, parseIntoValueType)
+        val codeGenUtils = CodeGeneratorHelper(customTypeConverterManager, typeConvertersForPrimitives, parseIntoValueType, elementUtils, typeUtils)
 
         val constructorBuilder = MethodSpec.constructorBuilder()
                 .addModifiers(Modifier.PUBLIC)

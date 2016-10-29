@@ -9,16 +9,16 @@ import javax.lang.model.element.ExecutableElement
 import javax.lang.model.element.TypeElement
 
 @Throws(ProcessingException::class)
-fun extractAutoValueProperties(autoValueClass: TypeElement, properties: Map<String, ExecutableElement>): List<AnnotatedMethod<*>>? {
+fun extractAutoValueProperties(autoValueClass: TypeElement, properties: Map<String, ExecutableElement>): List<AnnotatedMethod<*>> {
 
     if (properties.isEmpty())
-        return null
+        return emptyList()
 
     val annotatedPropropertiesCount = properties.entries.filter { it.value.hasTikXmlAnnotation() }.size
 
     if (annotatedPropropertiesCount == 0) {
         // AutoValue class doesn't contain TikXml annotated properties methods
-        return null
+        return emptyList()
     }
 
     if (annotatedPropropertiesCount != properties.size) {

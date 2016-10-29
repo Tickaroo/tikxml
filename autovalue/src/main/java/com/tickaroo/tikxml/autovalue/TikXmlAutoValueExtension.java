@@ -40,30 +40,28 @@ public class TikXmlAutoValueExtension extends AutoValueExtension {
           AutoValueScannerKt.extractAutoValueProperties(context.autoValueClass(),
               context.properties());
 
-      if (annotatedMethods != null) {
-        // generate code
-        AutoValueAnnotatedClass annotatedClass =
-            new AutoValueAnnotatedClass(context.packageName(), context.autoValueClass(),
-                xmlAnnotation, annotatedMethods);
+      // generate code
+      AutoValueAnnotatedClass annotatedClass =
+          new AutoValueAnnotatedClass(context.packageName(), context.autoValueClass(),
+              xmlAnnotation, annotatedMethods);
 
-        try {
-          Filer filer = context.processingEnvironment().getFiler();
+      try {
+        Filer filer = context.processingEnvironment().getFiler();
 
-          JavaFile.builder(context.packageName(),
-              AutoValueTypeAdapterCodeGeneratorKt.generateValueHolder(annotatedClass,
-                  context.processingEnvironment().getElementUtils()))
-              .build()
-              .writeTo(filer);
+        JavaFile.builder(context.packageName(),
+            AutoValueTypeAdapterCodeGeneratorKt.generateValueHolder(annotatedClass,
+                context.processingEnvironment().getElementUtils()))
+            .build()
+            .writeTo(filer);
 
-          JavaFile.builder(context.packageName(),
-              AutoValueTypeAdapterCodeGeneratorKt.generateTypeAdapter(annotatedClass))
-              .build()
-              .writeTo(filer);
-        } catch (IOException e) {
-          throw new ProcessingException(annotatedClass.getAutoValueClass(),
-              "Error while generating code for " + annotatedClass.getAutoValueClass()
-                  .getQualifiedName() + ": " + e.getMessage());
-        }
+        JavaFile.builder(context.packageName(),
+            AutoValueTypeAdapterCodeGeneratorKt.generateTypeAdapter(annotatedClass))
+            .build()
+            .writeTo(filer);
+      } catch (IOException e) {
+        throw new ProcessingException(annotatedClass.getAutoValueClass(),
+            "Error while generating code for " + annotatedClass.getAutoValueClass()
+                .getQualifiedName() + ": " + e.getMessage());
       }
     } catch (ProcessingException exception) {
       environment.getMessager()
