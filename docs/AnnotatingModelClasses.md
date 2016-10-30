@@ -1031,6 +1031,36 @@ Please note also that as for now TikXml only supports UTF-8 encoding since it is
 }
 ```
 
+## Compile time checks
+TikXml does compile time checks when doing annotation processing to detect erros in your TikXml annotations
+right when compiling your code, rather then run into crashes at compiletime. Optionally, you can
+disable some compile time checks for `@Element`. For example if you annotate a list with like this:
+
+```java
+ @Element(
+    typesByElement = {
+      @ElementNameMatcher(type = Boss.class),
+      @ElementNameMatcher(type = Employee.class)
+    }
+  )
+  List<Person> persons;
+```
+
+then both, `Boss` and `Employee` must be a subclass of `Person`. This kind of checks run when compiling TikXml.
+Another Example is:
+
+```java
+@Element Author author;
+```
+
+That would mean that TikXml knows how to parse and write `Author`. So TikXml would check if there exists a class `Author` annotated with `@Xml`.
+However, in some cases you want to use your own `TypeAdapter` implementation (can be added `TikXml.Builder.addTypeAdapter(new MyAuthorAdapter()).build()`)
+and therefore we have to disable compile time checks in that case, because we will add a TypeAdapter at runtime for the class Author.
+You can disable compile time checks with `@Element(compileTimeChecks = false)` and `@ElementNameMatcher(compileTimeChecks = false)`.
+
+By the way you can use `TikXml.Builder.addTypeAdapter(new MyHashMapTypeAdapter()).build()` for not out of the box supported types like `HashMap` and in that case you have
+to disable compile time checks too for `@Element(compileTimeChecks = false) HashMap<String, Foo> myMap;`
+
 # Kotlin
 Kotlin is supported:
 
@@ -1045,5 +1075,33 @@ class Book {
 }
 ```
 
-Data classes are not supported yet, because of [this issue](https://youtrack.jetbrains.com/issue/KT-14328#tab=Comments)
+kotlin's data classes are supported too, but you have to use kapt2 which requires to enable kapt2 manually by `apply plugin: 'kotlin-kapt'` gradle plugin.
 
+
+```kotlin
+@Xml
+data class Book (
+  @Attribute val id : Integer,
+  @Element val author : Author
+)
+```
+
+# AutoValue
+TikXml supports [AutoValue](https://github.com/google/auto/tree/master/value) by providing an auto value extension. You have to include that dependency
+```groovy
+apt 'com.tickaroo.tikxml:auto-value-tikxml:{latest-version}'
+```
+
+Then annotate AutoValue abstract classes with `@Xml` and any abstract method with other TikXml annotation as usual.
+
+```java
+@Xml
+@AutoValue
+public abstract class Book {
+
+  @Attribute public abstract String id();
+  @Element public abstract Author author();
+  @ProperyElement abstract String isbn();
+
+}
+```
