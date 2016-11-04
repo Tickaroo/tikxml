@@ -1,11 +1,9 @@
 # Work in Progress
-Please note that this is still **work in progress!**
+Please note that this is still **work in progress!**, although quite stable and used in production.
 [![Build Status](https://travis-ci.org/Tickaroo/tikxml.svg?branch=master)](https://travis-ci.org/Tickaroo/tikxml)
 
 # TikXML
 A fast xml parser for android (and java)
-
-The **documentation** can be found [here](https://github.com/Tickaroo/tikxml/blob/master/docs/AnnotatingModelClasses.md)
 
 Latest snapshot `0.8.1-SNAPSHOT` available:
 
@@ -36,6 +34,9 @@ Also, an [AutoValue](https://github.com/google/auto/tree/master/value) extension
 ```groovy
 apt 'com.tickaroo.tikxml:auto-value-tikxml:0.8.1-SNAPSHOT'
 ```
+
+# Documentation
+The **documentation** can be found [here](https://github.com/Tickaroo/tikxml/blob/master/docs/AnnotatingModelClasses.md)
 
 # Benchmark
 We did benchmark on this early version of TikXml to compare field's results with other popular xml parsers like SimpleXml and Jackson.
