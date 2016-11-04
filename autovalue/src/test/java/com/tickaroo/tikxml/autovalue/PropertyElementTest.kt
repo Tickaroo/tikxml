@@ -16,7 +16,7 @@
  *
  */
 
-package com.tickaroo.tikxml.processor
+package com.tickaroo.tikxml.autovalue
 
 import com.google.auto.value.AutoValue
 import com.google.auto.value.processor.AutoValueProcessor

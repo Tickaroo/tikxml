@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!--
+<?xml version="1.0" encoding="UTF-8" ?><!--
   ~ Copyright (C) 2015 Hannes Dorfmann
   ~ Copyright (C) 2015 Tickaroo, Inc.
   ~
@@ -16,23 +15,7 @@
   ~ limitations under the License.
   ~
   -->
-
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <parent>
-    <artifactId>parent</artifactId>
-    <groupId>com.tickaroo.tikxml</groupId>
-    <version>0.8.1-SNAPSHOT</version>
-  </parent>
-  <modelVersion>4.0.0</modelVersion>
-
-  <artifactId>converters</artifactId>
-  <packaging>pom</packaging>
-  <modules>
-    <module>htmlescape</module>
-    <module>date-rfc3339</module>
-  </modules>
-
-
-</project>
+<root xmlns:m="http://www.w3.org/1998/Math/MathML">
+  <x:name xmlns:x="http://www.w3.org/1998/Math/MathML">Foo</x:name>
+  <m:child m:id="123" />
+</root>

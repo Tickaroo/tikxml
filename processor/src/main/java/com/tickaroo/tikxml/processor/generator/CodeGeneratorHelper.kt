@@ -239,14 +239,12 @@ class CodeGeneratorHelper(val customTypeConverterManager: CustomTypeConverterMan
     }
 
     fun ignoreAttributes() = CodeBlock.builder()
-            .beginControlFlow("if (!$tikConfigParam.$tikConfigMethodExceptionOnUnreadXml())")
-            .beginControlFlow("while ($readerParam.hasAttribute())")
-            .addStatement("$readerParam.skipAttribute()")
+            .beginControlFlow("while(\$L.hasAttribute())", readerParam)
+            .addStatement("String attributeName = \$L.nextAttributeName()", readerParam)
+            .beginControlFlow("if (\$L.exceptionOnUnreadXml() && !attributeName.startsWith(\$S))", tikConfigParam, "xmlns")
+            .addStatement("throw new \$T(\"Unread attribute '\"+ attributeName +\"' at path \"+ $readerParam.getPath())", ClassName.get(IOException::class.java))
             .endControlFlow()
-            .nextControlFlow("else")
-            .beginControlFlow("if($readerParam.hasAttribute())")
-            .addStatement("throw new \$T(\"Unread attribute '\"+ reader.nextAttributeName()+\"' at path \"+ $readerParam.getPath())", ClassName.get(IOException::class.java))
-            .endControlFlow()
+            .addStatement("\$L.skipAttributeValue()", readerParam)
             .endControlFlow()
             .build()
 

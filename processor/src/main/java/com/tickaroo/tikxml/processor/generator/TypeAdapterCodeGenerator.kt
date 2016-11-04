@@ -47,6 +47,7 @@ class TypeAdapterCodeGenerator(private val filer: Filer, private val elementUtil
      * The name of the class that holds some value when we have to parse xml into a constructor
      */
     private val VALUE_HOLDER_CLASS_NAME = "ValueHolder"
+    private val namespaceDefinitionPrefix = "xmlns"
 
     /**
      * Generates an [com.tickaroo.tikxml.TypeAdapter] for the given class
@@ -177,32 +178,29 @@ class TypeAdapterCodeGenerator(private val filer: Filer, private val elementUtil
                     .beginControlFlow("if (attributeBinder != null)")
                     .addStatement("attributeBinder.fromXml(\$L, \$L, \$L)", reader, config, value)
                     .nextControlFlow("else")
-                    .beginControlFlow("if (\$L.exceptionOnUnreadXml())", config)
-                    .addStatement("throw new \$T(\$S+\$L.nextAttributeName()+\$S+\$L.getPath()+\$S)", IOException::class.java,
+                    .beginControlFlow("if (\$L.exceptionOnUnreadXml() && !attributeName.startsWith(\$S))", config, namespaceDefinitionPrefix)
+                    .addStatement("throw new \$T(\$S+attributeName+\$S+\$L.getPath()+\$S)", IOException::class.java,
                             "Could not map the xml attribute with the name '",
-                            reader,
                             "' at path ",
                             reader,
                             " to java class. Have you annotated such a field in your java class to map this xml attribute? Otherwise you can turn this error message off with TikXml.Builder().exceptionOnUnreadXml(false).build().")
                     .endControlFlow() // End if
                     .addStatement("\$L.skipAttributeValue()", reader)
                     .endControlFlow() // end if attributeBinder != null
-                    .endControlFlow() // end while hasAttribue()
+                    .endControlFlow() // end while hasAttribute()
 
         } else {
             // Skip attributes if there are any
-            builder.beginControlFlow("if (\$L.hasAttribute())", reader)
-                    .beginControlFlow("if (\$L.exceptionOnUnreadXml())", config)
-                    .addStatement("throw new \$T(\$S+\$L.nextAttributeName()+\$S+\$L.getPath()+\$S)", IOException::class.java,
+            builder.beginControlFlow("while(\$L.hasAttribute())", reader)
+                    .addStatement("String attributeName = \$L.nextAttributeName()", reader)
+                    .beginControlFlow("if (\$L.exceptionOnUnreadXml() && !attributeName.startsWith(\$S))", config, namespaceDefinitionPrefix)
+                    .addStatement("throw new \$T(\$S+attributeName+\$S+\$L.getPath()+\$S)", IOException::class.java,
                             "Could not map the xml attribute with the name '",
-                            reader,
                             "' at path ",
                             reader,
                             " to java class. Have you annotated such a field in your java class to map this xml attribute? Otherwise you can turn this error message off with TikXml.Builder().exceptionOnUnreadXml(false).build().")
                     .endControlFlow()
-                    .beginControlFlow("while(\$L.hasAttribute())", reader)
-                    .addStatement("\$L.skipAttribute()", reader)
-                    .endControlFlow()
+                    .addStatement("\$L.skipAttributeValue()", reader)
                     .endControlFlow()
         }
 
