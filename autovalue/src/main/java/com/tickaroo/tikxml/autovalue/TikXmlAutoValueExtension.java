@@ -38,7 +38,7 @@ public class TikXmlAutoValueExtension extends AutoValueExtension {
 
       List<AnnotatedMethod<?>> annotatedMethods =
           AutoValueScannerKt.extractAutoValueProperties(context.autoValueClass(),
-              context.properties());
+              context.properties(), context.processingEnvironment().getTypeUtils(), context.processingEnvironment().getElementUtils());
 
       // generate code
       AutoValueAnnotatedClass annotatedClass =

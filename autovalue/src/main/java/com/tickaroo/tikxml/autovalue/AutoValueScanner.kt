@@ -5,24 +5,18 @@ import com.tickaroo.tikxml.processor.ProcessingException
 import com.tickaroo.tikxml.processor.converter.AttributeConverterChecker
 import com.tickaroo.tikxml.processor.converter.PropertyElementConverterChecker
 import com.tickaroo.tikxml.processor.utils.hasTikXmlAnnotation
-import javax.lang.model.element.ElementKind
 import javax.lang.model.element.ExecutableElement
 import javax.lang.model.element.TypeElement
+import javax.lang.model.util.Elements
+import javax.lang.model.util.Types
 
 @Throws(ProcessingException::class)
-fun extractAutoValueProperties(autoValueClass: TypeElement, properties: Map<String, ExecutableElement>): List<AnnotatedMethod<*>> {
+fun extractAutoValueProperties(autoValueClass: TypeElement, properties: Map<String, ExecutableElement>, types: Types, elements: Elements): List<AnnotatedMethod<*>> {
 
     if (properties.isEmpty())
         return emptyList()
 
-    // Doesn't take interface definitions into account
-    val propropertiesDirectlyInAutoValueAnnotClass = autoValueClass.enclosedElements
-            .filter {
-                val name = it.simpleName.toString()
-                it.kind == ElementKind.METHOD && properties[name] != null }
-
-
-    val annotatedPropropertiesCount = propropertiesDirectlyInAutoValueAnnotClass.filter { it.hasTikXmlAnnotation() }.size
+    val annotatedPropropertiesCount = properties.entries.filter { it.value.hasTikXmlAnnotation() }.size
 
     if (annotatedPropropertiesCount == 0) {
         // AutoValue class doesn't contain TikXml annotated properties methods
@@ -30,15 +24,40 @@ fun extractAutoValueProperties(autoValueClass: TypeElement, properties: Map<Stri
     }
 
 
-    if (annotatedPropropertiesCount != propropertiesDirectlyInAutoValueAnnotClass.size) {
+    //
+    // Some checks for android parcelable
+    //
+    var parcelable = false
+    try {
+        val parcelableType = elements.getTypeElement("android.os.Parcelable")
+        if (parcelableType == null) {
+            // android.os.Parcelable not in class path, hence no android project
+            parcelable = false
+        } else {
+            parcelable = types.isAssignable(autoValueClass.asType(), parcelableType.asType())
+        }
+    } catch (t: Throwable) {
+        throw ProcessingException(autoValueClass, "An unexpected error has occurred while trying to scan ${autoValueClass.qualifiedName} inheritance hierarchy (incl. interfaces) to determine whether or not this class implements Parcelable (android)")
+    }
+    val containsParcelableDescribeContentMethod = parcelable && properties["describeContents"] != null
+
+
+    val propertiesSize = if (containsParcelableDescribeContentMethod) properties.size - 1 else properties.size
+
+    if (annotatedPropropertiesCount != propertiesSize) {
         throw ProcessingException(autoValueClass, "class ${autoValueClass.qualifiedName} must have " +
                 "all methods (auto value properties methods) annotated with TikXml annotations " +
                 "like @${Attribute::class.simpleName}, @${PropertyElement::class.simpleName}, " +
                 "@${Element::class.simpleName} or @${TextContent::class.simpleName}. " +
-                "It's not allowed to annotate just some of the property methods.")
+                "It's not allowed to annotate just some of the property methods "+
+        "(incl. implemented interface methods that are also auto value property methods).")
     }
 
-    return properties.map { toAnnotatedMethod(it.key, it.value) }
+    return if (containsParcelableDescribeContentMethod)
+    // describeContents() has to be implemented by another auto-value-parcelable plugin
+        properties.filter { it.key === "describeContents" }.map { toAnnotatedMethod(it.key, it.value) }
+    else
+        properties.map { toAnnotatedMethod(it.key, it.value) }
 }
 
 /**
