@@ -55,7 +55,7 @@ fun extractAutoValueProperties(autoValueClass: TypeElement, properties: Map<Stri
 
     return if (containsParcelableDescribeContentMethod)
     // describeContents() has to be implemented by another auto-value-parcelable plugin
-        properties.filter { it.key === "describeContents" }.map { toAnnotatedMethod(it.key, it.value) }
+        properties.filter { it.key !== "describeContents" }.map { toAnnotatedMethod(it.key, it.value) }
     else
         properties.map { toAnnotatedMethod(it.key, it.value) }
 }

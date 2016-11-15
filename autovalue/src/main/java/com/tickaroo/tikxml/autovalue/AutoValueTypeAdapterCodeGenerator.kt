@@ -11,7 +11,6 @@ import com.tickaroo.tikxml.processor.converter.PropertyElementConverterChecker
 import com.tickaroo.tikxml.typeadapter.TypeAdapter
 import java.io.IOException
 import java.util.*
-import javax.annotation.Generated
 import javax.lang.model.element.Modifier
 import javax.lang.model.type.MirroredTypeException
 import javax.lang.model.util.Elements
@@ -60,7 +59,7 @@ fun generateValueHolder(annotatedClass: AutoValueAnnotatedClass, elementUtils: E
 
                         }
                         .build())
-                .addAnnotation(AnnotationSpec.builder(Generated::class.java).addMember("value", "\$S", TikXmlAutoValueExtension::class.qualifiedName.toString()).build())
+                //.addAnnotation(AnnotationSpec.builder(Generated::class.java).addMember("value", "\$S", TikXmlAutoValueExtension::class.qualifiedName.toString()).build())
                 .apply {
                     annotatedClass.propertyMethods.forEach {
                         addField(FieldSpec.builder(ClassName.get(it.type), it.methodName)
