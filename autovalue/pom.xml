@@ -92,13 +92,6 @@
       <scope>test</scope>
     </dependency>
 
-    <dependency>
-      <groupId>com.ryanharter.auto.value</groupId>
-      <artifactId>auto-value-parcel</artifactId>
-      <version>0.2.5</version>
-      <scope>test</scope>
-    </dependency>
-
   </dependencies>
 
   <build>
