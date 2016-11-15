@@ -25,6 +25,7 @@ import com.google.testing.compile.JavaFileObjects
 import com.google.testing.compile.JavaSourceSubjectFactory
 import com.google.testing.compile.JavaSourcesSubject
 import com.tickaroo.tikxml.annotation.*
+import org.junit.Ignore
 import org.junit.Test
 import javax.tools.JavaFileObject
 
@@ -60,6 +61,7 @@ class InheritedPropertiesTest {
     }
 
     @Test
+    @Ignore
     fun ignoreParcelableProperties() {
         val componentFile = JavaFileObjects.forSourceLines("android.os.Parcelable",
                 "package android.os;",
