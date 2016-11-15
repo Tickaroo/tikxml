@@ -5,6 +5,7 @@ import com.tickaroo.tikxml.processor.ProcessingException
 import com.tickaroo.tikxml.processor.converter.AttributeConverterChecker
 import com.tickaroo.tikxml.processor.converter.PropertyElementConverterChecker
 import com.tickaroo.tikxml.processor.utils.hasTikXmlAnnotation
+import javax.lang.model.element.ElementKind
 import javax.lang.model.element.ExecutableElement
 import javax.lang.model.element.TypeElement
 
@@ -14,14 +15,22 @@ fun extractAutoValueProperties(autoValueClass: TypeElement, properties: Map<Stri
     if (properties.isEmpty())
         return emptyList()
 
-    val annotatedPropropertiesCount = properties.entries.filter { it.value.hasTikXmlAnnotation() }.size
+    // Doesn't take interface definitions into account
+    val propropertiesDirectlyInAutoValueAnnotClass = autoValueClass.enclosedElements
+            .filter {
+                val name = it.simpleName.toString()
+                it.kind == ElementKind.METHOD && properties[name] != null }
+
+
+    val annotatedPropropertiesCount = propropertiesDirectlyInAutoValueAnnotClass.filter { it.hasTikXmlAnnotation() }.size
 
     if (annotatedPropropertiesCount == 0) {
         // AutoValue class doesn't contain TikXml annotated properties methods
         return emptyList()
     }
 
-    if (annotatedPropropertiesCount != properties.size) {
+
+    if (annotatedPropropertiesCount != propropertiesDirectlyInAutoValueAnnotClass.size) {
         throw ProcessingException(autoValueClass, "class ${autoValueClass.qualifiedName} must have " +
                 "all methods (auto value properties methods) annotated with TikXml annotations " +
                 "like @${Attribute::class.simpleName}, @${PropertyElement::class.simpleName}, " +
