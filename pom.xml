@@ -36,7 +36,7 @@
   <groupId>com.tickaroo.tikxml</groupId>
   <artifactId>parent</artifactId>
   <packaging>pom</packaging>
-  <version>0.8.2-SNAPSHOT</version>
+  <version>0.8.3-SNAPSHOT</version>
   <modules>
     <module>core</module>
     <module>annotation</module>
