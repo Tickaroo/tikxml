@@ -853,7 +853,7 @@ public class Book {
 ```
 Either annotate all constructor parameters with TikXml annotations (like @Attribute etc.) or none of the constructor parameters.
 
-However, you can have multiple constructors without TikXml annotations but you must have exactly one parameter:
+However, you can have multiple constructors without TikXml annotations but you must have exactly one constructor containing parameters annotated with TikXml annotations only:
 
 ```java
 @Xml

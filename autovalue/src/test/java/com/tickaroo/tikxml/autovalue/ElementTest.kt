@@ -24,6 +24,7 @@ import com.google.common.truth.Truth
 import com.google.testing.compile.JavaFileObjects
 import com.google.testing.compile.JavaSourceSubjectFactory
 import com.google.testing.compile.JavaSourcesSubject
+import com.tickaroo.tikxml.annotation.Attribute
 import com.tickaroo.tikxml.annotation.Element
 import com.tickaroo.tikxml.annotation.ElementNameMatcher
 import com.tickaroo.tikxml.annotation.Xml
@@ -48,6 +49,31 @@ class ElementTest {
                 "@${AutoValue::class.java.simpleName}",
                 "abstract class A {",
                 "   @${Element::class.qualifiedName} public abstract B someA();",
+                "}",
+                "",
+                "@${Xml::class.java.simpleName}",
+                "@${AutoValue::class.java.simpleName}",
+                "abstract class B {}"
+        )
+
+        Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
+                .that(componentFile).processedWith(AutoValueProcessor())
+                .compilesWithoutError()
+    }
+
+    @Test
+    fun listElement() {
+        val componentFile = JavaFileObjects.forSourceLines("test.A",
+                "package test;",
+                "",
+                "import ${Xml::class.java.canonicalName};",
+                "import ${AutoValue::class.java.canonicalName};",
+                "import java.util.List;",
+                "",
+                "@${Xml::class.java.simpleName}",
+                "@${AutoValue::class.java.simpleName}",
+                "abstract class A {",
+                "   @${Element::class.qualifiedName} public abstract List<B> listOfB();",
                 "}",
                 "",
                 "@${Xml::class.java.simpleName}",
@@ -85,6 +111,44 @@ class ElementTest {
                 "@${Xml::class.java.simpleName}",
                 "@${AutoValue::class.java.simpleName}",
                 "abstract class B implements I {}"
+        )
+
+        Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
+                .that(componentFile).processedWith(AutoValueProcessor())
+                .compilesWithoutError()
+    }
+
+    @Test
+    fun polymorphicListElement() {
+        val componentFile = JavaFileObjects.forSourceLines("test.Root",
+                "package test;",
+                "",
+                "import ${Xml::class.java.canonicalName};",
+                "import ${AutoValue::class.java.canonicalName};",
+                "import ${ElementNameMatcher::class.java.canonicalName};",
+                "import ${Element::class.java.canonicalName};",
+                "import ${Attribute::class.java.canonicalName};",
+                "import java.util.List;",
+                "",
+                "@${Xml::class.java.simpleName}",
+                "@${AutoValue::class.java.simpleName}",
+                "abstract class Root {",
+                "   @${Element::class.qualifiedName}(typesByElement={@ElementNameMatcher(type = A.class), @ElementNameMatcher(type = B.class) }) public abstract List<I> listOfI();",
+                "}",
+                "",
+                "interface I{}",
+                "",
+                "@${Xml::class.java.simpleName}",
+                "@${AutoValue::class.java.simpleName}",
+                "abstract class A implements I{",
+                "     @Attribute public abstract String aString();",
+                "}",
+                "",
+                "@${Xml::class.java.simpleName}",
+                "@${AutoValue::class.java.simpleName}",
+                "abstract class B implements I {",
+                "     @Element public abstract A a();",
+                "}"
         )
 
         Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
