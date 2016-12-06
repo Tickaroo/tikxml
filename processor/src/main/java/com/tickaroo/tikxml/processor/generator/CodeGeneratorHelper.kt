@@ -402,7 +402,7 @@ class CodeGeneratorHelper(val customTypeConverterManager: CustomTypeConverterMan
             }
 
 
-            if (typeConvertersForPrimitives.contains("kotlin.Double") || typeConvertersForPrimitives.contains(Double::class.java.qualifiedName)) {
+            if (typeConvertersForPrimitives.contains("kotlin.Double") || typeConvertersForPrimitives.contains(Double::class.java.canonicalName)) {
                 return surroundWithTryCatch("$writerParam.$xmlWriterMethod(\"$attributeName\", $tikConfigParam.getTypeConverter(java.lang.Double.class).write(${accessResolver.resolveGetterForWritingXml()}))")
             }
 
