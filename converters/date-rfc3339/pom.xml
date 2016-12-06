@@ -23,7 +23,7 @@
   <parent>
     <artifactId>converters</artifactId>
     <groupId>com.tickaroo.tikxml</groupId>
-    <version>0.8.8-SNAPSHOT</version>
+    <version>0.8.9-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
 

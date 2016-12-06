@@ -123,12 +123,12 @@ Since `TikXml` is highly optimized for performance primitives (we count `String`
 ```groovy
 apt {
     arguments {
-        primitiveTypeConverters "java.lang.String, java.lang.int, java.lang.Integer"
+        primitiveTypeConverters "java.lang.String, int, java.lang.Integer"
     }
 }
 ```
 
-Note that you have to specify both, the primitive itself `java.lang.int` and his wrapper class `java.lang.Integer`, to say `TikXml` that a `TypeConverter` should be used for those types.
+Note that you have to specify both, the primitive itself `int` and his wrapper class `java.lang.Integer`, to say `TikXml` that a `TypeConverter` should be used for those types.
 
 ## Property Elements
 In XML not only attributes can be used to model properties but also nested elements like this:

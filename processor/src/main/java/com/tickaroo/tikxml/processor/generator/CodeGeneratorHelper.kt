@@ -155,57 +155,34 @@ class CodeGeneratorHelper(val customTypeConverterManager: CustomTypeConverterMan
         if (type.isBoolean()) {
             if (typeConvertersForPrimitives.contains("java.lang.Boolean")) {
                 return surroundWithTryCatch("$tikConfigParam.getTypeConverter(java.lang.Boolean.class).read($readerParam.$xmlReaderMethodPrefix())")
-                        .toBuilder()
-                        .addStatement("// Boolean Wrapper $type")
-                        .build()
             }
 
             if (typeConvertersForPrimitives.contains("boolean")) {
                 return surroundWithTryCatch("$tikConfigParam.getTypeConverter(boolean.class).read($readerParam.$xmlReaderMethodPrefix())")
-                        .toBuilder()
-                        .addStatement("// Boolean primitive $type")
-                        .build()
             }
 
             if (typeConvertersForPrimitives.contains("kotlin.Boolean") || typeConvertersForPrimitives.contains(Boolean::class.java.canonicalName)) {
                 return surroundWithTryCatch("$tikConfigParam.getTypeConverter(java.lang.Boolean.class).read($readerParam.$xmlReaderMethodPrefix())")
-                        .toBuilder()
-                        .addStatement("// kotlin Boolean Wrapper $type")
-                        .build()
             }
 
             return accessResolver.resolveAssignment("$readerParam.${xmlReaderMethodPrefix}AsBoolean()")
-                    .toBuilder()
-                    .addStatement("// No Boolean $type")
-                    .build()
         }
 
         if (type.isDouble()) {
 
             if (typeConvertersForPrimitives.contains("java.lang.Double")) {
                 return surroundWithTryCatch("$tikConfigParam.getTypeConverter(java.lang.Double.class).read($readerParam.${xmlReaderMethodPrefix}())")
-                        .toBuilder()
-                        .addStatement("// Double Wrapper $type")
-                        .build()
             }
 
             if (typeConvertersForPrimitives.contains("double")) {
                 return surroundWithTryCatch("$tikConfigParam.getTypeConverter(double.class).read($readerParam.${xmlReaderMethodPrefix}())")
-                        .toBuilder()
-                        .addStatement("// primitive double $type")
-                        .build()
             }
 
             if (typeConvertersForPrimitives.contains("kotlin.Double") || typeConvertersForPrimitives.contains(Double::class.java.canonicalName)) {
                 return surroundWithTryCatch("$tikConfigParam.getTypeConverter(java.lang.Double.class).read($readerParam.${xmlReaderMethodPrefix}())")
-                        .toBuilder()
-                        .addStatement("// KotlinDouble Wrapper $type")
-                        .build()
             }
 
-            return accessResolver.resolveAssignment("$readerParam.${xmlReaderMethodPrefix}AsDouble()").toBuilder()
-                    .addStatement("// No double casee $type")
-                    .build()
+            return accessResolver.resolveAssignment("$readerParam.${xmlReaderMethodPrefix}AsDouble()")
         }
 
         if (type.isInt()) {
