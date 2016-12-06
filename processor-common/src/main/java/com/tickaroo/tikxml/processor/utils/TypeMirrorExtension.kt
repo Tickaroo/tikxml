@@ -47,7 +47,7 @@ fun TypeMirror.isPrimitive() = kind.isPrimitive
 
 fun TypeMirror.isBoolean() =
         if (kind == TypeKind.BOOLEAN) true
-        else if (toString() == "java.lang.Boolean" )
+        else if (toString() == "java.lang.Boolean")
             true
         else false
 
@@ -58,8 +58,8 @@ fun TypeMirror.isString() = when (toString()) {
 
 }
 
-fun TypeMirror.isInt() = if (kind == TypeKind.INT || toString() == "java.lang.Integer") true else false
+fun TypeMirror.isInt() = kind == TypeKind.INT || toString() == "java.lang.Integer" || toString() == "kotlin.Int"
 
-fun TypeMirror.isDouble() = if (kind == TypeKind.DOUBLE || toString() == "java.lang.Double") true else false
+fun TypeMirror.isDouble() = kind == TypeKind.DOUBLE || toString() == "java.lang.Double" || toString() == "kotlin.Double"
 
-fun TypeMirror.isLong() = if (kind == TypeKind.LONG || toString() == "java.lang.Long") true else false
+fun TypeMirror.isLong() = kind == TypeKind.LONG || toString() == "java.lang.Long" || toString() == "kotlin.Long"
