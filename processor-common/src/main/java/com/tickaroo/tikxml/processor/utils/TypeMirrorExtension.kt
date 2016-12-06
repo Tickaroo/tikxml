@@ -45,11 +45,7 @@ fun TypeMirror.isPrimitiveInclWrapper() = when (kind) {
 
 fun TypeMirror.isPrimitive() = kind.isPrimitive
 
-fun TypeMirror.isBoolean() =
-        if (kind == TypeKind.BOOLEAN) true
-        else if (toString() == "java.lang.Boolean")
-            true
-        else false
+fun TypeMirror.isBoolean() = kind == TypeKind.BOOLEAN || toString() == "java.lang.Boolean" || toString() == "kotlin.Boolean" || toString() == Boolean::class.qualifiedName || toString() == Boolean::class.java.canonicalName
 
 fun TypeMirror.isString() = when (toString()) {
     "java.lang.String" -> true
@@ -58,8 +54,8 @@ fun TypeMirror.isString() = when (toString()) {
 
 }
 
-fun TypeMirror.isInt() = kind == TypeKind.INT || toString() == "java.lang.Integer" || toString() == "kotlin.Int"
+fun TypeMirror.isInt() = kind == TypeKind.INT || toString() == "java.lang.Integer" || toString() == "kotlin.Int" || toString() == Int::class.qualifiedName || toString() == Int::class.java.canonicalName
 
-fun TypeMirror.isDouble() = kind == TypeKind.DOUBLE || toString() == "java.lang.Double" || toString() == "kotlin.Double"
+fun TypeMirror.isDouble() = kind == TypeKind.DOUBLE || toString() == "java.lang.Double" || toString() == "kotlin.Double" || toString() == Double::class.qualifiedName || toString() == Double::class.java.canonicalName
 
-fun TypeMirror.isLong() = kind == TypeKind.LONG || toString() == "java.lang.Long" || toString() == "kotlin.Long"
+fun TypeMirror.isLong() = kind == TypeKind.LONG || toString() == "java.lang.Long" || toString() == "kotlin.Long" || toString() == Long::class.qualifiedName || toString() == Long::class.java.canonicalName
