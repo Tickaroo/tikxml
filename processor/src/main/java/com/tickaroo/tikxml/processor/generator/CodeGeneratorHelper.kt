@@ -154,12 +154,16 @@ class CodeGeneratorHelper(val customTypeConverterManager: CustomTypeConverterMan
         }
 
         if (type.isBoolean()) {
-            if (typeConvertersForPrimitives.contains(String::class.java.canonicalName)) {
+            if (typeConvertersForPrimitives.contains(Boolean::class.java.canonicalName)) {
                 return surroundWithTryCatch("$tikConfigParam.getTypeConverter(java.lang.Boolean.class).read($readerParam.$xmlReaderMethodPrefix())")
             }
 
             if (typeConvertersForPrimitives.contains("boolean")) {
                 return surroundWithTryCatch("$tikConfigParam.getTypeConverter(boolean.class).read($readerParam.$xmlReaderMethodPrefix())")
+            }
+
+            if (typeConvertersForPrimitives.contains("kotlin.Boolean")) {
+                return surroundWithTryCatch("$tikConfigParam.getTypeConverter(java.lang.Boolean.class).read($readerParam.$xmlReaderMethodPrefix())")
             }
 
             return accessResolver.resolveAssignment("$readerParam.${xmlReaderMethodPrefix}AsBoolean()")
@@ -175,6 +179,10 @@ class CodeGeneratorHelper(val customTypeConverterManager: CustomTypeConverterMan
                 return surroundWithTryCatch("$tikConfigParam.getTypeConverter(double.class).read($readerParam.${xmlReaderMethodPrefix}())")
             }
 
+            if (typeConvertersForPrimitives.contains("kotlin.Double")) {
+                return surroundWithTryCatch("$tikConfigParam.getTypeConverter(java.lang.Double.class).read($readerParam.${xmlReaderMethodPrefix}())")
+            }
+
             return accessResolver.resolveAssignment("$readerParam.${xmlReaderMethodPrefix}AsDouble()")
         }
 
@@ -186,6 +194,10 @@ class CodeGeneratorHelper(val customTypeConverterManager: CustomTypeConverterMan
 
             if (typeConvertersForPrimitives.contains("int")) {
                 return surroundWithTryCatch("$tikConfigParam.getTypeConverter(int.class).read($readerParam.${xmlReaderMethodPrefix}())")
+            }
+
+            if (typeConvertersForPrimitives.contains("kotlin.Int")) {
+                return surroundWithTryCatch("$tikConfigParam.getTypeConverter(java.lang.Integer.class).read($readerParam.${xmlReaderMethodPrefix}())")
             }
 
             return accessResolver.resolveAssignment("$readerParam.${xmlReaderMethodPrefix}AsInt()")
@@ -200,6 +212,11 @@ class CodeGeneratorHelper(val customTypeConverterManager: CustomTypeConverterMan
             if (typeConvertersForPrimitives.contains("long")) {
                 return surroundWithTryCatch("$tikConfigParam.getTypeConverter(long.class).read($readerParam.${xmlReaderMethodPrefix}())")
             }
+
+            if (typeConvertersForPrimitives.contains("kotlin.Long")) {
+                return surroundWithTryCatch("$tikConfigParam.getTypeConverter(java.lang.Long.class).read($readerParam.${xmlReaderMethodPrefix}())")
+            }
+
 
             return accessResolver.resolveAssignment("$readerParam.${xmlReaderMethodPrefix}AsLong()")
         }
