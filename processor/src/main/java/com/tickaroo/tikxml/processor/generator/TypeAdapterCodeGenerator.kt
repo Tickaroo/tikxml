@@ -95,7 +95,7 @@ class TypeAdapterCodeGenerator(private val filer: Filer, private val elementUtil
 
 
         val packageElement = elementUtils.getPackageOf(annotatedClass.element)
-        val packageName = if (packageElement.isUnnamed) "" else packageElement.toString()
+        val packageName = if (packageElement.isUnnamed) "" else packageElement.qualifiedName.toString()
 
         val javaFile = JavaFile.builder(packageName, adapterClassBuilder.build()).build()
         javaFile.writeTo(filer)
