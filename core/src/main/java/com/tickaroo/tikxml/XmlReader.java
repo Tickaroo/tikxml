@@ -37,7 +37,7 @@ public class XmlReader implements Closeable {
   //private static final ByteString LINEFEED_OR_CARRIAGE_RETURN = ByteString.encodeUtf8("\n\r");
 
   private static final ByteString UNQUOTED_STRING_TERMINALS
-      = ByteString.encodeUtf8(" >/=");
+      = ByteString.encodeUtf8(" >/=\n");
 
   private static final ByteString CDATA_CLOSE = ByteString.encodeUtf8("]]>");
 

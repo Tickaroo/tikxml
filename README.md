@@ -5,7 +5,7 @@ Please note that this is still **work in progress!**, although quite stable and 
 # TikXML
 A fast xml parser for android (and java)
 
-Latest snapshot `0.8.9-SNAPSHOT` available:
+Latest snapshot `0.8.10-SNAPSHOT` available:
 
 ```groovy
 repositories {
@@ -17,22 +17,22 @@ repositories {
 ```
 
 ```groovy
-compile 'com.tickaroo.tikxml:annotation:0.8.9-SNAPSHOT'
-compile 'com.tickaroo.tikxml:core:0.8.9-SNAPSHOT'
+compile 'com.tickaroo.tikxml:annotation:0.8.10-SNAPSHOT'
+compile 'com.tickaroo.tikxml:core:0.8.10-SNAPSHOT'
 
-apt 'com.tickaroo.tikxml:processor:0.8.9-SNAPSHOT'
+apt 'com.tickaroo.tikxml:processor:0.8.10-SNAPSHOT'
 ```
 
 For retrofit2:
 
 ```groovy
-compile 'com.tickaroo.tikxml:retrofit-converter:0.8.9-SNAPSHOT'
+compile 'com.tickaroo.tikxml:retrofit-converter:0.8.10-SNAPSHOT'
 ```
 
 Also, an [AutoValue](https://github.com/google/auto/tree/master/value) extension is available:
 
 ```groovy
-apt 'com.tickaroo.tikxml:auto-value-tikxml:0.8.9-SNAPSHOT'
+apt 'com.tickaroo.tikxml:auto-value-tikxml:0.8.10-SNAPSHOT'
 ```
 
 # Documentation
