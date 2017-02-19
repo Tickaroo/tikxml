@@ -78,7 +78,7 @@ public class Book {
 ```
 
 ```java
-public class MyDateConverter implements Converter<Date> {
+public class MyDateConverter implements TypeConverter<Date> {
 
   private SimpleDateFormat formatter = new SimpleDateFormat("yyyy.MM.dd"); // SimpleDateFormat is not thread safe!
 
@@ -95,7 +95,7 @@ public class MyDateConverter implements Converter<Date> {
 }
 ```
 
-Your custom `Converter` must provide an empty (parameter less) constructor).
+Your custom `TypeConverter` must provide an empty (parameter less) constructor).
 As you see, you can specify a custom converter for each field with `@Attribute(converter = MyConverter.class)`. 
 Additionally, you can set default converter for all your xml feeds directly in `TikXml`. 
 
