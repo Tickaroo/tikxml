@@ -1169,29 +1169,6 @@ class DefaultAnnotationDetectorTest {
     }
 
     @Test
-    fun nameConflictIgnoreAnnotation() {
-        val componentFile = JavaFileObjects.forSourceLines("test.NameConflictIgnoreAnnotation",
-                "package test;",
-                "",
-                "@${Xml::class.java.canonicalName}",
-                "class NameConflictIgnoreAnnotation extends Parent {",
-                "   int a;",
-                "",
-                "}",
-                "",
-                "@${Xml::class.java.canonicalName}",
-                "class Parent {",
-                "   @${IgnoreXml::class.qualifiedName}",
-                "   @${Attribute::class.qualifiedName}",
-                "   String a;",
-                "}")
-
-        Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
-                .that(componentFile).processedWith(XmlProcessor())
-                .compilesWithoutError()
-    }
-
-    @Test
     fun textContent() {
         val componentFile = JavaFileObjects.forSourceLines("test.TextContent",
                 "package test;",
