@@ -45,13 +45,6 @@ open class DefaultAnnotationDetector(protected val elementUtils: Elements, prote
         listTypeMirror = typeUtils.erasure(elementUtils.getTypeElement("java.util.List").asType())
     }
 
-    protected fun ignoreField(element: VariableElement): Boolean {
-        val ignoreAnnotation = element.getAnnotation(IgnoreXml::class.java)
-
-        // Ignore xml
-        return ignoreAnnotation != null
-    }
-
     protected fun isTextContentAnnotated(element: VariableElement): Boolean {
         val textContentAnnotated = element.getAnnotation(TextContent::class.java) != null
         if (textContentAnnotated && element.getAnnotation(Path::class.java) != null) {
@@ -62,25 +55,17 @@ open class DefaultAnnotationDetector(protected val elementUtils: Elements, prote
     }
 
     override fun isXmlTextContent(element: VariableElement): TextContentField? =
-            if (ignoreField(element)) null
-            else {
-                if (isTextContentAnnotated(element) && isXmlField(element) == null) {
-                    if (!element.asType().isString()) {
-                        throw ProcessingException(element, "Only type String is supported for @${TextContent::class.simpleName} but field '$element' in class ${element.getSurroundingClassQualifiedName()} is not of type String")
-                    }
+            if (isTextContentAnnotated(element) && isXmlField(element) == null) {
+                if (!element.asType().isString()) {
+                    throw ProcessingException(element, "Only type String is supported for @${TextContent::class.simpleName} but field '$element' in class ${element.getSurroundingClassQualifiedName()} is not of type String")
+                }
 
-                    val annotation = element.getAnnotation(TextContent::class.java)
-                    TextContentField(element, requiredDetector.isRequired(element), annotation.writeAsCData)
-                } else
-                    null
-            }
+                val annotation = element.getAnnotation(TextContent::class.java)
+                TextContentField(element, requiredDetector.isRequired(element), annotation.writeAsCData)
+            } else
+                null
 
     override fun isXmlField(element: VariableElement): NamedField? {
-
-        if (ignoreField(element)) {
-            return null
-        }
-
         var annotationFound = 0;
 
         // MAIN ANNOTATIONS
