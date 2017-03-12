@@ -41,9 +41,9 @@ public class XmlReader implements Closeable {
 
   private static final ByteString CDATA_CLOSE = ByteString.encodeUtf8("]]>");
 
-  private static final Byte DOUBLE_QUOTE = (byte) '"';
-  private static final Byte SINGLE_QUOTE = (byte) '\'';
-  private static final Byte OPENING_XML_ELEMENT = (byte) '<';
+  private static final byte DOUBLE_QUOTE = '"';
+  private static final byte SINGLE_QUOTE = '\'';
+  private static final byte OPENING_XML_ELEMENT = '<';
 
   //
   // Peek states
@@ -560,9 +560,7 @@ public class XmlReader implements Closeable {
       long index = indexOfClosingCDATA();
 
       String result = buffer.readUtf8(index);
-      buffer.readByte(); // consume ]
-      buffer.readByte(); // consume ]
-      buffer.readByte(); // consume >
+      buffer.skip(3); // consume ]]>
       return result;
     } else if (p == PEEKED_ELEMENT_END) {
       // this is an element without any text content. i.e. <foo></foo>.
