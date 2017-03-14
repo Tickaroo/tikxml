@@ -99,7 +99,7 @@ class ElementTest {
                 "@${Xml::class.java.simpleName}",
                 "@${AutoValue::class.java.simpleName}",
                 "abstract class Root {",
-                "   @${Element::class.qualifiedName}(typesByElement={@ElementNameMatcher(type = A.class), @ElementNameMatcher(type = B.class) }) public abstract I someI();",
+                "   @${Element::class.qualifiedName}(typesByElement={@ElementNameMatcher(name = \"foo\", type = A.class), @ElementNameMatcher(type = B.class) }) public abstract I someI();",
                 "}",
                 "",
                 "interface I{}",
