@@ -36,7 +36,7 @@
   <groupId>com.tickaroo.tikxml</groupId>
   <artifactId>parent</artifactId>
   <packaging>pom</packaging>
-  <version>0.8.10-SNAPSHOT</version>
+  <version>0.8.11-SNAPSHOT</version>
   <modules>
     <module>core</module>
     <module>annotation</module>
@@ -53,7 +53,7 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <java.version>1.7</java.version>
-    <kotlin.version>1.0.5</kotlin.version>
+    <kotlin.version>1.1.0</kotlin.version>
 
     <!-- Dependencies -->
     <okio.version>1.11.0</okio.version>

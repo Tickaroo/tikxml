@@ -201,7 +201,7 @@ fun rewriteAnnotation(annotatedMethod: AnnotatedMethod<*>, elements: Elements): 
                             codeBuilder.add("@\$T(", ElementNameMatcher::class.java)
 
                             if (matcher.name.isNotEmpty()) {
-                                codeBuilder.add("name = \$S", matcher.name)
+                                codeBuilder.add("name = \$S, ", matcher.name)
                             }
 
                             val typeClassName = try {
