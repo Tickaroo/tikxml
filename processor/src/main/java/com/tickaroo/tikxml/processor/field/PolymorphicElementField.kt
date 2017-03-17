@@ -34,7 +34,7 @@ import javax.lang.model.type.TypeMirror
  * Represents a Field with [com.tickaroo.tikxml.annotation.Element] annotation
  * @author Hannes Dorfmann
  */
-open class PolymorphicElementField(element: VariableElement, name: String, required: Boolean?, val typeElementNameMatcher: List<PolymorphicTypeElementNameMatcher>) : ElementField(element, name, required) {
+open class PolymorphicElementField(element: VariableElement, name: String, val typeElementNameMatcher: List<PolymorphicTypeElementNameMatcher>) : ElementField(element, name) {
 
     val substitutions = ArrayList<PolymorphicSubstitutionField>()
 
@@ -52,7 +52,7 @@ open class PolymorphicElementField(element: VariableElement, name: String, requi
                     .build()
 }
 
-class PolymorphicListElementField(element: VariableElement, name: String, required: Boolean?, typeElementNameMatcher: List<PolymorphicTypeElementNameMatcher>, val genericListTypeMirror: TypeMirror) : PolymorphicElementField(element, name, required, typeElementNameMatcher) {
+class PolymorphicListElementField(element: VariableElement, name: String, typeElementNameMatcher: List<PolymorphicTypeElementNameMatcher>, val genericListTypeMirror: TypeMirror) : PolymorphicElementField(element, name, typeElementNameMatcher) {
 
    override fun generateReadXmlCode(codeGeneratorHelper: CodeGeneratorHelper): TypeSpec {
         throw ProcessingException(element, "Oops, en error has occurred while generating reading xml code for $this. Please fill an issue at https://github.com/Tickaroo/tikxml/issues")
@@ -66,7 +66,7 @@ class PolymorphicListElementField(element: VariableElement, name: String, requir
 /**
  * This kind of element will be used to replace a [PolymorphicElementField]
  */
-open class PolymorphicSubstitutionField(element: VariableElement, override val typeMirror: TypeMirror, override var accessResolver: FieldAccessResolver, name: String, required: Boolean? = null, val originalElementTypeMirror: TypeMirror) : ElementField(element, name, required) {
+open class PolymorphicSubstitutionField(element: VariableElement, override val typeMirror: TypeMirror, override var accessResolver: FieldAccessResolver, name: String, val originalElementTypeMirror: TypeMirror) : ElementField(element, name) {
 
     override fun isXmlElementAccessableFromOutsideTypeAdapter(): Boolean = false
 
@@ -94,7 +94,7 @@ open class PolymorphicSubstitutionField(element: VariableElement, override val t
 /**
  * This kind of element will be used to replace a [PolymorphicElementField] but for List elements
  */
-class PolymorphicSubstitutionListField(element: VariableElement, typeMirror: TypeMirror, accessResolver: FieldAccessResolver, name: String, val genericListTypeMirror: TypeMirror, required: Boolean? = null) : PolymorphicSubstitutionField(element, typeMirror, accessResolver, name, required, element.asType()) {
+class PolymorphicSubstitutionListField(element: VariableElement, typeMirror: TypeMirror, accessResolver: FieldAccessResolver, name: String, val genericListTypeMirror: TypeMirror) : PolymorphicSubstitutionField(element, typeMirror, accessResolver, name, element.asType()) {
 
 
     override fun generateReadXmlCode(codeGeneratorHelper: CodeGeneratorHelper): TypeSpec {

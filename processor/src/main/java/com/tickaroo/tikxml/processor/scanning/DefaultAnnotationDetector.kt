@@ -37,7 +37,7 @@ import javax.lang.model.util.Types
  * A [AnnotationScanner] that scans the element by checking for TikXml annotations
  * @author Hannes Dorfmann
  */
-open class DefaultAnnotationDetector(protected val elementUtils: Elements, protected val typeUtils: Types, protected val requiredDetector: RequiredDetector) : AnnotationDetector {
+open class DefaultAnnotationDetector(protected val elementUtils: Elements, protected val typeUtils: Types) : AnnotationDetector {
 
     val listTypeMirror: TypeMirror
 
@@ -61,7 +61,7 @@ open class DefaultAnnotationDetector(protected val elementUtils: Elements, prote
                 }
 
                 val annotation = element.getAnnotation(TextContent::class.java)
-                TextContentField(element, requiredDetector.isRequired(element), annotation.writeAsCData)
+                TextContentField(element, annotation.writeAsCData)
             } else
                 null
 
@@ -114,7 +114,6 @@ open class DefaultAnnotationDetector(protected val elementUtils: Elements, prote
             val converterChecker = AttributeConverterChecker()
             return AttributeField(element,
                     nameFromAnnotationOrField(attributeAnnotation.name, element),
-                    requiredDetector.isRequired(element),
                     converterChecker.getQualifiedConverterName(element, attributeAnnotation))
         }
 
@@ -123,7 +122,6 @@ open class DefaultAnnotationDetector(protected val elementUtils: Elements, prote
             return PropertyField(element,
                     nameFromAnnotationOrField(propertyAnnotation.name, element),
                     propertyAnnotation.writeAsCData,
-                    requiredDetector.isRequired(element),
                     converterChecker.getQualifiedConverterName(element, propertyAnnotation))
         }
 
@@ -164,7 +162,6 @@ open class DefaultAnnotationDetector(protected val elementUtils: Elements, prote
                     return ListElementField(
                             element,
                             elementName,
-                            requiredDetector.isRequired(element),
                             genericListType
                     )
 
@@ -192,8 +189,7 @@ open class DefaultAnnotationDetector(protected val elementUtils: Elements, prote
 
                     return ElementField(
                             element,
-                            elementName,
-                            requiredDetector.isRequired(element)
+                            elementName
                     )
                 }
             } else {
@@ -204,7 +200,6 @@ open class DefaultAnnotationDetector(protected val elementUtils: Elements, prote
                     return PolymorphicListElementField(
                             element,
                             "placeHolderToSubstituteWithPolymorphicListElement",
-                            requiredDetector.isRequired(element),
                             getPolymorphicTypes(element, nameMatchers),
                             genericListType
                     )
@@ -213,11 +208,8 @@ open class DefaultAnnotationDetector(protected val elementUtils: Elements, prote
                     return PolymorphicElementField(
                             element,
                             "placeholderTOSubstituteWithPolymorhicElement",
-                            requiredDetector.isRequired(element),
                             getPolymorphicTypes(element, nameMatchers)
                     )
-
-
                 }
             }
 

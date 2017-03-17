@@ -33,7 +33,7 @@ import javax.lang.model.type.TypeMirror
  * Represents a Field with [com.tickaroo.tikxml.annotation.Element] annotation
  * @author Hannes Dorfmann
  */
-open class ElementField(element: VariableElement, name: String, required: Boolean? = null) : NamedField(element, name, required), XmlChildElement {
+open class ElementField(element: VariableElement, name: String) : NamedField(element, name), XmlChildElement {
 
     override val attributes = LinkedHashMap<String, AttributeField>()
     override val childElements = LinkedHashMap<String, XmlChildElement>()
@@ -62,7 +62,7 @@ open class ElementField(element: VariableElement, name: String, required: Boolea
     }
 }
 
-class ListElementField(element: VariableElement, name: String, required: Boolean? = null, private val genericListType: TypeMirror) : ElementField(element, name, required) {
+class ListElementField(element: VariableElement, name: String, private val genericListType: TypeMirror) : ElementField(element, name) {
 
 
     override fun generateReadXmlCode(codeGeneratorHelper: CodeGeneratorHelper): TypeSpec {

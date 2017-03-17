@@ -23,7 +23,6 @@ import com.tickaroo.tikxml.annotation.Xml;
 import com.tickaroo.tikxml.processor.field.AnnotatedClass;
 import com.tickaroo.tikxml.processor.field.AnnotatedClassImpl;
 import com.tickaroo.tikxml.processor.generator.TypeAdapterCodeGenerator;
-import com.tickaroo.tikxml.processor.scanning.AnnotationBasedRequiredDetector;
 import com.tickaroo.tikxml.processor.scanning.AnnotationDetector;
 import com.tickaroo.tikxml.processor.scanning.AnnotationScanner;
 import com.tickaroo.tikxml.processor.scanning.DefaultAnnotationDetector;
@@ -71,8 +70,7 @@ public class XmlProcessor extends AbstractProcessor {
     filer = processingEnv.getFiler();
     elementUtils = processingEnv.getElementUtils();
     typeUtils = processingEnv.getTypeUtils();
-    annotationDetector = new DefaultAnnotationDetector(elementUtils, typeUtils,
-        new AnnotationBasedRequiredDetector());
+    annotationDetector = new DefaultAnnotationDetector(elementUtils, typeUtils);
   }
 
   @Override
