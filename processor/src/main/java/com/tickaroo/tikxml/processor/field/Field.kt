@@ -26,7 +26,7 @@ import javax.lang.model.type.TypeMirror
  * Represents a java class field that is mapped to xml
  * @author Hannes Dorfmann
  */
-open class Field(val element: VariableElement, val required: Boolean? = null) {
+open class Field(val element: VariableElement) {
 
     open lateinit var accessResolver: FieldAccessResolver
 

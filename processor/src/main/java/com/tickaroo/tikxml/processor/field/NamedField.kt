@@ -28,8 +28,7 @@ import javax.lang.model.element.VariableElement
  */
 open class NamedField(
         element: VariableElement,
-        val name: String,
-        required: Boolean? = null) : Field(element, required) { // required == null means take default value of TikXml
+        val name: String) : Field(element) {
 
 
     override fun toString() = "field '${element.simpleName}' in class ${element.getSurroundingClassQualifiedName()}"

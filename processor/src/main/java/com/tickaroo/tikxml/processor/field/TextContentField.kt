@@ -24,5 +24,5 @@ import javax.lang.model.element.VariableElement
  * Represents a field annotated with [com.tickaroo.tikxml.annotation.TextContent] annotation
  * @author Hannes Dorfmann
  */
-class TextContentField(element: VariableElement, required: Boolean?, val writeAsCData : Boolean ) : Field(element, required) {
+class TextContentField(element: VariableElement, val writeAsCData : Boolean ) : Field(element) {
 }

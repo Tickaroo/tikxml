@@ -61,7 +61,7 @@ open class DefaultAnnotationDetector(protected val elementUtils: Elements, prote
                 }
 
                 val annotation = element.getAnnotation(TextContent::class.java)
-                TextContentField(element, null, annotation.writeAsCData)
+                TextContentField(element, annotation.writeAsCData)
             } else
                 null
 
@@ -114,7 +114,6 @@ open class DefaultAnnotationDetector(protected val elementUtils: Elements, prote
             val converterChecker = AttributeConverterChecker()
             return AttributeField(element,
                     nameFromAnnotationOrField(attributeAnnotation.name, element),
-                    null,
                     converterChecker.getQualifiedConverterName(element, attributeAnnotation))
         }
 
@@ -123,7 +122,6 @@ open class DefaultAnnotationDetector(protected val elementUtils: Elements, prote
             return PropertyField(element,
                     nameFromAnnotationOrField(propertyAnnotation.name, element),
                     propertyAnnotation.writeAsCData,
-                    null,
                     converterChecker.getQualifiedConverterName(element, propertyAnnotation))
         }
 
@@ -164,7 +162,6 @@ open class DefaultAnnotationDetector(protected val elementUtils: Elements, prote
                     return ListElementField(
                             element,
                             elementName,
-                            null,
                             genericListType
                     )
 
@@ -192,8 +189,7 @@ open class DefaultAnnotationDetector(protected val elementUtils: Elements, prote
 
                     return ElementField(
                             element,
-                            elementName,
-                            null
+                            elementName
                     )
                 }
             } else {
@@ -204,7 +200,6 @@ open class DefaultAnnotationDetector(protected val elementUtils: Elements, prote
                     return PolymorphicListElementField(
                             element,
                             "placeHolderToSubstituteWithPolymorphicListElement",
-                            null,
                             getPolymorphicTypes(element, nameMatchers),
                             genericListType
                     )
@@ -213,11 +208,8 @@ open class DefaultAnnotationDetector(protected val elementUtils: Elements, prote
                     return PolymorphicElementField(
                             element,
                             "placeholderTOSubstituteWithPolymorhicElement",
-                            null,
                             getPolymorphicTypes(element, nameMatchers)
                     )
-
-
                 }
             }
 

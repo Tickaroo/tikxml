@@ -30,7 +30,7 @@ import javax.lang.model.element.VariableElement
  * This class represents a field annotated with [com.tickaroo.tikxml.annotation.PropertyElement]
  * @author Hannes Dorfmann
  */
-class PropertyField(element: VariableElement, name: String, val writeAsCData: Boolean = false, required: Boolean? = null, val converterQualifiedName: String? = null) : NamedField(element, name, required), XmlChildElement {
+class PropertyField(element: VariableElement, name: String, val writeAsCData: Boolean = false, val converterQualifiedName: String? = null) : NamedField(element, name), XmlChildElement {
     override val attributes = LinkedHashMap<String, AttributeField>()
     override val childElements = LinkedHashMap<String, XmlChildElement>()
 
