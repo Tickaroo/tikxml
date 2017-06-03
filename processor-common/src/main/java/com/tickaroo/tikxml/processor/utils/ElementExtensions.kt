@@ -101,10 +101,15 @@ fun Element.isMethod() = kind == ElementKind.METHOD
 fun Element.isConstructor() = kind == ElementKind.CONSTRUCTOR
 
 /**
+ * Checks if a given element has parameters
+ */
+fun Element.hasEmptyParameters()  =  (this as ExecutableElement).parameters.isEmpty()
+
+/**
  * Checks if a given element is an Empty constructor (visibility not checked)
  */
 fun Element.isEmptyConstructor() =
-        isConstructor() && (this as ExecutableElement).parameters.isEmpty()
+        isConstructor() && hasEmptyParameters()
 
 /**
  * Checks if a given element is empty constructor with minimum package visibility
