@@ -30,6 +30,7 @@ import javax.lang.model.element.ExecutableElement
 import javax.lang.model.element.TypeElement
 import javax.lang.model.element.VariableElement
 import javax.lang.model.type.*
+import javax.lang.model.util.ElementFilter
 import javax.lang.model.util.Elements
 import javax.lang.model.util.Types
 
@@ -223,7 +224,7 @@ open class DefaultAnnotationDetector(protected val elementUtils: Elements, prote
      * Checks whether or not thy element is of type (or subtype) java.util.List
      */
     protected fun isList(element: VariableElement): Boolean {
-       // return typeUtils.isAssignable(element.asType(), listTypeMirror)
+        // return typeUtils.isAssignable(element.asType(), listTypeMirror)
         return element.isList()
     }
 
@@ -310,10 +311,12 @@ open class DefaultAnnotationDetector(protected val elementUtils: Elements, prote
             throw ProcessingException(variableElement, "@${ElementNameMatcher::class.simpleName} does not allow protected classes. $typeElement is a protected class!")
         }
 
-        if (!typeElement.isPublic() && !typeElement.isSamePackageAs(variableElement.enclosingElement, elementUtils)) {
+        val hasSamePackage = typeElement.isSamePackageAs(variableElement.enclosingElement, elementUtils)
+        val classIsPublic = typeElement.isPublic()
+
+        if (!classIsPublic && !hasSamePackage) {
             throw ProcessingException(variableElement, "@${ElementNameMatcher::class.simpleName} does not allow package visiblity on classes outside of this package. Make $typeElement is a public class or move this class into the same package")
         }
-
 
         // Check for subtype
         val variableType = if (isList(variableElement)) getGenericTypeFromList(variableElement) else variableElement.asType()
@@ -321,29 +324,21 @@ open class DefaultAnnotationDetector(protected val elementUtils: Elements, prote
             throw ProcessingException(variableElement, "The type $typeElement must be a sub type of ${variableType}. Otherwise this type cannot be used in @${ElementNameMatcher::class.simpleName} to resolve polymorphism");
         }
 
-        // TODO Is this constructor check really needed? Seems to be redundand / duplicated since it will also be checked in FieldScanner
-        for (method in typeElement.enclosedElements) {
-            if (typeElement.isSamePackageAs(variableElement, elementUtils) && method.isEmptyConstructorWithMinimumPackageVisibility()) {
-                return
-            }
-
-            if (typeElement.isPublic() && typeElement.isEmptyConstructor()) {
-                return
-            }
-
-            // Check for TikXml annotated constructor (all parameters are annotated with TikXml annotations)
-            if (method.isConstructor()) {
-                val constructor = (method as ExecutableElement)
-                if (constructor.parameters.isNotEmpty()
-                        && constructor.parameters.filter { !(it as VariableElement).hasTikXmlAnnotation() }.isEmpty()) {
+        for (constructor in ElementFilter.constructorsIn(typeElement.enclosedElements)) {
+            if (constructor.hasEmptyParameters()) {
+                if (hasSamePackage and constructor.hasMinimumPackageVisibilityModifiers()) {
                     return
                 }
 
+                if (classIsPublic and constructor.isPublic()) {
+                    return
+                }
+            } else if (constructor.parameters.filter { !(it as VariableElement).hasTikXmlAnnotation() }.isEmpty()) {
+                return
             }
-
         }
 
-
+        
         throw ProcessingException(variableElement, "Class $typeElement used in @${ElementNameMatcher::
         class.simpleName} must provide an public empty (parameter-less) constructor")
     }
