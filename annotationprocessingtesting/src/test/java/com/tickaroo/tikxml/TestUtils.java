@@ -21,7 +21,6 @@ package com.tickaroo.tikxml;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.nio.charset.Charset;
 import okio.Buffer;
 import okio.BufferedSource;
 import okio.Okio;
@@ -70,6 +69,6 @@ public class TestUtils {
    * @return
    */
   public static String bufferToString(Buffer buffer) {
-    return buffer.readString(Charset.defaultCharset());
+    return buffer.readUtf8();
   }
 }
