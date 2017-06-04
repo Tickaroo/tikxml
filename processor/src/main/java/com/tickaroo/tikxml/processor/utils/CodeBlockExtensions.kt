@@ -16,4 +16,4 @@ inline fun CodeBlock.Builder.ifValueNotNullCheck(field: Field, block: CodeBlock.
                     .apply(block)
                     .endControlFlow()
 
-inline fun CodeBlock.Builder.endXmlElement() = addStatement("${CodeGeneratorHelper.writerParam}.endElement()")
+fun CodeBlock.Builder.endXmlElement() = addStatement("${CodeGeneratorHelper.writerParam}.endElement()")
