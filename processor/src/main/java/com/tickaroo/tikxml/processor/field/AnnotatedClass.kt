@@ -110,7 +110,7 @@ class AnnotatedClassImpl
 
     }
 
-    private inline fun checkValidClass(element: Element) {
+    private fun checkValidClass(element: Element) {
 
         if (element.kind != ElementKind.CLASS) {
             throw ProcessingException(element, "Only classes can be annotated with " +

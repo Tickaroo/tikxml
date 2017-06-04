@@ -278,7 +278,7 @@ class CodeGeneratorHelper(val customTypeConverterManager: CustomTypeConverterMan
     fun writeAttributesAsXml(currentElement: XmlElement): CodeBlock {
 
         val builder = CodeBlock.builder()
-        for ((xmlElementName, attributeField) in currentElement.attributes) {
+        for ((_, attributeField) in currentElement.attributes) {
             builder.add(writeAttributeViaTypeConverterOrPrimitive(attributeField.name, attributeField.element, attributeField.accessResolver, attributeField.converterQualifiedName))
         }
 
