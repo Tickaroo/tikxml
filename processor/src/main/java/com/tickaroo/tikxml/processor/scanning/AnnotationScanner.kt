@@ -133,7 +133,10 @@ class AnnotationScanner(protected val elementUtils: Elements, protected val type
                 val method = it as ExecutableElement
                 methodsMap.put(method.simpleName.toString(), method)
             } else if (it.isField()) {
-                val xmlAnnotation = currentElement.getAnnotation(Xml::class.java) ?: throw ProcessingException(currentElement, "The class ${annotatedClass.qualifiedClassName} should be annotated with @${Xml::class.simpleName}. This is an internal error. Please file an issue on github: https://github.com/Tickaroo/tikxml/issues") // Should be impossible
+                if (currentElement.getAnnotation(Xml::class.java) == null) {
+                    throw ProcessingException(currentElement, "The class ${annotatedClass.qualifiedClassName} should be annotated with @${Xml::class.simpleName}. This is an internal error. Please file an issue on github: https://github.com/Tickaroo/tikxml/issues") // Should be impossible
+                }
+
                 val field = fillAnnotatedClass(annotatedClass, it as VariableElement, checkAccessPolicyOrDeferGetterSetterCheck)
                 if (field != null) {
                     annotatedFields++

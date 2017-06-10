@@ -29,7 +29,6 @@ import com.tickaroo.tikxml.typeadapter.ChildElementBinder
 import com.tickaroo.tikxml.typeadapter.TypeAdapter
 import java.io.IOException
 import java.util.*
-import java.util.Map
 import javax.annotation.processing.Filer
 import javax.lang.model.element.Modifier
 import javax.lang.model.util.Elements
@@ -109,7 +108,7 @@ class TypeAdapterCodeGenerator(private val filer: Filer, private val elementUtil
         val targetClassToParseInto = getClassToParseInto(annotatedClass)
 
         if (annotatedClass.hasAttributes()) {
-            val attributeBinderMapField = ParameterizedTypeName.get(ClassName.get(Map::class.java),
+            val attributeBinderMapField = ParameterizedTypeName.get(ClassName.get(java.util.Map::class.java),
                     ClassName.get(String::class.java), ParameterizedTypeName.get(ClassName.get(AttributeBinder::class.java), targetClassToParseInto))
             val attributeBinderHashMapField = ParameterizedTypeName.get(ClassName.get(HashMap::class.java),
                     ClassName.get(String::class.java), ParameterizedTypeName.get(ClassName.get(AttributeBinder::class.java), targetClassToParseInto))
@@ -122,7 +121,7 @@ class TypeAdapterCodeGenerator(private val filer: Filer, private val elementUtil
         }
 
         if (annotatedClass.hasChildElements()) {
-            val childElementBinderMapField = ParameterizedTypeName.get(ClassName.get(Map::class.java),
+            val childElementBinderMapField = ParameterizedTypeName.get(ClassName.get(java.util.Map::class.java),
                     ClassName.get(String::class.java), ParameterizedTypeName.get(ClassName.get(ChildElementBinder::class.java), targetClassToParseInto))
             val childElementBinderHashMapField = ParameterizedTypeName.get(ClassName.get(HashMap::class.java),
                     ClassName.get(String::class.java), ParameterizedTypeName.get(ClassName.get(ChildElementBinder::class.java), targetClassToParseInto))
@@ -422,7 +421,7 @@ class TypeAdapterCodeGenerator(private val filer: Filer, private val elementUtil
     private fun getClassToParseInto(annotatedClass: AnnotatedClass) =
             if (annotatedClass.annotatedConstructor != null) {
                 // ClassName.get(annotatedClass.element.g)get(annotatedClass.element.qualifiedName.toString() + "$" + VALUE_HOLDER_CLASS_NAME)
-                val packageElement = elementUtils.getPackageOf(annotatedClass.element)
+                //val packageElement =  elementUtils.getPackageOf(annotatedClass.element)
                 // ClassName.get(if (packageElement == null) "" else packageElement.toString(), annotatedClass.simpleClassName + TypeAdapter.GENERATED_CLASS_SUFFIX + "." + VALUE_HOLDER_CLASS_NAME)
                 ClassName.get("", VALUE_HOLDER_CLASS_NAME)
             } else {
