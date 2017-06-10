@@ -1,0 +1,12 @@
+rootProject.name = 'TikXML (Parent)'
+include 'core'
+include 'converter-htmlescape'
+include 'converter-date-rfc3389'
+include 'annotation'
+include 'processor-common'
+include 'processor'
+include 'auto-value-tikxml'
+include 'annotation-processor-testing'
+include 'retrofit-converter'
+include 'benchmark'
+
