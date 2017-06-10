@@ -23,6 +23,10 @@ branches:
   except:
     - gh-pages
 
+script:
+  - ./gradlew check
+  - ./gradlew codeCoverageReport
+
 #notifications:
 #  email: false
 #  hipchat:
