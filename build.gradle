@@ -17,8 +17,10 @@ jacoco {
     toolVersion = property('jacocoVersion')
 }
 
-tasks.withType(JavaCompile) {
-    options.encoding = 'UTF-8'
+allprojects {
+    tasks.withType(JavaCompile) {
+        options.encoding = 'UTF-8'
+    }
 }
 
 task codeCoverageReport(type: JacocoReport) {
