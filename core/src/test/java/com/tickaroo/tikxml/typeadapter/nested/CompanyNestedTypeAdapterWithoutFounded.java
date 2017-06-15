@@ -26,6 +26,8 @@ import com.tickaroo.tikxml.typeadapter.DelegatingTypeAdapter;
 import com.tickaroo.tikxml.typeadapter.NestedChildElementBinder;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
+
 import org.junit.Assert;
 
 /**
@@ -42,14 +44,14 @@ public class CompanyNestedTypeAdapterWithoutFounded extends DelegatingTypeAdapte
 
     attributeBinders.put("id", new AttributeBinder<Company>() {
       @Override
-      public void fromXml(XmlReader reader, TikXmlConfig config, Company value) throws IOException {
+      public void fromXml(XmlReader reader, TikXmlConfig config0, List<String> errors, Company value) throws IOException {
         value.id = reader.nextAttributeValueAsInt();
       }
     });
 
     attributeBinders.put("name", new AttributeBinder<Company>() {
       @Override
-      public void fromXml(XmlReader reader, TikXmlConfig config, Company value) throws IOException {
+      public void fromXml(XmlReader reader, TikXmlConfig config, List<String> errors, Company value) throws IOException {
         value.name = reader.nextAttributeValue();
       }
     });
@@ -66,7 +68,7 @@ public class CompanyNestedTypeAdapterWithoutFounded extends DelegatingTypeAdapte
 
         attributeBinders.put("shortInfo", new AttributeBinder<Company>() {
           @Override
-          public void fromXml(XmlReader reader, TikXmlConfig config, Company value) throws IOException {
+          public void fromXml(XmlReader reader, TikXmlConfig config, List<String> errors, Company value) throws IOException {
             value.shortInfo = reader.nextAttributeValueAsBoolean();
           }
         });
@@ -79,7 +81,7 @@ public class CompanyNestedTypeAdapterWithoutFounded extends DelegatingTypeAdapte
 
             attributeBinders.put("partOfTheName", new AttributeBinder<Company>() {
               @Override
-              public void fromXml(XmlReader reader, TikXmlConfig config, Company value) throws IOException {
+              public void fromXml(XmlReader reader, TikXmlConfig config, List<String> errors, Company value) throws IOException {
                 value.legalFormPartOfTheName = reader.nextAttributeValueAsBoolean();
               }
             });
@@ -114,7 +116,7 @@ public class CompanyNestedTypeAdapterWithoutFounded extends DelegatingTypeAdapte
 
     childElementBinders.put("other", new ChildElementBinder<Company>() {
       @Override
-      public void fromXml(XmlReader reader, TikXmlConfig config, Company value) throws IOException {
+      public void fromXml(XmlReader reader, TikXmlConfig config, List<String> errors, Company value) throws IOException {
         value.otherText = reader.nextTextContent();
       }
     });

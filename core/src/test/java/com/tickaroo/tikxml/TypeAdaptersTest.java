@@ -20,6 +20,8 @@ package com.tickaroo.tikxml;
 
 import com.tickaroo.tikxml.typeadapter.TypeAdapter;
 import java.io.IOException;
+import java.util.List;
+
 import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
@@ -57,7 +59,7 @@ public class TypeAdaptersTest {
   class TestTypeAdapter implements TypeAdapter<Object> {
 
     @Override
-    public Object fromXml(XmlReader reader, TikXmlConfig config) {
+    public Object fromXml(XmlReader reader, TikXmlConfig config, List<String> errors) {
       return null;
     }
 

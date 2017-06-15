@@ -1,0 +1,34 @@
+plugins {
+    id 'java'
+    id 'jacoco'
+    id 'findbugs'
+}
+
+group = 'com.tickaroo.tikxml'
+version = '0.8.11-SNAPSHOT'
+sourceCompatibility = 1.7
+targetCompatibility = 1.7
+
+repositories {
+    jcenter()
+    mavenCentral()
+}
+
+jacoco {
+    toolVersion = property('jacocoVersion')
+}
+
+findbugs {
+    ignoreFailures = true
+    effort = 'max'
+    reportLevel = 'low'
+    reportsDir = file("$project.buildDir/findbugs")
+    sourceSets = [sourceSets.main]
+}
+
+dependencies {
+    compile group: 'com.squareup.okio', name: 'okio', version: property('okioVersion')
+
+    testCompile group: 'junit', name: 'junit', version: property('junitVersion')
+    testCompile group: 'org.assertj', name: 'assertj-core', version: property('assertjVersion')
+}

@@ -23,6 +23,7 @@ import com.tickaroo.tikxml.TypeConverter;
 import com.tickaroo.tikxml.XmlReader;
 import com.tickaroo.tikxml.XmlWriter;
 import java.io.IOException;
+import java.util.List;
 
 /**
  * As the name already suggests, a type adapter is responsible to convert a xml element to a java
@@ -48,10 +49,11 @@ public interface TypeAdapter<T> {
    *
    * @param reader The {@link XmlReader} to read the xml document
    * @param config The {@link TikXmlConfig} where you can access {@link TypeConverter} etc.
+   * @param errors The list of caught errors while deserializing xml
    * @return The instantiated java object of type T
    * @throws IOException
    */
-  T fromXml(XmlReader reader, TikXmlConfig config) throws IOException;
+  T fromXml(XmlReader reader, TikXmlConfig config, List<String> errors) throws IOException;
 
   /**
    * Writes a java object as xml

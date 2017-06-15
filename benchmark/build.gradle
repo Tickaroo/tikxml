@@ -1,0 +1,38 @@
+plugins {
+    id 'java'
+    id 'jacoco'
+    id 'findbugs'
+    id 'net.ltgt.apt' version '0.10'
+}
+
+group = 'com.tickaroo.tikxml'
+version = '0.8.11-SNAPSHOT'
+sourceCompatibility = 1.7
+targetCompatibility = 1.7
+
+repositories {
+    jcenter()
+    mavenCentral()
+}
+
+jacoco {
+    toolVersion = property('jacocoVersion')
+}
+
+findbugs {
+    ignoreFailures = true
+    effort = "max"
+    reportLevel = "low"
+    reportsDir = file("$project.buildDir/findbugs")
+    sourceSets = [sourceSets.main]
+}
+
+dependencies {
+    compile project(':annotation')
+    compile project(':core')
+    apt project(':processor')
+
+    compile group: 'org.simpleframework', name: 'simple-xml', version: '2.7.1'
+    compile group: 'net.trajano.caliper', name: 'caliper', version: '1.2.1'
+    compile group: 'com.fasterxml.jackson.dataformat', name: 'jackson-dataformat-xml', version: '2.8.8'
+}

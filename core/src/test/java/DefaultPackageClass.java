@@ -21,6 +21,7 @@ import com.tickaroo.tikxml.XmlReader;
 import com.tickaroo.tikxml.XmlWriter;
 import com.tickaroo.tikxml.typeadapter.TypeAdapter;
 import java.io.IOException;
+import java.util.List;
 
 /**
  * Simple class used to test if things still work as expected if the class is not in a package
@@ -33,7 +34,7 @@ public class DefaultPackageClass {
 
   public static class $TypeAdapter implements TypeAdapter<DefaultPackageClass> {
     @Override
-    public DefaultPackageClass fromXml(XmlReader reader, TikXmlConfig config) throws IOException {
+    public DefaultPackageClass fromXml(XmlReader reader, TikXmlConfig config, List<String> errors) throws IOException {
       return null;
     }
 

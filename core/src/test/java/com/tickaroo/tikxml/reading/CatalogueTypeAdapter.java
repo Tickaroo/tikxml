@@ -24,6 +24,7 @@ import com.tickaroo.tikxml.XmlWriter;
 import com.tickaroo.tikxml.typeadapter.TypeAdapter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Hannes Dorfmann
@@ -31,7 +32,7 @@ import java.util.ArrayList;
 public class CatalogueTypeAdapter implements TypeAdapter<Catalogue> {
 
   @Override
-  public Catalogue fromXml(XmlReader reader, TikXmlConfig config) throws IOException {
+  public Catalogue fromXml(XmlReader reader, TikXmlConfig config, List<String> errors) throws IOException {
 
     Catalogue catalogue = new Catalogue();
     catalogue.books = new ArrayList<>();
@@ -39,7 +40,7 @@ public class CatalogueTypeAdapter implements TypeAdapter<Catalogue> {
     while (reader.hasElement()) {
       reader.beginElement();
       if (reader.nextElementName().equals("book")) {
-        catalogue.books.add(config.getTypeAdapter(Book.class).fromXml(reader, config));
+        catalogue.books.add(config.getTypeAdapter(Book.class).fromXml(reader, config, errors));
       }
       reader.endElement();
     }
