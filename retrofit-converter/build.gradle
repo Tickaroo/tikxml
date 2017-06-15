@@ -1,0 +1,39 @@
+plugins {
+    id 'java'
+    id 'jacoco'
+    id 'findbugs'
+    id 'net.ltgt.apt' version '0.10'
+}
+
+group = 'com.tickaroo.tikxml'
+version = '0.8.11-SNAPSHOT'
+sourceCompatibility = 1.7
+targetCompatibility = 1.7
+
+repositories {
+    jcenter()
+    mavenCentral()
+}
+
+jacoco {
+    toolVersion = property('jacocoVersion')
+}
+
+findbugs {
+    ignoreFailures = true
+    effort = "max"
+    reportLevel = "low"
+    reportsDir = file("$project.buildDir/findbugs")
+    sourceSets = [sourceSets.main]
+}
+
+dependencies {
+    compile project(':annotation')
+    compile project(':core')
+    compile group: 'com.squareup.retrofit2', name: 'retrofit', version: property('retrofitVersion')
+
+    testApt project(':processor')
+    testCompile group: 'junit', name: 'junit', version: property('junitVersion')
+    testCompile group: 'org.assertj', name: 'assertj-core', version: property('assertjVersion')
+    testCompile group: 'com.squareup.okhttp3', name: 'mockwebserver', version: property('mockWebserverVersion')
+}
