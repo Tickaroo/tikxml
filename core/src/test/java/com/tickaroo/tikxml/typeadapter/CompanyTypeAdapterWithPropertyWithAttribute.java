@@ -22,6 +22,7 @@ import com.tickaroo.tikxml.TikXmlConfig;
 import com.tickaroo.tikxml.XmlReader;
 import java.io.IOException;
 import java.util.Date;
+import java.util.List;
 
 /**
  * @author Hannes Dorfmann
@@ -37,14 +38,14 @@ public class CompanyTypeAdapterWithPropertyWithAttribute extends DelegatingTypeA
 
     attributeBinders.put("id", new AttributeBinder<Company>() {
       @Override
-      public void fromXml(XmlReader reader, TikXmlConfig config, Company value) throws IOException {
+      public void fromXml(XmlReader reader, TikXmlConfig config, List<String> errors, Company value) throws IOException {
         value.id = reader.nextAttributeValueAsInt();
       }
     });
 
     attributeBinders.put("name", new AttributeBinder<Company>() {
       @Override
-      public void fromXml(XmlReader reader, TikXmlConfig config, Company value) throws IOException {
+      public void fromXml(XmlReader reader, TikXmlConfig config, List<String> errors, Company value) throws IOException {
         value.name = reader.nextAttributeValue();
       }
     });
@@ -54,7 +55,7 @@ public class CompanyTypeAdapterWithPropertyWithAttribute extends DelegatingTypeA
     //
     childElementBinders.put("legalForm", new ChildElementBinder<Company>() {
       @Override
-      public void fromXml(XmlReader reader, TikXmlConfig config, Company value) throws IOException {
+      public void fromXml(XmlReader reader, TikXmlConfig config, List<String> errors, Company value) throws IOException {
         value.legalForm = reader.nextTextContent();
       }
     });
@@ -62,7 +63,7 @@ public class CompanyTypeAdapterWithPropertyWithAttribute extends DelegatingTypeA
 
     childElementBinders.put("founded", new ChildElementBinder<Company>() {
       @Override
-      public void fromXml(XmlReader reader, TikXmlConfig config, Company value) throws IOException {
+      public void fromXml(XmlReader reader, TikXmlConfig config, List<String> errors, Company value) throws IOException {
         try {
           value.founded = config.getTypeConverter(Date.class).read(reader.nextTextContent());
         } catch (Exception e) {

@@ -21,6 +21,8 @@ package com.tickaroo.tikxml;
 import com.tickaroo.tikxml.typeadapter.TypeAdapter;
 import java.io.IOException;
 import java.lang.reflect.Type;
+import java.util.List;
+
 import okio.BufferedSink;
 import okio.BufferedSource;
 
@@ -110,7 +112,7 @@ public final class TikXml {
     reader.beginElement();
     reader.nextElementName(); // We don't care about the name of the root tag
 
-    T value = config.getTypeAdapter(clazz).fromXml(reader, config);
+    T value = config.getTypeAdapter(clazz).fromXml(reader, config, null);
 
     reader.endElement();
 
@@ -126,5 +128,19 @@ public final class TikXml {
       writer.xmlDeclaration();
     }
     adapter.toXml(writer, config, valueToWrite, null);
+  }
+
+  public <T> T read(BufferedSource source, Class<T> clazz, List<String> errors) throws IOException {
+
+    XmlReader reader = XmlReader.of(source);
+
+    reader.beginElement();
+    reader.nextElementName(); // We don't care about the name of the root tag
+
+    T value = config.getTypeAdapter(clazz).fromXml(reader, config, errors);
+
+    reader.endElement();
+
+    return value;
   }
 }

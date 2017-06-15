@@ -21,6 +21,7 @@ package com.tickaroo.tikxml.typeadapter;
 import com.tickaroo.tikxml.TikXmlConfig;
 import com.tickaroo.tikxml.XmlReader;
 import java.io.IOException;
+import java.util.List;
 
 /**
  * This class is used with {@link DelegatingTypeAdapter} to delegate the work of reading child xml
@@ -51,5 +52,5 @@ public interface ChildElementBinder<T> {
    * @param reader The {@link XmlReader}
    * @throws IOException
    */
-  void fromXml(XmlReader reader, TikXmlConfig config, T value) throws IOException;
+  void fromXml(XmlReader reader, TikXmlConfig config, List<String> errors, T value) throws IOException;
 }

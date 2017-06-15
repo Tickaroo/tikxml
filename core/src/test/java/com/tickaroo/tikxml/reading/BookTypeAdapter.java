@@ -23,6 +23,7 @@ import com.tickaroo.tikxml.typeadapter.TypeAdapter;
 import com.tickaroo.tikxml.XmlReader;
 import com.tickaroo.tikxml.XmlWriter;
 import java.io.IOException;
+import java.util.List;
 
 /**
  * @author Hannes Dorfmann
@@ -31,7 +32,7 @@ public class BookTypeAdapter implements TypeAdapter<Book> {
 
 
   @Override
-  public Book fromXml(XmlReader reader, TikXmlConfig config) throws IOException {
+  public Book fromXml(XmlReader reader, TikXmlConfig config, List<String> errors) throws IOException {
 
     Book book = new Book();
     while (reader.hasAttribute()) {

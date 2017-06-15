@@ -30,10 +30,8 @@ fun extractAutoValueProperties(autoValueClass: TypeElement, properties: Map<Stri
     var parcelable = false
     try {
         val parcelableType = elements.getTypeElement("android.os.Parcelable")
-        if (parcelableType == null) {
-            // android.os.Parcelable not in class path, hence no android project
-            parcelable = false
-        } else {
+        if (parcelableType != null) {
+            // android.os.Parcelable is in class path, hence no android project
             parcelable = types.isAssignable(autoValueClass.asType(), parcelableType.asType())
         }
     } catch (t: Throwable) {

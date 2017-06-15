@@ -20,7 +20,9 @@ package com.tickaroo.tikxml.typeadapter;
 
 import com.tickaroo.tikxml.TikXmlConfig;
 import com.tickaroo.tikxml.XmlReader;
+
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -35,145 +37,158 @@ import java.util.Map;
 @Deprecated
 public abstract class NestedChildElementBinder<T> implements ChildElementBinder<T> {
 
-  public Map<String, AttributeBinder<T>> attributeBinders = null;
-  public Map<String, ChildElementBinder<T>> childElementBinders = null;
+    public Map<String, AttributeBinder<T>> attributeBinders = null;
+    public Map<String, ChildElementBinder<T>> childElementBinders = null;
 
-  // TODO Maybe use a Pool of StringBuilders?
-
-  //
-  // Text content
-  //
-  private String textContent = null;
-  private StringBuilder textContentBuilder = null;
-  private final boolean shouldReadTextContent;
-
-  /**
-   * For memory optimization you can specify here if attributes are read and child elements are
-   * read
-   */
-  public NestedChildElementBinder(boolean shouldReadTextContent) {
-    this.shouldReadTextContent = shouldReadTextContent;
-  }
-
-  /**
-   * Override this method and call super.fromXml() to read attributes
-   *
-   * @param reader The {@link XmlReader}
-   * @throws IOException
-   */
-  @Override
-  public void fromXml(XmlReader reader, TikXmlConfig config, T value) throws IOException {
+    // TODO Maybe use a Pool of StringBuilders?
 
     //
-    // Read attributes
+    // Text content
     //
-    if (reader.hasAttribute()) {
+    private String textContent = null;
+    private StringBuilder textContentBuilder = null;
+    private final boolean shouldReadTextContent;
 
-      if (attributeBinders != null) {
-        while (reader.hasAttribute()) {
+    /**
+     * For memory optimization you can specify here if attributes are read and child elements are
+     * read
+     */
+    public NestedChildElementBinder(boolean shouldReadTextContent) {
+        this.shouldReadTextContent = shouldReadTextContent;
+    }
 
-          String attributeName = reader.nextAttributeName();
-          AttributeBinder<T> attributeBinder = attributeBinders.get(attributeName);
+    /**
+     * Override this method and call super.fromXml() to read attributes
+     *
+     * @param reader The {@link XmlReader}
+     * @throws IOException
+     */
+    @Override
+    public void fromXml(XmlReader reader, TikXmlConfig config, List<String> errors, T value) throws IOException {
 
-          if (attributeBinder != null) {
-            attributeBinder.fromXml(reader, config, value);
-          } else {
-            if (config.exceptionOnUnreadXml()) {
-              throw new IOException("Could not map the xml attribute with the name '"
-                  + attributeName
-                  + "' at path "
-                  + reader.getPath()
-                  + "to java class. Have you annotated such a field in your java class to map this xml attribute? Otherwise you can turn this error message off with TikXml.Builder().exceptionOnUnreadXml(false).build().");
+        //
+        // Read attributes
+        //
+        if (reader.hasAttribute()) {
+
+            if (attributeBinders != null) {
+                while (reader.hasAttribute()) {
+
+                    String attributeName = reader.nextAttributeName();
+                    AttributeBinder<T> attributeBinder = attributeBinders.get(attributeName);
+
+                    if (attributeBinder != null) {
+                        attributeBinder.fromXml(reader, config, errors, value);
+                    } else {
+                        if (config.exceptionOnUnreadXml()) {
+                            throw new IOException("Could not map the xml attribute with the name '"
+                                    + attributeName
+                                    + "' at path "
+                                    + reader.getPath()
+                                    + "to java class. Have you annotated such a field in your java class to map this xml attribute? Otherwise you can turn this error message off with TikXml.Builder().exceptionOnUnreadXml(false).build().");
+                        } else {
+                            if (errors != null)
+                                errors.add("Could not map the xml attribute '" + attributeName + "' at path " + reader.getPath());
+                            reader.skipAttributeValue();
+                        }
+                    }
+                }
             } else {
-              reader.skipAttributeValue();
+                // Skip the attributes if no attributes binder is registered
+                while (reader.hasAttribute()) {
+                    if (errors != null) {
+                        String attributeName = reader.nextAttributeName();
+                        errors.add("Could not map the xml attribute '" + attributeName + "' at path " + reader.getPath());
+                        reader.skipAttributeValue();
+                    } else {
+                        reader.skipAttribute();
+                    }
+                }
             }
-          }
         }
-      } else {
-        // Skip the attributes if no attributes binder is registered
-        while (reader.hasAttribute()) {
-          reader.skipAttribute();
+
+        //
+        // Read child elements
+        //
+        while (true) {
+            if (childElementBinders != null && reader.hasElement()) {
+                //
+                // Read element
+                //
+                reader.beginElement();
+
+                String elementName = reader.nextElementName();
+                ChildElementBinder<T> childElementBinder = childElementBinders.get(elementName);
+                if (childElementBinder != null) {
+                    childElementBinder.fromXml(reader, config, errors, value);
+                    reader.endElement();
+                } else {
+                    if (config.exceptionOnUnreadXml()) {
+                        throw new IOException("Could not map the xml element with the name '"
+                                + elementName
+                                + "' at path "
+                                + reader.getPath()
+                                + " to java class. Have you annotated such a field in your java class to map this xml element? Otherwise you can turn this error message off with TikXml.Builder().exceptionOnUnreadXml(false).build().");
+                    } else {
+                        if (errors != null)
+                            errors.add("Could not map the xml element '" + elementName + "' at path " + reader.getPath());
+
+                        reader.skipRemainingElement(); // includes reader.endElement()
+                    }
+                }
+            } else if (reader.hasTextContent()) {
+                //
+                // Read text content
+                //
+
+                if (shouldReadTextContent) {
+                    if (textContent == null) {
+                        textContent = reader.nextTextContent();
+                    } else {
+                        // optimization: If textContent is split in parts (xml elements siting in between) than use StringBuilder
+                        if (textContentBuilder == null) {
+                            textContentBuilder = new StringBuilder(textContent);
+                        }
+                        textContentBuilder.append(reader.nextTextContent());
+                    }
+                } else {
+                    if (config.exceptionOnUnreadXml()) {
+                        throw new IOException("Could not map the xml element's text content at path  at path "
+                                + reader.getPath()
+                                + " to java class. Have you annotated such a field in your java class to map the xml element's text content? Otherwise you can turn this error message off with TikXml.Builder().exceptionOnUnreadXml(false).build().");
+                    } else {
+                        if (errors != null)
+                            errors.add("Could not map the xml element text content at path " + reader.getPath());
+                        reader.skipTextContent();
+                    }
+                }
+            } else {
+                break;
+            }
         }
-      }
-    }
 
-    //
-    // Read child elements
-    //
-    while (true) {
-      if (childElementBinders != null && reader.hasElement()) {
         //
-        // Read element
+        // Assign text content if any
         //
-        reader.beginElement();
-
-        String elementName = reader.nextElementName();
-        ChildElementBinder<T> childElementBinder = childElementBinders.get(elementName);
-        if (childElementBinder != null) {
-          childElementBinder.fromXml(reader, config, value);
-          reader.endElement();
-        } else {
-          if (config.exceptionOnUnreadXml()) {
-            throw new IOException("Could not map the xml element with the name '"
-                + elementName
-                + "' at path "
-                + reader.getPath()
-                + " to java class. Have you annotated such a field in your java class to map this xml element? Otherwise you can turn this error message off with TikXml.Builder().exceptionOnUnreadXml(false).build().");
-          } else {
-            reader.skipRemainingElement(); // includes reader.endElement()
-          }
-        }
-      } else if (reader.hasTextContent()) {
-        //
-        // Read text content
-        //
-
         if (shouldReadTextContent) {
-          if (textContent == null) {
-            textContent = reader.nextTextContent();
-          } else {
-            // optimization: If textContent is split in parts (xml elements siting in between) than use StringBuilder
-            if (textContentBuilder == null) {
-              textContentBuilder = new StringBuilder(textContent);
+            if (textContentBuilder != null && textContentBuilder.length() > 0) {
+                assignTextContent(config, textContentBuilder.toString(), value);
+                textContentBuilder.setLength(0);
+            } else if (textContent != null) {
+                assignTextContent(config, textContent, value);
+                textContent = null;
             }
-            textContentBuilder.append(reader.nextTextContent());
-          }
-        } else {
-          if (config.exceptionOnUnreadXml()) {
-            throw new IOException("Could not map the xml element's text content at path  at path "
-                + reader.getPath()
-                + " to java class. Have you annotated such a field in your java class to map the xml element's text content? Otherwise you can turn this error message off with TikXml.Builder().exceptionOnUnreadXml(false).build().");
-          } else {
-            reader.skipTextContent();
-          }
         }
-      } else {
-        break;
-      }
     }
 
-    //
-    // Assign text content if any
-    //
-    if (shouldReadTextContent) {
-      if (textContentBuilder != null && textContentBuilder.length() > 0) {
-        assignTextContent(config, textContentBuilder.toString(), value);
-        textContentBuilder.setLength(0);
-      } else if (textContent != null) {
-        assignTextContent(config, textContent, value);
-        textContent = null;
-      }
+    /**
+     * Override this method if your chile element has a text content
+     *
+     * @param config      the config
+     * @param textContent the textvalue as string
+     * @param value       the value where we have to assign the text content value
+     */
+    protected void assignTextContent(TikXmlConfig config, String textContent, T value) {
+
     }
-  }
-
-  /**
-   * Override this method if your chile element has a text content
-   *
-   * @param config the config
-   * @param textContent the textvalue as string
-   * @param value the value where we have to assign the text content value
-   */
-  protected void assignTextContent(TikXmlConfig config, String textContent, T value) {
-
-  }
 }

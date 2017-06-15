@@ -21,6 +21,7 @@ package com.tickaroo.tikxml.typeadapter;
 import com.tickaroo.tikxml.TikXmlConfig;
 import com.tickaroo.tikxml.XmlReader;
 import java.io.IOException;
+import java.util.List;
 
 /**
  * This binder is used with {@link DelegatingTypeAdapter} to delegate the work of reading and writing an
@@ -49,6 +50,6 @@ public interface AttributeBinder<T> {
    * @param reader The {@link XmlReader}
    * @throws IOException
    */
-  void fromXml(XmlReader reader, TikXmlConfig config, T value) throws IOException;
+  void fromXml(XmlReader reader, TikXmlConfig config, List<String> errors, T value) throws IOException;
 
 }

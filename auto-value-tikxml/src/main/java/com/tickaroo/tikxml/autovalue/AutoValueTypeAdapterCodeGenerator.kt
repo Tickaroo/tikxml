@@ -82,6 +82,7 @@ fun generateTypeAdapter(annotatedClass: AutoValueAnnotatedClass) =
                     val reader = "reader"
                     val config = "config"
                     val value = "value"
+                    val errors = "errors"
                     val valueHolderClass = ClassName.get(annotatedClass.packageName, annotatedClass.valueHolderClassName)
 
                     addMethod(MethodSpec.methodBuilder("fromXml")
@@ -90,8 +91,9 @@ fun generateTypeAdapter(annotatedClass: AutoValueAnnotatedClass) =
                             .addAnnotation(Override::class.java)
                             .addParameter(XmlReader::class.java, reader)
                             .addParameter(TikXmlConfig::class.java, config)
+                            .addParameter(ParameterizedTypeName.get(List::class.java, String::class.java), errors)
                             .addException(IOException::class.java)
-                            .addStatement("\$T $value = $config.getTypeAdapter(\$T.class).fromXml($reader, $config)", valueHolderClass, valueHolderClass)
+                            .addStatement("\$T $value = $config.getTypeAdapter(\$T.class).fromXml($reader, $config, $errors)", valueHolderClass, valueHolderClass)
                             .addCode("return new \$T(", ClassName.get(annotatedClass.packageName, "AutoValue_" + annotatedClass.autoValueClass.simpleName))
                             .apply {
                                 //fill constructor parameters with values from value holder instance

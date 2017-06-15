@@ -53,6 +53,7 @@ class CodeGeneratorHelper(val customTypeConverterManager: CustomTypeConverterMan
     companion object PARAMS {
         const val valueParam = "value"
         const val tikConfigParam = "config"
+        const val tikErrorsParam = "errors"
         const val tikConfigMethodExceptionOnUnreadXml = "exceptionOnUnreadXml"
         const val textContentParam = "textContent"
         const val readerParam = "reader"
@@ -260,6 +261,9 @@ class CodeGeneratorHelper(val customTypeConverterManager: CustomTypeConverterMan
             .beginControlFlow("if (\$L.exceptionOnUnreadXml() && !attributeName.startsWith(\$S))", tikConfigParam, "xmlns")
             .addStatement("throw new \$T(\"Unread attribute '\"+ attributeName +\"' at path \"+ $readerParam.getPath())", ClassName.get(IOException::class.java))
             .endControlFlow()
+            .beginControlFlow("if(\$L != null)", tikErrorsParam)
+            .addStatement("\$L.add(\"Unread attribute '\"+ attributeName +\"' at path \"+ $readerParam.getPath())", tikErrorsParam)
+            .endControlFlow()
             .addStatement("\$L.skipAttributeValue()", readerParam)
             .endControlFlow()
             .build()
@@ -269,6 +273,7 @@ class CodeGeneratorHelper(val customTypeConverterManager: CustomTypeConverterMan
             .addModifiers(Modifier.PUBLIC)
             .addParameter(XmlReader::class.java, readerParam)
             .addParameter(TikXmlConfig::class.java, tikConfigParam)
+            .addParameter(ParameterizedTypeName.get(List::class.java, String::class.java), tikErrorsParam)
             .addParameter(valueType, valueParam)
             .addException(IOException::class.java)
 
