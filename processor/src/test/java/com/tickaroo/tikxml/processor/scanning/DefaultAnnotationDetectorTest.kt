@@ -18,10 +18,12 @@
 
 package com.tickaroo.tikxml.processor.scanning
 
+import com.google.common.truth.FailureStrategy
 import com.google.common.truth.Truth
 import com.google.testing.compile.JavaFileObjects
 import com.google.testing.compile.JavaSourceSubjectFactory
 import com.google.testing.compile.JavaSourcesSubject
+import com.google.testing.compile.JavaSourcesSubjectFactory
 import com.tickaroo.tikxml.annotation.*
 import com.tickaroo.tikxml.processor.XmlProcessor
 import org.junit.Ignore
@@ -1587,6 +1589,106 @@ class DefaultAnnotationDetectorTest {
                 .that(componentFile).processedWith(XmlProcessor())
                 .failsToCompile()
                 .withErrorContaining("@${Path::class.simpleName} on @${TextContent::class.simpleName} is not allowed. Use @${PropertyElement::class.simpleName} and @${Path::class.simpleName} instead on field 'foo' in class test.PathOnTextContent")
+    }
+
+    @Test
+    fun testEmptyConstructorFix() {
+        val actionFile = JavaFileObjects.forSourceLines("test.complex.action.Action",
+                "package test.complex.action;",
+                "@${Xml::class.java.canonicalName}(name = \"action\")",
+                "public class Action {",
+                "  @${Attribute::class.qualifiedName}(name =\"action\")",
+                "  public String action;",
+                "}"
+        )
+
+        val testAction = JavaFileObjects.forSourceLines("test.complex.action.TestAction",
+                "package test.complex.action;",
+                "@${Xml::class.java.canonicalName}(name = \"testAction\")",
+                "public class TestAction {",
+                "}"
+        )
+        val filterA = JavaFileObjects.forSourceLines("test.complex.filter.action.FilterA",
+                "package test.complex.filter.action;",
+                "@${Xml::class.java.canonicalName}(name = \"filterA\")",
+                "public class FilterA {",
+                "}"
+        )
+
+        val filterB = JavaFileObjects.forSourceLines("test.complex.filter.action.FilterB",
+                "package test.complex.filter.action;",
+                "@${Xml::class.java.canonicalName}(name = \"filterB\")",
+                "public class FilterB {",
+                "  @${Attribute::class.qualifiedName}(name =\"target\")",
+                "  public String target;",
+                "}"
+        )
+
+        val filterC = JavaFileObjects.forSourceLines("test.complex.filter.action.FilterC",
+                "package test.complex.filter.action;",
+                "@${Xml::class.java.canonicalName}(name = \"filterC\")",
+                "public class FilterC {",
+                "}"
+        )
+
+        val filterD = JavaFileObjects.forSourceLines("test.complex.filter.action.FilterD",
+                "package test.complex.filter.action;",
+                "@${Xml::class.java.canonicalName}(name = \"filterD\")",
+                "public class FilterD {",
+                "}"
+        )
+        val filterE = JavaFileObjects.forSourceLines("test.complex.filter.action.FilterE",
+                "package test.complex.filter.action;",
+                "@${Xml::class.java.canonicalName}(name = \"filterE\")",
+                "public class FilterE {",
+                "}"
+        )
+
+        val filterFile = JavaFileObjects.forSourceLines("test.complex.filter.Filter",
+                "package test.complex.filter;",
+                "@${Xml::class.java.canonicalName}(name =\"filter\")",
+                "public class Filter {",
+                "  @${Path::class.qualifiedName}(\"action\")",
+                "  @${Element::class.qualifiedName}( typesByElement = {",
+                "     @${ElementNameMatcher::class.qualifiedName}( name = \"filterA\", type= test.complex.filter.action.FilterA.class),",
+                "     @${ElementNameMatcher::class.qualifiedName}( name = \"filterB\", type= test.complex.filter.action.FilterB.class),",
+                "     @${ElementNameMatcher::class.qualifiedName}( name = \"filterC\", type= test.complex.filter.action.FilterC.class),",
+                "     @${ElementNameMatcher::class.qualifiedName}( name = \"filterD\", type= test.complex.filter.action.FilterD.class),",
+                "     @${ElementNameMatcher::class.qualifiedName}( name = \"filterE\", type= test.complex.filter.action.FilterE.class),",
+                "  })",
+                "  public Object action;",
+                "}")
+
+        val eventFile = JavaFileObjects.forSourceLines("test.complex.Event",
+                "package test.complex;",
+                "@${Xml::class.java.canonicalName}(name =\"event\")",
+                "public class Event {",
+                "  @${Path::class.qualifiedName}(\"action\")",
+                "  @${Element::class.qualifiedName}( typesByElement = {",
+                "     @${ElementNameMatcher::class.qualifiedName}( name = \"action\", type= test.complex.action.Action.class),",
+                "     @${ElementNameMatcher::class.qualifiedName}( name = \"testAction\", type= test.complex.action.TestAction.class)",
+                "  })",
+                "  public Object action;",
+                "  @${Element::class.qualifiedName}(name =\"filter\")",
+                "  public test.complex.filter.Filter filter;",
+                "}"
+        )
+
+        Truth.assertAbout(JavaSourcesSubjectFactory.javaSources())
+                .that(arrayListOf<JavaFileObject>(
+                        actionFile,
+                        testAction,
+                        filterA,
+                        filterB,
+                        filterC,
+                        filterD,
+                        filterE,
+                        filterFile,
+                        eventFile
+                ))
+                .processedWith(XmlProcessor())
+                .compilesWithoutError()
+
     }
 
 }
