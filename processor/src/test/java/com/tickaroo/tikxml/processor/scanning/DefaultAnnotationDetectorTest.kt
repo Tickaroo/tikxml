@@ -1591,8 +1591,12 @@ class DefaultAnnotationDetectorTest {
                 .withErrorContaining("@${Path::class.simpleName} on @${TextContent::class.simpleName} is not allowed. Use @${PropertyElement::class.simpleName} and @${Path::class.simpleName} instead on field 'foo' in class test.PathOnTextContent")
     }
 
+    /**
+     * Issue:
+     * https://github.com/Tickaroo/tikxml/pull/66
+     */
     @Test
-    fun testEmptyConstructorFix() {
+    fun testEmptyConstructorOnElementNameMatcher() {
         val actionFile = JavaFileObjects.forSourceLines("test.complex.action.Action",
                 "package test.complex.action;",
                 "@${Xml::class.java.canonicalName}(name = \"action\")",
