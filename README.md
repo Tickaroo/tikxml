@@ -5,7 +5,26 @@ Please note that this is still **work in progress!**, although quite stable and 
 # TikXML
 A fast xml parser for android (and java)
 
-Latest snapshot `0.8.12-SNAPSHOT` available:
+```groovy
+compile 'com.tickaroo.tikxml:annotation:0.8.13'
+compile 'com.tickaroo.tikxml:core:0.8.13'
+
+apt 'com.tickaroo.tikxml:processor:0.8.13'
+```
+
+For retrofit2:
+
+```groovy
+compile 'com.tickaroo.tikxml:retrofit-converter:0.8.13'
+```
+
+Also, an [AutoValue](https://github.com/google/auto/tree/master/value) extension is available:
+
+```groovy
+apt 'com.tickaroo.tikxml:auto-value-tikxml:0.8.13'
+```
+
+Latest snapshot `0.8.14-SNAPSHOT` available:
 
 ```groovy
 repositories {
@@ -14,25 +33,6 @@ repositories {
     url 'http://oss.sonatype.org/content/repositories/snapshots'
   }
 }
-```
-
-```groovy
-compile 'com.tickaroo.tikxml:annotation:0.8.12-SNAPSHOT'
-compile 'com.tickaroo.tikxml:core:0.8.12-SNAPSHOT'
-
-apt 'com.tickaroo.tikxml:processor:0.8.12-SNAPSHOT'
-```
-
-For retrofit2:
-
-```groovy
-compile 'com.tickaroo.tikxml:retrofit-converter:0.8.12-SNAPSHOT'
-```
-
-Also, an [AutoValue](https://github.com/google/auto/tree/master/value) extension is available:
-
-```groovy
-apt 'com.tickaroo.tikxml:auto-value-tikxml:0.8.12-SNAPSHOT'
 ```
 
 # Documentation
@@ -62,3 +62,9 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 ```
+
+
+#### Releaseing on Maven central
+
+If you are a Tickaroo employee and you want to release a new version on maven central, 
+take a look [at this document](https://github.com/Tickaroo/tikxml/Releasing.md)

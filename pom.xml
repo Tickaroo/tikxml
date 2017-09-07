@@ -36,7 +36,7 @@
   <groupId>com.tickaroo.tikxml</groupId>
   <artifactId>parent</artifactId>
   <packaging>pom</packaging>
-  <version>0.8.12-SNAPSHOT</version>
+  <version>0.8.14-SNAPSHOT</version>
   <modules>
     <module>core</module>
     <module>annotation</module>
@@ -62,7 +62,7 @@
     <junit.version>4.12</junit.version>
     <assertj.version>1.7.0</assertj.version>
 
-
+    <gpg.keyname>E1FB7CBA</gpg.keyname>
   </properties>
 
   <scm>
@@ -189,6 +189,38 @@
           </configuration>
         </plugin>
 
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-gpg-plugin</artifactId>
+          <version>1.5</version>
+          <configuration>
+            <keyname>${gpg.keyname}</keyname>
+          </configuration>
+          <executions>
+            <execution>
+              <id>sign-artifacts</id>
+              <phase>verify</phase>
+              <goals>
+                <goal>sign</goal>
+              </goals>
+            </execution>
+          </executions>
+        </plugin>
+
+        <plugin>
+          <groupId>org.jetbrains.dokka</groupId>
+          <artifactId>dokka-maven-plugin</artifactId>
+          <version>0.9.15</version>
+          <executions>
+            <execution>
+              <phase>pre-site</phase>
+              <goals>
+                <goal>dokka</goal>
+              </goals>
+            </execution>
+          </executions>
+        </plugin>
+
       </plugins>
     </pluginManagement>
 
@@ -264,6 +296,10 @@
           </configuration>
         </plugin>
 
+      <plugin>
+      <groupId>org.apache.maven.plugins</groupId>
+      <artifactId>maven-gpg-plugin</artifactId>
+      </plugin>
     </plugins>
   </build>
 
@@ -294,6 +330,25 @@
         <enabled>true</enabled>
       </snapshots>
     </pluginRepository>
+
+    <pluginRepository>
+      <id>jcenter</id>
+      <name>JCenter</name>
+      <url>https://jcenter.bintray.com/</url>
+    </pluginRepository>
+
   </pluginRepositories>
+
+
+  <distributionManagement>
+    <snapshotRepository>
+      <id>ossrh</id>
+      <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+    </snapshotRepository>
+    <repository>
+      <id>ossrh</id>
+      <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+    </repository>
+  </distributionManagement>
 
 </project>

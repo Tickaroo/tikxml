@@ -23,7 +23,7 @@
     <parent>
         <artifactId>parent</artifactId>
         <groupId>com.tickaroo.tikxml</groupId>
-        <version>0.8.12-SNAPSHOT</version>
+        <version>0.8.14-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -176,6 +176,11 @@
                 </configuration>
             </plugin>
 
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-gpg-plugin</artifactId>
+            </plugin>
         </plugins>
 
     </build>
