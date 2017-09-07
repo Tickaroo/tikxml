@@ -33,7 +33,7 @@ branches:
 #    format: html
 
 sudo: false
-script: mvn install -Dgpg.skip=true
+script: mvn install -Dgpg.skip
 cache:
   directories:
     - $HOME/.m2
