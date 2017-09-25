@@ -28,7 +28,7 @@ import com.tickaroo.tikxml.typeadapter.TypeAdapter;
  */
 public final class TikXmlConfig {
 
-  boolean exceptionOnUnreadXml = true;
+  boolean exceptionOnUnreadXml = false;
   TypeConverters typeConverters = new TypeConverters();
   TypeAdapters typeAdapters = new TypeAdapters();
   boolean writeDefaultXmlDeclaration = true;
