@@ -91,7 +91,7 @@ fun generateTypeAdapter(annotatedClass: AutoValueAnnotatedClass) =
                             .addParameter(XmlReader::class.java, reader)
                             .addParameter(TikXmlConfig::class.java, config)
                             .addException(IOException::class.java)
-                            .addStatement("\$T $value = $config.getTypeAdapter(\$T.class).fromXml($reader, $config)", valueHolderClass, valueHolderClass)
+                            .addStatement("\$T $value = (\$T) $config.getTypeAdapter(\$T.class).fromXml($reader, $config)", valueHolderClass, valueHolderClass, valueHolderClass)
                             .addCode("return new \$T(", ClassName.get(annotatedClass.packageName, "AutoValue_" + annotatedClass.autoValueClass.simpleName))
                             .apply {
                                 //fill constructor parameters with values from value holder instance

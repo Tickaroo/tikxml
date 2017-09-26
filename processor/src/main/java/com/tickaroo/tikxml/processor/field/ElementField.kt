@@ -43,7 +43,7 @@ open class ElementField(element: VariableElement, name: String) : NamedField(ele
     override fun generateReadXmlCode(codeGeneratorHelper: CodeGeneratorHelper): TypeSpec {
 
         val fromXmlMethod = codeGeneratorHelper.fromXmlMethodBuilder()
-                .addCode(accessResolver.resolveAssignment("${CodeGeneratorHelper.tikConfigParam}.getTypeAdapter(\$T.class).fromXml(${CodeGeneratorHelper.readerParam}, ${CodeGeneratorHelper.tikConfigParam})", ClassName.get(element.asType())))
+                .addCode(accessResolver.resolveAssignment("(\$T)${CodeGeneratorHelper.tikConfigParam}.getTypeAdapter(\$T.class).fromXml(${CodeGeneratorHelper.readerParam}, ${CodeGeneratorHelper.tikConfigParam})", ClassName.get(element.asType()), ClassName.get(element.asType())))
                 .build()
 
         return TypeSpec.anonymousClassBuilder("")
@@ -71,12 +71,12 @@ class ListElementField(element: VariableElement, name: String, private val gener
         val valueTypeAsArrayList = ParameterizedTypeName.get(ClassName.get(ArrayList::class.java), ClassName.get(genericListType))
 
 
-        val valueFromAdapter = "${CodeGeneratorHelper.tikConfigParam}.getTypeAdapter(\$T.class).fromXml(${CodeGeneratorHelper.readerParam}, ${CodeGeneratorHelper.tikConfigParam})"
+        val valueFromAdapter = " ${CodeGeneratorHelper.tikConfigParam}.getTypeAdapter(\$T.class).fromXml(${CodeGeneratorHelper.readerParam}, ${CodeGeneratorHelper.tikConfigParam})"
 
         val fromXmlMethod = codeGeneratorHelper.fromXmlMethodBuilder()
                 .addCode(CodeBlock.builder()
                         .beginControlFlow("if (${accessResolver.resolveGetterForReadingXml()} == null)")
-                        .add(accessResolver.resolveAssignment("new \$T()", valueTypeAsArrayList)) // TODO remove this
+                        .add(accessResolver.resolveAssignment("(\$T) new \$T()", valueTypeAsArrayList, valueTypeAsArrayList)) // TODO remove this
                         .endControlFlow()
                         .build())
                 .addStatement("${accessResolver.resolveGetterForReadingXml()}.add((\$T) $valueFromAdapter )", ClassName.get(genericListType), ClassName.get(genericListType))

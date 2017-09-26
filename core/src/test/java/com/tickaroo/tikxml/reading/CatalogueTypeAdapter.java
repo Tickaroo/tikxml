@@ -39,7 +39,7 @@ public class CatalogueTypeAdapter implements TypeAdapter<Catalogue> {
     while (reader.hasElement()) {
       reader.beginElement();
       if (reader.nextElementName().equals("book")) {
-        catalogue.books.add(config.getTypeAdapter(Book.class).fromXml(reader, config));
+        catalogue.books.add((Book) config.getTypeAdapter(Book.class).fromXml(reader, config));
       }
       reader.endElement();
     }

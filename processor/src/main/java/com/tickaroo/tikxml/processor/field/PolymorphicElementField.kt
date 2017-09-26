@@ -54,7 +54,7 @@ open class PolymorphicElementField(element: VariableElement, name: String, val t
 
 class PolymorphicListElementField(element: VariableElement, name: String, typeElementNameMatcher: List<PolymorphicTypeElementNameMatcher>, val genericListTypeMirror: TypeMirror) : PolymorphicElementField(element, name, typeElementNameMatcher) {
 
-   override fun generateReadXmlCode(codeGeneratorHelper: CodeGeneratorHelper): TypeSpec {
+    override fun generateReadXmlCode(codeGeneratorHelper: CodeGeneratorHelper): TypeSpec {
         throw ProcessingException(element, "Oops, en error has occurred while generating reading xml code for $this. Please fill an issue at https://github.com/Tickaroo/tikxml/issues")
     }
 
@@ -73,7 +73,7 @@ open class PolymorphicSubstitutionField(element: VariableElement, override val t
     override fun generateReadXmlCode(codeGeneratorHelper: CodeGeneratorHelper): TypeSpec {
 
         val fromXmlMethod = codeGeneratorHelper.fromXmlMethodBuilder()
-                .addCode(accessResolver.resolveAssignment("${CodeGeneratorHelper.tikConfigParam}.getTypeAdapter(\$T.class).fromXml(${CodeGeneratorHelper.readerParam}, ${CodeGeneratorHelper.tikConfigParam})", ClassName.get(typeMirror)))
+                .addCode(accessResolver.resolveAssignment(" (\$T) ${CodeGeneratorHelper.tikConfigParam}.getTypeAdapter(\$T.class).fromXml(${CodeGeneratorHelper.readerParam}, ${CodeGeneratorHelper.tikConfigParam})", ClassName.get(typeMirror), ClassName.get(typeMirror)))
                 .build()
 
         return TypeSpec.anonymousClassBuilder("")
@@ -109,7 +109,7 @@ class PolymorphicSubstitutionListField(element: VariableElement, typeMirror: Typ
                         .add(accessResolver.resolveAssignment("new \$T()", valueTypeAsArrayList))
                         .endControlFlow()
                         .build())
-                .addStatement("\$T v = $valueFromAdapter", ClassName.get(typeMirror), ClassName.get(typeMirror))
+                .addStatement("\$T v = (\$T) $valueFromAdapter", ClassName.get(typeMirror), ClassName.get(typeMirror), ClassName.get(typeMirror))
                 .addStatement("${accessResolver.resolveGetterForReadingXml()}.add(v)")
                 .build()
 

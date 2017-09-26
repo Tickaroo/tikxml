@@ -30,7 +30,7 @@ import javax.lang.model.element.VariableElement
  */
 sealed class FieldAccessResolver {
 
-    abstract fun resolveAssignment(assignValue: String, argument: Any? = null): CodeBlock
+    abstract fun resolveAssignment(assignValue: String, vararg arguments: Any): CodeBlock
 
     abstract fun resolveGetterForReadingXml(): String
 
@@ -41,9 +41,9 @@ sealed class FieldAccessResolver {
      */
     class GetterSetterFieldAccessResolver(private val getter: ExecutableElement, private val setter: ExecutableElement) : FieldAccessResolver() {
 
-        override fun resolveAssignment(assignValue: String, argument: Any?) =
+        override fun resolveAssignment(assignValue: String, vararg arguments: Any) =
                 CodeBlock.builder()
-                        .addStatement("${CodeGeneratorHelper.valueParam}.${setter.simpleName}($assignValue)", argument)
+                        .addStatement("${CodeGeneratorHelper.valueParam}.${setter.simpleName}($assignValue)", *arguments)
                         .build()
 
         override fun resolveGetterForReadingXml() =
@@ -57,9 +57,9 @@ sealed class FieldAccessResolver {
      */
     class MinPackageVisibilityFieldAccessResolver(private val element: VariableElement) : FieldAccessResolver() {
 
-        override fun resolveAssignment(assignValue: String, argument: Any?) =
+        override fun resolveAssignment(assignValue: String, vararg arguments: Any) =
                 CodeBlock.builder()
-                        .addStatement("${CodeGeneratorHelper.valueParam}.$element = $assignValue", argument)
+                        .addStatement("${CodeGeneratorHelper.valueParam}.$element = $assignValue", *arguments)
                         .build()
 
         override fun resolveGetterForReadingXml() = "${CodeGeneratorHelper.valueParam}.$element"
@@ -72,9 +72,9 @@ sealed class FieldAccessResolver {
      */
     class ConstructorAndGetterFieldAccessResolver(private val element: VariableElement, private val getter: ExecutableElement) : FieldAccessResolver() {
 
-        override fun resolveAssignment(assignValue: String, argument: Any?) =
+        override fun resolveAssignment(assignValue: String, vararg arguments: Any) =
                 CodeBlock.builder()
-                        .addStatement("${CodeGeneratorHelper.valueParam}.$element = $assignValue", argument)
+                        .addStatement("${CodeGeneratorHelper.valueParam}.$element = $assignValue", *arguments)
                         .build()
 
         override fun resolveGetterForReadingXml() = "${CodeGeneratorHelper.valueParam}.$element"

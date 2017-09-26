@@ -20,6 +20,8 @@ package com.tickaroo.tikxml;
 
 import com.tickaroo.tikxml.typeadapter.TypeAdapter;
 
+import java.lang.reflect.Type;
+
 /**
  * Holds the config for parsing and writing xml via {@link TikXml}
  *
@@ -79,7 +81,7 @@ public final class TikXmlConfig {
    * @throws TypeAdapterNotFoundException Thrown if no {@link TypeAdapter} has been found for the
    * given class
    */
-  public <T> TypeAdapter<T> getTypeAdapter(Class<T> clazz) throws TypeAdapterNotFoundException {
+  public <T> TypeAdapter<T> getTypeAdapter(Type clazz) throws TypeAdapterNotFoundException {
     return typeAdapters.get(clazz);
   }
 }

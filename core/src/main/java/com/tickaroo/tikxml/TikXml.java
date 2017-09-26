@@ -103,14 +103,14 @@ public final class TikXml {
     this.config = config;
   }
 
-  public <T> T read(BufferedSource source, Class<T> clazz) throws IOException {
+  public <T> T read(BufferedSource source, Type clazz) throws IOException {
 
     XmlReader reader = XmlReader.of(source);
 
     reader.beginElement();
     reader.nextElementName(); // We don't care about the name of the root tag
 
-    T value = config.getTypeAdapter(clazz).fromXml(reader, config);
+    T value = (T)config.getTypeAdapter(clazz).fromXml(reader, config);
 
     reader.endElement();
 
@@ -118,10 +118,14 @@ public final class TikXml {
   }
 
   public <T> void write(BufferedSink sink, T valueToWrite) throws IOException {
+    write(sink, valueToWrite, valueToWrite.getClass());
+  }
+
+  public <T> void write(BufferedSink sink, T valueToWrite, Type typeOfValueToWrite) throws IOException {
 
     XmlWriter writer = XmlWriter.of(sink);
 
-    TypeAdapter<T> adapter = config.getTypeAdapter((Class<T>) valueToWrite.getClass());
+    TypeAdapter<T> adapter = config.getTypeAdapter(typeOfValueToWrite);
     if (config.writeDefaultXmlDeclaration()) {
       writer.xmlDeclaration();
     }
