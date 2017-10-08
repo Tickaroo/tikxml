@@ -56,6 +56,7 @@ public class XmlProcessor extends AbstractProcessor {
    * The default scan mode
    */
   private static final String OPTION_TYPE_CONVERTER_FOR_PRIMITIVES = "primitiveTypeConverters";
+  private static final String ARRAY_MAP = "tikxml.arrayMap";
 
   private Messager messager;
   private Filer filer;
@@ -84,6 +85,7 @@ public class XmlProcessor extends AbstractProcessor {
   public Set<String> getSupportedOptions() {
     Set<String> options = new HashSet<>();
     options.add(OPTION_TYPE_CONVERTER_FOR_PRIMITIVES);
+    options.add(ARRAY_MAP);
     return options;
   }
 
@@ -119,8 +121,9 @@ public class XmlProcessor extends AbstractProcessor {
         // Scan class
         scanner.scan(clazz);
 
+        boolean arrayMap = "true".equals(processingEnv.getOptions().get(ARRAY_MAP));
         TypeAdapterCodeGenerator generator =
-            new TypeAdapterCodeGenerator(filer, elementUtils, typeUtils, primitiveTypeConverters);
+            new TypeAdapterCodeGenerator(filer, elementUtils, typeUtils, primitiveTypeConverters, arrayMap);
         generator.generateCode(clazz);
       }
     } catch (ProcessingException e) {
