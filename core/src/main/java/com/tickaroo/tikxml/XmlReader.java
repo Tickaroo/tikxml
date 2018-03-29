@@ -19,12 +19,13 @@
  */
 package com.tickaroo.tikxml;
 
-import java.io.Closeable;
-import java.io.EOFException;
-import java.io.IOException;
 import okio.Buffer;
 import okio.BufferedSource;
 import okio.ByteString;
+
+import java.io.Closeable;
+import java.io.EOFException;
+import java.io.IOException;
 
 /**
  * A class to read and parse an xml stream.
@@ -250,7 +251,7 @@ public class XmlReader implements Closeable {
       throw new IllegalStateException("XmlReader is closed");
     }
 
-    int c = nextNonWhitespace(true);
+    int c = nextNonWhitespace(true, peekStack == XmlScope.EMPTY_DOCUMENT);
     switch (c) {
 
       // Handling open < and closing </
@@ -778,6 +779,15 @@ public class XmlReader implements Closeable {
    * caller can always pushStack back the returned character by decrementing {@code pos}.
    */
   private int nextNonWhitespace(boolean throwOnEof) throws IOException {
+    return nextNonWhitespace(throwOnEof, false);
+  }
+
+  /**
+   * Returns the next character in the stream that is neither whitespace nor a part of a comment.
+   * When this returns, the returned character is always at {@code buffer[pos-1]}; this means the
+   * caller can always pushStack back the returned character by decrementing {@code pos}.
+   */
+  private int nextNonWhitespace(boolean throwOnEof, boolean isDocumentBeginning) throws IOException {
     /*
      * This code uses ugly local variables 'p' and 'l' representing the 'pos'
      * and 'limit' fields respectively. Using locals rather than fields saves
@@ -786,6 +796,16 @@ public class XmlReader implements Closeable {
      * before any (potentially indirect) call to fillBuffer() and reread both
      * 'p' and 'l' after any (potentially indirect) call to the same method.
      */
+
+    // Look for UTF-8 BOM sequence 0xEFBBBF and skip it
+    if (isDocumentBeginning &&
+        fillBuffer(3) &&
+        buffer.getByte(0) == (byte) 0xEF &&
+        buffer.getByte(1) == (byte) 0xBB &&
+        buffer.getByte(2) == (byte) 0xBF) {
+      buffer.skip(3);
+    }
+
     int p = 0;
     while (fillBuffer(p + 1)) {
       int c = buffer.getByte(p++);

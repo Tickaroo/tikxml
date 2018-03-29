@@ -18,11 +18,13 @@
 
 package com.tickaroo.tikxml;
 
-import java.io.IOException;
+import okio.Buffer;
 import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+
+import java.io.IOException;
 
 import static com.tickaroo.tikxml.TestUtils.readerFrom;
 
@@ -127,6 +129,28 @@ public class XmlReaderTest {
   public void validWithWhitespaces() throws IOException {
     String xml = "<  element    a = \"qwe\"  ></element>";
     XmlReader reader = readerFrom(xml);
+
+    try {
+      reader.beginElement();
+      Assert.assertEquals("element", reader.nextElementName());
+      Assert.assertEquals("a", reader.nextAttributeName());
+      Assert.assertEquals("qwe", reader.nextAttributeValue());
+      Assert.assertFalse(reader.hasTextContent());
+      reader.endElement();
+    } finally {
+      reader.close();
+    }
+  }
+
+  @Test
+  public void readXmlWithUtf8Bom() throws IOException {
+    String xml = "<element a=\"qwe\"></element>";
+    Buffer xmlWithUtf8Bom = new Buffer();
+    xmlWithUtf8Bom.writeByte(0xEF);
+    xmlWithUtf8Bom.writeByte(0xBB);
+    xmlWithUtf8Bom.writeByte(0xBF);
+    xmlWithUtf8Bom.writeUtf8(xml);
+    XmlReader reader = XmlReader.of(xmlWithUtf8Bom);
 
     try {
       reader.beginElement();
