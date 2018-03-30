@@ -318,6 +318,27 @@ public class XmlReader implements Closeable {
   }
 
   /**
+   * Checks for DOCTYPE beginning {@code <!DOCTYPE }. This method doesn't consume the opening <!DOCTYPE
+   * Tag
+   *
+   * @return true, if DOCTYPE openining tag, otherwise false
+   * @throws IOException
+   */
+  private boolean isDocTypeDefinition() throws IOException {
+
+    return fillBuffer(9)
+        && buffer.getByte(0) == '<'
+        && buffer.getByte(1) == '!'
+        && buffer.getByte(2) == 'D'
+        && buffer.getByte(3) == 'O'
+        && buffer.getByte(4) == 'C'
+        && buffer.getByte(5) == 'T'
+        && buffer.getByte(6) == 'Y'
+        && buffer.getByte(7) == 'P'
+        && buffer.getByte(8) == 'E';
+  }
+
+  /**
    * Consumes the next token from the JSON stream and asserts that it is the beginning of a new
    * object.
    */
@@ -817,7 +838,31 @@ public class XmlReader implements Closeable {
       if (c == '<' && !isCDATA()) {
 
         byte peek = buffer.getByte(1);
-        if (peek == '!' && fillBuffer(4)) {
+        int peekStack = stack[stackSize - 1];
+
+        if (peekStack == XmlScope.NONEMPTY_DOCUMENT && isDocTypeDefinition()) {
+          // Skip <!DOCTYPE ... >
+          buffer.readByte(); // '<'
+          buffer.readByte(); // '!'
+          buffer.readByte(); // 'D'
+          buffer.readByte(); // 'O'
+          buffer.readByte(); // 'C'
+          buffer.readByte(); // 'T'
+          buffer.readByte(); // 'Y'
+          buffer.readByte(); // 'P'
+          buffer.readByte(); // 'E'
+
+          if (!skipTo(">")) {
+            throw syntaxError("Unterminated <!DOCTYPE> . Inline DOCTYPE is not support at the moment.");
+          }
+
+          // Consume closing char
+          buffer.readByte(); // '>'
+
+          // TODO inline DOCTYPE.
+          p = 0;
+          continue;
+        } else if (peek == '!' && fillBuffer(4)) {
           // skip xml comments <!-- comment -->
           // consume opening comment chars
           buffer.readByte(); // '<'
