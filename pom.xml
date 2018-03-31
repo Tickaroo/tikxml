@@ -36,7 +36,7 @@
   <groupId>com.tickaroo.tikxml</groupId>
   <artifactId>parent</artifactId>
   <packaging>pom</packaging>
-  <version>0.8.14-SNAPSHOT</version>
+  <version>0.8.14</version>
   <modules>
     <module>core</module>
     <module>annotation</module>
@@ -62,7 +62,7 @@
     <junit.version>4.12</junit.version>
     <assertj.version>1.7.0</assertj.version>
 
-    <gpg.keyname>E1FB7CBA</gpg.keyname>
+    <gpg.keyname>76DCB3DBFDF01326F94168410537BF3EE1FB7CBA</gpg.keyname>
   </properties>
 
   <scm>
