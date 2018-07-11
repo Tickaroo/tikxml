@@ -1020,6 +1020,7 @@ Please note also that as for now TikXml only supports UTF-8 encoding since it is
 # Proguard
 ```
 -keep class com.tickaroo.tikxml.** { *; }
+-keep @com.tickaroo.tikxml.annotation.Xml public class *
 -keep class **$$TypeAdapter { *; }
 
 -keepclasseswithmembernames class * {
