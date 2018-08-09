@@ -155,4 +155,59 @@ class ElementTest {
                 .that(componentFile).processedWith(AutoValueProcessor())
                 .compilesWithoutError()
     }
+
+
+    @Test
+    fun simpleElementWithMultipleNamespaces() {
+        val componentFile = JavaFileObjects.forSourceLines("test.A",
+                "package test;",
+                "",
+                "import ${Xml::class.java.canonicalName};",
+                "import ${AutoValue::class.java.canonicalName};",
+                "",
+                "@${Xml::class.java.simpleName}( ",
+                        "    writeNamespaces = {\"a=http://www.w3.org/2005/Atom\", \"b=http://www.w3.org/2005/Atom2\"}",
+                        ")",
+                "@${AutoValue::class.java.simpleName}",
+                "abstract class A {",
+                "   @${Element::class.qualifiedName} public abstract B someA();",
+                "}",
+                "",
+                "@${Xml::class.java.simpleName}",
+                "@${AutoValue::class.java.simpleName}",
+                "abstract class B {}"
+        )
+
+        Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
+                .that(componentFile).processedWith(AutoValueProcessor())
+                .compilesWithoutError()
+    }
+
+
+
+    @Test
+    fun simpleElementWithNamespace() {
+        val componentFile = JavaFileObjects.forSourceLines("test.A",
+                "package test;",
+                "",
+                "import ${Xml::class.java.canonicalName};",
+                "import ${AutoValue::class.java.canonicalName};",
+                "",
+                "@${Xml::class.java.simpleName}( ",
+                "    writeNamespaces = {\"a=http://www.w3.org/2005/Atom\"}",
+                ")",
+                "@${AutoValue::class.java.simpleName}",
+                "abstract class A {",
+                "   @${Element::class.qualifiedName} public abstract B someA();",
+                "}",
+                "",
+                "@${Xml::class.java.simpleName}",
+                "@${AutoValue::class.java.simpleName}",
+                "abstract class B {}"
+        )
+
+        Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
+                .that(componentFile).processedWith(AutoValueProcessor())
+                .compilesWithoutError()
+    }
 }

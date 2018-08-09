@@ -46,15 +46,8 @@ fun generateValueHolder(annotatedClass: AutoValueAnnotatedClass, elementUtils: E
 
                             val namespaces = annotation.writeNamespaces
                             if (namespaces.isNotEmpty()) {
-                                val strBuilder = StringBuilder("{")
-                                namespaces.forEachIndexed { i, ns ->
-                                    if (i > 0) strBuilder.append(", ")
-                                    strBuilder.append("\"")
-                                            .append(ns)
-                                            .append("\"")
-                                            .append("}")
-                                }
-                                addMember("writeNamespaces", strBuilder.toString())
+                                val joinedNamespaces = namespaces.joinToString(",") { "\"$it\"" }
+                                addMember("writeNamespaces", "{$joinedNamespaces}")
                             }
 
                         }
