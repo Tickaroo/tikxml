@@ -97,7 +97,7 @@ class AnnotatedClassImpl
                     throw ProcessingException(element, "@${Xml::class.simpleName} annotated class $simpleClassName contains an illegal namespace definition $namespace . The following characters are not allowed: < > \" ' to be used in a namespace definition");
 
                 val parts = namespace.split("=")
-                if (parts.isEmpty())
+                if (parts.size == 1)
                     namespaces.add(Namespace.DefaultNamespace(namespace))
                 else if (parts.size == 2)
                     namespaces.add(Namespace.PrefixedNamespace(parts[0], parts[1]))
