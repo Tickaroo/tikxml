@@ -81,8 +81,8 @@ class CodeGeneratorHelper(val customTypeConverterManager: CustomTypeConverterMan
                 Integer::class.java.canonicalName to "java.lang.Integer"
         )
 
-        val stringTypes = mapOf<String, String>(
-                String::class.java.canonicalName to "java.lang.String"
+        val stringTypes = Collections.singletonMap(
+                String::class.java.canonicalName, "java.lang.String"
         )
 
         val longTypes = mapOf<String, String>(
@@ -183,51 +183,31 @@ class CodeGeneratorHelper(val customTypeConverterManager: CustomTypeConverterMan
         val codeWriter = fun(className: String) =
                 "$tikConfigParam.getTypeConverter($className.class).read($readerParam.$xmlReaderMethodPrefix())"
 
+        val codeBlockGen = fun(typesMap: Map<String, String>, resolveMethodName: String) = generatePrimitiveConverter(
+                typesMap,
+                typeConvertersForPrimitives,
+                surroundWithTryCatch,
+                codeWriter
+        ) ?: accessResolver.resolveAssignment("$readerParam.$xmlReaderMethodPrefix$resolveMethodName()")
+
         return when {
             customTypeConverterQualifiedClassName != null -> {
                 surroundWithTryCatch("${customTypeConverterManager.getFieldNameForConverter(customTypeConverterQualifiedClassName)}.read($readerParam.$xmlReaderMethodPrefix())")
             }
             type.isString() -> {
-                generatePrimitiveConverter(
-                        stringTypes,
-                        typeConvertersForPrimitives,
-                        surroundWithTryCatch,
-                        codeWriter
-                ) ?: accessResolver.resolveAssignment("$readerParam.$xmlReaderMethodPrefix()")
+                codeBlockGen(stringTypes, "")
             }
             type.isBoolean() -> {
-                generatePrimitiveConverter(
-                        booleanTypes,
-                        typeConvertersForPrimitives,
-                        surroundWithTryCatch,
-                        codeWriter
-                ) ?: accessResolver.resolveAssignment("$readerParam.${xmlReaderMethodPrefix}AsBoolean()")
+                codeBlockGen(booleanTypes, "AsBoolean")
             }
             type.isDouble() -> {
-                generatePrimitiveConverter(
-                        doubleTypes,
-                        typeConvertersForPrimitives,
-                        surroundWithTryCatch,
-                        codeWriter
-                ) ?: accessResolver.resolveAssignment("$readerParam.${xmlReaderMethodPrefix}AsDouble()")
+                codeBlockGen(doubleTypes, "AsDouble")
             }
-
             type.isInt() -> {
-                generatePrimitiveConverter(
-                        integerTypes,
-                        typeConvertersForPrimitives,
-                        surroundWithTryCatch,
-                        codeWriter
-                ) ?: accessResolver.resolveAssignment("$readerParam.${xmlReaderMethodPrefix}AsInt()")
+                codeBlockGen(integerTypes, "AsInt")
             }
-
             type.isLong() -> {
-                generatePrimitiveConverter(
-                        longTypes,
-                        typeConvertersForPrimitives,
-                        surroundWithTryCatch,
-                        codeWriter
-                ) ?: accessResolver.resolveAssignment("$readerParam.${xmlReaderMethodPrefix}AsLong()")
+                codeBlockGen(longTypes, "AsLong")
             }
             else -> {
                 surroundWithTryCatch("$tikConfigParam.getTypeConverter($type.class).read($readerParam.$xmlReaderMethodPrefix())")
