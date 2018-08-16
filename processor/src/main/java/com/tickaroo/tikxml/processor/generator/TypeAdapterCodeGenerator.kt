@@ -108,14 +108,13 @@ class TypeAdapterCodeGenerator(private val filer: Filer, private val elementUtil
 
         val targetClassToParseInto = getClassToParseInto(annotatedClass)
 
-        val mapImplClass: Class<*> = when {
-            mapImpl?.isNullOrEmpty()?.not() -> try {
+        val mapImplClass: Class<*> = mapImpl?.isNullOrEmpty()?.not()?.let {
+            try {
                 Class.forName(mapImpl)
             } catch (classNotFound: ClassNotFoundException) {
                 HashMap::class.java
             }
-            else -> HashMap::class.java
-        }
+        } ?: HashMap::class.java
 
         if (annotatedClass.hasAttributes()) {
             val attributeBinderMapField = ParameterizedTypeName.get(ClassName.get(java.util.Map::class.java),
