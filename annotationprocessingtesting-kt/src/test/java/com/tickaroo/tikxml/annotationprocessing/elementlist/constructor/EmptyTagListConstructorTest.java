@@ -19,4 +19,14 @@ public class EmptyTagListConstructorTest {
     Assert.assertNotNull(emptyTagList.getTags());
     Assert.assertEquals(3, emptyTagList.getTags().size());
   }
+
+  @Test
+  public void testDataClass() throws IOException {
+    TikXml xml = new TikXml.Builder().exceptionOnUnreadXml(true).build();
+    EmptyTagListConstructorDataClass emptyTagList =
+            xml.read(TestUtils.sourceForFile("empty_tag_list.xml"), EmptyTagListConstructorDataClass.class);
+    Assert.assertNotNull(emptyTagList);
+    Assert.assertNotNull(emptyTagList.getTags());
+    Assert.assertEquals(3, emptyTagList.getTags().size());
+  }
 }

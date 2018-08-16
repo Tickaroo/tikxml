@@ -51,7 +51,6 @@ public class CatalogueConstructorTest {
     }
   }
 
-
   @Test
   public void simpleWithAttributeInPath() throws IOException, ParseException {
     TikXml xml = new TikXml.Builder().exceptionOnUnreadXml(true).build();
@@ -74,7 +73,6 @@ public class CatalogueConstructorTest {
 
   @Test
   public void inlineList() throws IOException, ParseException {
-
     TikXml xml = new TikXml.Builder().exceptionOnUnreadXml(true).build();
 
     InlineListCatalogueConstructor catalogue = xml.read(TestUtils.sourceForFile("books_inline.xml"), InlineListCatalogueConstructor.class);
@@ -91,6 +89,65 @@ public class CatalogueConstructorTest {
       Assert.assertEquals(date, book.getPublishDate());
       Assert.assertEquals("description"+i, book.getDescription());
     }
+  }
 
+  @Test
+  public void simpleDataClass() throws IOException, ParseException {
+    TikXml xml = new TikXml.Builder().exceptionOnUnreadXml(true).build();
+
+    CatalogueConstructorDataClass catalogue = xml.read(TestUtils.sourceForFile("books.xml"), CatalogueConstructorDataClass.class);
+
+    Assert.assertEquals(10, catalogue.getBooks().size());
+    for (int i = 1; i<= 10; i++){
+      BookConstructorDataClass book = catalogue.getBooks().get(i-1);
+      Date date = DateConverter.Companion.getFormat().parse("2000-09-0"+i);
+
+      Assert.assertEquals(i, book.getId());
+      Assert.assertEquals("author"+i, book.getAuthor());
+      Assert.assertEquals("genre"+i, book.getGenre());
+      Assert.assertEquals(i, book.getPrice(), 0);
+      Assert.assertEquals(date, book.getPublishDate());
+      Assert.assertEquals("description"+i, book.getDescription());
+    }
+  }
+
+  @Test
+  public void simpleWithAttributeInPathDataClass() throws IOException, ParseException {
+    TikXml xml = new TikXml.Builder().exceptionOnUnreadXml(true).build();
+
+    CatalogueConstructorDataClass catalogue = xml.read(TestUtils.sourceForFile("books_with_attribute_with_path.xml"), CatalogueConstructorDataClass.class);
+
+    Assert.assertEquals(10, catalogue.getBooks().size());
+    for (int i = 1; i<= 10; i++){
+      BookConstructorDataClass book = catalogue.getBooks().get(i-1);
+      Date date = DateConverter.Companion.getFormat().parse("2000-09-0"+i);
+
+      Assert.assertEquals(i, book.getId());
+      Assert.assertEquals("author"+i, book.getAuthor());
+      Assert.assertEquals("genre"+i, book.getGenre());
+      Assert.assertEquals(i, book.getPrice(), 0);
+      Assert.assertEquals(date, book.getPublishDate());
+      Assert.assertEquals("description"+i, book.getDescription());
+    }
+  }
+
+  @Test
+  public void inlineListDataClass() throws IOException, ParseException {
+    TikXml xml = new TikXml.Builder().exceptionOnUnreadXml(true).build();
+
+    InlineListCatalogueConstructorDataClass catalogue = xml.read(TestUtils.sourceForFile("books_inline.xml"), InlineListCatalogueConstructorDataClass.class);
+
+    Assert.assertEquals(10, catalogue.getBooks().size());
+    for (int i = 1; i<= 10; i++){
+      BookConstructorDataClass book = catalogue.getBooks().get(i-1);
+      Date date = DateConverter.Companion.getFormat().parse("2000-09-0"+i);
+
+      Assert.assertEquals(i, book.getId());
+      Assert.assertEquals("author"+i, book.getAuthor());
+      Assert.assertEquals("genre"+i, book.getGenre());
+      Assert.assertEquals(i, book.getPrice(), 0);
+      Assert.assertEquals(date, book.getPublishDate());
+      Assert.assertEquals("description"+i, book.getDescription());
+    }
   }
 }

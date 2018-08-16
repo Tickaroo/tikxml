@@ -138,4 +138,115 @@ public class PropertyElementTest {
       Assert.assertEquals("Unread attribute 'a' at path /item/aString[@a]", e.getMessage());
     }
   }
+
+
+
+
+
+  @Test
+  public void fieldAccessDataCall() throws IOException, ParseException {
+    TikXml xml = new TikXml.Builder().exceptionOnUnreadXml(true).build();
+
+    PropertyItemDataClass item = xml.read(TestUtils.sourceForFile("property_item.xml"), PropertyItemDataClass.class);
+
+    Date date = DateConverter.Companion.getFormat().parse("1988-03-04");
+
+    Assert.assertEquals("foo", item.aString);
+    Assert.assertEquals(123, item.anInt);
+    Assert.assertEquals(true, item.aBoolean);
+    Assert.assertEquals(23.42, item.aDouble, 0);
+    Assert.assertEquals(2147483648L, item.aLong);
+    Assert.assertEquals(date, item.aDate);
+
+    Assert.assertEquals(123, (int) item.intWrapper);
+    Assert.assertEquals(true, item.booleanWrapper);
+    Assert.assertEquals(23.42, item.doubleWrapper, 0);
+    Assert.assertEquals(2147483648L, (long) item.longWrapper);
+
+    // Write XML
+    // Writing tests
+    Buffer buffer = new Buffer();
+    xml.write(buffer, item);
+
+    String xmlStr =
+            "<?xml version=\"1.0\" encoding=\"UTF-8\"?><item><aBoolean>true</aBoolean><longWrapper>2147483648</longWrapper><aString>foo</aString><intWrapper>123</intWrapper><aLong>2147483648</aLong><anInt>123</anInt><aDate>1988-03-04</aDate><aDouble>23.42</aDouble><doubleWrapper>23.42</doubleWrapper><booleanWrapper>true</booleanWrapper></item>";
+    Assert.assertEquals(xmlStr, TestUtils.bufferToString(buffer));
+
+    PropertyItemDataClass item2 = xml.read(TestUtils.sourceFrom(xmlStr), PropertyItemDataClass.class);
+    Assert.assertEquals(item, item2);
+  }
+
+  @Test
+  public void settersGettersDataClass() throws IOException, ParseException {
+    TikXml xml = new TikXml.Builder().exceptionOnUnreadXml(true).build();
+
+    PropertyItemWithGetterSettersDataClass item =
+            xml.read(TestUtils.sourceForFile("property_item.xml"), PropertyItemWithGetterSettersDataClass.class);
+
+    Date date = DateConverter.Companion.getFormat().parse("1988-03-04");
+
+    Assert.assertEquals("foo", item.getAString());
+    Assert.assertEquals(123, item.getAnInt());
+    Assert.assertEquals(true, item.getABoolean());
+    Assert.assertEquals(23.42, item.getADouble(), 0);
+    Assert.assertEquals(2147483648L, item.getALong());
+    Assert.assertEquals(date, item.getADate());
+
+    Assert.assertEquals(123, (int) item.getIntWrapper());
+    Assert.assertEquals(true, item.getBooleanWrapper());
+    Assert.assertEquals(23.42, item.getDoubleWrapper(), 0);
+    Assert.assertEquals(2147483648L, (long) item.getLongWrapper());
+
+    // Write XML
+    // Writing tests
+    Buffer buffer = new Buffer();
+    xml.write(buffer, item);
+
+    String xmlStr =
+            "<?xml version=\"1.0\" encoding=\"UTF-8\"?><item><aBoolean>true</aBoolean><longWrapper>2147483648</longWrapper><aString>foo</aString><intWrapper>123</intWrapper><aLong>2147483648</aLong><anInt>123</anInt><aDate>1988-03-04</aDate><aDouble>23.42</aDouble><doubleWrapper>23.42</doubleWrapper><booleanWrapper>true</booleanWrapper></item>";
+    Assert.assertEquals(xmlStr, TestUtils.bufferToString(buffer));
+
+    PropertyItemWithGetterSettersDataClass item2 =
+            xml.read(TestUtils.sourceFrom(xmlStr), PropertyItemWithGetterSettersDataClass.class);
+    Assert.assertEquals(item, item2);
+  }
+
+  @Test
+  public void skipAttributesDataClass() throws IOException, ParseException {
+    TikXml xml = new TikXml.Builder().exceptionOnUnreadXml(false).build();
+
+    PropertyItemWithGetterSettersDataClass item =
+            xml.read(TestUtils.sourceForFile("property_item_with_attributes.xml"),
+                    PropertyItemWithGetterSettersDataClass.class);
+
+    Assert.assertEquals("foo", item.getAString());
+
+    // Write XML
+    // Writing tests
+    Buffer buffer = new Buffer();
+    xml.write(buffer, item);
+
+    String xmlStr =
+            "<?xml version=\"1.0\" encoding=\"UTF-8\"?><item><aBoolean>false</aBoolean><aString>foo</aString><aLong>0</aLong><anInt>0</anInt><aDouble>0.0</aDouble></item>";
+    Assert.assertEquals(xmlStr, TestUtils.bufferToString(buffer));
+
+    PropertyItemWithGetterSettersDataClass item2 =
+            xml.read(TestUtils.sourceFrom(xmlStr), PropertyItemWithGetterSettersDataClass.class);
+    Assert.assertEquals(item, item2);
+  }
+
+  @Test
+  public void failSkippingAttributesDataClass() throws IOException, ParseException {
+    TikXml xml = new TikXml.Builder().exceptionOnUnreadXml(true).build();
+
+    try {
+
+      PropertyItemWithGetterSettersDataClass item =
+              xml.read(TestUtils.sourceForFile("property_item_with_attributes.xml"),
+                      PropertyItemWithGetterSettersDataClass.class);
+      Assert.fail("Exception expected");
+    } catch (IOException e) {
+      Assert.assertEquals("Unread attribute 'a' at path /item/aString[@a]", e.getMessage());
+    }
+  }
 }

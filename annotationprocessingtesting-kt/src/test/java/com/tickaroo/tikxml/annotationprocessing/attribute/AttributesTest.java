@@ -66,6 +66,41 @@ public class AttributesTest {
     Assert.assertEquals(item, item2);
   }
 
+
+  @Test
+  public void fieldAccessDataClass() throws IOException, ParseException {
+    TikXml xml =
+            new TikXml.Builder().exceptionOnUnreadXml(true).writeDefaultXmlDeclaration(true).build();
+
+    // Reading test
+    ItemDataClass item = xml.read(TestUtils.sourceForFile("attributes.xml"), ItemDataClass.class);
+
+    Date date = DateConverter.Companion.getFormat().parse("1988-03-04");
+
+    Assert.assertEquals("foo", item.aString);
+    Assert.assertEquals(123, item.anInt);
+    Assert.assertEquals(true, item.aBoolean);
+    Assert.assertEquals(23.42, item.aDouble, 0);
+    Assert.assertEquals(2147483648L, item.aLong);
+    Assert.assertEquals(date, item.aDate);
+
+    Assert.assertEquals(123, (int) item.intWrapper);
+    Assert.assertEquals(true, item.booleanWrapper);
+    Assert.assertEquals(23.42, item.doubleWrapper, 0);
+    Assert.assertEquals(2147483648L, (long) item.longWrapper);
+
+    // Writing xml test
+    Buffer buffer = new Buffer();
+    xml.write(buffer, item);
+
+    String xmlStr =
+            "<?xml version=\"1.0\" encoding=\"UTF-8\"?><item aBoolean=\"true\" longWrapper=\"2147483648\" aString=\"foo\" intWrapper=\"123\" aLong=\"2147483648\" anInt=\"123\" aDate=\"1988-03-04\" aDouble=\"23.42\" doubleWrapper=\"23.42\" booleanWrapper=\"true\"/>";
+    Assert.assertEquals(xmlStr, TestUtils.bufferToString(buffer));
+
+    ItemDataClass item2 = xml.read(TestUtils.sourceFrom(xmlStr), ItemDataClass.class);
+    Assert.assertEquals(item, item2);
+  }
+
   @Test
   public void settersGetters() throws IOException, ParseException {
     TikXml xml = new TikXml.Builder().exceptionOnUnreadXml(true).build();
@@ -97,6 +132,40 @@ public class AttributesTest {
     Assert.assertEquals(xmlStr, TestUtils.bufferToString(buffer));
 
     ItemWithGetterSetters item2 = xml.read(TestUtils.sourceFrom(xmlStr), ItemWithGetterSetters.class);
+    Assert.assertEquals(item, item2);
+  }
+
+  @Test
+  public void settersGettersDataClass() throws IOException, ParseException {
+    TikXml xml = new TikXml.Builder().exceptionOnUnreadXml(true).build();
+
+    // Test reading xml
+    ItemWithGetterSettersDataClass item =
+            xml.read(TestUtils.sourceForFile("attributes.xml"), ItemWithGetterSettersDataClass.class);
+
+    Date date = DateConverter.Companion.getFormat().parse("1988-03-04");
+
+    Assert.assertEquals("foo", item.getAString());
+    Assert.assertEquals(123, item.getAnInt());
+    Assert.assertEquals(true, item.getABoolean());
+    Assert.assertEquals(23.42, item.getADouble(), 0);
+    Assert.assertEquals(2147483648L, item.getALong());
+    Assert.assertEquals(date, item.getADate());
+
+    Assert.assertEquals(123, (int) item.getIntWrapper());
+    Assert.assertEquals(true, item.getBooleanWrapper());
+    Assert.assertEquals(23.42, item.getDoubleWrapper(), 0);
+    Assert.assertEquals(2147483648L, (long) item.getLongWrapper());
+
+    // Writing xml test
+    Buffer buffer = new Buffer();
+    xml.write(buffer, item);
+
+    String xmlStr =
+            "<?xml version=\"1.0\" encoding=\"UTF-8\"?><item aBoolean=\"true\" longWrapper=\"2147483648\" aString=\"foo\" intWrapper=\"123\" aLong=\"2147483648\" anInt=\"123\" aDate=\"1988-03-04\" aDouble=\"23.42\" doubleWrapper=\"23.42\" booleanWrapper=\"true\"/>";
+    Assert.assertEquals(xmlStr, TestUtils.bufferToString(buffer));
+
+    ItemWithGetterSettersDataClass item2 = xml.read(TestUtils.sourceFrom(xmlStr), ItemWithGetterSettersDataClass.class);
     Assert.assertEquals(item, item2);
   }
 }

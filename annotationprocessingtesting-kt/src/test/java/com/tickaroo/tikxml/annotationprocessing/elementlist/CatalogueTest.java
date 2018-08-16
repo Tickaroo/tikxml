@@ -39,16 +39,16 @@ public class CatalogueTest {
     Catalogue catalogue = xml.read(TestUtils.sourceForFile("books.xml"), Catalogue.class);
 
     Assert.assertEquals(10, catalogue.getBooks().size());
-    for (int i = 1; i<= 10; i++){
-      Book book = catalogue.getBooks().get(i-1);
-      Date date = DateConverter.Companion.getFormat().parse("2000-09-0"+i);
+    for (int i = 1; i <= 10; i++) {
+      Book book = catalogue.getBooks().get(i - 1);
+      Date date = DateConverter.Companion.getFormat().parse("2000-09-0" + i);
 
       Assert.assertEquals(i, book.getId());
-      Assert.assertEquals("author"+i, book.getAuthor());
-      Assert.assertEquals("genre"+i, book.getGenre());
+      Assert.assertEquals("author" + i, book.getAuthor());
+      Assert.assertEquals("genre" + i, book.getGenre());
       Assert.assertEquals(i, book.getPrice(), 0);
       Assert.assertEquals(date, book.getPublishDate());
-      Assert.assertEquals("description"+i, book.getDescription());
+      Assert.assertEquals("description" + i, book.getDescription());
     }
 
     // Write XML
@@ -57,7 +57,7 @@ public class CatalogueTest {
     xml.write(buffer, catalogue);
 
     String xmlStr =
-        "<?xml version=\"1.0\" encoding=\"UTF-8\"?><catalogue><books><book id=\"1\"><author>author1</author><price>1.0</price><genre>genre1</genre><description>description1</description><title>title1</title><publish_date>2000-09-01</publish_date></book><book id=\"2\"><author>author2</author><price>2.0</price><genre>genre2</genre><description>description2</description><title>title2</title><publish_date>2000-09-02</publish_date></book><book id=\"3\"><author>author3</author><price>3.0</price><genre>genre3</genre><description>description3</description><title>title3</title><publish_date>2000-09-03</publish_date></book><book id=\"4\"><author>author4</author><price>4.0</price><genre>genre4</genre><description>description4</description><title>title4</title><publish_date>2000-09-04</publish_date></book><book id=\"5\"><author>author5</author><price>5.0</price><genre>genre5</genre><description>description5</description><title>title5</title><publish_date>2000-09-05</publish_date></book><book id=\"6\"><author>author6</author><price>6.0</price><genre>genre6</genre><description>description6</description><title>title6</title><publish_date>2000-09-06</publish_date></book><book id=\"7\"><author>author7</author><price>7.0</price><genre>genre7</genre><description>description7</description><title>title7</title><publish_date>2000-09-07</publish_date></book><book id=\"8\"><author>author8</author><price>8.0</price><genre>genre8</genre><description>description8</description><title>title8</title><publish_date>2000-09-08</publish_date></book><book id=\"9\"><author>author9</author><price>9.0</price><genre>genre9</genre><description>description9</description><title>title9</title><publish_date>2000-09-09</publish_date></book><book id=\"10\"><author>author10</author><price>10.0</price><genre>genre10</genre><description>description10</description><title>title10</title><publish_date>2000-09-10</publish_date></book></books></catalogue>";
+            "<?xml version=\"1.0\" encoding=\"UTF-8\"?><catalogue><books><book id=\"1\"><author>author1</author><price>1.0</price><genre>genre1</genre><description>description1</description><title>title1</title><publish_date>2000-09-01</publish_date></book><book id=\"2\"><author>author2</author><price>2.0</price><genre>genre2</genre><description>description2</description><title>title2</title><publish_date>2000-09-02</publish_date></book><book id=\"3\"><author>author3</author><price>3.0</price><genre>genre3</genre><description>description3</description><title>title3</title><publish_date>2000-09-03</publish_date></book><book id=\"4\"><author>author4</author><price>4.0</price><genre>genre4</genre><description>description4</description><title>title4</title><publish_date>2000-09-04</publish_date></book><book id=\"5\"><author>author5</author><price>5.0</price><genre>genre5</genre><description>description5</description><title>title5</title><publish_date>2000-09-05</publish_date></book><book id=\"6\"><author>author6</author><price>6.0</price><genre>genre6</genre><description>description6</description><title>title6</title><publish_date>2000-09-06</publish_date></book><book id=\"7\"><author>author7</author><price>7.0</price><genre>genre7</genre><description>description7</description><title>title7</title><publish_date>2000-09-07</publish_date></book><book id=\"8\"><author>author8</author><price>8.0</price><genre>genre8</genre><description>description8</description><title>title8</title><publish_date>2000-09-08</publish_date></book><book id=\"9\"><author>author9</author><price>9.0</price><genre>genre9</genre><description>description9</description><title>title9</title><publish_date>2000-09-09</publish_date></book><book id=\"10\"><author>author10</author><price>10.0</price><genre>genre10</genre><description>description10</description><title>title10</title><publish_date>2000-09-10</publish_date></book></books></catalogue>";
     Assert.assertEquals(xmlStr, TestUtils.bufferToString(buffer));
 
     Catalogue catalogue2 = xml.read(TestUtils.sourceFrom(xmlStr), Catalogue.class);
@@ -73,16 +73,16 @@ public class CatalogueTest {
     Catalogue catalogue = xml.read(TestUtils.sourceForFile("books_with_attribute_with_path.xml"), Catalogue.class);
 
     Assert.assertEquals(10, catalogue.getBooks().size());
-    for (int i = 1; i<= 10; i++){
-      Book book = catalogue.getBooks().get(i-1);
-      Date date = DateConverter.Companion.getFormat().parse("2000-09-0"+i);
+    for (int i = 1; i <= 10; i++) {
+      Book book = catalogue.getBooks().get(i - 1);
+      Date date = DateConverter.Companion.getFormat().parse("2000-09-0" + i);
 
       Assert.assertEquals(i, book.getId());
-      Assert.assertEquals("author"+i, book.getAuthor());
-      Assert.assertEquals("genre"+i, book.getGenre());
+      Assert.assertEquals("author" + i, book.getAuthor());
+      Assert.assertEquals("genre" + i, book.getGenre());
       Assert.assertEquals(i, book.getPrice(), 0);
       Assert.assertEquals(date, book.getPublishDate());
-      Assert.assertEquals("description"+i, book.getDescription());
+      Assert.assertEquals("description" + i, book.getDescription());
     }
 
     // Write XML
@@ -91,7 +91,7 @@ public class CatalogueTest {
     xml.write(buffer, catalogue);
 
     String xmlStr =
-        "<?xml version=\"1.0\" encoding=\"UTF-8\"?><catalogue><books><book id=\"1\"><author>author1</author><price>1.0</price><genre>genre1</genre><description>description1</description><title>title1</title><publish_date>2000-09-01</publish_date></book><book id=\"2\"><author>author2</author><price>2.0</price><genre>genre2</genre><description>description2</description><title>title2</title><publish_date>2000-09-02</publish_date></book><book id=\"3\"><author>author3</author><price>3.0</price><genre>genre3</genre><description>description3</description><title>title3</title><publish_date>2000-09-03</publish_date></book><book id=\"4\"><author>author4</author><price>4.0</price><genre>genre4</genre><description>description4</description><title>title4</title><publish_date>2000-09-04</publish_date></book><book id=\"5\"><author>author5</author><price>5.0</price><genre>genre5</genre><description>description5</description><title>title5</title><publish_date>2000-09-05</publish_date></book><book id=\"6\"><author>author6</author><price>6.0</price><genre>genre6</genre><description>description6</description><title>title6</title><publish_date>2000-09-06</publish_date></book><book id=\"7\"><author>author7</author><price>7.0</price><genre>genre7</genre><description>description7</description><title>title7</title><publish_date>2000-09-07</publish_date></book><book id=\"8\"><author>author8</author><price>8.0</price><genre>genre8</genre><description>description8</description><title>title8</title><publish_date>2000-09-08</publish_date></book><book id=\"9\"><author>author9</author><price>9.0</price><genre>genre9</genre><description>description9</description><title>title9</title><publish_date>2000-09-09</publish_date></book><book id=\"10\"><author>author10</author><price>10.0</price><genre>genre10</genre><description>description10</description><title>title10</title><publish_date>2000-09-10</publish_date></book></books></catalogue>";
+            "<?xml version=\"1.0\" encoding=\"UTF-8\"?><catalogue><books><book id=\"1\"><author>author1</author><price>1.0</price><genre>genre1</genre><description>description1</description><title>title1</title><publish_date>2000-09-01</publish_date></book><book id=\"2\"><author>author2</author><price>2.0</price><genre>genre2</genre><description>description2</description><title>title2</title><publish_date>2000-09-02</publish_date></book><book id=\"3\"><author>author3</author><price>3.0</price><genre>genre3</genre><description>description3</description><title>title3</title><publish_date>2000-09-03</publish_date></book><book id=\"4\"><author>author4</author><price>4.0</price><genre>genre4</genre><description>description4</description><title>title4</title><publish_date>2000-09-04</publish_date></book><book id=\"5\"><author>author5</author><price>5.0</price><genre>genre5</genre><description>description5</description><title>title5</title><publish_date>2000-09-05</publish_date></book><book id=\"6\"><author>author6</author><price>6.0</price><genre>genre6</genre><description>description6</description><title>title6</title><publish_date>2000-09-06</publish_date></book><book id=\"7\"><author>author7</author><price>7.0</price><genre>genre7</genre><description>description7</description><title>title7</title><publish_date>2000-09-07</publish_date></book><book id=\"8\"><author>author8</author><price>8.0</price><genre>genre8</genre><description>description8</description><title>title8</title><publish_date>2000-09-08</publish_date></book><book id=\"9\"><author>author9</author><price>9.0</price><genre>genre9</genre><description>description9</description><title>title9</title><publish_date>2000-09-09</publish_date></book><book id=\"10\"><author>author10</author><price>10.0</price><genre>genre10</genre><description>description10</description><title>title10</title><publish_date>2000-09-10</publish_date></book></books></catalogue>";
     Assert.assertEquals(xmlStr, TestUtils.bufferToString(buffer));
 
     Catalogue catalogue2 = xml.read(TestUtils.sourceFrom(xmlStr), Catalogue.class);
@@ -106,16 +106,16 @@ public class CatalogueTest {
     InlineListCatalogue catalogue = xml.read(TestUtils.sourceForFile("books_inline.xml"), InlineListCatalogue.class);
 
     Assert.assertEquals(10, catalogue.getBooks().size());
-    for (int i = 1; i<= 10; i++){
-      Book book = catalogue.getBooks().get(i-1);
-      Date date = DateConverter.Companion.getFormat().parse("2000-09-0"+i);
+    for (int i = 1; i <= 10; i++) {
+      Book book = catalogue.getBooks().get(i - 1);
+      Date date = DateConverter.Companion.getFormat().parse("2000-09-0" + i);
 
       Assert.assertEquals(i, book.getId());
-      Assert.assertEquals("author"+i, book.getAuthor());
-      Assert.assertEquals("genre"+i, book.getGenre());
+      Assert.assertEquals("author" + i, book.getAuthor());
+      Assert.assertEquals("genre" + i, book.getGenre());
       Assert.assertEquals(i, book.getPrice(), 0);
       Assert.assertEquals(date, book.getPublishDate());
-      Assert.assertEquals("description"+i, book.getDescription());
+      Assert.assertEquals("description" + i, book.getDescription());
     }
 
 
@@ -125,10 +125,111 @@ public class CatalogueTest {
     xml.write(buffer, catalogue);
 
     String xmlStr =
-        "<?xml version=\"1.0\" encoding=\"UTF-8\"?><catalogue><book id=\"1\"><author>author1</author><price>1.0</price><genre>genre1</genre><description>description1</description><title>title1</title><publish_date>2000-09-01</publish_date></book><book id=\"2\"><author>author2</author><price>2.0</price><genre>genre2</genre><description>description2</description><title>title2</title><publish_date>2000-09-02</publish_date></book><book id=\"3\"><author>author3</author><price>3.0</price><genre>genre3</genre><description>description3</description><title>title3</title><publish_date>2000-09-03</publish_date></book><book id=\"4\"><author>author4</author><price>4.0</price><genre>genre4</genre><description>description4</description><title>title4</title><publish_date>2000-09-04</publish_date></book><book id=\"5\"><author>author5</author><price>5.0</price><genre>genre5</genre><description>description5</description><title>title5</title><publish_date>2000-09-05</publish_date></book><book id=\"6\"><author>author6</author><price>6.0</price><genre>genre6</genre><description>description6</description><title>title6</title><publish_date>2000-09-06</publish_date></book><book id=\"7\"><author>author7</author><price>7.0</price><genre>genre7</genre><description>description7</description><title>title7</title><publish_date>2000-09-07</publish_date></book><book id=\"8\"><author>author8</author><price>8.0</price><genre>genre8</genre><description>description8</description><title>title8</title><publish_date>2000-09-08</publish_date></book><book id=\"9\"><author>author9</author><price>9.0</price><genre>genre9</genre><description>description9</description><title>title9</title><publish_date>2000-09-09</publish_date></book><book id=\"10\"><author>author10</author><price>10.0</price><genre>genre10</genre><description>description10</description><title>title10</title><publish_date>2000-09-10</publish_date></book></catalogue>";
+            "<?xml version=\"1.0\" encoding=\"UTF-8\"?><catalogue><book id=\"1\"><author>author1</author><price>1.0</price><genre>genre1</genre><description>description1</description><title>title1</title><publish_date>2000-09-01</publish_date></book><book id=\"2\"><author>author2</author><price>2.0</price><genre>genre2</genre><description>description2</description><title>title2</title><publish_date>2000-09-02</publish_date></book><book id=\"3\"><author>author3</author><price>3.0</price><genre>genre3</genre><description>description3</description><title>title3</title><publish_date>2000-09-03</publish_date></book><book id=\"4\"><author>author4</author><price>4.0</price><genre>genre4</genre><description>description4</description><title>title4</title><publish_date>2000-09-04</publish_date></book><book id=\"5\"><author>author5</author><price>5.0</price><genre>genre5</genre><description>description5</description><title>title5</title><publish_date>2000-09-05</publish_date></book><book id=\"6\"><author>author6</author><price>6.0</price><genre>genre6</genre><description>description6</description><title>title6</title><publish_date>2000-09-06</publish_date></book><book id=\"7\"><author>author7</author><price>7.0</price><genre>genre7</genre><description>description7</description><title>title7</title><publish_date>2000-09-07</publish_date></book><book id=\"8\"><author>author8</author><price>8.0</price><genre>genre8</genre><description>description8</description><title>title8</title><publish_date>2000-09-08</publish_date></book><book id=\"9\"><author>author9</author><price>9.0</price><genre>genre9</genre><description>description9</description><title>title9</title><publish_date>2000-09-09</publish_date></book><book id=\"10\"><author>author10</author><price>10.0</price><genre>genre10</genre><description>description10</description><title>title10</title><publish_date>2000-09-10</publish_date></book></catalogue>";
     Assert.assertEquals(xmlStr, TestUtils.bufferToString(buffer));
 
     InlineListCatalogue catalogue2 = xml.read(TestUtils.sourceFrom(xmlStr), InlineListCatalogue.class);
+    Assert.assertEquals(catalogue, catalogue2);
+  }
+
+
+  @Test
+  public void simpleDataClass() throws IOException, ParseException {
+    TikXml xml = new TikXml.Builder().exceptionOnUnreadXml(true).build();
+
+    CatalogueDataClass catalogue = xml.read(TestUtils.sourceForFile("books.xml"), CatalogueDataClass.class);
+
+    Assert.assertEquals(10, catalogue.getBooks().size());
+    for (int i = 1; i <= 10; i++) {
+      BookDataClass book = catalogue.getBooks().get(i - 1);
+      Date date = DateConverter.Companion.getFormat().parse("2000-09-0" + i);
+
+      Assert.assertEquals(i, book.getId());
+      Assert.assertEquals("author" + i, book.getAuthor());
+      Assert.assertEquals("genre" + i, book.getGenre());
+      Assert.assertEquals(i, book.getPrice(), 0);
+      Assert.assertEquals(date, book.getPublishDate());
+      Assert.assertEquals("description" + i, book.getDescription());
+    }
+
+    // Write XML
+    // Writing tests
+    Buffer buffer = new Buffer();
+    xml.write(buffer, catalogue);
+
+    String xmlStr =
+            "<?xml version=\"1.0\" encoding=\"UTF-8\"?><catalogue><books><book id=\"1\"><author>author1</author><price>1.0</price><genre>genre1</genre><description>description1</description><title>title1</title><publish_date>2000-09-01</publish_date></book><book id=\"2\"><author>author2</author><price>2.0</price><genre>genre2</genre><description>description2</description><title>title2</title><publish_date>2000-09-02</publish_date></book><book id=\"3\"><author>author3</author><price>3.0</price><genre>genre3</genre><description>description3</description><title>title3</title><publish_date>2000-09-03</publish_date></book><book id=\"4\"><author>author4</author><price>4.0</price><genre>genre4</genre><description>description4</description><title>title4</title><publish_date>2000-09-04</publish_date></book><book id=\"5\"><author>author5</author><price>5.0</price><genre>genre5</genre><description>description5</description><title>title5</title><publish_date>2000-09-05</publish_date></book><book id=\"6\"><author>author6</author><price>6.0</price><genre>genre6</genre><description>description6</description><title>title6</title><publish_date>2000-09-06</publish_date></book><book id=\"7\"><author>author7</author><price>7.0</price><genre>genre7</genre><description>description7</description><title>title7</title><publish_date>2000-09-07</publish_date></book><book id=\"8\"><author>author8</author><price>8.0</price><genre>genre8</genre><description>description8</description><title>title8</title><publish_date>2000-09-08</publish_date></book><book id=\"9\"><author>author9</author><price>9.0</price><genre>genre9</genre><description>description9</description><title>title9</title><publish_date>2000-09-09</publish_date></book><book id=\"10\"><author>author10</author><price>10.0</price><genre>genre10</genre><description>description10</description><title>title10</title><publish_date>2000-09-10</publish_date></book></books></catalogue>";
+    Assert.assertEquals(xmlStr, TestUtils.bufferToString(buffer));
+
+    CatalogueDataClass catalogue2 = xml.read(TestUtils.sourceFrom(xmlStr), CatalogueDataClass.class);
+    Assert.assertEquals(catalogue, catalogue2);
+
+  }
+
+
+  @Test
+  public void simpleWithAttributeInPathDataClass() throws IOException, ParseException {
+    TikXml xml = new TikXml.Builder().exceptionOnUnreadXml(true).build();
+
+    CatalogueDataClass catalogue = xml.read(TestUtils.sourceForFile("books_with_attribute_with_path.xml"), CatalogueDataClass.class);
+
+    Assert.assertEquals(10, catalogue.getBooks().size());
+    for (int i = 1; i <= 10; i++) {
+      BookDataClass book = catalogue.getBooks().get(i - 1);
+      Date date = DateConverter.Companion.getFormat().parse("2000-09-0" + i);
+
+      Assert.assertEquals(i, book.getId());
+      Assert.assertEquals("author" + i, book.getAuthor());
+      Assert.assertEquals("genre" + i, book.getGenre());
+      Assert.assertEquals(i, book.getPrice(), 0);
+      Assert.assertEquals(date, book.getPublishDate());
+      Assert.assertEquals("description" + i, book.getDescription());
+    }
+
+    // Write XML
+    // Writing tests
+    Buffer buffer = new Buffer();
+    xml.write(buffer, catalogue);
+
+    String xmlStr =
+            "<?xml version=\"1.0\" encoding=\"UTF-8\"?><catalogue><books><book id=\"1\"><author>author1</author><price>1.0</price><genre>genre1</genre><description>description1</description><title>title1</title><publish_date>2000-09-01</publish_date></book><book id=\"2\"><author>author2</author><price>2.0</price><genre>genre2</genre><description>description2</description><title>title2</title><publish_date>2000-09-02</publish_date></book><book id=\"3\"><author>author3</author><price>3.0</price><genre>genre3</genre><description>description3</description><title>title3</title><publish_date>2000-09-03</publish_date></book><book id=\"4\"><author>author4</author><price>4.0</price><genre>genre4</genre><description>description4</description><title>title4</title><publish_date>2000-09-04</publish_date></book><book id=\"5\"><author>author5</author><price>5.0</price><genre>genre5</genre><description>description5</description><title>title5</title><publish_date>2000-09-05</publish_date></book><book id=\"6\"><author>author6</author><price>6.0</price><genre>genre6</genre><description>description6</description><title>title6</title><publish_date>2000-09-06</publish_date></book><book id=\"7\"><author>author7</author><price>7.0</price><genre>genre7</genre><description>description7</description><title>title7</title><publish_date>2000-09-07</publish_date></book><book id=\"8\"><author>author8</author><price>8.0</price><genre>genre8</genre><description>description8</description><title>title8</title><publish_date>2000-09-08</publish_date></book><book id=\"9\"><author>author9</author><price>9.0</price><genre>genre9</genre><description>description9</description><title>title9</title><publish_date>2000-09-09</publish_date></book><book id=\"10\"><author>author10</author><price>10.0</price><genre>genre10</genre><description>description10</description><title>title10</title><publish_date>2000-09-10</publish_date></book></books></catalogue>";
+    Assert.assertEquals(xmlStr, TestUtils.bufferToString(buffer));
+
+    CatalogueDataClass catalogue2 = xml.read(TestUtils.sourceFrom(xmlStr), CatalogueDataClass.class);
+    Assert.assertEquals(catalogue, catalogue2);
+  }
+
+  @Test
+  public void inlineListDataClass() throws IOException, ParseException {
+
+    TikXml xml = new TikXml.Builder().exceptionOnUnreadXml(true).build();
+
+    InlineListCatalogueDataClass catalogue = xml.read(TestUtils.sourceForFile("books_inline.xml"), InlineListCatalogueDataClass.class);
+
+    Assert.assertEquals(10, catalogue.getBooks().size());
+    for (int i = 1; i <= 10; i++) {
+      BookDataClass book = catalogue.getBooks().get(i - 1);
+      Date date = DateConverter.Companion.getFormat().parse("2000-09-0" + i);
+
+      Assert.assertEquals(i, book.getId());
+      Assert.assertEquals("author" + i, book.getAuthor());
+      Assert.assertEquals("genre" + i, book.getGenre());
+      Assert.assertEquals(i, book.getPrice(), 0);
+      Assert.assertEquals(date, book.getPublishDate());
+      Assert.assertEquals("description" + i, book.getDescription());
+    }
+
+
+    // Write XML
+    // Writing tests
+    Buffer buffer = new Buffer();
+    xml.write(buffer, catalogue);
+
+    String xmlStr =
+            "<?xml version=\"1.0\" encoding=\"UTF-8\"?><catalogue><book id=\"1\"><author>author1</author><price>1.0</price><genre>genre1</genre><description>description1</description><title>title1</title><publish_date>2000-09-01</publish_date></book><book id=\"2\"><author>author2</author><price>2.0</price><genre>genre2</genre><description>description2</description><title>title2</title><publish_date>2000-09-02</publish_date></book><book id=\"3\"><author>author3</author><price>3.0</price><genre>genre3</genre><description>description3</description><title>title3</title><publish_date>2000-09-03</publish_date></book><book id=\"4\"><author>author4</author><price>4.0</price><genre>genre4</genre><description>description4</description><title>title4</title><publish_date>2000-09-04</publish_date></book><book id=\"5\"><author>author5</author><price>5.0</price><genre>genre5</genre><description>description5</description><title>title5</title><publish_date>2000-09-05</publish_date></book><book id=\"6\"><author>author6</author><price>6.0</price><genre>genre6</genre><description>description6</description><title>title6</title><publish_date>2000-09-06</publish_date></book><book id=\"7\"><author>author7</author><price>7.0</price><genre>genre7</genre><description>description7</description><title>title7</title><publish_date>2000-09-07</publish_date></book><book id=\"8\"><author>author8</author><price>8.0</price><genre>genre8</genre><description>description8</description><title>title8</title><publish_date>2000-09-08</publish_date></book><book id=\"9\"><author>author9</author><price>9.0</price><genre>genre9</genre><description>description9</description><title>title9</title><publish_date>2000-09-09</publish_date></book><book id=\"10\"><author>author10</author><price>10.0</price><genre>genre10</genre><description>description10</description><title>title10</title><publish_date>2000-09-10</publish_date></book></catalogue>";
+    Assert.assertEquals(xmlStr, TestUtils.bufferToString(buffer));
+
+    InlineListCatalogueDataClass catalogue2 = xml.read(TestUtils.sourceFrom(xmlStr), InlineListCatalogueDataClass.class);
     Assert.assertEquals(catalogue, catalogue2);
 
   }

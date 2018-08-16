@@ -9,7 +9,7 @@ import com.tickaroo.tikxml.annotation.Xml
  * @author Hannes Dorfmann
  */
 @Xml
-internal class Team {
+class Team {
 
     @Attribute
     var id: Int = 0

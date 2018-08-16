@@ -69,4 +69,43 @@ public class CompanyTest {
     Assert.assertEquals(company, company2);
   }
 
+  @Test
+  public void simpleDataClass() throws IOException, ParseException {
+    TikXml xml = new TikXml.Builder().exceptionOnUnreadXml(true).build();
+
+    CompanyDataClass company = xml.read(TestUtils.sourceForFile("company.xml"), CompanyDataClass.class);
+
+    Assert.assertEquals("Tickaroo", company.getName());
+    Assert.assertEquals(4, company.getPersons().size());
+
+    Assert.assertTrue(company.getPersons().get(0) instanceof BossDataClass);
+
+    BossDataClass boss = (BossDataClass) company.getPersons().get(0);
+    Assert.assertEquals("Naomi", boss.getFirstName());
+    Assert.assertEquals("Owusu", boss.getLastName());
+
+    EmployeeDataClass employee = (EmployeeDataClass) company.getPersons().get(1);
+    Assert.assertEquals("Hannes", employee.getName());
+
+
+    employee = (EmployeeDataClass) company.getPersons().get(2);
+    Assert.assertEquals("Lukas", employee.getName());
+
+
+    employee = (EmployeeDataClass) company.getPersons().get(3);
+    Assert.assertEquals("Bodo", employee.getName());
+
+    // Write XML
+    // Writing tests
+    Buffer buffer = new Buffer();
+    xml.write(buffer, company);
+
+    String xmlStr =
+            "<?xml version=\"1.0\" encoding=\"UTF-8\"?><company><boss firstName=\"Naomi\" lastName=\"Owusu\"/><employee><name>Hannes</name></employee><employee><name>Lukas</name></employee><employee><name>Bodo</name></employee><name>Tickaroo</name></company>";
+    Assert.assertEquals(xmlStr, TestUtils.bufferToString(buffer));
+
+    CompanyDataClass company2 = xml.read(TestUtils.sourceFrom(xmlStr), CompanyDataClass.class);
+    Assert.assertEquals(company, company2);
+  }
+
 }

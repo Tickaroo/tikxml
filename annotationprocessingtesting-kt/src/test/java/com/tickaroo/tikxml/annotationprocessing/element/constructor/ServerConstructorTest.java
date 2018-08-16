@@ -51,4 +51,27 @@ public class ServerConstructorTest {
     Assert.assertEquals(server, server2);
 
   }
+
+  @Test
+  public void testDataClass() throws IOException {
+    TikXml xml = new TikXml.Builder().exceptionOnUnreadXml(true).writeDefaultXmlDeclaration(false).build();
+    ServerConstructorDataClass server = xml.read(TestUtils.sourceForFile("server.xml"), ServerConstructorDataClass.class);
+
+    Assert.assertEquals("fooServer", server.getName());
+    Assert.assertTrue(server.getConfig().getEnabled());
+    Assert.assertEquals("127.0.0.1", server.getConfig().getIp());
+
+    // Writing xml test
+
+    Buffer buffer = new Buffer();
+    xml.write(buffer, server);
+
+    String xmlStr =
+            "<server name=\"fooServer\"><serverConfig enabled=\"true\"><ip>127.0.0.1</ip></serverConfig></server>";
+    Assert.assertEquals(xmlStr, TestUtils.bufferToString(buffer));
+
+    ServerConstructorDataClass server2 = xml.read(TestUtils.sourceFrom(xmlStr), ServerConstructorDataClass.class);
+    Assert.assertEquals(server, server2);
+
+  }
 }

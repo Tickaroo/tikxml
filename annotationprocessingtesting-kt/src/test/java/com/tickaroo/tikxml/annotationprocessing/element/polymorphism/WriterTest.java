@@ -76,6 +76,53 @@ public class WriterTest {
 
     Paper paperOrganisation2 = xml.read(TestUtils.sourceFrom(xmlStr2), Paper.class);
     Assert.assertEquals(paperOrganisation, paperOrganisation2);
-
   }
+
+  @Test
+  public void testDataClass() throws IOException {
+    TikXml xml = new TikXml.Builder().exceptionOnUnreadXml(true).build();
+    PaperDataClass paperJournalist = xml.read(TestUtils.sourceForFile("writer_journalist.xml"), PaperDataClass.class);
+
+
+    Assert.assertNotNull(paperJournalist.getWriter());
+    Assert.assertTrue(paperJournalist.getWriter() instanceof JournalistDataClass);
+    JournalistDataClass writer = (JournalistDataClass) paperJournalist.getWriter();
+
+    Assert.assertEquals("Hannes", writer.getName());
+    Assert.assertEquals(40, writer.getAge());
+
+
+    PaperDataClass paperOrganisation = xml.read(TestUtils.sourceForFile("writer_organisation.xml"), PaperDataClass.class);
+
+
+    Assert.assertNotNull(paperOrganisation.getWriter());
+    Assert.assertTrue(paperOrganisation.getWriter() instanceof OrganisationDataClass);
+    OrganisationDataClass writer2 = (OrganisationDataClass) paperOrganisation.getWriter();
+
+    Assert.assertEquals("NY Times", writer2.getName());
+    Assert.assertEquals("Foo Road 42", writer2.getAddress());
+
+
+    Buffer buffer = new Buffer();
+    xml.write(buffer, paperJournalist);
+
+    String xmlStr =
+            "<?xml version=\"1.0\" encoding=\"UTF-8\"?><paper><journalist><name>Hannes</name><age>40</age></journalist></paper>";
+    Assert.assertEquals(xmlStr, TestUtils.bufferToString(buffer));
+
+    PaperDataClass paperJournalist2 = xml.read(TestUtils.sourceFrom(xmlStr), PaperDataClass.class);
+    Assert.assertEquals(paperJournalist, paperJournalist2);
+
+
+    Buffer buffer2 = new Buffer();
+    xml.write(buffer2, paperOrganisation);
+
+    String xmlStr2 =
+            "<?xml version=\"1.0\" encoding=\"UTF-8\"?><paper><organisation><address>Foo Road 42</address><name>NY Times</name></organisation></paper>";
+    Assert.assertEquals(xmlStr2, TestUtils.bufferToString(buffer2));
+
+    PaperDataClass paperOrganisation2 = xml.read(TestUtils.sourceFrom(xmlStr2), PaperDataClass.class);
+    Assert.assertEquals(paperOrganisation, paperOrganisation2);
+  }
+
 }

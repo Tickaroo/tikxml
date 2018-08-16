@@ -3,6 +3,7 @@ package com.tickaroo.tikxml.annotationprocessing.element;
 import com.tickaroo.tikxml.TestUtils;
 import com.tickaroo.tikxml.TikXml;
 import java.io.IOException;
+
 import okio.Buffer;
 import org.junit.*;
 

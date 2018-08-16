@@ -142,4 +142,118 @@ public class EmptyPropertyElementTest {
         xml.read(TestUtils.sourceFrom(xmlStr), EmptyBooleanPropertyElement.class);
     Assert.assertEquals(item, item2);
   }
+
+
+  @Test
+  public void emptyStringForEmptyTagDataClass() throws IOException, ParseException {
+    TikXml xml = new TikXml.Builder().exceptionOnUnreadXml(true).build();
+
+    EmptyStringPropertyElementDataClass item =
+            xml.read(TestUtils.sourceForFile("empty_property_tag.xml"),
+                    EmptyStringPropertyElementDataClass.class);
+    Assert.assertEquals("", item.getEmpty());
+
+    // Write XML
+    // Writing tests
+    Buffer buffer = new Buffer();
+    xml.write(buffer, item);
+
+    String xmlStr =
+            "<?xml version=\"1.0\" encoding=\"UTF-8\"?><emptyPropertyTag><empty></empty></emptyPropertyTag>";
+    Assert.assertEquals(xmlStr, TestUtils.bufferToString(buffer));
+
+    EmptyStringPropertyElementDataClass item2 =
+            xml.read(TestUtils.sourceFrom(xmlStr), EmptyStringPropertyElementDataClass.class);
+    Assert.assertEquals(item, item2);
+  }
+
+  @Test
+  public void zeroIntForEmptyTagDataClass() throws IOException, ParseException {
+    TikXml xml = new TikXml.Builder().exceptionOnUnreadXml(true).build();
+
+    EmptyIntPropertyElementDataClass item =
+            xml.read(TestUtils.sourceForFile("empty_property_tag.xml"), EmptyIntPropertyElementDataClass.class);
+    Assert.assertEquals(0, item.getEmpty());
+
+    // Write XML
+    // Writing tests
+    Buffer buffer = new Buffer();
+    xml.write(buffer, item);
+
+    String xmlStr =
+            "<?xml version=\"1.0\" encoding=\"UTF-8\"?><emptyPropertyTag><empty>0</empty></emptyPropertyTag>";
+    Assert.assertEquals(xmlStr, TestUtils.bufferToString(buffer));
+
+    EmptyIntPropertyElementDataClass item2 =
+            xml.read(TestUtils.sourceFrom(xmlStr), EmptyIntPropertyElementDataClass.class);
+    Assert.assertEquals(item, item2);
+  }
+
+  @Test
+  public void zeroLongForEmptyTagDataClass() throws IOException, ParseException {
+    TikXml xml = new TikXml.Builder().exceptionOnUnreadXml(true).build();
+
+    EmptyLongPropertyElementDataClass item =
+            xml.read(TestUtils.sourceForFile("empty_property_tag.xml"), EmptyLongPropertyElementDataClass.class);
+    Assert.assertEquals(0, item.getEmpty());
+
+    // Write XML
+    // Writing tests
+    Buffer buffer = new Buffer();
+    xml.write(buffer, item);
+
+    String xmlStr =
+            "<?xml version=\"1.0\" encoding=\"UTF-8\"?><emptyPropertyTag><empty>0</empty></emptyPropertyTag>";
+    Assert.assertEquals(xmlStr, TestUtils.bufferToString(buffer));
+
+    EmptyLongPropertyElementDataClass item2 =
+            xml.read(TestUtils.sourceFrom(xmlStr), EmptyLongPropertyElementDataClass.class);
+    Assert.assertEquals(item, item2);
+  }
+
+  @Test
+  public void zeroDoubleForEmptyTagDataClass() throws IOException, ParseException {
+    TikXml xml = new TikXml.Builder().exceptionOnUnreadXml(true).build();
+
+    EmptyDoublePropertyElementDataClass item =
+            xml.read(TestUtils.sourceForFile("empty_property_tag.xml"),
+                    EmptyDoublePropertyElementDataClass.class);
+    Assert.assertEquals(0, 0, item.getEmpty());
+
+    // Write XML
+    // Writing tests
+    Buffer buffer = new Buffer();
+    xml.write(buffer, item);
+
+    String xmlStr =
+            "<?xml version=\"1.0\" encoding=\"UTF-8\"?><emptyPropertyTag><empty>0.0</empty></emptyPropertyTag>";
+    Assert.assertEquals(xmlStr, TestUtils.bufferToString(buffer));
+
+    EmptyDoublePropertyElementDataClass item2 =
+            xml.read(TestUtils.sourceFrom(xmlStr), EmptyDoublePropertyElementDataClass.class);
+    Assert.assertEquals(item, item2);
+  }
+
+  @Test
+  public void falseBooleanForEmptyTagDataClass() throws IOException, ParseException {
+    TikXml xml = new TikXml.Builder().exceptionOnUnreadXml(true).build();
+
+    EmptyBooleanPropertyElementDataClass item =
+            xml.read(TestUtils.sourceForFile("empty_property_tag.xml"),
+                    EmptyBooleanPropertyElementDataClass.class);
+    Assert.assertEquals(false, item.getEmpty());
+
+    // Write XML
+    // Writing tests
+    Buffer buffer = new Buffer();
+    xml.write(buffer, item);
+
+    String xmlStr =
+            "<?xml version=\"1.0\" encoding=\"UTF-8\"?><emptyPropertyTag><empty>false</empty></emptyPropertyTag>";
+    Assert.assertEquals(xmlStr, TestUtils.bufferToString(buffer));
+
+    EmptyBooleanPropertyElementDataClass item2 =
+            xml.read(TestUtils.sourceFrom(xmlStr), EmptyBooleanPropertyElementDataClass.class);
+    Assert.assertEquals(item, item2);
+  }
 }

@@ -62,4 +62,35 @@ public class PolymorphicPathTest {
     Company company2 = xml.read(TestUtils.sourceFrom(xmlStr), Company.class);
     Assert.assertEquals(company, company2);
   }
+
+  @Test
+  public void simpleDataClass() throws IOException, ParseException {
+    TikXml xml = new TikXml.Builder().exceptionOnUnreadXml(false).build();
+
+    CompanyDataClass company =
+            xml.read(TestUtils.sourceForFile("regression/deep_polymprphic_paths.xml"), CompanyDataClass.class);
+
+    Assert.assertEquals(company.getPersons().size(), 3);
+    BossDataClass boss = (BossDataClass) company.getPersons().get(0);
+    EmployeeDataClass employee = (EmployeeDataClass) company.getPersons().get(1);
+    Person person = company.getPersons().get(2);
+
+    Assert.assertEquals(boss.getId(), 1);
+    Assert.assertEquals(boss.getName(), "Boss");
+    Assert.assertEquals(employee.getId(), 2);
+    Assert.assertEquals(employee.getName(), "Employee");
+    Assert.assertEquals(person.getId(), 3);
+
+    // Writing xml test
+
+    Buffer buffer = new Buffer();
+    xml.write(buffer, company);
+
+    String xmlStr =
+            "<?xml version=\"1.0\" encoding=\"UTF-8\"?><company><department><persons><boss><name>Boss</name><id>1</id></boss><employee><name>Employee</name><id>2</id></employee><person><id>3</id></person></persons></department></company>";
+    Assert.assertEquals(xmlStr, TestUtils.bufferToString(buffer));
+
+    CompanyDataClass company2 = xml.read(TestUtils.sourceFrom(xmlStr), CompanyDataClass.class);
+    Assert.assertEquals(company, company2);
+  }
 }

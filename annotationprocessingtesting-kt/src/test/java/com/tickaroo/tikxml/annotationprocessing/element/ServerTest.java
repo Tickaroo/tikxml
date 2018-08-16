@@ -31,7 +31,6 @@ public class ServerTest {
 
   @Test
   public void test() throws IOException {
-
     // Test reading
     TikXml xml = new TikXml.Builder().exceptionOnUnreadXml(true).writeDefaultXmlDeclaration(false).build();
     Server server = xml.read(TestUtils.sourceForFile("server.xml"), Server.class);
@@ -52,6 +51,28 @@ public class ServerTest {
 
     Server server2 = xml.read(TestUtils.sourceFrom(xmlStr), Server.class);
     Assert.assertEquals(server, server2);
+  }
 
+  @Test
+  public void testDataClass() throws IOException {
+    // Test reading
+    TikXml xml = new TikXml.Builder().exceptionOnUnreadXml(true).writeDefaultXmlDeclaration(false).build();
+    ServerDataClass server = xml.read(TestUtils.sourceForFile("server.xml"), ServerDataClass.class);
+
+    Assert.assertEquals("fooServer", server.getName());
+    Assert.assertTrue(server.getConfig().getEnabled());
+    Assert.assertEquals("127.0.0.1", server.getConfig().getIp());
+
+    // Writing xml test
+
+    Buffer buffer = new Buffer();
+    xml.write(buffer, server);
+
+    String xmlStr =
+            "<server name=\"fooServer\"><serverConfig enabled=\"true\"><ip>127.0.0.1</ip></serverConfig></server>";
+    Assert.assertEquals(xmlStr, TestUtils.bufferToString(buffer));
+
+    ServerDataClass server2 = xml.read(TestUtils.sourceFrom(xmlStr), ServerDataClass.class);
+    Assert.assertEquals(server, server2);
   }
 }
