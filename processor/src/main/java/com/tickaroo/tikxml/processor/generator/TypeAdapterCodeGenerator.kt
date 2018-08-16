@@ -41,7 +41,7 @@ import kotlin.collections.HashMap
  * @author Hannes Dorfmann
  * @since 1.0
  */
-class TypeAdapterCodeGenerator(private val filer: Filer, private val elementUtils: Elements, private val typeUtils: Types, private val typeConvertersForPrimitives: Set<String>, private val mapImpl: String) {
+class TypeAdapterCodeGenerator(private val filer: Filer, private val elementUtils: Elements, private val typeUtils: Types, private val typeConvertersForPrimitives: Set<String>, private val mapImpl: String?) {
 
     /**
      * The name of the class that holds some value when we have to parse xml into a constructor
@@ -109,7 +109,7 @@ class TypeAdapterCodeGenerator(private val filer: Filer, private val elementUtil
         val targetClassToParseInto = getClassToParseInto(annotatedClass)
 
         val mapImplClass: Class<*> = when {
-            mapImpl.isNullOrEmpty().not() -> try {
+            mapImpl?.isNullOrEmpty()?.not() -> try {
                 Class.forName(mapImpl)
             } catch (classNotFound: ClassNotFoundException) {
                 HashMap::class.java
