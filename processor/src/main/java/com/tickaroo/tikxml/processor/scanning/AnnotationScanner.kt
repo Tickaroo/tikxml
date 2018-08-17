@@ -174,12 +174,12 @@ class AnnotationScanner(protected val elementUtils: Elements, protected val type
                 val getter = checkGetter(it, methodsMap, false)
                 val setter = checkSetter(it, methodsMap)
 
+                // Set access policy
+                it.accessResolver = FieldAccessResolver.GetterSetterFieldAccessResolver(getter, setter)
+
                 if (it is NamedField) {
                     addFieldToAnnotatedClass(annotatedClass, it)
                 }
-
-                // Set access policy
-                it.accessResolver = FieldAccessResolver.GetterSetterFieldAccessResolver(getter, setter)
             }
         }
         return annotatedConstructor != null

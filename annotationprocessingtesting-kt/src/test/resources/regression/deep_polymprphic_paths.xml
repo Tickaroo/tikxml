@@ -1,0 +1,20 @@
+<company>
+  <department>
+    <persons>
+      <boss>
+        <id>1</id>
+        <name>Boss</name>
+      </boss>
+
+      <employee>
+        <id>2</id>
+        <name>Employee</name>
+      </employee>
+
+      <person>
+        <id>3</id>
+      </person>
+
+    </persons>
+  </department>
+</company>
