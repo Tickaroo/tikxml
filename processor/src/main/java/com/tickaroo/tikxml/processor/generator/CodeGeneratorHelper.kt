@@ -59,6 +59,53 @@ class CodeGeneratorHelper(val customTypeConverterManager: CustomTypeConverterMan
         const val writerParam = "writer"
         const val attributeBindersParam = "attributeBinders"
         const val childElementBindersParam = "childElementBinders"
+
+        val booleanTypes = mapOf<String, String>(
+                "java.lang.Boolean" to "java.lang.Boolean",
+                "boolean" to "boolean",
+                "kotlin.Boolean" to "java.lang.Boolean",
+                Boolean::class.java.canonicalName to "java.lang.Boolean"
+        )
+
+        val doubleTypes = mapOf<String, String>(
+                "java.lang.Double" to "java.lang.Double",
+                "double" to "double",
+                "kotlin.Double" to "java.lang.Double",
+                Double::class.java.canonicalName to "java.lang.Double"
+        )
+
+        val integerTypes = mapOf<String, String>(
+                "java.lang.Integer" to "java.lang.Integer",
+                "int" to "int",
+                "kotlin.Int" to "java.lang.Integer",
+                Integer::class.java.canonicalName to "java.lang.Integer"
+        )
+
+        val stringTypes = Collections.singletonMap(
+                String::class.java.canonicalName, "java.lang.String"
+        )
+
+        val longTypes = mapOf<String, String>(
+                "java.lang.Long" to "java.lang.Long",
+                "long" to "long",
+                "kotlin.Long" to "java.lang.Long",
+                Long::class.java.canonicalName to "java.lang.Long"
+        )
+
+        fun generatePrimitiveConverter(
+                typesMap: Map<String, String>,
+                typeConvertersForPrimitives: Set<String>,
+                surroundWithTryCatch: (String) -> CodeBlock,
+                codeWriter: (String) -> String
+        ): CodeBlock? {
+            return typesMap.asSequence().filter {
+                typeConvertersForPrimitives.contains(it.key)
+            }.map {
+                it.value
+            }.firstOrNull()?.let { className ->
+                surroundWithTryCatch(codeWriter(className))
+            }
+        }
     }
 
 
@@ -123,7 +170,6 @@ class CodeGeneratorHelper(val customTypeConverterManager: CustomTypeConverterMan
         val type = element.asType()
         val xmlReaderMethodPrefix = assignmentType.xmlReaderMethodPrefix()
 
-
         val surroundWithTryCatch = fun(assignmentStatement: String) = CodeBlock.builder()
                 .beginControlFlow("try")
                 .add(accessResolver.resolveAssignment(assignmentStatement))
@@ -134,96 +180,39 @@ class CodeGeneratorHelper(val customTypeConverterManager: CustomTypeConverterMan
                 .endControlFlow()
                 .build()
 
-        //
-        // Use custom type converter?
-        //
-        if (customTypeConverterQualifiedClassName != null) {
-            return surroundWithTryCatch("${customTypeConverterManager.getFieldNameForConverter(customTypeConverterQualifiedClassName)}.read($readerParam.$xmlReaderMethodPrefix())")
+        val codeWriter = fun(className: String) =
+                "$tikConfigParam.getTypeConverter($className.class).read($readerParam.$xmlReaderMethodPrefix())"
+
+        val codeBlockGen = fun(typesMap: Map<String, String>, resolveMethodName: String) = generatePrimitiveConverter(
+                typesMap,
+                typeConvertersForPrimitives,
+                surroundWithTryCatch,
+                codeWriter
+        ) ?: accessResolver.resolveAssignment("$readerParam.$xmlReaderMethodPrefix$resolveMethodName()")
+
+        return when {
+            customTypeConverterQualifiedClassName != null -> {
+                surroundWithTryCatch("${customTypeConverterManager.getFieldNameForConverter(customTypeConverterQualifiedClassName)}.read($readerParam.$xmlReaderMethodPrefix())")
+            }
+            type.isString() -> {
+                codeBlockGen(stringTypes, "")
+            }
+            type.isBoolean() -> {
+                codeBlockGen(booleanTypes, "AsBoolean")
+            }
+            type.isDouble() -> {
+                codeBlockGen(doubleTypes, "AsDouble")
+            }
+            type.isInt() -> {
+                codeBlockGen(integerTypes, "AsInt")
+            }
+            type.isLong() -> {
+                codeBlockGen(longTypes, "AsLong")
+            }
+            else -> {
+                surroundWithTryCatch("$tikConfigParam.getTypeConverter($type.class).read($readerParam.$xmlReaderMethodPrefix())")
+            }
         }
-
-        //
-        // Primitives
-        //
-        if (type.isString()) {
-            if (typeConvertersForPrimitives.contains(String::class.java.canonicalName)) {
-                return surroundWithTryCatch("$tikConfigParam.getTypeConverter(java.lang.String.class).read($readerParam.$xmlReaderMethodPrefix())")
-            }
-
-            return accessResolver.resolveAssignment("$readerParam.$xmlReaderMethodPrefix()")
-        }
-
-        if (type.isBoolean()) {
-            if (typeConvertersForPrimitives.contains("java.lang.Boolean")) {
-                return surroundWithTryCatch("$tikConfigParam.getTypeConverter(java.lang.Boolean.class).read($readerParam.$xmlReaderMethodPrefix())")
-            }
-
-            if (typeConvertersForPrimitives.contains("boolean")) {
-                return surroundWithTryCatch("$tikConfigParam.getTypeConverter(boolean.class).read($readerParam.$xmlReaderMethodPrefix())")
-            }
-
-            if (typeConvertersForPrimitives.contains("kotlin.Boolean") || typeConvertersForPrimitives.contains(Boolean::class.java.canonicalName)) {
-                return surroundWithTryCatch("$tikConfigParam.getTypeConverter(java.lang.Boolean.class).read($readerParam.$xmlReaderMethodPrefix())")
-            }
-
-            return accessResolver.resolveAssignment("$readerParam.${xmlReaderMethodPrefix}AsBoolean()")
-        }
-
-        if (type.isDouble()) {
-
-            if (typeConvertersForPrimitives.contains("java.lang.Double")) {
-                return surroundWithTryCatch("$tikConfigParam.getTypeConverter(java.lang.Double.class).read($readerParam.${xmlReaderMethodPrefix}())")
-            }
-
-            if (typeConvertersForPrimitives.contains("double")) {
-                return surroundWithTryCatch("$tikConfigParam.getTypeConverter(double.class).read($readerParam.${xmlReaderMethodPrefix}())")
-            }
-
-            if (typeConvertersForPrimitives.contains("kotlin.Double") || typeConvertersForPrimitives.contains(Double::class.java.canonicalName)) {
-                return surroundWithTryCatch("$tikConfigParam.getTypeConverter(java.lang.Double.class).read($readerParam.${xmlReaderMethodPrefix}())")
-            }
-
-            return accessResolver.resolveAssignment("$readerParam.${xmlReaderMethodPrefix}AsDouble()")
-        }
-
-        if (type.isInt()) {
-
-            if (typeConvertersForPrimitives.contains("java.lang.Integer")) {
-                return surroundWithTryCatch("$tikConfigParam.getTypeConverter(java.lang.Integer.class).read($readerParam.${xmlReaderMethodPrefix}())")
-            }
-
-            if (typeConvertersForPrimitives.contains("int")) {
-                return surroundWithTryCatch("$tikConfigParam.getTypeConverter(int.class).read($readerParam.${xmlReaderMethodPrefix}())")
-            }
-
-            if (typeConvertersForPrimitives.contains("kotlin.Int") || typeConvertersForPrimitives.contains(Int::class.java.canonicalName)) {
-                return surroundWithTryCatch("$tikConfigParam.getTypeConverter(java.lang.Integer.class).read($readerParam.${xmlReaderMethodPrefix}())")
-            }
-
-            return accessResolver.resolveAssignment("$readerParam.${xmlReaderMethodPrefix}AsInt()")
-        }
-
-        if (type.isLong()) {
-
-            if (typeConvertersForPrimitives.contains("java.lang.Long")) {
-                return surroundWithTryCatch("$tikConfigParam.getTypeConverter(java.lang.Long.class).read($readerParam.${xmlReaderMethodPrefix}())")
-            }
-
-            if (typeConvertersForPrimitives.contains("long")) {
-                return surroundWithTryCatch("$tikConfigParam.getTypeConverter(long.class).read($readerParam.${xmlReaderMethodPrefix}())")
-            }
-
-            if (typeConvertersForPrimitives.contains("kotlin.Long") || typeConvertersForPrimitives.contains(Long::class.java.canonicalName)) {
-                return surroundWithTryCatch("$tikConfigParam.getTypeConverter(java.lang.Long.class).read($readerParam.${xmlReaderMethodPrefix}())")
-            }
-
-
-            return accessResolver.resolveAssignment("$readerParam.${xmlReaderMethodPrefix}AsLong()")
-        }
-
-        //
-        // Use typeconveter from TikConfig
-        //
-        return surroundWithTryCatch("$tikConfigParam.getTypeConverter($type.class).read($readerParam.${xmlReaderMethodPrefix}())")
     }
 
     /**
@@ -334,97 +323,40 @@ class CodeGeneratorHelper(val customTypeConverterManager: CustomTypeConverterMan
             return builder.build();
         }
 
-        //
-        // Use custom type converter?
-        //
-        if (customTypeConverterQualifiedClassName != null) {
-            return surroundWithTryCatch("$writerParam.$xmlWriterMethod(\"$attributeName\", ${customTypeConverterManager.getFieldNameForConverter(customTypeConverterQualifiedClassName)}.write(${accessResolver.resolveGetterForWritingXml()}))")
+        val codeWriter = fun(className: String) =
+                "$writerParam.$xmlWriterMethod(\"$attributeName\", $tikConfigParam.getTypeConverter($className.class).write(${accessResolver.resolveGetterForWritingXml()}))"
+
+
+        val codeBlockGen = fun(typesMap: Map<String, String>) = generatePrimitiveConverter(
+                typesMap,
+                typeConvertersForPrimitives,
+                surroundWithTryCatch,
+                codeWriter
+        ) ?: writeValueWithoutConverter()
+
+        return when {
+            customTypeConverterQualifiedClassName != null -> {
+                surroundWithTryCatch("$writerParam.$xmlWriterMethod(\"$attributeName\", ${customTypeConverterManager.getFieldNameForConverter(customTypeConverterQualifiedClassName)}.write(${accessResolver.resolveGetterForWritingXml()}))")
+            }
+            type.isString() -> {
+                codeBlockGen(stringTypes)
+            }
+            type.isBoolean() -> {
+                codeBlockGen(booleanTypes)
+            }
+            type.isDouble() -> {
+                codeBlockGen(doubleTypes)
+            }
+            type.isInt() -> {
+                codeBlockGen(integerTypes)
+            }
+            type.isLong() -> {
+                codeBlockGen(longTypes)
+            }
+            else -> {
+                surroundWithTryCatch("$writerParam.$xmlWriterMethod(\"$attributeName\", $tikConfigParam.getTypeConverter($type.class).write(${accessResolver.resolveGetterForWritingXml()}))")
+            }
         }
-
-        //
-        // Primitives
-        //
-        if (type.isString()) {
-            if (typeConvertersForPrimitives.contains(String::class.java.canonicalName)) {
-                return surroundWithTryCatch("$writerParam.$xmlWriterMethod(\"$attributeName\", $tikConfigParam.getTypeConverter(java.lang.String.class).write(${accessResolver.resolveGetterForWritingXml()}))")
-            }
-
-            return writeValueWithoutConverter()
-        }
-
-        if (type.isBoolean()) {
-            if (typeConvertersForPrimitives.contains("java.lang.Boolean")) {
-                return surroundWithTryCatch("$writerParam.$xmlWriterMethod(\"$attributeName\", $tikConfigParam.getTypeConverter(java.lang.Boolean.class).write(${accessResolver.resolveGetterForWritingXml()}))")
-            }
-
-            if (typeConvertersForPrimitives.contains("boolean")) {
-                return surroundWithTryCatch("$writerParam.$xmlWriterMethod(\"$attributeName\", $tikConfigParam.getTypeConverter(boolean.class).write(${accessResolver.resolveGetterForWritingXml()}))")
-            }
-
-            if (typeConvertersForPrimitives.contains("kotlin.Boolean") || typeConvertersForPrimitives.contains(Boolean::class.java.canonicalName)) {
-                return surroundWithTryCatch("$writerParam.$xmlWriterMethod(\"$attributeName\", $tikConfigParam.getTypeConverter(java.lang.Boolean.class).write(${accessResolver.resolveGetterForWritingXml()}))")
-            }
-
-            return writeValueWithoutConverter()
-        }
-
-        if (type.isDouble()) {
-
-            if (typeConvertersForPrimitives.contains("java.lang.Double")) {
-                return surroundWithTryCatch("$writerParam.$xmlWriterMethod(\"$attributeName\", $tikConfigParam.getTypeConverter(java.lang.Double.class).write(${accessResolver.resolveGetterForWritingXml()}))")
-            }
-
-            if (typeConvertersForPrimitives.contains("double")) {
-                return surroundWithTryCatch("$writerParam.$xmlWriterMethod(\"$attributeName\", $tikConfigParam.getTypeConverter(double.class).write(${accessResolver.resolveGetterForWritingXml()}))")
-            }
-
-
-            if (typeConvertersForPrimitives.contains("kotlin.Double") || typeConvertersForPrimitives.contains(Double::class.java.canonicalName)) {
-                return surroundWithTryCatch("$writerParam.$xmlWriterMethod(\"$attributeName\", $tikConfigParam.getTypeConverter(java.lang.Double.class).write(${accessResolver.resolveGetterForWritingXml()}))")
-            }
-
-
-            return writeValueWithoutConverter()
-        }
-
-        if (type.isInt()) {
-
-            if (typeConvertersForPrimitives.contains("java.lang.Integer")) {
-                return surroundWithTryCatch("$writerParam.$xmlWriterMethod(\"$attributeName\", $tikConfigParam.getTypeConverter(java.lang.Integer.class).write(${accessResolver.resolveGetterForWritingXml()}))")
-            }
-
-            if (typeConvertersForPrimitives.contains("int")) {
-                return surroundWithTryCatch("$writerParam.$xmlWriterMethod(\"$attributeName\", $tikConfigParam.getTypeConverter(int.class).write(${accessResolver.resolveGetterForWritingXml()}))")
-            }
-
-            if (typeConvertersForPrimitives.contains("kotlin.Int") || typeConvertersForPrimitives.contains(Int::class.java.canonicalName)) {
-                return surroundWithTryCatch("$writerParam.$xmlWriterMethod(\"$attributeName\", $tikConfigParam.getTypeConverter(java.lang.Integer.class).write(${accessResolver.resolveGetterForWritingXml()}))")
-            }
-
-            return writeValueWithoutConverter()
-        }
-
-        if (type.isLong()) {
-
-            if (typeConvertersForPrimitives.contains("java.lang.Long")) {
-                return surroundWithTryCatch("$writerParam.$xmlWriterMethod(\"$attributeName\", $tikConfigParam.getTypeConverter(java.lang.Long.class).write(${accessResolver.resolveGetterForWritingXml()}))")
-            }
-
-            if (typeConvertersForPrimitives.contains("long")) {
-                return surroundWithTryCatch("$writerParam.$xmlWriterMethod(\"$attributeName\", $tikConfigParam.getTypeConverter(long.class).write(${accessResolver.resolveGetterForWritingXml()}))")
-            }
-
-            if (typeConvertersForPrimitives.contains("kotlin.Long") || typeConvertersForPrimitives.contains(Long::class.java.canonicalName)) {
-                return surroundWithTryCatch("$writerParam.$xmlWriterMethod(\"$attributeName\", $tikConfigParam.getTypeConverter(java.lang.Long.class).write(${accessResolver.resolveGetterForWritingXml()}))")
-            }
-
-            return writeValueWithoutConverter()
-        }
-
-        //
-        // Use typeconveter from TikConfig
-        //
-        return surroundWithTryCatch("$writerParam.$xmlWriterMethod(\"$attributeName\", $tikConfigParam.getTypeConverter($type.class).write(${accessResolver.resolveGetterForWritingXml()}))")
     }
 
     /**
@@ -530,79 +462,39 @@ class CodeGeneratorHelper(val customTypeConverterManager: CustomTypeConverterMan
             return builder.build();
         }
 
-        //
-        // Use custom type converter?
-        //
-        if (customTypeConverterQualifiedClassName != null) {
-            return surroundWithTryCatch("$writerParam.$xmlWriterMethod(${customTypeConverterManager.getFieldNameForConverter(customTypeConverterQualifiedClassName)}.write(${accessResolver.resolveGetterForWritingXml()}))")
+        val codeWriter = fun(className: String) =
+                "$writerParam.$xmlWriterMethod($tikConfigParam.getTypeConverter($className.class).write(${accessResolver.resolveGetterForWritingXml()}))"
+
+        val codeBlockGen = fun(typesMap: Map<String, String>) = generatePrimitiveConverter(
+                typesMap,
+                typeConvertersForPrimitives,
+                surroundWithTryCatch,
+                codeWriter
+        ) ?: writeValueWithoutConverter()
+
+        return when {
+            customTypeConverterQualifiedClassName != null -> {
+                surroundWithTryCatch("$writerParam.$xmlWriterMethod(${customTypeConverterManager.getFieldNameForConverter(customTypeConverterQualifiedClassName)}.write(${accessResolver.resolveGetterForWritingXml()}))")
+            }
+            type.isString() -> {
+                codeBlockGen(stringTypes)
+            }
+            type.isBoolean() -> {
+                codeBlockGen(booleanTypes)
+            }
+            type.isDouble() -> {
+                codeBlockGen(doubleTypes)
+            }
+            type.isInt() -> {
+                codeBlockGen(integerTypes)
+            }
+            type.isLong() -> {
+                codeBlockGen(longTypes)
+            }
+            else -> {
+                surroundWithTryCatch("$writerParam.$xmlWriterMethod($tikConfigParam.getTypeConverter($type.class).write(${accessResolver.resolveGetterForWritingXml()}))")
+            }
         }
-
-        //
-        // Primitives
-        //
-        if (type.isString()) {
-            if (typeConvertersForPrimitives.contains(String::class.java.canonicalName)) {
-                return surroundWithTryCatch("$writerParam.$xmlWriterMethod($tikConfigParam.getTypeConverter(java.lang.String.class).write(${accessResolver.resolveGetterForWritingXml()}))")
-            }
-
-            return writeValueWithoutConverter()
-        }
-
-        if (type.isBoolean()) {
-            if (typeConvertersForPrimitives.contains(String::class.java.canonicalName)) {
-                return surroundWithTryCatch("$writerParam.$xmlWriterMethod($tikConfigParam.getTypeConverter(java.lang.Boolean.class).write(${accessResolver.resolveGetterForWritingXml()}))")
-            }
-
-            if (typeConvertersForPrimitives.contains("boolean")) {
-                return surroundWithTryCatch("$writerParam.$xmlWriterMethod($tikConfigParam.getTypeConverter(boolean.class).write(${accessResolver.resolveGetterForWritingXml()}))")
-            }
-
-            return writeValueWithoutConverter()
-        }
-
-        if (type.isDouble()) {
-
-            if (typeConvertersForPrimitives.contains(Double::class.java.canonicalName)) {
-                return surroundWithTryCatch("$writerParam.$xmlWriterMethod($tikConfigParam.getTypeConverter(java.lang.Double.class).write(${accessResolver.resolveGetterForWritingXml()}))")
-            }
-
-            if (typeConvertersForPrimitives.contains("double")) {
-                return surroundWithTryCatch("$writerParam.$xmlWriterMethod($tikConfigParam.getTypeConverter(double.class).write(${accessResolver.resolveGetterForWritingXml()}))")
-            }
-
-            return writeValueWithoutConverter()
-        }
-
-        if (type.isInt()) {
-
-            if (typeConvertersForPrimitives.contains(Integer::class.java.canonicalName)) {
-                return surroundWithTryCatch("$writerParam.$xmlWriterMethod($tikConfigParam.getTypeConverter(java.lang.Integer.class).write(${accessResolver.resolveGetterForWritingXml()}))")
-            }
-
-            if (typeConvertersForPrimitives.contains("int")) {
-                return surroundWithTryCatch("$writerParam.$xmlWriterMethod($tikConfigParam.getTypeConverter(int.class).write(${accessResolver.resolveGetterForWritingXml()}))")
-            }
-
-            return writeValueWithoutConverter()
-        }
-
-        if (type.isLong()) {
-
-            if (typeConvertersForPrimitives.contains(Long::class.java.canonicalName)) {
-                return surroundWithTryCatch("$writerParam.$xmlWriterMethod($tikConfigParam.getTypeConverter(java.lang.Long.class).write(${accessResolver.resolveGetterForWritingXml()}))")
-            }
-
-            if (typeConvertersForPrimitives.contains("long")) {
-                return surroundWithTryCatch("$writerParam.$xmlWriterMethod($tikConfigParam.getTypeConverter(long.class).write(${accessResolver.resolveGetterForWritingXml()}))")
-            }
-
-            return writeValueWithoutConverter()
-        }
-
-        //
-        // Use typeconveter from TikConfig
-        //
-        return surroundWithTryCatch("$writerParam.$xmlWriterMethod($tikConfigParam.getTypeConverter($type.class).write(${accessResolver.resolveGetterForWritingXml()}))")
     }
 
     /**
