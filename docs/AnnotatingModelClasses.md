@@ -1090,7 +1090,7 @@ data class Book (
 # AutoValue
 TikXml supports [AutoValue](https://github.com/google/auto/tree/master/value) by providing an auto value extension. You have to include that dependency
 ```groovy
-apt 'com.tickaroo.tikxml:auto-value-tikxml:{latest-version}'
+annotationProcessor 'com.tickaroo.tikxml:auto-value-tikxml:{latest-version}'
 ```
 
 Then annotate AutoValue abstract classes with `@Xml` and any abstract method with other TikXml annotation as usual.
