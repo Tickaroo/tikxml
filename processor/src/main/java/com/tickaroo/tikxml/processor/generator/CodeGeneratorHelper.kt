@@ -46,8 +46,13 @@ import javax.lang.model.util.Types
  *
  * @author Hannes Dorfmann
  */
-class CodeGeneratorHelper(val customTypeConverterManager: CustomTypeConverterManager, val typeConvertersForPrimitives: Set<String>, val valueType: ClassName, val elementUtils: Elements, val typeUtils: Types) {
-
+class CodeGeneratorHelper(
+        val customTypeConverterManager: CustomTypeConverterManager,
+        val typeConvertersForPrimitives: Set<String>,
+        val valueType: ClassName,
+        val elementUtils: Elements,
+        val typeUtils: Types
+) {
 
     // Constants
     companion object PARAMS {
@@ -92,19 +97,83 @@ class CodeGeneratorHelper(val customTypeConverterManager: CustomTypeConverterMan
                 Long::class.java.canonicalName to "java.lang.Long"
         )
 
-        fun generatePrimitiveConverter(
+        fun tryGeneratePrimitiveConverter(
                 typesMap: Map<String, String>,
                 typeConvertersForPrimitives: Set<String>,
-                surroundWithTryCatch: (String) -> CodeBlock,
-                codeWriter: (String) -> String
-        ): CodeBlock? {
+                codeWriterFormat: String
+        ): String? {
             return typesMap.asSequence().filter {
                 typeConvertersForPrimitives.contains(it.key)
             }.map {
                 it.value
             }.firstOrNull()?.let { className ->
-                surroundWithTryCatch(codeWriter(className))
+                codeWriterFormat.format(className)
             }
+        }
+
+        fun surroundWithTryCatchForRead(accessResolver: FieldAccessResolver, assignmentStatement: String): CodeBlock =
+                CodeBlock.builder()
+                        .beginControlFlow("try")
+                        .add(accessResolver.resolveAssignment(assignmentStatement))
+                        .nextControlFlow("catch(\$T e)", ClassName.get(TypeConverterNotFoundException::class.java))
+                        .addStatement("throw e")
+                        .nextControlFlow("catch(\$T e)", ClassName.get(Exception::class.java))
+                        .addStatement("throw new \$T(e)", ClassName.get(IOException::class.java))
+                        .endControlFlow()
+                        .build()
+
+        fun surroundWithTryCatchForWrite(
+                elementNotPrimitive: Boolean,
+                resolvedGetter: String,
+                writeStatement: String
+        ): CodeBlock {
+            val builder = CodeBlock.builder()
+
+            if (elementNotPrimitive) {
+                // Only write values if they are not null, otherwise don't write values as xml
+                builder.beginControlFlow("if ($resolvedGetter != null)")
+            }
+
+            builder.beginControlFlow("try")
+                    .addStatement(writeStatement)
+                    .nextControlFlow("catch(\$T e)", ClassName.get(TypeConverterNotFoundException::class.java))
+                    .addStatement("throw e")
+                    .nextControlFlow("catch(\$T e)", ClassName.get(Exception::class.java))
+                    .addStatement("throw new \$T(e)", ClassName.get(IOException::class.java))
+                    .endControlFlow()
+
+            if (elementNotPrimitive) {
+                // Only write values if they are not null, otherwise don't write values as xml
+                builder.endControlFlow()
+            }
+            return builder.build()
+        }
+
+        fun writeValueWithoutConverter(
+                elementNotPrimitive: Boolean,
+                resolvedGetter: String,
+                xmlWriterMethod: String,
+                attributeName: String? = null
+        ): CodeBlock {
+            val builder = CodeBlock.builder()
+
+            if (elementNotPrimitive) {
+                // Only write values if they are not null, otherwise don't write values as xml
+                builder.beginControlFlow("if ($resolvedGetter != null)")
+            }
+
+            if (attributeName != null) {
+                builder.addStatement("$writerParam.$xmlWriterMethod(\"$attributeName\", $resolvedGetter)")
+            } else {
+                // For text content support
+                builder.addStatement("$writerParam.$xmlWriterMethod($resolvedGetter)")
+            }
+
+            if (elementNotPrimitive) {
+                // Only write values if they are not null, otherwise don't write values as xml
+                builder.endControlFlow()
+            }
+            return builder.build()
         }
     }
 
@@ -162,57 +231,52 @@ class CodeGeneratorHelper(val customTypeConverterManager: CustomTypeConverterMan
         return builder.build()
     }
 
+
     /**
      * get the assignment statement for reading attributes
      */
-    fun assignViaTypeConverterOrPrimitive(element: Element, assignmentType: AssignmentType, accessResolver: FieldAccessResolver, customTypeConverterQualifiedClassName: String?): CodeBlock {
-
+    fun assignViaTypeConverterOrPrimitive(
+            element: Element,
+            assignmentType: AssignmentType,
+            accessResolver: FieldAccessResolver,
+            customTypeConverterQualifiedClassName: String?
+    ): CodeBlock {
         val type = element.asType()
         val xmlReaderMethodPrefix = assignmentType.xmlReaderMethodPrefix()
+        val codeWriterFormat = "$tikConfigParam.getTypeConverter(%s.class).read($readerParam.$xmlReaderMethodPrefix())"
 
-        val surroundWithTryCatch = fun(assignmentStatement: String) = CodeBlock.builder()
-                .beginControlFlow("try")
-                .add(accessResolver.resolveAssignment(assignmentStatement))
-                .nextControlFlow("catch(\$T e)", ClassName.get(TypeConverterNotFoundException::class.java))
-                .addStatement("throw e")
-                .nextControlFlow("catch(\$T e)", ClassName.get(Exception::class.java))
-                .addStatement("throw new \$T(e)", ClassName.get(IOException::class.java))
-                .endControlFlow()
-                .build()
-
-        val codeWriter = fun(className: String) =
-                "$tikConfigParam.getTypeConverter($className.class).read($readerParam.$xmlReaderMethodPrefix())"
-
-        val codeBlockGen = fun(typesMap: Map<String, String>, resolveMethodName: String) = generatePrimitiveConverter(
-                typesMap,
-                typeConvertersForPrimitives,
-                surroundWithTryCatch,
-                codeWriter
-        ) ?: accessResolver.resolveAssignment("$readerParam.$xmlReaderMethodPrefix$resolveMethodName()")
-
-        return when {
+        var resolveMethodName = ""
+        val assignmentStatement = when {
             customTypeConverterQualifiedClassName != null -> {
-                surroundWithTryCatch("${customTypeConverterManager.getFieldNameForConverter(customTypeConverterQualifiedClassName)}.read($readerParam.$xmlReaderMethodPrefix())")
+                val fieldName = customTypeConverterManager.getFieldNameForConverter(customTypeConverterQualifiedClassName)
+                "$fieldName.read($readerParam.$xmlReaderMethodPrefix())"
             }
             type.isString() -> {
-                codeBlockGen(stringTypes, "")
+                tryGeneratePrimitiveConverter(stringTypes, typeConvertersForPrimitives, codeWriterFormat)
             }
             type.isBoolean() -> {
-                codeBlockGen(booleanTypes, "AsBoolean")
+                resolveMethodName = "AsBoolean"
+                tryGeneratePrimitiveConverter(booleanTypes, typeConvertersForPrimitives, codeWriterFormat)
             }
             type.isDouble() -> {
-                codeBlockGen(doubleTypes, "AsDouble")
+                resolveMethodName = "AsDouble"
+                tryGeneratePrimitiveConverter(doubleTypes, typeConvertersForPrimitives, codeWriterFormat)
             }
             type.isInt() -> {
-                codeBlockGen(integerTypes, "AsInt")
+                resolveMethodName = "AsInt"
+                tryGeneratePrimitiveConverter(integerTypes, typeConvertersForPrimitives, codeWriterFormat)
             }
             type.isLong() -> {
-                codeBlockGen(longTypes, "AsLong")
+                resolveMethodName = "AsLong"
+                tryGeneratePrimitiveConverter(longTypes, typeConvertersForPrimitives, codeWriterFormat)
             }
             else -> {
-                surroundWithTryCatch("$tikConfigParam.getTypeConverter($type.class).read($readerParam.$xmlReaderMethodPrefix())")
+                codeWriterFormat.format(type.toString())
             }
         }
+
+        return assignmentStatement?.let { surroundWithTryCatchForRead(accessResolver, it) }
+                ?: accessResolver.resolveAssignment("$readerParam.$xmlReaderMethodPrefix$resolveMethodName()")
     }
 
     /**
@@ -277,86 +341,45 @@ class CodeGeneratorHelper(val customTypeConverterManager: CustomTypeConverterMan
     /**
      * write the value of an attribute or
      */
-    fun writeAttributeViaTypeConverterOrPrimitive(attributeName: String, element: Element, accessResolver: FieldAccessResolver, customTypeConverterQualifiedClassName: String?): CodeBlock {
-
+    fun writeAttributeViaTypeConverterOrPrimitive(
+            attributeName: String,
+            element: Element,
+            accessResolver: FieldAccessResolver,
+            customTypeConverterQualifiedClassName: String?
+    ): CodeBlock {
         val type = element.asType()
+        val elementNotPrimitive = !type.isPrimitive()
         val xmlWriterMethod = "attribute"
+        val resolvedGetter = accessResolver.resolveGetterForWritingXml()
+        val codeWriterFormat = "$writerParam.$xmlWriterMethod(\"$attributeName\", $tikConfigParam.getTypeConverter(%s.class).write($resolvedGetter))"
 
-
-        val surroundWithTryCatch = fun(writeStatement: String): CodeBlock {
-            val builder = CodeBlock.builder()
-
-            if (!element.asType().isPrimitive()) {
-                // Only write values if they are not null, otherwise don't write values as xml
-                builder.beginControlFlow("if (${accessResolver.resolveGetterForWritingXml()} != null)")
-            }
-
-            builder.beginControlFlow("try")
-                    .addStatement(writeStatement)
-                    .nextControlFlow("catch(\$T e)", ClassName.get(TypeConverterNotFoundException::class.java))
-                    .addStatement("throw e")
-                    .nextControlFlow("catch(\$T e)", ClassName.get(Exception::class.java))
-                    .addStatement("throw new \$T(e)", ClassName.get(IOException::class.java))
-                    .endControlFlow()
-
-            if (!element.asType().isPrimitive()) {
-                // Only write values if they are not null, otherwise don't write values as xml
-                builder.endControlFlow()
-            }
-            return builder.build()
-        }
-
-        fun writeValueWithoutConverter(): CodeBlock {
-            val builder = CodeBlock.builder()
-
-            if (!element.asType().isPrimitive()) {
-                // Only write values if they are not null, otherwise don't write values as xml
-                builder.beginControlFlow("if (${accessResolver.resolveGetterForWritingXml()} != null)")
-            }
-
-            builder.addStatement("$writerParam.$xmlWriterMethod(\"$attributeName\", ${accessResolver.resolveGetterForWritingXml()})")
-
-            if (!element.asType().isPrimitive()) {
-                // Only write values if they are not null, otherwise don't write values as xml
-                builder.endControlFlow()
-            }
-            return builder.build();
-        }
-
-        val codeWriter = fun(className: String) =
-                "$writerParam.$xmlWriterMethod(\"$attributeName\", $tikConfigParam.getTypeConverter($className.class).write(${accessResolver.resolveGetterForWritingXml()}))"
-
-
-        val codeBlockGen = fun(typesMap: Map<String, String>) = generatePrimitiveConverter(
-                typesMap,
-                typeConvertersForPrimitives,
-                surroundWithTryCatch,
-                codeWriter
-        ) ?: writeValueWithoutConverter()
-
-        return when {
+        val assignmentStatement = when {
             customTypeConverterQualifiedClassName != null -> {
-                surroundWithTryCatch("$writerParam.$xmlWriterMethod(\"$attributeName\", ${customTypeConverterManager.getFieldNameForConverter(customTypeConverterQualifiedClassName)}.write(${accessResolver.resolveGetterForWritingXml()}))")
+                val fieldName = customTypeConverterManager.getFieldNameForConverter(customTypeConverterQualifiedClassName)
+                "$writerParam.$xmlWriterMethod(\"$attributeName\", $fieldName.write($resolvedGetter))"
             }
             type.isString() -> {
-                codeBlockGen(stringTypes)
+                tryGeneratePrimitiveConverter(stringTypes, typeConvertersForPrimitives, codeWriterFormat)
             }
             type.isBoolean() -> {
-                codeBlockGen(booleanTypes)
+                tryGeneratePrimitiveConverter(booleanTypes, typeConvertersForPrimitives, codeWriterFormat)
             }
             type.isDouble() -> {
-                codeBlockGen(doubleTypes)
+                tryGeneratePrimitiveConverter(doubleTypes, typeConvertersForPrimitives, codeWriterFormat)
             }
             type.isInt() -> {
-                codeBlockGen(integerTypes)
+                tryGeneratePrimitiveConverter(integerTypes, typeConvertersForPrimitives, codeWriterFormat)
             }
             type.isLong() -> {
-                codeBlockGen(longTypes)
+                tryGeneratePrimitiveConverter(longTypes, typeConvertersForPrimitives, codeWriterFormat)
             }
             else -> {
-                surroundWithTryCatch("$writerParam.$xmlWriterMethod(\"$attributeName\", $tikConfigParam.getTypeConverter($type.class).write(${accessResolver.resolveGetterForWritingXml()}))")
+                codeWriterFormat.format(type.toString())
             }
         }
+
+        return assignmentStatement?.let { surroundWithTryCatchForWrite(elementNotPrimitive, resolvedGetter, it) }
+                ?: writeValueWithoutConverter(elementNotPrimitive, resolvedGetter, xmlWriterMethod, attributeName)
     }
 
     /**
@@ -416,85 +439,46 @@ class CodeGeneratorHelper(val customTypeConverterManager: CustomTypeConverterMan
     /**
      * Writes the text content via type adapter. This is used i.e. for property fields and or textContent fields
      */
-    fun writeTextContentViaTypeConverterOrPrimitive(element: Element, accessResolver: FieldAccessResolver, customTypeConverterQualifiedClassName: String?, asCData: Boolean): CodeBlock {
-
+    //TODO: almost same as writeAttributeViaTypeConverterOrPrimitive function (xmlWriterMethod is not same, codeWriterFormat is not same) but is doable to merge it into one
+    fun writeTextContentViaTypeConverterOrPrimitive(
+            element: Element,
+            accessResolver: FieldAccessResolver,
+            customTypeConverterQualifiedClassName: String?,
+            asCData: Boolean
+    ): CodeBlock {
         val type = element.asType()
-        val xmlWriterMethod = if (asCData && element.asType().isString()) "textContentAsCData" else "textContent"
+        val elementNotPrimitive = !type.isPrimitive()
+        val xmlWriterMethod = if (asCData && type.isString()) "textContentAsCData" else "textContent"
+        val resolvedGetter = accessResolver.resolveGetterForWritingXml()
+        val codeWriterFormat = "$writerParam.$xmlWriterMethod($tikConfigParam.getTypeConverter(%s.class).write($resolvedGetter))"
 
-
-        val surroundWithTryCatch = fun(writeStatement: String): CodeBlock {
-            val builder = CodeBlock.builder()
-
-            if (!element.asType().isPrimitive()) {
-                // Only write values if they are not null, otherwise don't write values as xml
-                builder.beginControlFlow("if (${accessResolver.resolveGetterForWritingXml()} != null)")
-            }
-
-            builder.beginControlFlow("try")
-                    .addStatement(writeStatement)
-                    .nextControlFlow("catch(\$T e)", ClassName.get(TypeConverterNotFoundException::class.java))
-                    .addStatement("throw e")
-                    .nextControlFlow("catch(\$T e)", ClassName.get(Exception::class.java))
-                    .addStatement("throw new \$T(e)", ClassName.get(IOException::class.java))
-                    .endControlFlow()
-
-            if (!element.asType().isPrimitive()) {
-                // Only write values if they are not null, otherwise don't write values as xml
-                builder.endControlFlow()
-            }
-            return builder.build()
-        }
-
-        fun writeValueWithoutConverter(): CodeBlock {
-            val builder = CodeBlock.builder()
-
-            if (!element.asType().isPrimitive()) {
-                // Only write values if they are not null, otherwise don't write values as xml
-                builder.beginControlFlow("if (${accessResolver.resolveGetterForWritingXml()} != null)")
-            }
-
-            builder.addStatement("$writerParam.$xmlWriterMethod(${accessResolver.resolveGetterForWritingXml()})")
-
-            if (!element.asType().isPrimitive()) {
-                // Only write values if they are not null, otherwise don't write values as xml
-                builder.endControlFlow()
-            }
-            return builder.build();
-        }
-
-        val codeWriter = fun(className: String) =
-                "$writerParam.$xmlWriterMethod($tikConfigParam.getTypeConverter($className.class).write(${accessResolver.resolveGetterForWritingXml()}))"
-
-        val codeBlockGen = fun(typesMap: Map<String, String>) = generatePrimitiveConverter(
-                typesMap,
-                typeConvertersForPrimitives,
-                surroundWithTryCatch,
-                codeWriter
-        ) ?: writeValueWithoutConverter()
-
-        return when {
+        val assignmentStatement = when {
             customTypeConverterQualifiedClassName != null -> {
-                surroundWithTryCatch("$writerParam.$xmlWriterMethod(${customTypeConverterManager.getFieldNameForConverter(customTypeConverterQualifiedClassName)}.write(${accessResolver.resolveGetterForWritingXml()}))")
+                val fieldName = customTypeConverterManager.getFieldNameForConverter(customTypeConverterQualifiedClassName)
+                "$writerParam.$xmlWriterMethod($fieldName.write($resolvedGetter))"
             }
             type.isString() -> {
-                codeBlockGen(stringTypes)
+                tryGeneratePrimitiveConverter(stringTypes, typeConvertersForPrimitives, codeWriterFormat)
             }
             type.isBoolean() -> {
-                codeBlockGen(booleanTypes)
+                tryGeneratePrimitiveConverter(booleanTypes, typeConvertersForPrimitives, codeWriterFormat)
             }
             type.isDouble() -> {
-                codeBlockGen(doubleTypes)
+                tryGeneratePrimitiveConverter(doubleTypes, typeConvertersForPrimitives, codeWriterFormat)
             }
             type.isInt() -> {
-                codeBlockGen(integerTypes)
+                tryGeneratePrimitiveConverter(integerTypes, typeConvertersForPrimitives, codeWriterFormat)
             }
             type.isLong() -> {
-                codeBlockGen(longTypes)
+                tryGeneratePrimitiveConverter(longTypes, typeConvertersForPrimitives, codeWriterFormat)
             }
             else -> {
-                surroundWithTryCatch("$writerParam.$xmlWriterMethod($tikConfigParam.getTypeConverter($type.class).write(${accessResolver.resolveGetterForWritingXml()}))")
+                codeWriterFormat.format(type.toString())
             }
         }
+
+        return assignmentStatement?.let { surroundWithTryCatchForWrite(elementNotPrimitive, resolvedGetter, it) }
+                ?: writeValueWithoutConverter(elementNotPrimitive, resolvedGetter, xmlWriterMethod)
     }
 
     /**
