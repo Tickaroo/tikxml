@@ -111,10 +111,10 @@ class CodeGeneratorHelper(
             }
         }
 
-        fun surroundWithTryCatchForRead(accessResolver: FieldAccessResolver, assignmentStatement: String): CodeBlock =
+        fun surroundWithTryCatchForRead(resolvedCodeBlock: CodeBlock): CodeBlock =
                 CodeBlock.builder()
                         .beginControlFlow("try")
-                        .add(accessResolver.resolveAssignment(assignmentStatement))
+                        .add(resolvedCodeBlock)
                         .nextControlFlow("catch(\$T e)", ClassName.get(TypeConverterNotFoundException::class.java))
                         .addStatement("throw e")
                         .nextControlFlow("catch(\$T e)", ClassName.get(Exception::class.java))
@@ -275,7 +275,7 @@ class CodeGeneratorHelper(
             }
         }
 
-        return assignmentStatement?.let { surroundWithTryCatchForRead(accessResolver, it) }
+        return assignmentStatement?.let { surroundWithTryCatchForRead(accessResolver.resolveAssignment(it)) }
                 ?: accessResolver.resolveAssignment("$readerParam.$xmlReaderMethodPrefix$resolveMethodName()")
     }
 
@@ -353,7 +353,7 @@ class CodeGeneratorHelper(
         val resolvedGetter = accessResolver.resolveGetterForWritingXml()
         val codeWriterFormat = "$writerParam.$xmlWriterMethod(\"$attributeName\", $tikConfigParam.getTypeConverter(%s.class).write($resolvedGetter))"
 
-        val assignmentStatement = when {
+        val writeStatement = when {
             customTypeConverterQualifiedClassName != null -> {
                 val fieldName = customTypeConverterManager.getFieldNameForConverter(customTypeConverterQualifiedClassName)
                 "$writerParam.$xmlWriterMethod(\"$attributeName\", $fieldName.write($resolvedGetter))"
@@ -378,7 +378,7 @@ class CodeGeneratorHelper(
             }
         }
 
-        return assignmentStatement?.let { surroundWithTryCatchForWrite(elementNotPrimitive, resolvedGetter, it) }
+        return writeStatement?.let { surroundWithTryCatchForWrite(elementNotPrimitive, resolvedGetter, it) }
                 ?: writeValueWithoutConverter(elementNotPrimitive, resolvedGetter, xmlWriterMethod, attributeName)
     }
 
@@ -452,7 +452,7 @@ class CodeGeneratorHelper(
         val resolvedGetter = accessResolver.resolveGetterForWritingXml()
         val codeWriterFormat = "$writerParam.$xmlWriterMethod($tikConfigParam.getTypeConverter(%s.class).write($resolvedGetter))"
 
-        val assignmentStatement = when {
+        val writeStatement = when {
             customTypeConverterQualifiedClassName != null -> {
                 val fieldName = customTypeConverterManager.getFieldNameForConverter(customTypeConverterQualifiedClassName)
                 "$writerParam.$xmlWriterMethod($fieldName.write($resolvedGetter))"
@@ -477,7 +477,7 @@ class CodeGeneratorHelper(
             }
         }
 
-        return assignmentStatement?.let { surroundWithTryCatchForWrite(elementNotPrimitive, resolvedGetter, it) }
+        return writeStatement?.let { surroundWithTryCatchForWrite(elementNotPrimitive, resolvedGetter, it) }
                 ?: writeValueWithoutConverter(elementNotPrimitive, resolvedGetter, xmlWriterMethod)
     }
 
