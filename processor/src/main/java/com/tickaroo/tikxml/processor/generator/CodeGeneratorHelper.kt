@@ -111,7 +111,7 @@ class CodeGeneratorHelper(
             }
         }
 
-        fun surroundWithTryCatchForRead(resolvedCodeBlock: CodeBlock): CodeBlock =
+        fun surroundWithTryCatch(resolvedCodeBlock: CodeBlock): CodeBlock =
                 CodeBlock.builder()
                         .beginControlFlow("try")
                         .add(resolvedCodeBlock)
@@ -122,31 +122,26 @@ class CodeGeneratorHelper(
                         .endControlFlow()
                         .build()
 
-        fun surroundWithTryCatchForWrite(
+        fun surroundWithTryCatch(
                 elementNotPrimitive: Boolean,
                 resolvedGetter: String,
                 writeStatement: String
         ): CodeBlock {
-            val builder = CodeBlock.builder()
-
-            if (elementNotPrimitive) {
-                // Only write values if they are not null, otherwise don't write values as xml
-                builder.beginControlFlow("if ($resolvedGetter != null)")
-            }
-
-            builder.beginControlFlow("try")
+            val writeCodeBlock = CodeBlock.builder()
                     .addStatement(writeStatement)
-                    .nextControlFlow("catch(\$T e)", ClassName.get(TypeConverterNotFoundException::class.java))
-                    .addStatement("throw e")
-                    .nextControlFlow("catch(\$T e)", ClassName.get(Exception::class.java))
-                    .addStatement("throw new \$T(e)", ClassName.get(IOException::class.java))
-                    .endControlFlow()
+                    .build()
 
+            val tryCatchCodeBlock = surroundWithTryCatch(writeCodeBlock)
             if (elementNotPrimitive) {
                 // Only write values if they are not null, otherwise don't write values as xml
-                builder.endControlFlow()
+                return CodeBlock.builder()
+                        .beginControlFlow("if ($resolvedGetter != null)")
+                        .add(tryCatchCodeBlock)
+                        .endControlFlow()
+                        .build()
             }
-            return builder.build()
+
+            return tryCatchCodeBlock
         }
 
         fun writeValueWithoutConverter(
@@ -275,7 +270,7 @@ class CodeGeneratorHelper(
             }
         }
 
-        return assignmentStatement?.let { surroundWithTryCatchForRead(accessResolver.resolveAssignment(it)) }
+        return assignmentStatement?.let { surroundWithTryCatch(accessResolver.resolveAssignment(it)) }
                 ?: accessResolver.resolveAssignment("$readerParam.$xmlReaderMethodPrefix$resolveMethodName()")
     }
 
@@ -378,7 +373,7 @@ class CodeGeneratorHelper(
             }
         }
 
-        return writeStatement?.let { surroundWithTryCatchForWrite(elementNotPrimitive, resolvedGetter, it) }
+        return writeStatement?.let { surroundWithTryCatch(elementNotPrimitive, resolvedGetter, it) }
                 ?: writeValueWithoutConverter(elementNotPrimitive, resolvedGetter, xmlWriterMethod, attributeName)
     }
 
@@ -477,7 +472,7 @@ class CodeGeneratorHelper(
             }
         }
 
-        return writeStatement?.let { surroundWithTryCatchForWrite(elementNotPrimitive, resolvedGetter, it) }
+        return writeStatement?.let { surroundWithTryCatch(elementNotPrimitive, resolvedGetter, it) }
                 ?: writeValueWithoutConverter(elementNotPrimitive, resolvedGetter, xmlWriterMethod)
     }
 
