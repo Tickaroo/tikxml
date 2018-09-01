@@ -41,6 +41,8 @@ public class XmlReader implements Closeable {
       = ByteString.encodeUtf8(" >/=\n");
 
   private static final ByteString CDATA_CLOSE = ByteString.encodeUtf8("]]>");
+  private static final ByteString CDATA_OPEN = ByteString.encodeUtf8("<![CDATA[");
+  private static final ByteString DOCTYPE_OPEN = ByteString.encodeUtf8("<!DOCTYPE");
 
   private static final byte DOUBLE_QUOTE = '"';
   private static final byte SINGLE_QUOTE = '\'';
@@ -198,8 +200,8 @@ public class XmlReader implements Closeable {
             popStack();
 
             // correct closing xml tag
-            buffer.readByte(); // consuming '/'
-            buffer.readByte(); // consuming '>'
+            buffer.skip(2); // consuming '/>'
+
             return peeked = PEEKED_ELEMENT_END;
           } else {
             throw syntaxError("Expected closing />");
@@ -300,42 +302,22 @@ public class XmlReader implements Closeable {
    * Checks for CDATA beginning {@code <![CDATA[ }. This method doesn't consume the opening CDATA
    * Tag
    *
-   * @return true, if CDATA openining tag, otherwise false
+   * @return true, if CDATA opening tag, otherwise false
    * @throws IOException
    */
   private boolean isCDATA() throws IOException {
-
-    return fillBuffer(9)
-        && buffer.getByte(0) == '<'
-        && buffer.getByte(1) == '!'
-        && buffer.getByte(2) == '['
-        && buffer.getByte(3) == 'C'
-        && buffer.getByte(4) == 'D'
-        && buffer.getByte(5) == 'A'
-        && buffer.getByte(6) == 'T'
-        && buffer.getByte(7) == 'A'
-        && buffer.getByte(8) == '[';
+  	return buffer.rangeEquals(0, CDATA_OPEN);
   }
 
   /**
    * Checks for DOCTYPE beginning {@code <!DOCTYPE }. This method doesn't consume the opening <!DOCTYPE
    * Tag
    *
-   * @return true, if DOCTYPE openining tag, otherwise false
+   * @return true, if DOCTYPE opening tag, otherwise false
    * @throws IOException
    */
   private boolean isDocTypeDefinition() throws IOException {
-
-    return fillBuffer(9)
-        && buffer.getByte(0) == '<'
-        && buffer.getByte(1) == '!'
-        && buffer.getByte(2) == 'D'
-        && buffer.getByte(3) == 'O'
-        && buffer.getByte(4) == 'C'
-        && buffer.getByte(5) == 'T'
-        && buffer.getByte(6) == 'Y'
-        && buffer.getByte(7) == 'P'
-        && buffer.getByte(8) == 'E';
+  	return buffer.rangeEquals(0, DOCTYPE_OPEN);
   }
 
   /**
@@ -842,15 +824,7 @@ public class XmlReader implements Closeable {
 
         if (peekStack == XmlScope.NONEMPTY_DOCUMENT && isDocTypeDefinition()) {
           // Skip <!DOCTYPE ... >
-          buffer.readByte(); // '<'
-          buffer.readByte(); // '!'
-          buffer.readByte(); // 'D'
-          buffer.readByte(); // 'O'
-          buffer.readByte(); // 'C'
-          buffer.readByte(); // 'T'
-          buffer.readByte(); // 'Y'
-          buffer.readByte(); // 'P'
-          buffer.readByte(); // 'E'
+          buffer.skip(9); // '<!DOCTYPE'
 
           if (!skipTo(">")) {
             throw syntaxError("Unterminated <!DOCTYPE> . Inline DOCTYPE is not support at the moment.");
@@ -865,31 +839,26 @@ public class XmlReader implements Closeable {
         } else if (peek == '!' && fillBuffer(4)) {
           // skip xml comments <!-- comment -->
           // consume opening comment chars
-          buffer.readByte(); // '<'
-          buffer.readByte(); // '!'
-          buffer.readByte(); // '-'
-          buffer.readByte(); // '-'
+          buffer.skip(4); // '<!--'
+
           if (!skipTo("-->")) {
             throw syntaxError("Unterminated comment");
           }
 
           // Consume closing comment chars
-          buffer.readByte(); // '-'
-          buffer.readByte(); // '-'
-          buffer.readByte(); // '>'
+          buffer.skip(3); // '-->'
           p = 0;
           continue;
         } else if (peek == '?') {
           // Opening xml declaration processing instruction <?xml version="1.0" encoding="UTF-8" ?>
-          buffer.readByte(); // consume <
-          buffer.readByte(); // consume ?
+          buffer.skip(2); // consume <?	
 
           if (!skipTo("?>")) {
             throw syntaxError("Unterminated xml declaration or processing instruction \"<?\"");
           }
 
-          buffer.readByte(); // consume ?
-          buffer.readByte(); // consume >
+          buffer.skip(2); // consume ?>
+
           p = 0;
           continue;
         }
