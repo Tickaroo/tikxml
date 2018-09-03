@@ -43,10 +43,14 @@ public class XmlReader implements Closeable {
   private static final ByteString CDATA_CLOSE = ByteString.encodeUtf8("]]>");
   private static final ByteString CDATA_OPEN = ByteString.encodeUtf8("<![CDATA[");
   private static final ByteString DOCTYPE_OPEN = ByteString.encodeUtf8("<!DOCTYPE");
+  private static final ByteString COMMENT_CLOSE = ByteString.encodeUtf8("-->");
+  private static final ByteString XML_DECLARATION_CLOSE = ByteString.encodeUtf8("?>");
+  private static final ByteString UTF8_BOM = ByteString.of((byte) 0xEF, (byte) 0xBB, (byte) 0xBF);
 
   private static final byte DOUBLE_QUOTE = '"';
   private static final byte SINGLE_QUOTE = '\'';
   private static final byte OPENING_XML_ELEMENT = '<';
+  private static final byte CLOSING_XML_ELEMENT = '>';
 
   //
   // Peek states
@@ -306,7 +310,7 @@ public class XmlReader implements Closeable {
    * @throws IOException
    */
   private boolean isCDATA() throws IOException {
-  	return buffer.rangeEquals(0, CDATA_OPEN);
+    return buffer.rangeEquals(0, CDATA_OPEN);
   }
 
   /**
@@ -317,7 +321,7 @@ public class XmlReader implements Closeable {
    * @throws IOException
    */
   private boolean isDocTypeDefinition() throws IOException {
-  	return buffer.rangeEquals(0, DOCTYPE_OPEN);
+    return buffer.rangeEquals(0, DOCTYPE_OPEN);
   }
 
   /**
@@ -752,23 +756,6 @@ public class XmlReader implements Closeable {
   }
 
   /**
-   * @param toFind a string to search for. Must not contain a newline.
-   */
-  private boolean skipTo(String toFind) throws IOException {
-    outer:
-    for (; fillBuffer(toFind.length()); ) {
-      for (int c = 0; c < toFind.length(); c++) {
-        if (buffer.getByte(c) != toFind.charAt(c)) {
-          buffer.readByte();
-          continue outer;
-        }
-      }
-      return true;
-    }
-    return false;
-  }
-
-  /**
    * Returns true once {@code limit - pos >= minimum}. If the data is exhausted before that many
    * characters are available, this returns false.
    */
@@ -801,12 +788,8 @@ public class XmlReader implements Closeable {
      */
 
     // Look for UTF-8 BOM sequence 0xEFBBBF and skip it
-    if (isDocumentBeginning &&
-        fillBuffer(3) &&
-        buffer.getByte(0) == (byte) 0xEF &&
-        buffer.getByte(1) == (byte) 0xBB &&
-        buffer.getByte(2) == (byte) 0xBF) {
-      buffer.skip(3);
+    if (isDocumentBeginning && source.rangeEquals(0, UTF8_BOM)) {
+      source.skip(3);
     }
 
     int p = 0;
@@ -823,42 +806,28 @@ public class XmlReader implements Closeable {
         int peekStack = stack[stackSize - 1];
 
         if (peekStack == XmlScope.NONEMPTY_DOCUMENT && isDocTypeDefinition()) {
-          // Skip <!DOCTYPE ... >
-          buffer.skip(9); // '<!DOCTYPE'
-
-          if (!skipTo(">")) {
+          long index = source.indexOf(CLOSING_XML_ELEMENT, DOCTYPE_OPEN.size());
+          if (index == -1) {
             throw syntaxError("Unterminated <!DOCTYPE> . Inline DOCTYPE is not support at the moment.");
           }
-
-          // Consume closing char
-          buffer.readByte(); // '>'
-
+          source.skip(index + 1); // skip behind >
           // TODO inline DOCTYPE.
           p = 0;
           continue;
         } else if (peek == '!' && fillBuffer(4)) {
-          // skip xml comments <!-- comment -->
-          // consume opening comment chars
-          buffer.skip(4); // '<!--'
-
-          if (!skipTo("-->")) {
+          long index = source.indexOf(COMMENT_CLOSE, 4); // skip <!-- in comparison by offset 4
+          if (index == -1) {
             throw syntaxError("Unterminated comment");
           }
-
-          // Consume closing comment chars
-          buffer.skip(3); // '-->'
+          source.skip(index + COMMENT_CLOSE.size()); // skip behind --!>
           p = 0;
           continue;
         } else if (peek == '?') {
-          // Opening xml declaration processing instruction <?xml version="1.0" encoding="UTF-8" ?>
-          buffer.skip(2); // consume <?	
-
-          if (!skipTo("?>")) {
+          long index = source.indexOf(XML_DECLARATION_CLOSE, 2); // skip <? in comparison by offset 2
+          if (index == -1) {
             throw syntaxError("Unterminated xml declaration or processing instruction \"<?\"");
           }
-
-          buffer.skip(2); // consume ?>
-
+          source.skip(index + XML_DECLARATION_CLOSE.size()); // skip behind ?>
           p = 0;
           continue;
         }
