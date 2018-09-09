@@ -69,7 +69,7 @@ limitations under the License.
 ```
 
 
-#### Releaseing on Maven central
+#### Releasing on Maven Central
 
-If you are a Tickaroo employee and you want to release a new version on maven central, 
-take a look [at this document](https://github.com/Tickaroo/tikxml/Releasing.md)
+If you are a Tickaroo employee and you want to release a new version on Maven Central, 
+take a look [at this document](https://github.com/Tickaroo/tikxml/blob/master/Releasing.md)
