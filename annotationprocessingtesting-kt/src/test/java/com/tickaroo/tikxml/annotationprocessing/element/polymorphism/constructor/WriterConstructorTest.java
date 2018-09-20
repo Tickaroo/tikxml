@@ -59,7 +59,7 @@ public class WriterConstructorTest {
     xml.write(buffer, paperJournalist);
 
     String xmlStr =
-        "<?xml version=\"1.0\" encoding=\"UTF-8\"?><paper><journalist><name>Hannes</name><age>40</age></journalist></paper>";
+        "<?xml version=\"1.0\" encoding=\"UTF-8\"?><paper><journalist><age>40</age><name>Hannes</name></journalist></paper>";
     Assert.assertEquals(xmlStr, TestUtils.bufferToString(buffer));
 
     PaperConstructor paperJournalist2 = xml.read(TestUtils.sourceFrom(xmlStr), PaperConstructor.class);
@@ -70,7 +70,7 @@ public class WriterConstructorTest {
     xml.write(buffer2, paperOrganisation);
 
     String xmlStr2 =
-        "<?xml version=\"1.0\" encoding=\"UTF-8\"?><paper><organisation><address>Foo Road 42</address><name>NY Times</name></organisation></paper>";
+        "<?xml version=\"1.0\" encoding=\"UTF-8\"?><paper><organisation><name>NY Times</name><address>Foo Road 42</address></organisation></paper>";
     Assert.assertEquals(xmlStr2, TestUtils.bufferToString(buffer2));
 
     PaperConstructor paperOrganisation2 = xml.read(TestUtils.sourceFrom(xmlStr2), PaperConstructor.class);
