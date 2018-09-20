@@ -30,8 +30,8 @@ import javax.lang.model.element.TypeElement
  */
 class MockXmlElement(override val nameAsRoot: String = "mockRoot", override val element: TypeElement = MockClassElement()) : XmlRootElement {
 
-    override val attributes = HashMap<String, AttributeField>()
-    override val childElements = HashMap<String, XmlChildElement>()
+    override val attributes = LinkedHashMap<String, AttributeField>()
+    override val childElements = LinkedHashMap<String, XmlChildElement>()
 
     override fun isXmlElementAccessableFromOutsideTypeAdapter() = true
 

@@ -28,6 +28,7 @@ import javax.lang.model.element.Element
 import javax.lang.model.element.ElementKind
 import javax.lang.model.element.ExecutableElement
 import javax.lang.model.element.TypeElement
+import kotlin.collections.LinkedHashMap
 
 /**
  * This class holds the information of an element that has been annotated with @Xml
@@ -52,8 +53,8 @@ interface AnnotatedClass : XmlRootElement {
 class AnnotatedClassImpl
 @Throws(ProcessingException::class) constructor(e: Element) : AnnotatedClass {
 
-    override val attributes = HashMap<String, AttributeField>()
-    override val childElements = HashMap<String, XmlChildElement>()
+    override val attributes = LinkedHashMap<String, AttributeField>()
+    override val childElements = LinkedHashMap<String, XmlChildElement>()
 
     override val element: TypeElement
 
