@@ -71,7 +71,7 @@ public class WriterTest {
     xml.write(buffer2, paperOrganisation);
 
     String xmlStr2 =
-        "<?xml version=\"1.0\" encoding=\"UTF-8\"?><paper><organisation><address>Foo Road 42</address><name>NY Times</name></organisation></paper>";
+        "<?xml version=\"1.0\" encoding=\"UTF-8\"?><paper><organisation><name>NY Times</name><address>Foo Road 42</address></organisation></paper>";
     Assert.assertEquals(xmlStr2, TestUtils.bufferToString(buffer2));
 
     Paper paperOrganisation2 = xml.read(TestUtils.sourceFrom(xmlStr2), Paper.class);

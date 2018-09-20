@@ -55,7 +55,7 @@ public class TeamTest {
     xml.write(buffer, team);
 
     String xmlStr =
-        "<?xml version=\"1.0\" encoding=\"UTF-8\"?><team lng=\"11.572654\" iconBig=\"bigIcon\" id=\"14\" shortName=\"Bayern\" iconSmall=\"smallIcon\" countryId=\"D\" lat=\"48.101861\" longName=\"Bayern München\" defaultLeagueId=\"1\"/>";
+        "<?xml version=\"1.0\" encoding=\"UTF-8\"?><team id=\"14\" countryId=\"D\" shortName=\"Bayern\" longName=\"Bayern München\" iconSmall=\"smallIcon\" iconBig=\"bigIcon\" defaultLeagueId=\"1\" lat=\"48.101861\" lng=\"11.572654\"/>";
     Assert.assertEquals(xmlStr, TestUtils.bufferToString(buffer));
 
     Team week2 = xml.read(TestUtils.sourceFrom(xmlStr), Team.class);

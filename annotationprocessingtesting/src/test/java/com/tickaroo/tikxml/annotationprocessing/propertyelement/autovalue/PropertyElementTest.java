@@ -58,7 +58,7 @@ public class PropertyElementTest {
     xml.write(buffer, item);
 
     String xmlStr =
-        "<?xml version=\"1.0\" encoding=\"UTF-8\"?><item><aBoolean>true</aBoolean><longWrapper>2147483648</longWrapper><aString>foo</aString><intWrapper>123</intWrapper><aLong>2147483648</aLong><anInt>123</anInt><aDate>1988-03-04</aDate><aDouble>23.42</aDouble><doubleWrapper>23.42</doubleWrapper><booleanWrapper>true</booleanWrapper></item>";
+        "<?xml version=\"1.0\" encoding=\"UTF-8\"?><item><aString>foo</aString><anInt>123</anInt><aBoolean>true</aBoolean><aDouble>23.42</aDouble><aLong>2147483648</aLong><aDate>1988-03-04</aDate><intWrapper>123</intWrapper><booleanWrapper>true</booleanWrapper><doubleWrapper>23.42</doubleWrapper><longWrapper>2147483648</longWrapper></item>";
     Assert.assertEquals(xmlStr, TestUtils.bufferToString(buffer));
 
     PropertyItem item2 = xml.read(TestUtils.sourceFrom(xmlStr), PropertyItem.class);
