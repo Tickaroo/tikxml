@@ -46,7 +46,6 @@ class TypeAdapterCodeGenerator(private val filer: Filer, private val elementUtil
      * The name of the class that holds some value when we have to parse xml into a constructor
      */
     private val VALUE_HOLDER_CLASS_NAME = "ValueHolder"
-    private val namespaceDefinitionPrefix = "xmlns"
 
     /**
      * Generates an [com.tickaroo.tikxml.TypeAdapter] for the given class
@@ -61,12 +60,10 @@ class TypeAdapterCodeGenerator(private val filer: Filer, private val elementUtil
 
         val constructorBuilder = MethodSpec.constructorBuilder()
                 .addModifiers(Modifier.PUBLIC)
-                .addCode(codeGenUtils.generateAttributeBinders(annotatedClass))
 
         for ((xmlName, xmlElement) in annotatedClass.childElements) {
             constructorBuilder.addStatement("${CodeGeneratorHelper.childElementBindersParam}.put(\$S, \$L)", xmlName, xmlElement.generateReadXmlCode(codeGenUtils))
         }
-
 
         //
         // Generate code
@@ -74,7 +71,6 @@ class TypeAdapterCodeGenerator(private val filer: Filer, private val elementUtil
         val adapterClassBuilder = TypeSpec.classBuilder(annotatedClass.simpleClassName + TypeAdapter.GENERATED_CLASS_SUFFIX)
                 .addModifiers(Modifier.PUBLIC)
                 .addSuperinterface(genericParamTypeAdapter)
-
 
         // Uses an annotated constructor, so generate a value holder class
         val annotatedConstructor = annotatedClass.annotatedConstructor
@@ -86,10 +82,13 @@ class TypeAdapterCodeGenerator(private val filer: Filer, private val elementUtil
             adapterClassBuilder.addType(valueHolderBuilder.build())
         }
 
+        // Generate before generateFields because we need to fill converterMap first
+        val fromXmlCodeBlock = generateFromXmlMethod(annotatedClass, codeGenUtils).build()
+
         generateFields(annotatedClass, adapterClassBuilder, customTypeConverterManager)
 
         adapterClassBuilder.addMethod(constructorBuilder.build())
-                .addMethod(generateFromXmlMethod(annotatedClass).build())
+                .addMethod(fromXmlCodeBlock)
                 .addMethod(generateToXmlMethod(annotatedClass, codeGenUtils).build())
 
 
@@ -106,19 +105,6 @@ class TypeAdapterCodeGenerator(private val filer: Filer, private val elementUtil
     private fun generateFields(annotatedClass: AnnotatedClass, adapterClassBuilder: TypeSpec.Builder, customTypeConverterManager: CustomTypeConverterManager) {
 
         val targetClassToParseInto = getClassToParseInto(annotatedClass)
-
-        if (annotatedClass.hasAttributes()) {
-            val attributeBinderMapField = ParameterizedTypeName.get(ClassName.get(java.util.Map::class.java),
-                    ClassName.get(String::class.java), ParameterizedTypeName.get(ClassName.get(AttributeBinder::class.java), targetClassToParseInto))
-            val attributeBinderHashMapField = ParameterizedTypeName.get(ClassName.get(HashMap::class.java),
-                    ClassName.get(String::class.java), ParameterizedTypeName.get(ClassName.get(AttributeBinder::class.java), targetClassToParseInto))
-
-            // TODO use ArrayMap
-            adapterClassBuilder.addField(
-                    FieldSpec.builder(attributeBinderMapField, CodeGeneratorHelper.attributeBindersParam, Modifier.PRIVATE)
-                            .initializer("new  \$T()", attributeBinderHashMapField)
-                            .build())
-        }
 
         if (annotatedClass.hasChildElements()) {
             val childElementBinderMapField = ParameterizedTypeName.get(ClassName.get(java.util.Map::class.java),
@@ -144,7 +130,7 @@ class TypeAdapterCodeGenerator(private val filer: Filer, private val elementUtil
     /**
      * Generates the method to parse xml.
      */
-    private fun generateFromXmlMethod(annotatedClass: AnnotatedClass): MethodSpec.Builder {
+    private fun generateFromXmlMethod(annotatedClass: AnnotatedClass, codeGenHelper: CodeGeneratorHelper): MethodSpec.Builder {
 
         val reader = CodeGeneratorHelper.readerParam
         val config = CodeGeneratorHelper.tikConfigParam
@@ -169,39 +155,7 @@ class TypeAdapterCodeGenerator(private val filer: Filer, private val elementUtil
         //
         // Read attributes
         //
-        if (annotatedClass.hasAttributes()) {
-            // consume attributes
-            builder.beginControlFlow("while(\$L.hasAttribute())", reader)
-                    .addStatement("String attributeName = \$L.nextAttributeName()", reader)
-                    .addStatement("\$T attributeBinder = ${CodeGeneratorHelper.attributeBindersParam}.get(attributeName)", ParameterizedTypeName.get(ClassName.get(AttributeBinder::class.java), targetClassToParseInto))
-                    .beginControlFlow("if (attributeBinder != null)")
-                    .addStatement("attributeBinder.fromXml(\$L, \$L, \$L)", reader, config, value)
-                    .nextControlFlow("else")
-                    .beginControlFlow("if (\$L.exceptionOnUnreadXml() && !attributeName.startsWith(\$S))", config, namespaceDefinitionPrefix)
-                    .addStatement("throw new \$T(\$S+attributeName+\$S+\$L.getPath()+\$S)", IOException::class.java,
-                            "Could not map the xml attribute with the name '",
-                            "' at path ",
-                            reader,
-                            " to java class. Have you annotated such a field in your java class to map this xml attribute? Otherwise you can turn this error message off with TikXml.Builder().exceptionOnUnreadXml(false).build().")
-                    .endControlFlow() // End if
-                    .addStatement("\$L.skipAttributeValue()", reader)
-                    .endControlFlow() // end if attributeBinder != null
-                    .endControlFlow() // end while hasAttribute()
-
-        } else {
-            // Skip attributes if there are any
-            builder.beginControlFlow("while(\$L.hasAttribute())", reader)
-                    .addStatement("String attributeName = \$L.nextAttributeName()", reader)
-                    .beginControlFlow("if (\$L.exceptionOnUnreadXml() && !attributeName.startsWith(\$S))", config, namespaceDefinitionPrefix)
-                    .addStatement("throw new \$T(\$S+attributeName+\$S+\$L.getPath()+\$S)", IOException::class.java,
-                            "Could not map the xml attribute with the name '",
-                            "' at path ",
-                            reader,
-                            " to java class. Have you annotated such a field in your java class to map this xml attribute? Otherwise you can turn this error message off with TikXml.Builder().exceptionOnUnreadXml(false).build().")
-                    .endControlFlow()
-                    .addStatement("\$L.skipAttributeValue()", reader)
-                    .endControlFlow()
-        }
+        builder.addCode(codeGenHelper.generateAttributesReadFlowControl(annotatedClass))
 
         //
         // Read child elements and text content
