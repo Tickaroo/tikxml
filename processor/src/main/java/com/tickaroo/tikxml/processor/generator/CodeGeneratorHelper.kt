@@ -56,6 +56,7 @@ class CodeGeneratorHelper(
 
     // Constants
     companion object PARAMS {
+        const val namespaceDefinitionPrefix = "xmlns"
         const val valueParam = "value"
         const val tikConfigParam = "config"
         const val tikConfigMethodExceptionOnUnreadXml = "exceptionOnUnreadXml"
@@ -225,6 +226,68 @@ class CodeGeneratorHelper(
 
         return builder.build()
     }
+
+    /**
+     * Generate code for reading xml parameters
+     */
+    fun generateAttributesReadFlowControl(element: XmlElement): CodeBlock {
+        val attributes = element.attributes.map {
+            it.key to assignViaTypeConverterOrPrimitive(
+                    it.value.element, AssignmentType.ATTRIBUTE,
+                    it.value.accessResolver,
+                    it.value.converterQualifiedName
+            )
+        }
+
+        return CodeBlock.builder().apply {
+            beginControlFlow("while(\$L.hasAttribute())", readerParam)
+            addStatement("String attributeName = \$L.nextAttributeName()", readerParam)
+            when (attributes.size) {
+                0 -> {
+                    add(generateCheckForNotMappedAttributes())
+                }
+                1 -> {
+                    val (attrName, assignCode) = attributes.first()
+                    beginControlFlow("if(attributeName.equals(\$S))", attrName)
+                    add(assignCode)
+                    nextControlFlow("else")
+                    add(generateCheckForNotMappedAttributes())
+                    endControlFlow()
+                }
+                else -> {
+                    beginControlFlow("switch(attributeName)")
+
+                    attributes.forEach {
+                        val (attrName, assignCode) = it
+                        add("case \$S:\n", attrName)
+                        indent()
+                        add(assignCode)
+                        addStatement("break")
+                        unindent()
+                    }
+
+                    add("default:\n")
+                    indent()
+                    add(generateCheckForNotMappedAttributes())
+                    addStatement("break")
+                    unindent()
+                    endControlFlow() // end switch
+                }
+            }
+            endControlFlow() // end while hasAttribute()
+        }.build()
+    }
+
+    fun generateCheckForNotMappedAttributes(): CodeBlock = CodeBlock.builder()
+            .beginControlFlow("if (\$L.exceptionOnUnreadXml() && !attributeName.startsWith(\$S))", tikConfigParam, namespaceDefinitionPrefix)
+            .addStatement("throw new \$T(\$S+attributeName+\$S+\$L.getPath()+\$S)", IOException::class.java,
+                    "Could not map the xml attribute with the name '",
+                    "' at path ",
+                    readerParam,
+                    " to java class. Have you annotated such a field in your java class to map this xml attribute? Otherwise you can turn this error message off with TikXml.Builder().exceptionOnUnreadXml(false).build().")
+            .endControlFlow() // End if
+            .addStatement("\$L.skipAttributeValue()", readerParam)
+            .build()
 
 
     /**
