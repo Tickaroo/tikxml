@@ -58,7 +58,7 @@ public class AttributesTest {
     xml.write(buffer, item);
 
     String xmlStr =
-        "<?xml version=\"1.0\" encoding=\"UTF-8\"?><item aBoolean=\"true\" longWrapper=\"2147483648\" aString=\"foo\" intWrapper=\"123\" aLong=\"2147483648\" anInt=\"123\" aDate=\"1988-03-04\" aDouble=\"23.42\" doubleWrapper=\"23.42\" booleanWrapper=\"true\"/>";
+        "<?xml version=\"1.0\" encoding=\"UTF-8\"?><item aString=\"foo\" anInt=\"123\" aBoolean=\"true\" aDouble=\"23.42\" aLong=\"2147483648\" aDate=\"1988-03-04\" intWrapper=\"123\" booleanWrapper=\"true\" doubleWrapper=\"23.42\" longWrapper=\"2147483648\"/>";
     Assert.assertEquals(xmlStr, TestUtils.bufferToString(buffer));
 
     ItemAV item2 =

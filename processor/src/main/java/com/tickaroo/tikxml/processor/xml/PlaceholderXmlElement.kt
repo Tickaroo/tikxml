@@ -24,10 +24,10 @@ import com.tickaroo.tikxml.processor.field.AttributeField
 import com.tickaroo.tikxml.processor.generator.CodeGeneratorHelper
 import com.tickaroo.tikxml.processor.utils.endXmlElement
 import com.tickaroo.tikxml.processor.utils.getSurroundingClassQualifiedName
-import java.util.*
 import javax.lang.model.element.Element
 import javax.lang.model.element.TypeElement
 import javax.lang.model.element.VariableElement
+import kotlin.collections.LinkedHashMap
 
 /**
  * This element represents a "placeholder" xml element. That means that we might have written a [com.tickaroo.tikxml.annotation.Path]
@@ -38,8 +38,8 @@ import javax.lang.model.element.VariableElement
 class PlaceholderXmlElement(override val name: String, override val element: Element) : XmlChildElement {
 
 
-    override val attributes = HashMap<String, AttributeField>()
-    override val childElements = HashMap<String, XmlChildElement>()
+    override val attributes = LinkedHashMap<String, AttributeField>()
+    override val childElements = LinkedHashMap<String, XmlChildElement>()
 
     override fun isXmlElementAccessableFromOutsideTypeAdapter() = true
 

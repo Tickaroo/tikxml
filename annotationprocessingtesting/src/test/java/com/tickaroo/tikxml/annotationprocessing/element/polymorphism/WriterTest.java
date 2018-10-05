@@ -60,7 +60,7 @@ public class WriterTest {
     xml.write(buffer, paperJournalist);
 
     String xmlStr =
-        "<?xml version=\"1.0\" encoding=\"UTF-8\"?><paper><journalist><name>Hannes</name><age>40</age></journalist></paper>";
+        "<?xml version=\"1.0\" encoding=\"UTF-8\"?><paper><journalist><age>40</age><name>Hannes</name></journalist></paper>";
     Assert.assertEquals(xmlStr, TestUtils.bufferToString(buffer));
 
     Paper paperJournalist2 = xml.read(TestUtils.sourceFrom(xmlStr), Paper.class);

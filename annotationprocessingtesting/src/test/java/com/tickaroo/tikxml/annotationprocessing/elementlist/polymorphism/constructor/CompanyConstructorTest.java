@@ -63,7 +63,7 @@ public class CompanyConstructorTest {
     xml.write(buffer, company);
 
     String xmlStr =
-        "<?xml version=\"1.0\" encoding=\"UTF-8\"?><company><boss firstName=\"Naomi\" lastName=\"Owusu\"/><employee><name>Hannes</name></employee><employee><name>Lukas</name></employee><employee><name>Bodo</name></employee><name>Tickaroo</name></company>";
+        "<?xml version=\"1.0\" encoding=\"UTF-8\"?><company><name>Tickaroo</name><boss firstName=\"Naomi\" lastName=\"Owusu\"/><employee><name>Hannes</name></employee><employee><name>Lukas</name></employee><employee><name>Bodo</name></employee></company>";
     Assert.assertEquals(xmlStr, TestUtils.bufferToString(buffer));
 
     CompanyConstructor company2 = xml.read(TestUtils.sourceFrom(xmlStr), CompanyConstructor.class);

@@ -31,15 +31,18 @@ import javax.lang.model.element.TypeElement
 /**
  *
  * @author Hannes Dorfmann
+ *
  */
+
+//TODO: this is not used. can we remove it?
 class MockAnnotatedClass(override val element: TypeElement, override val inheritance: Boolean = true, override val nameAsRoot: String = "", override val simpleClassName: String = "", override val qualifiedClassName: String = "") : AnnotatedClass {
 
     constructor() : this(Mockito.mock(TypeElement::class.java) as TypeElement)
 
     override var textContentField: TextContentField? = null
 
-    override val attributes: Map<String, AttributeField> = HashMap()
-    override val childElements: Map<String, XmlChildElement> = HashMap()
+    override val attributes: Map<String, AttributeField> = LinkedHashMap()
+    override val childElements: Map<String, XmlChildElement> = LinkedHashMap()
 
     override fun isXmlElementAccessableFromOutsideTypeAdapter(): Boolean = true
 
