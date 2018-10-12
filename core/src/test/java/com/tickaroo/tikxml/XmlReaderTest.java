@@ -1029,6 +1029,30 @@ public class XmlReaderTest {
     }
 
     @Test
+    public void xmlWithLowercaseDoctypes() throws IOException {
+
+        String xml =
+                "<!doctype rootelement SYSTEM \"file.dtd\"><root\nanAttribute=\"1\"\n attributeWithWhiteSpace=\"2\" \n   \t\tattributeWithTabs=\"20.2\">\n<child>Contains\nmulitlines\n</child>\n</root>";
+        XmlReader reader = readerFrom(xml);
+
+        reader.beginElement();
+        Assert.assertEquals("root", reader.nextElementName());
+        Assert.assertEquals("anAttribute", reader.nextAttributeName());
+        Assert.assertEquals(1, reader.nextAttributeValueAsInt());
+        Assert.assertEquals("attributeWithWhiteSpace", reader.nextAttributeName());
+        Assert.assertEquals("2", reader.nextAttributeValue());
+        Assert.assertEquals("attributeWithTabs", reader.nextAttributeName());
+        Assert.assertEquals(20.2, reader.nextAttributeValueAsDouble(), 0);
+        Assert.assertTrue(reader.hasElement());
+        reader.beginElement();
+        Assert.assertEquals("child", reader.nextElementName());
+        Assert.assertEquals("Contains\nmulitlines\n", reader.nextTextContent());
+        reader.endElement();
+        reader.endElement();
+        Assert.assertFalse(reader.hasElement());
+    }
+
+    @Test
     public void notADocTypeDefinitionButSameDoctypeAsTag() throws IOException {
 
         String xml = "<!DOCTYPE foo><!DOCTYPE bar><DOCTYPE />";

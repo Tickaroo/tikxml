@@ -321,7 +321,8 @@ public class XmlReader implements Closeable {
    * @throws IOException
    */
   private boolean isDocTypeDefinition() throws IOException {
-    return buffer.rangeEquals(0, DOCTYPE_OPEN);
+    return buffer.size() >= DOCTYPE_OPEN.size() &&
+            buffer.snapshot(DOCTYPE_OPEN.size()).toAsciiUppercase().equals(DOCTYPE_OPEN);
   }
 
   /**
