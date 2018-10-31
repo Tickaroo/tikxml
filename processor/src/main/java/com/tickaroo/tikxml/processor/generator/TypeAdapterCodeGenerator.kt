@@ -33,6 +33,7 @@ import javax.annotation.processing.Filer
 import javax.lang.model.element.Modifier
 import javax.lang.model.util.Elements
 import javax.lang.model.util.Types
+import kotlin.collections.HashMap
 
 /**
  * This class takes an [com.tickaroo.tikxml.processor.field.AnnotatedClass] as input
@@ -40,7 +41,7 @@ import javax.lang.model.util.Types
  * @author Hannes Dorfmann
  * @since 1.0
  */
-class TypeAdapterCodeGenerator(private val filer: Filer, private val elementUtils: Elements, private val typeUtils: Types, private val typeConvertersForPrimitives: Set<String>) {
+class TypeAdapterCodeGenerator(private val filer: Filer, private val elementUtils: Elements, private val typeUtils: Types, private val typeConvertersForPrimitives: Set<String>, private val mapImpl: String?) {
 
     /**
      * The name of the class that holds some value when we have to parse xml into a constructor
@@ -107,13 +108,20 @@ class TypeAdapterCodeGenerator(private val filer: Filer, private val elementUtil
 
         val targetClassToParseInto = getClassToParseInto(annotatedClass)
 
+        val mapImplClass: Class<*> = mapImpl?.isNullOrEmpty()?.not()?.let {
+            try {
+                Class.forName(mapImpl)
+            } catch (classNotFound: ClassNotFoundException) {
+                HashMap::class.java
+            }
+        } ?: HashMap::class.java
+
         if (annotatedClass.hasAttributes()) {
             val attributeBinderMapField = ParameterizedTypeName.get(ClassName.get(java.util.Map::class.java),
                     ClassName.get(String::class.java), ParameterizedTypeName.get(ClassName.get(AttributeBinder::class.java), targetClassToParseInto))
-            val attributeBinderHashMapField = ParameterizedTypeName.get(ClassName.get(HashMap::class.java),
+            val attributeBinderHashMapField = ParameterizedTypeName.get(ClassName.get(mapImplClass),
                     ClassName.get(String::class.java), ParameterizedTypeName.get(ClassName.get(AttributeBinder::class.java), targetClassToParseInto))
 
-            // TODO use ArrayMap
             adapterClassBuilder.addField(
                     FieldSpec.builder(attributeBinderMapField, CodeGeneratorHelper.attributeBindersParam, Modifier.PRIVATE)
                             .initializer("new  \$T()", attributeBinderHashMapField)
@@ -123,10 +131,9 @@ class TypeAdapterCodeGenerator(private val filer: Filer, private val elementUtil
         if (annotatedClass.hasChildElements()) {
             val childElementBinderMapField = ParameterizedTypeName.get(ClassName.get(java.util.Map::class.java),
                     ClassName.get(String::class.java), ParameterizedTypeName.get(ClassName.get(ChildElementBinder::class.java), targetClassToParseInto))
-            val childElementBinderHashMapField = ParameterizedTypeName.get(ClassName.get(HashMap::class.java),
+            val childElementBinderHashMapField = ParameterizedTypeName.get(ClassName.get(mapImplClass),
                     ClassName.get(String::class.java), ParameterizedTypeName.get(ClassName.get(ChildElementBinder::class.java), targetClassToParseInto))
 
-            // TODO use ArrayMap
             adapterClassBuilder.addField(
                     FieldSpec.builder(childElementBinderMapField, CodeGeneratorHelper.childElementBindersParam, Modifier.PRIVATE)
                             .initializer("new  \$T()", childElementBinderHashMapField)
