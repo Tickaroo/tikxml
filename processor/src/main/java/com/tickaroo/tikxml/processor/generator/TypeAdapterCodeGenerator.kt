@@ -108,13 +108,14 @@ class TypeAdapterCodeGenerator(private val filer: Filer, private val elementUtil
 
         val targetClassToParseInto = getClassToParseInto(annotatedClass)
 
-        val mapImplClass: Class<*> = mapImpl?.isNullOrEmpty()?.not()?.let {
-            try {
-                Class.forName(mapImpl)
-            } catch (classNotFound: ClassNotFoundException) {
-                HashMap::class.java
-            }
-        } ?: HashMap::class.java
+        val mapImplClass: Class<*> = if (mapImpl != null) {
+            // TODO improve that one.
+            // What if class is not compiled yet so that Class.forName() throws not found exception?
+            // Now compiler will crash.
+            Class.forName(mapImpl)
+        } else {
+            HashMap::class.java
+        }
 
         if (annotatedClass.hasAttributes()) {
             val attributeBinderMapField = ParameterizedTypeName.get(ClassName.get(java.util.Map::class.java),
