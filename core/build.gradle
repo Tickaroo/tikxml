@@ -1,0 +1,7 @@
+apply plugin: 'java'
+
+dependencies {
+    compile rootProject.okio
+    testImplementation rootProject.junit
+    testImplementation rootProject.assertj
+}

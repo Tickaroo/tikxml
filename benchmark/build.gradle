@@ -1,0 +1,10 @@
+apply plugin: 'java'
+
+dependencies {
+  compile group: 'com.fasterxml.jackson.dataformat', name: 'jackson-dataformat-xml', version:'2.6.4'
+  compile group: 'org.simpleframework', name: 'simple-xml', version:'2.7.1'
+  compile project(':processor')
+  compile project(':core')
+  compile project(':annotation')
+    compile group: 'net.trajano.caliper', name: 'caliper', version:'1.1.1'
+}

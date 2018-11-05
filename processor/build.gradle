@@ -1,0 +1,19 @@
+apply plugin: 'java'
+apply plugin: 'kotlin'
+
+dependencies {
+  implementation project(':annotation')
+  implementation project(':core')
+  implementation project(':processor-common')
+  implementation rootProject.autoService
+  implementation rootProject.kotlinStdLib
+  implementation rootProject.kotlinReflect
+  implementation rootProject.javaPoet
+  implementation rootProject.guava
+
+  testImplementation rootProject.compileTesting
+  testImplementation rootProject.truth
+  testImplementation rootProject.mockito
+  testImplementation rootProject.kotlinTestJunit
+  testImplementation rootProject.junit
+}

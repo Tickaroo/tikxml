@@ -1,0 +1,8 @@
+apply plugin: 'java'
+
+dependencies {
+  implementation project(':processor')
+  implementation project(':auto-value-tikxml')
+  implementation rootProject.autoValue
+  testImplementation rootProject.junit
+}
