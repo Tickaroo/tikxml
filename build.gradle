@@ -30,11 +30,15 @@ buildscript {
     repositories {
         google()
         jcenter()
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
     }
 
     dependencies {
         classpath "com.android.tools.build:gradle:$androidGradleVersion"
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
+        classpath "net.ltgt.gradle:gradle-apt-plugin:0.19"
     }
 }
 
@@ -43,6 +47,8 @@ allprojects {
         google()
         jcenter()
         mavenCentral()
-        maven { url "http://oss.sonatype.org/content/repositories/snapshots"}
+        maven { 
+            url "http://oss.sonatype.org/content/repositories/snapshots"
+        }
     }
 }

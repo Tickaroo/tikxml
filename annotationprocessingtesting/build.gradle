@@ -1,8 +1,15 @@
 apply plugin: 'java'
+apply plugin: 'net.ltgt.apt'
 
 dependencies {
-  implementation project(':processor')
-  implementation project(':auto-value-tikxml')
-  implementation rootProject.autoValue
-  testImplementation rootProject.junit
+    compile project(":annotation")
+    implementation project(':processor')
+    implementation project(':autovalue')
+    implementation rootProject.autoValue
+    annotationProcessor project(':processor')
+    annotationProcessor project(':autovalue')
+
+    testAnnotationProcessor project(':processor')
+    testAnnotationProcessor project(':autovalue')
+    testImplementation rootProject.junit
 }

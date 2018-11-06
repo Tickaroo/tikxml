@@ -2,9 +2,9 @@ apply plugin: 'java'
 apply plugin: 'kotlin'
 
 dependencies {
-  implementation project(':annotation')
+  api project(':annotation')
   implementation project(':processor-common')
-  implementation project(':core')
+  api project(':core')
   implementation rootProject.autoValue
   implementation rootProject.autoService
   implementation rootProject.kotlinStdLib
@@ -12,7 +12,7 @@ dependencies {
   implementation rootProject.javaPoet
 
   testImplementation rootProject.junit
-  testImplementation rootProject.testCompile
+  testImplementation rootProject.compileTesting
   testImplementation rootProject.truth
   testImplementation rootProject.kotlinTestJunit
 }

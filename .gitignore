@@ -79,6 +79,7 @@ gen/
 # Gradle files
 .gradle/
 build/
+out/
 
 # Local configuration file (sdk path, etc)
 local.properties
