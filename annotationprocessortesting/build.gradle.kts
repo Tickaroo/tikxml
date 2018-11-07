@@ -4,7 +4,6 @@ plugins {
 
 dependencies {
     implementation(project(":autovalue"))
-    implementation(Deps.autoValueProcessor)
     annotationProcessor(project(":processor"))
     annotationProcessor(project(":autovalue"))
 
