@@ -1,0 +1,15 @@
+apply plugin: "java"
+apply plugin: "kotlin"
+apply plugin: "kotlin-kapt"
+
+dependencies {
+  implementation project(":annotation")
+  implementation project(":autovalue")
+  kapt project(":autovalue")
+  implementation rootProject.autoValue
+  kapt rootProject.autoValue
+  implementation rootProject.kotlinStdLib
+  kapt project(":processor")
+
+  testImplementation rootProject.junit
+}
