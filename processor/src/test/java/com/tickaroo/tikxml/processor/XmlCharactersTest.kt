@@ -9,25 +9,22 @@ import org.junit.Test
  */
 class XmlCharactersTest {
 
-
     @Test
-    fun test(){
-        Assert.assertTrue(XmlCharacters.containsXmlCharacter("a<"));
-        Assert.assertTrue(XmlCharacters.containsXmlCharacter("<a"));
-        Assert.assertTrue(XmlCharacters.containsXmlCharacter("<"));
+    fun test() {
+        Assert.assertTrue(XmlCharacters.containsXmlCharacter("a<"))
+        Assert.assertTrue(XmlCharacters.containsXmlCharacter("<a"))
+        Assert.assertTrue(XmlCharacters.containsXmlCharacter("<"))
 
+        Assert.assertTrue(XmlCharacters.containsXmlCharacter("a>"))
+        Assert.assertTrue(XmlCharacters.containsXmlCharacter(">a"))
+        Assert.assertTrue(XmlCharacters.containsXmlCharacter(">"))
 
-        Assert.assertTrue(XmlCharacters.containsXmlCharacter("a>"));
-        Assert.assertTrue(XmlCharacters.containsXmlCharacter(">a"));
-        Assert.assertTrue(XmlCharacters.containsXmlCharacter(">"));
+        Assert.assertTrue(XmlCharacters.containsXmlCharacter("a\""))
+        Assert.assertTrue(XmlCharacters.containsXmlCharacter("\"a"))
+        Assert.assertTrue(XmlCharacters.containsXmlCharacter("\""))
 
-
-        Assert.assertTrue(XmlCharacters.containsXmlCharacter("a\""));
-        Assert.assertTrue(XmlCharacters.containsXmlCharacter("\"a"));
-        Assert.assertTrue(XmlCharacters.containsXmlCharacter("\""));
-
-        Assert.assertTrue(XmlCharacters.containsXmlCharacter("a'"));
-        Assert.assertTrue(XmlCharacters.containsXmlCharacter("'a"));
-        Assert.assertTrue(XmlCharacters.containsXmlCharacter("'"));
+        Assert.assertTrue(XmlCharacters.containsXmlCharacter("a'"))
+        Assert.assertTrue(XmlCharacters.containsXmlCharacter("'a"))
+        Assert.assertTrue(XmlCharacters.containsXmlCharacter("'"))
     }
 }

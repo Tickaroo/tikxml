@@ -123,8 +123,7 @@ public final class TypesTest {
   }
 
   @Test public void mapKeyAndValueTypes() throws Exception {
-    Type mapOfStringIntegerType = TypesTest.class.getDeclaredField(
-        "mapOfStringInteger").getGenericType();
+    Type mapOfStringIntegerType = TypesTest.class.getDeclaredField("mapOfStringInteger").getGenericType();
     assertThat(Types.mapKeyAndValueTypes(mapOfStringIntegerType, Map.class))
         .containsExactly(String.class, Integer.class);
   }

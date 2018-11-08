@@ -20,6 +20,7 @@ package com.tickaroo.tikxml;
 
 import java.io.IOException;
 import java.util.Date;
+
 import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
@@ -30,37 +31,37 @@ import org.junit.rules.ExpectedException;
  */
 public class TypeConvertersTest {
 
-  @Rule
-  public ExpectedException exception = ExpectedException.none();
+    @Rule
+    public ExpectedException exception = ExpectedException.none();
 
-  static class TestConverter implements TypeConverter<Object> {
-    @Override
-    public Object read(String value) throws Exception {
-      return null;
+    static class TestConverter implements TypeConverter<Object> {
+        @Override
+        public Object read(String value) {
+            return null;
+        }
+
+        @Override
+        public String write(Object value) {
+            return null;
+        }
     }
 
-    @Override
-    public String write(Object value) throws Exception {
-      return null;
+    @Test
+    public void addAndGetTypeConverter() throws IOException {
+
+        TypeConverters converters = new TypeConverters();
+
+        exception.expect(IOException.class);
+        converters.get(TestConverter.class);
+
+        TestConverter converter = new TestConverter();
+
+        converters.add(Object.class, converter);
+        Assert.assertSame(converter, converters.get(Object.class));
+
+        exception.expect(IOException.class);
+        converters.get(Date.class);
+
+
     }
-  }
-
-  @Test
-  public void addAndGetTypeConverter() throws IOException {
-
-    TypeConverters converters = new TypeConverters();
-
-    exception.expect(IOException.class);
-    converters.get(TestConverter.class);
-
-    TestConverter converter = new TestConverter();
-
-    converters.add(Object.class, converter);
-    Assert.assertTrue(converter == converters.get(Object.class));
-
-    exception.expect(IOException.class);
-    converters.get(Date.class);
-
-
-  }
 }

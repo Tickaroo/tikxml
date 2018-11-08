@@ -18,13 +18,16 @@
 
 package com.tickaroo.tikxml.retrofit;
 
+import com.tickaroo.tikxml.annotation.PropertyElement;
+import com.tickaroo.tikxml.annotation.Xml;
 
 /**
  * @author Hannes Dorfmann
  */
-
+@Xml
 public class Person {
-  String name;
 
+    @PropertyElement
+    String name;
 
 }
