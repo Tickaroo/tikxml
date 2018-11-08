@@ -12,11 +12,11 @@ class Week {
     @Element
     var days: List<Day>? = null
 
-    override fun equals(o: Any?): Boolean {
-        if (this === o) return true
-        if (o !is Week) return false
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is Week) return false
 
-        val week = o as Week?
+        val week = other as Week?
 
         return if (days != null) days == week!!.days else week!!.days == null
     }

@@ -1,0 +1,12 @@
+include(":core",
+        ":annotation",
+        ":processor",
+        ":annotationprocessortesting",
+        ":annotationprocessortesting-kt",
+        ":retrofit-converter",
+        ":benchmark",
+        ":converters:htmlescape",
+        ":converters:date-rfc3339",
+        ":converters",
+        ":autovalue",
+        ":processor-common")

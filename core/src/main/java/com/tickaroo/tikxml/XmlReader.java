@@ -101,7 +101,7 @@ public class XmlReader implements Closeable {
       throw new NullPointerException("source == null");
     }
     this.source = source;
-    this.buffer = source.buffer();
+    this.buffer = source.getBuffer();
   }
 
   /**

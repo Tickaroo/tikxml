@@ -11,6 +11,7 @@ dependencies {
     implementation(Deps.javaPoet)
     implementation(Deps.autoService)
     implementation(Deps.kotlinStdLib)
+    implementation(Deps.kotlinReflect)
     implementation(Deps.autoValueProcessor)
 
     testImplementation(Deps.junit)

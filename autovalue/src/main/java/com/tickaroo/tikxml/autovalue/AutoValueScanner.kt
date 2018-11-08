@@ -27,7 +27,7 @@ fun extractAutoValueProperties(autoValueClass: TypeElement, properties: Map<Stri
     //
     // Some checks for android parcelable
     //
-    var parcelable = false
+    var parcelable: Boolean
     try {
         val parcelableType = elements.getTypeElement("android.os.Parcelable")
         if (parcelableType == null) {
