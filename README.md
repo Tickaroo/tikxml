@@ -6,10 +6,10 @@ Please note that this is still **work in progress!**, although quite stable and 
 A fast xml parser for android (and java)
 
 ```groovy
-implementation 'com.tickaroo.tikxml:annotation:0.8.13'
-implementation 'com.tickaroo.tikxml:core:0.8.13'
+implementation 'com.tickaroo.tikxml:annotation:0.8.15'
+implementation 'com.tickaroo.tikxml:core:0.8.15'
 
-annotationProcessor 'com.tickaroo.tikxml:processor:0.8.13'
+annotationProcessor 'com.tickaroo.tikxml:processor:0.8.15'
 ```
 For pure java project use this [apt plugin](https://github.com/tbroyer/gradle-apt-plugin) 
 
@@ -20,16 +20,16 @@ For koltin project (android or pure) use [kotlin-kapt plugin](https://kotlinlang
 For retrofit2:
 
 ```groovy
-implementation 'com.tickaroo.tikxml:retrofit-converter:0.8.13'
+implementation 'com.tickaroo.tikxml:retrofit-converter:0.8.15'
 ```
 
 Also, an [AutoValue](https://github.com/google/auto/tree/master/value) extension is available:
 
 ```groovy
-annotationProcessor 'com.tickaroo.tikxml:auto-value-tikxml:0.8.13'
+annotationProcessor 'com.tickaroo.tikxml:auto-value-tikxml:0.8.15'
 ```
 
-Latest snapshot `0.8.14-SNAPSHOT` available:
+Latest snapshot `0.8.16-SNAPSHOT` available:
 
 ```groovy
 repositories {
