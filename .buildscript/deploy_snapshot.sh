@@ -25,8 +25,13 @@ else
   openssl aes-256-cbc -K $encrypted_abf389171084_key -iv $encrypted_abf389171084_iv -in .buildscript/private.key.enc -out private.key -d
   ./gradlew uploadArchives
   gpg --import private.key
-  echo "signing.keyId=E1FB7CBA" >> library/gradle.properties
-  echo "signing.password=$PGP_KEY" >> library/gradle.properties
+
+  echo "SONATYPE_NEXUS_USERNAME=$NEXUS_USERNAME" >> gradle.properties
+  echo "SONATYPE_NEXUS_PASSWORD=$NEXUS_PASSWORD" >> gradle.properties
+  echo "NEXUS_USERNAME=$NEXUS_USERNAME" >> gradle.properties
+  echo "NEXUS_PASSWORD=$NEXUS_PASSWORD" >> gradle.properties
+  echo "signing.keyId=E1FB7CBA" >> gradle.properties
+  echo "signing.password=$PGP_KEY" >> gradle.properties
   echo "signing.secretKeyRingFile=/home/travis/.gnupg/secring.gpg" >> library/gradle.properties
   echo "org.gradle.parallel=false" >> gradle.properties
   echo "org.gradle.configureondemand=false" >> gradle.properties
