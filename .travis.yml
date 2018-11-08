@@ -11,8 +11,6 @@ jdk:
 after_success:
   - bash <(curl -s https://codecov.io/bash)
   - .buildscript/deploy_snapshot.sh
-  - .buildscript/snapshot_deployed_notification.sh
-
 env:
   global:
     - secure: "VlIloQ91nXr4icmqcbpwP1h+NEP1ahijuEJr1TDqfO4gXGFfxHr7cPyo5V5qGoJQNFIIDctIIj66b6PiIZN7+1u3P1XaKsc0H+37pfvFIn4CnHoN3ccZaSLtfl9ZSScuPmmYg3DsbPkGFX7DzoyOY8k7PqSKtFmk97Fst/mIrLS7GO33Q7AhMhhzW/MmcPLAvOLMPdmo8CbJREVoeL52M6AhO++SEN5BuVydUWYF742tSI5E3ZV57KBoFwA4HrkuCDSTSn1Ts1m213xXAW5D1MmGYUcUi7bGK5CkkxzLLT8jA2Aam7sWaJO32ty8niG2vvqLTN+I/9ldf/rjMukE6dmFF09UoIBlVitWuqFuP9cJsE8r5mzy/FwVnq63Y7QhnGDc7fVjqVw79T/iIgfk0NX3yEAfUz1cZF8SHqui4KRRLQtKCAUy55LUq0N3ij+9J2GIn6eCUfO7A1hK8UJn7idsBwDXcscZUcGC1KT/lLnaPOUWtBXZR78Q5ltja9e1z2bTTjaR5zYaOvufhf40ARATRwSfWO5eIL/nDs+nmQl8yxDQjpZyA/xBtNHVPH6JJiZtWtW8xVYEDZjMJRpS9DShMsukIZ4px7Sn9dhwc66nK79QFWC01f74bTR/WpBeA8ksvKpKmBU/Z8q5NlohBWeh/SzWuGa3qT2e56aWWsY="
@@ -23,17 +21,8 @@ branches:
   except:
     - gh-pages
 
-#notifications:
-#  email: false
-#  hipchat:
-#    rooms:
-#      - secure: "I+VFrrCgl50vPU2KuBLwoZBUgv3dqrkiazW9EaWOUbvTBBn13A9zi8ScP3elUksz5dkwCCAtVlLqUzVqsqFYPTSI0nA39M+sWzuXHa/oV5DUKX99vQQRVMH3Eas88hPe+7Y4DQoSu6TUgX391CvQmkCchuVCRIB57gon3z0Fg1eIXKOkevQC1h5mJ0bnAaPa6XfmPlfDukMJmbFQZL7cX7zKFTmh5CMc/WwyhCS2fd1Lns8trBAqHDr4fGry0mDGCLfCYw9hf9GJpTORvlnE2BbigqJa1FQq/iPL1/Xpl7VNWO92t8iMN+mkNC79c/+L5gZClUhqM++uXnNxD8jjrnxjHa+j5hzi76fZ5XzMucT/2H+h/5grTWXKeL5iiyGu15hJtVPa0kiPKr8G2UKFL/QCK+qncpeygQIMTAd1RHpQTgvQyh0xhDNtQrwHfWRFzR/aRLoEs1SIhle3m8OEXcAagONZGh6ubIcYvg8GQA/nNZp+25Q+JQOiVgP15MzCrNibzNTR/3bJ3OgysCEAtV17W40ax5rep9U5QOJ/i6LhMxk5PUszMDwmumnyAf1t+qXmLudpXqJFDr04csW7yvh+Pqpg+ciYU4NV2CVRl0QTbES6+knQyo0Vv8/IvhXNsbuDRFJXINZSJS53I0aSww1cmozFHN0Vx/heoxzMIZw="
-#    template:
-#      - '%{repository} #%{build_number} (%{branch} - %{commit} : %{author}): %{message} (<a href="%{build_url}">Details</a>/<a href="%{compare_url}">Change view</a>)'
-#    format: html
-
 sudo: false
-script: mvn install -Dgpg.skip
+script: "./gradlew build test"
 cache:
   directories:
-    - $HOME/.m2
+  - "$HOME/.gradle"
