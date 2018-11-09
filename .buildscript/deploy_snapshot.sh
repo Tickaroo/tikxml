@@ -23,10 +23,7 @@ elif [ "$TRAVIS_BRANCH" != "$BRANCH" ]; then
 else
   echo "Deploying ..."
   openssl aes-256-cbc -K $encrypted_abf389171084_key -iv $encrypted_abf389171084_iv -in .buildscript/private.key.enc -out private.key -d
-  ./gradlew uploadArchives
   gpg --import private.key
-
-  echo "u $CI_DEPLOY_USERNAME $NEXUS_USERNAME"
   echo "SONATYPE_NEXUS_USERNAME=$CI_DEPLOY_USERNAME" >> gradle.properties
   echo "SONATYPE_NEXUS_PASSWORD=$CI_DEPLOY_PASSWORD" >> gradle.properties
   echo "NEXUS_USERNAME=$CI_DEPLOY_USERNAME" >> gradle.properties
@@ -36,6 +33,7 @@ else
   echo "signing.secretKeyRingFile=/home/travis/.gnupg/secring.gpg" >> gradle.properties
   echo "org.gradle.parallel=false" >> gradle.properties
   echo "org.gradle.configureondemand=false" >> gradle.properties
+  ./gradlew uploadArchives
   rm private.key
   git reset --hard
   echo "Deployed!"
