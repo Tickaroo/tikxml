@@ -26,8 +26,8 @@ else
   ./gradlew uploadArchives
   gpg --import private.key
 
-  echo "SONATYPE_NEXUS_USERNAME=CI_DEPLOY_USERNAME" >> gradle.properties
-  echo "SONATYPE_NEXUS_PASSWORD=CI_DEPLOY_PASSWORD" >> gradle.properties
+  echo "SONATYPE_NEXUS_USERNAME=$CI_DEPLOY_USERNAME" >> gradle.properties
+  echo "SONATYPE_NEXUS_PASSWORD=$CI_DEPLOY_PASSWORD" >> gradle.properties
   echo "NEXUS_USERNAME=$NEXUS_USERNAME" >> gradle.properties
   echo "NEXUS_PASSWORD=$NEXUS_PASSWORD" >> gradle.properties
   echo "signing.keyId=E1FB7CBA" >> gradle.properties
