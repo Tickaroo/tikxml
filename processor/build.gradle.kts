@@ -3,7 +3,9 @@ plugins {
     id("kotlin")
 }
 
-apply(from = "$rootDir/maven-push-java-lib.gradle")
+// apply(from = "$rootDir/maven-push-java-lib.gradle")
+apply (plugin = "com.vanniktech.maven.publish")
+
 
 dependencies {
     compile(project(":core"))

@@ -2,8 +2,10 @@ plugins {
     java
 }
 
-apply(from = "../maven-push-java-lib.gradle")
+apply (plugin = "com.vanniktech.maven.publish")
+
+// apply(from = "../maven-push-java-lib.gradle")
 
 dependencies {
-   compile(project(":core"))
+    compile(project(":core"))
 }
