@@ -1113,4 +1113,19 @@ public class XmlReaderTest {
             reader.close();
         }
     }
+
+    @Test
+    public void readXmlWithOpenAngleBracketAtEndOfBuffer() throws IOException {
+        XmlReader reader = XmlReader.of(TestUtils.sourceForFile("gpx.xml"));
+        while (reader.hasElement() || reader.hasTextContent()) {
+            if (reader.hasElement()) {
+                while(reader.hasElement()) {
+                    reader.beginElement();
+                    reader.skipRemainingElement();
+                }
+            } else if (reader.hasTextContent()) {
+                reader.skipTextContent();
+            }
+        }
+    }
 }

@@ -801,7 +801,7 @@ public class XmlReader implements Closeable {
       }
 
       buffer.skip(p - 1);
-      if (c == '<' && !isCDATA()) {
+      if (c == '<' && !isCDATA() && fillBuffer(2)) {
 
         byte peek = buffer.getByte(1);
         int peekStack = stack[stackSize - 1];
