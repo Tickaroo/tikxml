@@ -20,6 +20,7 @@ package com.tickaroo.tikxml.annotationprocessing.elementlist.polymorphism;
 
 import com.tickaroo.tikxml.annotation.Attribute;
 import com.tickaroo.tikxml.annotation.Xml;
+import java.util.Objects;
 
 /**
  * @author Hannes Dorfmann
@@ -35,9 +36,8 @@ public class Boss implements Person {
 
     Boss boss = (Boss) o;
 
-    if (firstName != null ? !firstName.equals(boss.firstName) : boss.firstName != null)
-      return false;
-    return lastName != null ? lastName.equals(boss.lastName) : boss.lastName == null;
+    if (!Objects.equals(firstName, boss.firstName)) return false;
+    return Objects.equals(lastName, boss.lastName);
   }
 
   @Override public int hashCode() {

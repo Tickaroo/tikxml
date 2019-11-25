@@ -1,20 +1,20 @@
 object Versions {
-    const val autoService = "1.0-rc4"
-    const val autoValue = "1.6.2"
+    const val autoService = "1.0-rc6"
+    const val autoValue = "1.7"
     const val junit = "4.12"
-    const val kotlin = "1.3.0"
+    const val kotlin = "1.3.60"
     const val javaPoet = "1.11.1"
-    const val compileTesting = "0.15"
-    const val truth = "0.42"
-    const val jackson = "2.9.7"
+    const val compileTesting = "0.18"
+    const val truth = "1.0"
+    const val jackson = "2.10.1"
     const val simpleXml = "2.7.1"
     const val caliper = "1.2.1"
-    const val okio = "2.1.0"
-    const val assertj = "3.11.1"
-    const val guava = "27.0-jre"
-    const val mockito = "2.23.0"
-    const val retrofit = "2.4.0"
-    const val mockWebserver = "3.11.0"
+    const val okio = "2.2.2"
+    const val assertj = "3.14.0"
+    const val guava = "28.1-jre"
+    const val mockito = "3.1.0"
+    const val retrofit = "2.6.2"
+    const val mockWebserver = "4.2.2"
 }
 
 object Deps {
@@ -26,7 +26,8 @@ object Deps {
     const val mockito = "org.mockito:mockito-core:${Versions.mockito}"
 
     // google auto
-    const val autoService ="com.google.auto.service:auto-service:${Versions.autoService}"
+    const val autoServiceProcessor ="com.google.auto.service:auto-service:${Versions.autoService}"
+    const val autoServiceAnnotation ="com.google.auto.service:auto-service-annotations:${Versions.autoService}"
     const val autoValueProcessor = "com.google.auto.value:auto-value:${Versions.autoValue}"
     const val autoValueAnnotation = "com.google.auto.value:auto-value-annotations:${Versions.autoValue}"
 

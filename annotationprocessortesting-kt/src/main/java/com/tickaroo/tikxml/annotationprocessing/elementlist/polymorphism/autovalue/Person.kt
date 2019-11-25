@@ -18,7 +18,10 @@
 
 package com.tickaroo.tikxml.annotationprocessing.elementlist.polymorphism.autovalue
 
+import com.tickaroo.tikxml.annotation.GenericAdapter
+
 /**
  * @author Hannes Dorfmann
  */
+@GenericAdapter
 interface Person

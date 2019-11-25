@@ -22,6 +22,8 @@ import com.tickaroo.tikxml.annotation.Element;
 import com.tickaroo.tikxml.annotation.ElementNameMatcher;
 import com.tickaroo.tikxml.annotation.Xml;
 
+import java.util.Objects;
+
 /**
  * @author Hannes Dorfmann
  */
@@ -50,7 +52,7 @@ public class PaperConstructor {
 
     PaperConstructor that = (PaperConstructor) o;
 
-    return writer != null ? writer.equals(that.writer) : that.writer == null;
+    return Objects.equals(writer, that.writer);
   }
 
   @Override public int hashCode() {

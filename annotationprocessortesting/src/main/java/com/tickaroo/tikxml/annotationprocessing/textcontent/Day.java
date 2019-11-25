@@ -2,6 +2,7 @@ package com.tickaroo.tikxml.annotationprocessing.textcontent;
 
 import com.tickaroo.tikxml.annotation.TextContent;
 import com.tickaroo.tikxml.annotation.Xml;
+import java.util.Objects;
 
 /**
  * @author Hannes Dorfmann
@@ -17,7 +18,7 @@ public class Day {
 
     Day day = (Day) o;
 
-    return name != null ? name.equals(day.name) : day.name == null;
+    return Objects.equals(name, day.name);
   }
 
   @Override public int hashCode() {
