@@ -21,6 +21,7 @@ package com.tickaroo.tikxml.annotationprocessing.elementlist;
 import com.tickaroo.tikxml.annotation.Element;
 import com.tickaroo.tikxml.annotation.Xml;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @author Hannes Dorfmann
@@ -37,7 +38,7 @@ public class InlineListCatalogue {
 
     InlineListCatalogue that = (InlineListCatalogue) o;
 
-    return books != null ? books.equals(that.books) : that.books == null;
+    return Objects.equals(books, that.books);
   }
 
   @Override public int hashCode() {

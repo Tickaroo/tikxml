@@ -97,9 +97,9 @@ fun toAnnotatedMethod(propertyName: String, element: ExecutableElement): Annotat
     if (annotationFound > 1) {
         // More than one annotation is not allowed
         throw ProcessingException(element, "Methods can ONLY be annotated with one of the "
-                + "following annotations @${Attribute::class.simpleName}, "
-                + "@${PropertyElement::class.simpleName}, @${Element::class.simpleName} or @${TextContent::class.simpleName}  "
-                + "and not multiple of them! The field ${element.simpleName.toString()} in class "
+                + "following annotations @${Attribute::class.java.simpleName}, "
+                + "@${PropertyElement::class.java.simpleName}, @${Element::class.java.simpleName} or @${TextContent::class.java.simpleName} "
+                + "and not multiple of them! The field ${element.simpleName} in class "
                 + "${(element.enclosingElement as TypeElement).qualifiedName} is annotated with more than one of these annotations. You must annotate a field with exactly one of these annotations (not multiple)!")
     }
 

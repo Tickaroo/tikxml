@@ -21,6 +21,7 @@ package com.tickaroo.tikxml.annotationprocessing.element;
 import com.tickaroo.tikxml.annotation.Attribute;
 import com.tickaroo.tikxml.annotation.Element;
 import com.tickaroo.tikxml.annotation.Xml;
+import java.util.Objects;
 
 /**
  * @author Hannes Dorfmann
@@ -36,8 +37,8 @@ public class Server {
 
     Server server = (Server) o;
 
-    if (name != null ? !name.equals(server.name) : server.name != null) return false;
-    return config != null ? config.equals(server.config) : server.config == null;
+    if (!Objects.equals(name, server.name)) return false;
+    return Objects.equals(config, server.config);
   }
 
   @Override public int hashCode() {

@@ -20,6 +20,7 @@ package com.tickaroo.tikxml.annotationprocessing.element.polymorphism;
 
 import com.tickaroo.tikxml.annotation.PropertyElement;
 import com.tickaroo.tikxml.annotation.Xml;
+import java.util.Objects;
 
 /**
  * @author Hannes Dorfmann
@@ -36,7 +37,7 @@ public class Organisation extends Writer {
 
     Organisation that = (Organisation) o;
 
-    return address != null ? address.equals(that.address) : that.address == null;
+    return Objects.equals(address, that.address);
   }
 
   @Override public int hashCode() {

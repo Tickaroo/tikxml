@@ -41,6 +41,7 @@ import com.tickaroo.tikxml.processor.field.TextContentField
 import com.tickaroo.tikxml.processor.utils.getSurroundingClassQualifiedName
 import com.tickaroo.tikxml.processor.utils.hasEmptyParameters
 import com.tickaroo.tikxml.processor.utils.hasMinimumPackageVisibilityModifiers
+import com.tickaroo.tikxml.processor.utils.hasSuperClass
 import com.tickaroo.tikxml.processor.utils.hasTikXmlAnnotation
 import com.tickaroo.tikxml.processor.utils.isAbstract
 import com.tickaroo.tikxml.processor.utils.isClass
@@ -51,7 +52,6 @@ import com.tickaroo.tikxml.processor.utils.isProtected
 import com.tickaroo.tikxml.processor.utils.isPublic
 import com.tickaroo.tikxml.processor.utils.isSamePackageAs
 import com.tickaroo.tikxml.processor.utils.isString
-import java.util.ArrayList
 import java.util.Locale
 import javax.lang.model.element.TypeElement
 import javax.lang.model.element.VariableElement
@@ -101,7 +101,7 @@ open class DefaultAnnotationDetector(protected val elementUtils: Elements, prote
       null
 
   override fun isXmlField(element: VariableElement): NamedField? {
-    var annotationFound = 0;
+    var annotationFound = 0
 
     // MAIN ANNOTATIONS
     val attributeAnnotation = element.getAnnotation(Attribute::class.java)
@@ -132,10 +132,10 @@ open class DefaultAnnotationDetector(protected val elementUtils: Elements, prote
 
     if (annotationFound > 1) {
       // More than one annotation is not allowed
-      throw ProcessingException(element, "Fields can ONLY be annotated with one of the "
-          + "following annotations @${Attribute::class.simpleName}, "
-          + "@${PropertyElement::class.simpleName}, @${Element::class.simpleName} or @${TextContent::class.simpleName}  "
-          + "and not multiple of them! The field ${element.simpleName.toString()} in class "
+      throw ProcessingException(element, "Fields can ONLY be annotated with ONE of the "
+          + "following annotations @${Attribute::class.java.simpleName}, "
+          + "@${PropertyElement::class.java.simpleName}, @${Element::class.java.simpleName} or @${TextContent::class.java.simpleName} "
+          + "and not multiple of them! The field ${element.simpleName} in class "
           + "${(element.enclosingElement as TypeElement).qualifiedName} is annotated with more than one of these annotations. You must annotate a field with exactly one of these annotations (not multiple)!")
     }
 
@@ -169,26 +169,32 @@ open class DefaultAnnotationDetector(protected val elementUtils: Elements, prote
           "The type of field '${element.simpleName}' in class ${element.enclosingElement} is not a class nor a interface. Only classes or interfaces can be annotated with @${Element::class.simpleName} annotation. If you try to annotate primitives than @${PropertyElement::class.simpleName}")
       }
 
+      val checkTypeElement = fun(typeElement: TypeElement) {
+        if (elementAnnotation.compileTimeChecks) {
+          if (typeElement.isInterface()) {
+            throw ProcessingException(element,
+              "The type of field '${element.simpleName}' in class ${element.getSurroundingClassQualifiedName()} is an interface. Hence polymorphism must be resolved by annotating this interface with @${GenericAdapter::class.simpleName}!")
+          }
+
+          if (typeElement.isAbstract()) {
+            throw ProcessingException(element,
+              "The type of field '${element.simpleName}' in class ${element.getSurroundingClassQualifiedName()} is an abstract class. Hence polymorphism must be resolved by annotating this abstract class with @${GenericAdapter::class.simpleName}!")
+          } else if (typeElement.isClass()) {
+            checkNameMatchers(nameMatchers, element)
+          }
+        }
+      }
+
       if (isList(element)) {
         val genericListType = getGenericTypeFromList(element)
         val genericListTypeElement = typeUtils.asElement(genericListType) as TypeElement
         val genericTypeNames = genericTypes[genericListTypeElement.toString()]
 
         if (genericTypeNames == null) {
-          if (genericListTypeElement.isInterface()) {
-            throw ProcessingException(element,
-              "The generic list type of '$element' is an interface. Hence polymorphism must be resolved by annotating this interface with @${GenericAdapter::class.simpleName}.")
-          }
-
-          if (genericListTypeElement.isAbstract()) {
-            throw ProcessingException(element,
-              "The generic list type of '$element' is a abstract class. Hence polymorphism must be resolved by annotating this abstract class with @${GenericAdapter::class.simpleName}.")
-          } else if (genericListTypeElement.isClass()) {
-            checkNameMatchers(nameMatchers, element)
-          }
+          checkTypeElement(genericListTypeElement)
 
           val elementName = if (elementAnnotation.name.isEmpty()) {
-            getXmlElementNameOrThrowException(element, genericListTypeElement, elementAnnotation.compileTimeChecks)
+            getXmlElementNameOrThrowException(element, genericListTypeElement, elementAnnotation.compileTimeChecks, true)
           } else {
             elementAnnotation.name
           }
@@ -199,6 +205,8 @@ open class DefaultAnnotationDetector(protected val elementUtils: Elements, prote
             genericListType
           )
         } else {
+          checkNameMatchers(nameMatchers, element)
+
           return PolymorphicListElementField(
             element,
             "placeholderToSubstituteWithPolymorphicListElement",
@@ -211,30 +219,20 @@ open class DefaultAnnotationDetector(protected val elementUtils: Elements, prote
         val genericTypeNames = genericTypes[element.asType().toString()]
         val typeElement = (element.asType() as DeclaredType).asElement() as TypeElement
 
-        if (genericTypeNames == null && typeElement.superclass.toString() != "none") {
-          if (elementAnnotation.compileTimeChecks) {
-            if (typeUtils.asElement(element.asType()).isInterface()) {
-              throw ProcessingException(element,
-                "The type of field '${element.simpleName}' in class ${element.getSurroundingClassQualifiedName()} is an interface. Hence polymorphism must be resolved by annotating this interface with @${GenericAdapter::class.simpleName}!")
-            }
-
-            if (typeUtils.asElement(element.asType()).isAbstract()) {
-              throw ProcessingException(element,
-                "The type of field '${element.simpleName}' in class ${element.getSurroundingClassQualifiedName()} is an abstract class. Hence polymorphism must be resolved by annotating this abstract class with @${GenericAdapter::class.simpleName}!")
-            }
-
-            checkNameMatchers(nameMatchers, element)
-          }
+        return if (genericTypeNames == null) {
+          checkTypeElement(typeElement)
 
           val elementName = if (elementAnnotation.name.isEmpty()) {
-            getXmlElementNameOrThrowException(element, typeElement, elementAnnotation.compileTimeChecks)
+            getXmlElementNameOrThrowException(element, typeElement, elementAnnotation.compileTimeChecks, true)
           } else {
             elementAnnotation.name
           }
 
-          return ElementField(element, elementName)
+          ElementField(element, elementName)
         } else {
-          return PolymorphicElementField(element, "placeholderToSubstituteWithPolymorphicElement",
+          checkNameMatchers(nameMatchers, element)
+
+          PolymorphicElementField(element, "placeholderToSubstituteWithPolymorphicElement",
             getPolymorphicTypes(element, nameMatchers, genericTypeNames))
         }
       }
@@ -271,22 +269,39 @@ open class DefaultAnnotationDetector(protected val elementUtils: Elements, prote
 
   val checkDuplicateNameMatchers =
     fun(element: VariableElement, nameMatchers: Array<ElementNameMatcher>, matcher: ElementNameMatcher) {
-      val filteredNameMatchers = nameMatchers.filter { nameMatcher ->
-
-        val nameMatcherType = try { nameMatcher.type } catch (mte: MirroredTypeException) { mte.typeMirror }
-        val matcherType = try { matcher.type } catch (mte: MirroredTypeException) { mte.typeMirror }
-
-        nameMatcher.name == matcher.name && nameMatcherType == matcherType
+      val (matcherType, matcherName) = try {
+        Pair(matcher.type, matcher.name)
+      } catch (mte: MirroredTypeException) {
+        Pair(mte.typeMirror, matcher.name.takeIf { it.isNotBlank() } ?: getXmlElementName(
+          (mte.typeMirror as DeclaredType).asElement() as TypeElement))
       }
 
-      if (filteredNameMatchers.size >= 2) {
+      val conflictingNameMatcher = nameMatchers.firstOrNull { nameMatcher ->
+        val (nameMatcherType, nameMatcherName) = try {
+          Pair(nameMatcher.type, matcher.name)
+        } catch (mte: MirroredTypeException) {
+          Pair(mte.typeMirror, nameMatcher.name.takeIf { it.isNotBlank() } ?: getXmlElementName(
+            (mte.typeMirror as DeclaredType).asElement() as TypeElement))
+        }
+
+        nameMatcherName == matcherName && nameMatcherType != matcherType
+      }
+
+      if (conflictingNameMatcher != null) {
+        val conflictingNameMatcherType = try {
+          conflictingNameMatcher.type
+        } catch (mte: MirroredTypeException) {
+          mte.typeMirror
+        }
+
         throw ProcessingException(element,
-          "Conflict: A @${ElementNameMatcher::class.simpleName} with the name \"${matcher.name}\" is already mapped to the type ${filteredNameMatchers[0].type} to resolve polymorphism. Hence it cannot be mapped to ${matcher.type} as well.")
+          "Conflict: A @${ElementNameMatcher::class.simpleName} with the name \"${matcher.name}\" is already mapped to the type $matcherType to resolve polymorphism. Hence it cannot be mapped to $conflictingNameMatcherType as well.")
       }
     }
 
   val checkTargetClassXmlAnnotated = fun(element: VariableElement, typeElement: TypeElement) {
-    if (typeElement.getAnnotation(Xml::class.java) == null) {
+    if (typeElement.getAnnotation(Xml::class.java) == null && (typeUtils.asElement(
+        element.asType()) as TypeElement).hasSuperClass()) {
       throw ProcessingException(element,
         "The class ${typeElement.qualifiedName} is not annotated with @${Xml::class.simpleName}, but is used in '$element' in class @${element.getSurroundingClassQualifiedName()} to resolve polymorphism. Please annotate @${element.getSurroundingClassQualifiedName()} with @${Xml::class.simpleName}")
     }
@@ -301,7 +316,7 @@ open class DefaultAnnotationDetector(protected val elementUtils: Elements, prote
         "Neither @${ElementNameMatcher::class.simpleName} nor @${GenericAdapter::class.simpleName} specified to resolve polymorphism!")
     }
 
-    val namingMap = mutableMapOf<String, PolymorphicTypeElementNameMatcher>()
+    val namingMap = hashMapOf<String, PolymorphicTypeElementNameMatcher>()
 
     // add generic types first
     genericTypes?.forEach { qualifiedName ->
@@ -340,12 +355,12 @@ open class DefaultAnnotationDetector(protected val elementUtils: Elements, prote
         namingMap.values.firstOrNull { elementNameMatcher -> elementNameMatcher.type == typeMirror }
           ?.also { elementNameMatcher ->
             namingMap.remove(elementNameMatcher.xmlElementName)
-          } // delete common generic type if already in list
+          }
         namingMap[xmlElementName] = PolymorphicTypeElementNameMatcher(xmlElementName, typeElement.asType())
       }
     }
 
-    return ArrayList(namingMap.values)
+    return namingMap.values.toList()
   }
 
   /**
@@ -381,7 +396,7 @@ open class DefaultAnnotationDetector(protected val elementUtils: Elements, prote
     val variableType = if (isList(variableElement)) getGenericTypeFromList(variableElement) else variableElement.asType()
     if (!typeUtils.isAssignable(typeElement.asType(), variableType)) {
       throw ProcessingException(variableElement,
-        "The type $typeElement must be a sub type of ${variableType}. Otherwise this type cannot be used in @${ElementNameMatcher::class.simpleName} to resolve polymorphism");
+        "The type $typeElement must be a sub type of ${variableType}. Otherwise this type cannot be used in @${ElementNameMatcher::class.simpleName} to resolve polymorphism.")
     }
 
     for (constructor in ElementFilter.constructorsIn(typeElement.enclosedElements)) {
@@ -441,14 +456,15 @@ open class DefaultAnnotationDetector(protected val elementUtils: Elements, prote
    * Get the xmlElement name which is either @Xml(name = "foo") property or the class name decapitalize (first letter in lower case)
    */
   private fun getXmlElementNameOrThrowException(field: VariableElement, typeElement: TypeElement,
-    compileTimeChecks: Boolean): String {
+    compileTimeChecks: Boolean, allowJavaObject: Boolean): String {
 
     val xmlAnnotation = typeElement.getAnnotation(Xml::class.java)
     val genericAdapterAnnotation = typeElement.getAnnotation(GenericAdapter::class.java)
     val annotationName =
       if (typeElement.isClass() && !typeElement.isAbstract()) "@${Xml::class.simpleName}" else "@${GenericAdapter::class.simpleName}"
+    val checkAnnotation = (typeElement.isClass() && typeElement.hasSuperClass()) || !allowJavaObject
 
-    if (xmlAnnotation == null && genericAdapterAnnotation == null && compileTimeChecks) {
+    if (xmlAnnotation == null && genericAdapterAnnotation == null && compileTimeChecks && checkAnnotation) {
       throw ProcessingException(field,
         "The type ${typeElement.qualifiedName} used for field '$field' in ${field.getSurroundingClassQualifiedName()} can't be used, because it is not annotated with $annotationName. Annotate ${typeElement.qualifiedName} with $annotationName!")
     } else {

@@ -62,7 +62,7 @@ class DefaultAnnotationDetectorTest {
     Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
       .that(componentFile).processedWith(XmlProcessor())
       .failsToCompile()
-      .withErrorContaining("Fields can ONLY be annotated with one of the following")
+      .withErrorContaining("Fields can ONLY be annotated with ONE of the following")
   }
 
   @Test
@@ -85,7 +85,7 @@ class DefaultAnnotationDetectorTest {
     Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
       .that(componentFile).processedWith(XmlProcessor())
       .failsToCompile()
-      .withErrorContaining("Fields can ONLY be annotated with one of the following")
+      .withErrorContaining("Fields can ONLY be annotated with ONE of the following")
   }
 
   @Test
@@ -108,7 +108,7 @@ class DefaultAnnotationDetectorTest {
     Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
       .that(componentFile).processedWith(XmlProcessor())
       .failsToCompile()
-      .withErrorContaining("Fields can ONLY be annotated with one of the following")
+      .withErrorContaining("Fields can ONLY be annotated with ONE of the following")
   }
 
   @Test
@@ -132,7 +132,7 @@ class DefaultAnnotationDetectorTest {
     Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
       .that(componentFile).processedWith(XmlProcessor())
       .failsToCompile()
-      .withErrorContaining("Fields can ONLY be annotated with one of the following")
+      .withErrorContaining("Fields can ONLY be annotated with ONE of the following")
   }
 
   @Test
@@ -152,7 +152,7 @@ class DefaultAnnotationDetectorTest {
     Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
       .that(componentFile).processedWith(XmlProcessor())
       .failsToCompile()
-      .withErrorContaining("Fields can ONLY be annotated with one of the following")
+      .withErrorContaining("Fields can ONLY be annotated with ONE of the following")
   }
 
   @Test
@@ -171,8 +171,7 @@ class DefaultAnnotationDetectorTest {
     Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
       .that(componentFile).processedWith(XmlProcessor())
       .failsToCompile()
-      .withErrorContaining(
-        "Fields can ONLY be annotated with one of the following annotations @Attribute, @PropertyElement, @Element or @TextContent  and not multiple of them! The field aField in class test.MultipleAnnotations4 is annotated with more than one of these annotations. You must annotate a field with exactly one of these annotations (not multiple)!")
+      .withErrorContaining("Fields can ONLY be annotated with ONE of the following")
   }
 
   @Test
@@ -191,8 +190,7 @@ class DefaultAnnotationDetectorTest {
     Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
       .that(componentFile).processedWith(XmlProcessor())
       .failsToCompile()
-      .withErrorContaining(
-        "Fields can ONLY be annotated with one of the following annotations @Attribute, @PropertyElement, @Element or @TextContent  and not multiple of them! The field aField in class test.MultipleAnnotations4 is annotated with more than one of these annotations. You must annotate a field with exactly one of these annotations (not multiple)!")
+      .withErrorContaining("Fields can ONLY be annotated with ONE of the following")
   }
 
   @Test
@@ -211,10 +209,11 @@ class DefaultAnnotationDetectorTest {
     Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
       .that(componentFile).processedWith(XmlProcessor())
       .failsToCompile()
+      .withErrorContaining("Fields can ONLY be annotated with ONE of the following")
   }
 
   @Test
-  fun failBecauseGenericListTypeNotAnnotated() {
+  fun genericListTypeForJavaObjectIsAllowed() {
     val componentFile = JavaFileObjects.forSourceLines("test.InlineListOnListType",
       "package test;",
       "",
@@ -229,9 +228,7 @@ class DefaultAnnotationDetectorTest {
 
     Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
       .that(componentFile).processedWith(XmlProcessor())
-      .failsToCompile()
-      .withErrorContaining(
-        "The type java.lang.Object used for field 'aList' in test.InlineListOnListType can't be used, because it is not annotated with @${Xml::class.simpleName}. Annotate java.lang.Object with @${Xml::class.simpleName}!")
+      .compilesWithoutError()
   }
 
   @Test
@@ -265,9 +262,7 @@ class DefaultAnnotationDetectorTest {
 
     Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
       .that(componentFile).processedWith(XmlProcessor())
-      .failsToCompile()
-      .withErrorContaining(
-        "The type java.lang.Object used for field 'aList' in test.InlineListOnLinkedListType can't be used, because it is not annotated with @${Xml::class.simpleName}. Annotate java.lang.Object with @${Xml::class.simpleName}!")
+      .compilesWithoutError()
   }
 
   @Test
@@ -278,7 +273,7 @@ class DefaultAnnotationDetectorTest {
       "@${Xml::class.java.canonicalName}",
       "class PolymorphicClassIsPrivate {",
       "   @${Element::class.java.canonicalName}(",
-      "       typesByElement = @${ElementNameMatcher::class.qualifiedName}(name=\"foo\" , type=InnerPrivateClass.class)",
+      "       typesByElement = @${ElementNameMatcher::class.qualifiedName}(name=\"foo\", type=InnerPrivateClass.class)",
       "    )",
       "   Object aField;",
       "",
@@ -301,7 +296,7 @@ class DefaultAnnotationDetectorTest {
       "@${Xml::class.java.canonicalName}",
       "class PolymorphicClassIsProtected {",
       "   @${Element::class.java.canonicalName}(",
-      "       typesByElement = @${ElementNameMatcher::class.qualifiedName}(name=\"foo\" , type=InnerProtectedClass.class)",
+      "       typesByElement = @${ElementNameMatcher::class.qualifiedName}(name=\"foo\", type=InnerProtectedClass.class)",
       "    )",
       "   Object aField;",
       "",
@@ -324,14 +319,14 @@ class DefaultAnnotationDetectorTest {
       "@${Xml::class.java.canonicalName}",
       "class PolymorphicClassHasNoPublicConstructor {",
       "   @${Element::class.java.canonicalName}(",
-      "       typesByElement = @${ElementNameMatcher::class.qualifiedName}(name=\"foo\" , type=InnerClass.class)",
+      "       typesByElement = @${ElementNameMatcher::class.qualifiedName}(name=\"foo\", type=InnerClass.class)",
       "    )",
       "   Object aField;",
       "",
       "@${Xml::class.java.canonicalName}",
-      " public class InnerClass {",
-      "    private InnerClass() {}",
-      " }",
+      "public class InnerClass {",
+      "   private InnerClass() {}",
+      "}",
       "}")
 
     Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
@@ -354,9 +349,9 @@ class DefaultAnnotationDetectorTest {
       "   Object aField;",
       "",
       "@${Xml::class.java.canonicalName}",
-      " public class InnerClass {",
-      "    public InnerClass(int a) {}",
-      " }",
+      "public class InnerClass {",
+      "   public InnerClass(int a) {}",
+      "}",
       "}")
 
     Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
@@ -374,11 +369,11 @@ class DefaultAnnotationDetectorTest {
       "@${Xml::class.java.canonicalName}",
       "class PolymorphicTypeIsInterface {",
       "   @${Element::class.java.canonicalName}(",
-      "       typesByElement = @${ElementNameMatcher::class.qualifiedName}(name=\"foo\" , type=InnerClass.class)",
+      "       typesByElement = @${ElementNameMatcher::class.qualifiedName}(name=\"foo\", type=InnerClass.class)",
       "    )",
       "   Object aField;",
       "",
-      " public interface InnerClass {}",
+      "public interface InnerClass {}",
       "}")
 
     Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
@@ -396,11 +391,11 @@ class DefaultAnnotationDetectorTest {
       "@${Xml::class.java.canonicalName}",
       "class PolymorphicTypeIsEnum {",
       "   @${Element::class.java.canonicalName}(",
-      "       typesByElement = @${ElementNameMatcher::class.qualifiedName}(name=\"foo\" , type=InnerClass.class)",
+      "       typesByElement = @${ElementNameMatcher::class.qualifiedName}(name=\"foo\", type=InnerClass.class)",
       "    )",
       "   Object aField;",
       "",
-      " public enum InnerClass {}",
+      "public enum InnerClass {}",
       "}")
 
     Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
@@ -418,12 +413,12 @@ class DefaultAnnotationDetectorTest {
       "@${Xml::class.java.canonicalName}",
       "class PolymorphicTypeIsNotSubType {",
       "   @${Element::class.java.canonicalName}(",
-      "       typesByElement = @${ElementNameMatcher::class.qualifiedName}(name=\"foo\" , type=InnerClass.class)",
+      "       typesByElement = @${ElementNameMatcher::class.qualifiedName}(name=\"foo\", type=InnerClass.class)",
       "    )",
       "   String aField;",
       "",
-      "   @${Xml::class.java.canonicalName}",
-      "   public class InnerClass {}",
+      " @${Xml::class.java.canonicalName}",
+      " public class InnerClass {}",
       "}")
 
     Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
@@ -441,12 +436,12 @@ class DefaultAnnotationDetectorTest {
       "@${Xml::class.java.canonicalName}",
       "class PolymorphicTypeIsSubType {",
       "   @${Element::class.java.canonicalName}(",
-      "       typesByElement = @${ElementNameMatcher::class.qualifiedName}(name=\"foo\" , type=InnerClass.class)",
+      "       typesByElement = @${ElementNameMatcher::class.qualifiedName}(name=\"foo\", type=InnerClass.class)",
       "    )",
       "   Object aField;",
       "",
       "@${Xml::class.java.canonicalName}",
-      " static class InnerClass {}",
+      "static class InnerClass {}",
       "}")
 
     Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
@@ -462,12 +457,12 @@ class DefaultAnnotationDetectorTest {
       "@${Xml::class.java.canonicalName}",
       "class PolymorphicEmptyXmlName {",
       "   @${Element::class.java.canonicalName}(",
-      "       typesByElement = @${ElementNameMatcher::class.qualifiedName}(name=\"\" , type=InnerClass.class)",
+      "       typesByElement = @${ElementNameMatcher::class.qualifiedName}(name=\"\", type=InnerClass.class)",
       "    )",
       "   Object aField;",
       "",
       "@${Xml::class.java.canonicalName}",
-      " static class InnerClass {}",
+      "static class InnerClass {}",
       "}")
 
     Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
@@ -505,15 +500,15 @@ class DefaultAnnotationDetectorTest {
       "class PolymorphicElementNameInConflict {",
       "   @${Element::class.java.canonicalName}(",
       "       typesByElement = {",
-      "       @${ElementNameMatcher::class.qualifiedName}(name=\"foo\" , type=InnerClass1.class),",
-      "       @${ElementNameMatcher::class.qualifiedName}(name=\"foo\" , type=InnerClass2.class),",
+      "       @${ElementNameMatcher::class.qualifiedName}(name=\"foo\", type=InnerClass1.class),",
+      "       @${ElementNameMatcher::class.qualifiedName}(name=\"foo\", type=InnerClass2.class),",
       "    })",
       "   Object aField;",
       "",
-      "   @${Xml::class.java.canonicalName}",
-      "   public class InnerClass1 {}",
-      "   @${Xml::class.java.canonicalName}",
-      "   public class InnerClass2 {}",
+      "@${Xml::class.java.canonicalName}",
+      "public class InnerClass1 {}",
+      "@${Xml::class.java.canonicalName}",
+      "public class InnerClass2 {}",
       "}")
 
     Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
@@ -532,8 +527,8 @@ class DefaultAnnotationDetectorTest {
       "class PolymorphicElementNoNamingConflict {",
       "   @${Element::class.java.canonicalName}(",
       "       typesByElement = {",
-      "       @${ElementNameMatcher::class.qualifiedName}(name=\"foo\" , type=InnerClass1.class),",
-      "       @${ElementNameMatcher::class.qualifiedName}(name=\"bar\" , type=InnerClass2.class),",
+      "       @${ElementNameMatcher::class.qualifiedName}(name=\"foo\", type=InnerClass1.class),",
+      "       @${ElementNameMatcher::class.qualifiedName}(name=\"bar\", type=InnerClass2.class),",
       "    })",
       "   Object aField;",
       "}",
@@ -558,8 +553,8 @@ class DefaultAnnotationDetectorTest {
       "class ElementDeclarationOnPrimitive {",
       "   @${Element::class.java.canonicalName}(",
       "       typesByElement = {",
-      "       @${ElementNameMatcher::class.qualifiedName}(name=\"foo\" , type=InnerClass1.class),",
-      "       @${ElementNameMatcher::class.qualifiedName}(name=\"bar\" , type=InnerClass2.class),",
+      "       @${ElementNameMatcher::class.qualifiedName}(name=\"foo\", type=InnerClass1.class),",
+      "       @${ElementNameMatcher::class.qualifiedName}(name=\"bar\", type=InnerClass2.class),",
       "    })",
       "   int aField;",
       "",
@@ -586,14 +581,14 @@ class DefaultAnnotationDetectorTest {
       "   @${Element::class.java.canonicalName}",
       "   MyInterface aField;",
       "",
-      " public interface MyInterface {}",
+      "public interface MyInterface {}",
       "}")
 
     Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
       .that(componentFile).processedWith(XmlProcessor())
       .failsToCompile()
       .withErrorContaining(
-        "The type of field 'aField' in class test.ElementOnInterfaceWithoutPolymorphism is an interface. Since interfaces cannot be instantiated you have to specify which class should be instantiated (resolve polymorphism) manually by @${Element::class.simpleName}( typesByElement = ... )")
+        "The type of field 'aField' in class test.ElementOnInterfaceWithoutPolymorphism is an interface. Hence polymorphism must be resolved by annotating this interface with @${GenericAdapter::class.java.simpleName}")
   }
 
   @Test
@@ -616,36 +611,63 @@ class DefaultAnnotationDetectorTest {
     Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
       .that(componentFile).processedWith(XmlProcessor())
       .compilesWithoutError()
-
   }
 
   @Test
-  fun elementOnInterfaceWithPolymorphismWrong() {
-    val componentFile = JavaFileObjects.forSourceLines("test.ElementOnInterfaceWithoutPolymorphismWrong",
+  fun elementOnInterfaceWithoutPolymorphismWrong() {
+    val componentFile = JavaFileObjects.forSourceLines("test.ElementOnInterfaceWithPolymorphismWrong",
       "package test;",
       "",
       "@${Xml::class.java.canonicalName}",
-      "class ElementOnInterfaceWithoutPolymorphismWrong {",
+      "class ElementOnInterfaceWithPolymorphismWrong {",
       "   @${Element::class.java.canonicalName}(",
       "       typesByElement = {",
-      "       @${ElementNameMatcher::class.qualifiedName}(name=\"foo\" , type=InnerClass1.class),",
-      "       @${ElementNameMatcher::class.qualifiedName}(name=\"bar\" , type=InnerClass2.class),",
+      "       @${ElementNameMatcher::class.qualifiedName}(name=\"foo\", type=InnerClass1.class),",
+      "       @${ElementNameMatcher::class.qualifiedName}(name=\"bar\", type=InnerClass2.class),",
       "    })",
       "   MyInterface aField;",
       "",
-      " public interface MyInterface {}",
+      "public interface MyInterface {}",
       "@${Xml::class.java.canonicalName}",
-      " public class InnerClass1 implements MyInterface{}",
+      "public class InnerClass1 implements MyInterface{}",
       "@${Xml::class.java.canonicalName}",
-      " public class InnerClass2 {}",
+      "public class InnerClass2 {}",
       "}")
 
     Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
       .that(componentFile).processedWith(XmlProcessor())
       .failsToCompile()
       .withErrorContaining(
-        "The type test.ElementOnInterfaceWithoutPolymorphismWrong.InnerClass2 must be a sub type of test.ElementOnInterfaceWithoutPolymorphismWrong.MyInterface. Otherwise this type cannot be used in @${ElementNameMatcher::class.simpleName} to resolve polymorphism")
+        "The type of field 'aField' in class test.ElementOnInterfaceWithPolymorphismWrong is an interface. Hence polymorphism must be resolved by annotating this interface with @${GenericAdapter::class.java.simpleName}!")
+  }
 
+  @Test
+  fun elementOnInterfaceWithPolymorphismWrong() {
+    val componentFile = JavaFileObjects.forSourceLines("test.elementOnInterfaceWithPolymorphismWrong",
+      "package test;",
+      "",
+      "@${Xml::class.java.canonicalName}",
+      "class ElementOnInterfaceWithPolymorphismWrong {",
+      "   @${Element::class.java.canonicalName}(",
+      "       typesByElement = {",
+      "       @${ElementNameMatcher::class.qualifiedName}(name=\"foo\", type=InnerClass1.class),",
+      "       @${ElementNameMatcher::class.qualifiedName}(name=\"bar\", type=InnerClass2.class),",
+      "    })",
+      "   MyInterface aField;",
+      "",
+      "@${GenericAdapter::class.java.canonicalName}",
+      "public interface MyInterface {}",
+      "@${Xml::class.java.canonicalName}",
+      "public class InnerClass1 implements MyInterface {}",
+      "@${Xml::class.java.canonicalName}",
+      "public class InnerClass2 {}",
+      "}")
+
+    Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
+      .that(componentFile).processedWith(XmlProcessor())
+      .failsToCompile()
+      .withErrorContaining(
+        "The type test.ElementOnInterfaceWithPolymorphismWrong.InnerClass2 must be a sub type of test.ElementOnInterfaceWithPolymorphismWrong.MyInterface. Otherwise this type cannot be used in @${ElementNameMatcher::class.java.simpleName} to resolve polymorphism.")
   }
 
   @Test
@@ -659,7 +681,7 @@ class DefaultAnnotationDetectorTest {
       "   MyClass aField;",
       "",
       "@${Xml::class.java.canonicalName}",
-      " public abstract class MyClass {}",
+      "public abstract class MyClass {}",
       "}")
 
     Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
@@ -684,6 +706,7 @@ class DefaultAnnotationDetectorTest {
       "   MyClass aField;",
       "}",
       "",
+      "@${GenericAdapter::class.java.canonicalName}",
       "abstract class MyClass {}",
       "@${Xml::class.java.canonicalName}",
       "class InnerClass1 extends MyClass{}",
@@ -694,7 +717,6 @@ class DefaultAnnotationDetectorTest {
     Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
       .that(componentFile).processedWith(XmlProcessor())
       .compilesWithoutError()
-
   }
 
   @Test
@@ -713,6 +735,7 @@ class DefaultAnnotationDetectorTest {
       "",
       "}",
       "",
+      "@${GenericAdapter::class.java.canonicalName}",
       "abstract class MyClass {}",
       "@${Xml::class.java.canonicalName}",
       "class InnerClass1 extends MyClass{}",
@@ -723,7 +746,7 @@ class DefaultAnnotationDetectorTest {
       .that(componentFile).processedWith(XmlProcessor())
       .failsToCompile()
       .withErrorContaining(
-        "The type test.InnerClass2 must be a sub type of test.MyClass. Otherwise this type cannot be used in @${ElementNameMatcher::class.simpleName} to resolve polymorphism")
+        "The type test.InnerClass2 must be a sub type of test.MyClass. Otherwise this type cannot be used in @${ElementNameMatcher::class.simpleName} to resolve polymorphism.")
   }
 
   @Test
@@ -735,23 +758,21 @@ class DefaultAnnotationDetectorTest {
       "class ElementOnInterfaceWithPolymorphism {",
       "   @${Element::class.java.canonicalName}(",
       "       typesByElement = {",
-      "       @${ElementNameMatcher::class.qualifiedName}(name=\"foo\" , type=InnerClass1.class),",
-      "       @${ElementNameMatcher::class.qualifiedName}(name=\"bar\" , type=InnerClass2.class),",
+      "       @${ElementNameMatcher::class.qualifiedName}(name=\"foo\", type=InnerClass1.class),",
+      "       @${ElementNameMatcher::class.qualifiedName}(name=\"bar\", type=InnerClass2.class),",
       "    })",
       "   java.util.List<MyClass> aField;",
       "}",
-
       "",
       "abstract class MyClass {}",
       "@${Xml::class.java.canonicalName}",
-      " class InnerClass1 extends MyClass{}",
+      "class InnerClass1 extends MyClass{}",
       "@${Xml::class.java.canonicalName}",
-      " class InnerClass2 extends MyClass{}")
+      "class InnerClass2 extends MyClass{}")
 
     Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
       .that(componentFile).processedWith(XmlProcessor())
       .compilesWithoutError()
-
   }
 
   @Test
@@ -775,7 +796,6 @@ class DefaultAnnotationDetectorTest {
     Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
       .that(componentFile).processedWith(XmlProcessor())
       .compilesWithoutError()
-
   }
 
   @Test
@@ -785,10 +805,14 @@ class DefaultAnnotationDetectorTest {
       "",
       "@${Xml::class.java.canonicalName}",
       "class ElementListRawAbstractClassWithPolymorphism {",
+      "   @${Element::class.java.canonicalName}(",
+      "       typesByElement = {",
+      "       @${ElementNameMatcher::class.qualifiedName}(name=\"foo\" , type=InnerClass1.class),",
+      "       @${ElementNameMatcher::class.qualifiedName}(name=\"bar\" , type=InnerClass2.class),",
+      "    })",
       "   java.util.List aField;",
       "}",
       "",
-      "@${GenericAdapter::class.java.canonicalName}",
       "abstract class MyClass {}",
       "@${Xml::class.java.canonicalName}",
       "class InnerClass1 extends MyClass{}",
@@ -799,7 +823,6 @@ class DefaultAnnotationDetectorTest {
     Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
       .that(componentFile).processedWith(XmlProcessor())
       .compilesWithoutError()
-
   }
 
   @Test
@@ -811,23 +834,22 @@ class DefaultAnnotationDetectorTest {
       "class ElementListRawInterfaceWithPolymorphism {",
       "   @${Element::class.java.canonicalName}(",
       "       typesByElement = {",
-      "       @${ElementNameMatcher::class.qualifiedName}(name=\"foo\" , type=InnerClass1.class),",
-      "       @${ElementNameMatcher::class.qualifiedName}(name=\"bar\" , type=InnerClass2.class),",
+      "       @${ElementNameMatcher::class.qualifiedName}(name=\"foo\", type=InnerClass1.class),",
+      "       @${ElementNameMatcher::class.qualifiedName}(name=\"bar\", type=InnerClass2.class),",
       "    })",
       "   java.util.List aField;",
       "}",
       "",
-      " interface MyInterface {}",
+      "interface MyInterface {}",
       "@${Xml::class.java.canonicalName}",
-      " class InnerClass1 implements MyInterface{}",
+      "class InnerClass1 implements MyInterface{}",
       "@${Xml::class.java.canonicalName}",
-      " class InnerClass2 implements MyInterface{}"
+      "class InnerClass2 implements MyInterface{}"
     )
 
     Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
       .that(componentFile).processedWith(XmlProcessor())
       .compilesWithoutError()
-
   }
 
   @Test
@@ -867,12 +889,13 @@ class DefaultAnnotationDetectorTest {
       "class ElementListWildcardExtendsInterfaceWithPolymorphismWrong {",
       "   @${Element::class.java.canonicalName}(",
       "       typesByElement = {",
-      "       @${ElementNameMatcher::class.qualifiedName}(name=\"foo\" , type=InnerClass1.class),",
-      "       @${ElementNameMatcher::class.qualifiedName}(name=\"bar\" , type=InnerClass2.class),",
+      "       @${ElementNameMatcher::class.qualifiedName}(name=\"foo\", type=InnerClass1.class),",
+      "       @${ElementNameMatcher::class.qualifiedName}(name=\"bar\", type=InnerClass2.class),",
       "    })",
       "   java.util.List<? extends MyInterface> aField;",
       "}",
       "",
+      "@${GenericAdapter::class.java.canonicalName}",
       "interface MyInterface {}",
       "@${Xml::class.java.canonicalName}",
       "class InnerClass1 implements MyInterface{}",
@@ -884,7 +907,7 @@ class DefaultAnnotationDetectorTest {
       .that(componentFile).processedWith(XmlProcessor())
       .failsToCompile()
       .withErrorContaining(
-        "The type test.InnerClass2 must be a sub type of test.MyInterface. Otherwise this type cannot be used in @${ElementNameMatcher::class.simpleName} to resolve polymorphism")
+        "The type test.InnerClass2 must be a sub type of test.MyInterface. Otherwise this type cannot be used in @${ElementNameMatcher::class.simpleName} to resolve polymorphism.")
 
   }
 
@@ -945,7 +968,7 @@ class DefaultAnnotationDetectorTest {
       .that(componentFile).processedWith(XmlProcessor())
       .failsToCompile()
       .withErrorContaining(
-        "The type test.ElementListWildcardSuperInterfaceWithPolymorphismWrong.Parent must be a sub type of test.ElementListWildcardSuperInterfaceWithPolymorphismWrong.GrandParent. Otherwise this type cannot be used in @${ElementNameMatcher::class.simpleName} to resolve polymorphism")
+        "The type test.ElementListWildcardSuperInterfaceWithPolymorphismWrong.Parent must be a sub type of test.ElementListWildcardSuperInterfaceWithPolymorphismWrong.GrandParent. Otherwise this type cannot be used in @${ElementNameMatcher::class.simpleName} to resolve polymorphism.")
 
   }
 
