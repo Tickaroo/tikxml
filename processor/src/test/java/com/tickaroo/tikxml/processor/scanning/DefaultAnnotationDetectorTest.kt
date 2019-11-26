@@ -46,16 +46,10 @@ class DefaultAnnotationDetectorTest {
   fun multipleAnnotationOnField1() {
     val componentFile = JavaFileObjects.forSourceLines("test.MultipleAnnotations1",
       "package test;",
-      "",
-      "import ${Xml::class.java.canonicalName};",
-      "import ${Attribute::class.java.canonicalName};",
-      "import ${Element::class.java.canonicalName};",
-      "import ${PropertyElement::class.java.canonicalName};",
-      "",
-      "@${Xml::class.java.simpleName}",
+      "@${Xml::class.qualifiedName}",
       "class MultipleAnnotations1 {",
-      "   @${Attribute::class.java.simpleName}",
-      "   @${Element::class.java.simpleName}",
+      "   @${Attribute::class.qualifiedName}",
+      "   @${Element::class.qualifiedName}",
       "   String aField;",
       "}")
 
@@ -69,16 +63,10 @@ class DefaultAnnotationDetectorTest {
   fun multipleAnnotationOnField2() {
     val componentFile = JavaFileObjects.forSourceLines("test.MultipleAnnotations2",
       "package test;",
-      "",
-      "import ${Xml::class.java.canonicalName};",
-      "import ${Attribute::class.java.canonicalName};",
-      "import ${Element::class.java.canonicalName};",
-      "import ${PropertyElement::class.java.canonicalName};",
-      "",
-      "@${Xml::class.java.simpleName}",
+      "@${Xml::class.qualifiedName}",
       "class MultipleAnnotations2 {",
-      "   @${Element::class.java.simpleName}",
-      "   @${PropertyElement::class.java.simpleName}",
+      "   @${Element::class.qualifiedName}",
+      "   @${PropertyElement::class.qualifiedName}",
       "   String aField;",
       "}")
 

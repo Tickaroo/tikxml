@@ -226,22 +226,14 @@ class AnnotationScanner(protected val elementUtils: Elements, protected val type
     val nameWithoutHungarian = getFieldNameWithoutHungarianNotation(element)
 
     var getter = findGetterForField(element, nameWithoutHungarian, "get", methodsMap)
-    if (getter == null) {
-      getter = findGetterForHungarianField(element, elementName, "get", methodsMap)
-      if (getter == null) {
-        getter = findGetterForHungarianFieldUpperCase(element, elementName, "get", methodsMap)
-      }
-    }
+      ?: findGetterForHungarianField(element, elementName, "get", methodsMap)
+      ?: findGetterForHungarianFieldUpperCase(element, elementName, "get", methodsMap)
 
     // Test with "is" prefix
     if (getter == null && element.asType().isBoolean()) {
       getter = findGetterForField(element, nameWithoutHungarian, "is", methodsMap)
-      if (getter == null) {
-        getter = findGetterForHungarianField(element, elementName, "is", methodsMap)
-        if (getter == null) {
-          getter = findGetterForHungarianFieldUpperCase(element, elementName, "is", methodsMap)
-        }
-      }
+        ?: findGetterForHungarianField(element, elementName, "is", methodsMap)
+            ?: findGetterForHungarianFieldUpperCase(element, elementName, "is", methodsMap)
     }
 
     if (getter == null) {
@@ -274,7 +266,6 @@ class AnnotationScanner(protected val elementUtils: Elements, protected val type
       throw ProcessingException(element, "The getter method '$getter' for field '${element.simpleName}' "
           + "in class ${element.getSurroundingClassQualifiedName()} "
           + "must have minimum package visibility (or public visibility if this is a super class in a different package)")
-
     }
 
     return getter
@@ -289,36 +280,29 @@ class AnnotationScanner(protected val elementUtils: Elements, protected val type
     val nameWithoutHungarian = getFieldNameWithoutHungarianNotation(element)
 
     // Setter method
-    var setter = findMethodForField(nameWithoutHungarian, "set", methodsMap)
-    if (setter == null) {
-      setter = findMethodForHungarianField(elementName, "set", methodsMap)
-      if (setter == null) {
-        setter = findMethodForHungarianFieldUpperCase(elementName, "set", methodsMap)
-      }
-    }
-
-    if (setter == null) {
-      throw ProcessingException(element, "The field '${element.simpleName.toString()}' "
-          + "in class ${(element.enclosingElement as TypeElement).qualifiedName.toString()} "
+    val setter = findMethodForField(nameWithoutHungarian, "set", methodsMap)
+      ?: findMethodForHungarianField(elementName, "set", methodsMap)
+      ?: findMethodForHungarianFieldUpperCase(elementName, "set", methodsMap)
+      ?: throw ProcessingException(element, "The field '${element.simpleName}' "
+          + "in class ${(element.enclosingElement as TypeElement).qualifiedName} "
           + "has private or protected visibility. Hence a corresponding setter method must be provided "
-          + " with the name ${bestMethodName(elementName, "set")}(${element.asType()}) and "
-          + "minimum package visibility (or public visibility if this is a super class in a different package)"
+          + "with the name ${bestMethodName(elementName, "set")}(${element.asType()}) and "
+          + "minimum package visibility (or public visibility if this is a super class in a different package). "
           + "Unfortunately, there is no such setter method. Please provide one!")
-    }
 
     if (!setter.isMethodWithOneParameterOfType(element.asType(), typeUtils)) {
-      throw ProcessingException(element, "The setter method '${setter.toString()}' for field '${element.simpleName.toString()}' "
+      throw ProcessingException(element, "The setter method '$setter' for field '${element.simpleName}' "
           + "in class ${element.getSurroundingClassQualifiedName()} "
           + "must have exactly one parameter of type '${element.asType()}'")
     }
 
     if (setter.isProtected() || setter.isPrivate() || (setter.isDefaultVisibility() && !setter.isSamePackageAs(element,
         elementUtils))) {
-      throw ProcessingException(element, "The setter method '${setter.toString()}' for field '${element.simpleName.toString()}'"
+      throw ProcessingException(element, "The setter method '$setter' for field '${element.simpleName}' "
           + "in class ${element.getSurroundingClassQualifiedName()} "
           + "must have minimum package visibility (or public visibility if this is a super class in a different package)")
-
     }
+
     return setter
   }
 
@@ -421,7 +405,7 @@ class AnnotationScanner(protected val elementUtils: Elements, protected val type
 
         }*/
     else if (methodNamePrefix === "is" && fieldName.matches(booleanFieldRegex)) {
-      // field isFoo shoule be isFoo()
+      // field isFoo should be isFoo()
       return fieldName
     } else if (methodNamePrefix === "set" && fieldName.matches(booleanFieldRegex)) {
       // field isFoo should be setFoo()

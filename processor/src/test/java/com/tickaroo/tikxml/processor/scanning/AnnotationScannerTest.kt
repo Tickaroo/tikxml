@@ -50,7 +50,9 @@ class AnnotationScannerTest {
       "import ${Xml::class.java.canonicalName};",
       "",
       "@${Xml::class.java.simpleName}",
-      "class NoConstructorClass { private NoConstructorClass() {} }")
+      "class NoConstructorClass {",
+      "   private NoConstructorClass() {}",
+      "}")
 
     Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
       .that(componentFile).processedWith(XmlProcessor())
@@ -66,7 +68,9 @@ class AnnotationScannerTest {
       "import ${Xml::class.java.canonicalName};",
       "",
       "@${Xml::class.java.simpleName}",
-      "class NoParameterlessConstructor { public NoParameterlessConstructor(int a) {} }")
+      "class NoParameterlessConstructor {",
+      "   public NoParameterlessConstructor(int a) {}",
+      "}")
 
     Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
       .that(componentFile).processedWith(XmlProcessor())
@@ -83,8 +87,8 @@ class AnnotationScannerTest {
       "",
       "@${Xml::class.java.simpleName}",
       "class DefaultConstTest {",
-      " private DefaultConstTest(int a) {}",
-      " DefaultConstTest() {}",
+      "   private DefaultConstTest(int a) {}",
+      "   DefaultConstTest() {}",
       "}")
 
     Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
@@ -101,8 +105,8 @@ class AnnotationScannerTest {
       "",
       "@${Xml::class.java.simpleName}",
       "class PublicConstTest {",
-      " private PublicConstTest(int a) {}",
-      " public PublicConstTest() {}",
+      "   private PublicConstTest(int a) {}",
+      "   public PublicConstTest() {}",
       "}")
 
     Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
@@ -137,7 +141,7 @@ class AnnotationScannerTest {
       "class NoPublicSetter {",
       "   @${Attribute::class.qualifiedName}",
       "   private int a;",
-      "   public int getA(){ return a;}",
+      "   public int getA() { return a; }",
       "}")
 
     Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
@@ -156,8 +160,8 @@ class AnnotationScannerTest {
       "class SetterAndGetter {",
       "   @${Attribute::class.qualifiedName}",
       "   private int a;",
-      "   public int getA(){ return a;}",
-      "   public void setA(int a){}",
+      "   public int getA() { return a; }",
+      "   public void setA(int a) {}",
       "}")
 
     Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
@@ -174,8 +178,8 @@ class AnnotationScannerTest {
       "class WrongSetterParam {",
       "   @${Attribute::class.qualifiedName}",
       "   private int a;",
-      "   public int getA(){ return a;}",
-      "   public void setA(String a){}",
+      "   public int getA() { return a; }",
+      "   public void setA(String a) {}",
       "}")
 
     Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
@@ -194,8 +198,8 @@ class AnnotationScannerTest {
       "class PrivateGetter {",
       "   @${Attribute::class.qualifiedName}",
       "   private int a;",
-      "   private int getA(){ return a;}",
-      "   public void setA(int a){}",
+      "   private int getA() { return a; }",
+      "   public void setA(int a) {}",
       "}")
 
     Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
@@ -214,15 +218,15 @@ class AnnotationScannerTest {
       "class PrivateSetter {",
       "   @${Attribute::class.qualifiedName}",
       "   private int a;",
-      "   public int getA(){ return a;}",
-      "   private void setA(int a){}",
+      "   public int getA() { return a; }",
+      "   private void setA(int a) {}",
       "}")
+
     Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
       .that(componentFile).processedWith(XmlProcessor())
       .failsToCompile()
       .withErrorContaining(
         "The field 'a' in class test.PrivateSetter has private or protected visibility. Hence a corresponding setter method must be provided  with the name setA(int) and minimum package visibility (or public visibility if this is a super class in a different package)Unfortunately, there is no such setter method. Please provide one!")
-
   }
 
   @Test
@@ -234,9 +238,10 @@ class AnnotationScannerTest {
       "class PrivateSetter {",
       "   @${Attribute::class.qualifiedName}",
       "   private int a;",
-      "   int getA(){ return a;}",
-      "   void setA(int a){}",
+      "   int getA() { return a; }",
+      "   void setA(int a) {}",
       "}")
+
     Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
       .that(componentFile).processedWith(XmlProcessor())
       .compilesWithoutError()
@@ -251,9 +256,10 @@ class AnnotationScannerTest {
       "class PrivateSetter {",
       "   @${Attribute::class.qualifiedName}",
       "   protected int a;",
-      "   int getA(){ return a;}",
-      "   void setA(int a){}",
+      "   int getA() { return a; }",
+      "   void setA(int a) {}",
       "}")
+
     Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
       .that(componentFile).processedWith(XmlProcessor())
       .compilesWithoutError()
@@ -269,6 +275,7 @@ class AnnotationScannerTest {
       "   @${TextContent::class.qualifiedName}",
       "   private String a;",
       "}")
+
     Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
       .that(componentFile).processedWith(XmlProcessor())
       .failsToCompile()
@@ -284,8 +291,9 @@ class AnnotationScannerTest {
       "@${Xml::class.java.canonicalName}",
       "class ProtectedTextContent {",
       "   @${TextContent::class.qualifiedName}",
-      "   private String a;",
+      "   protected String a;",
       "}")
+
     Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
       .that(componentFile).processedWith(XmlProcessor())
       .failsToCompile()
@@ -304,6 +312,7 @@ class AnnotationScannerTest {
       "   private String a;",
       "   private int getA(){ return a;}",
       "}")
+
     Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
       .that(componentFile).processedWith(XmlProcessor())
       .failsToCompile()
@@ -320,8 +329,9 @@ class AnnotationScannerTest {
       "class TextContent {",
       "   @${TextContent::class.qualifiedName}",
       "   private String a;",
-      "   protected int getA(){ return a;}",
+      "   protected int getA() { return a; }",
       "}")
+
     Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
       .that(componentFile).processedWith(XmlProcessor())
       .failsToCompile()
@@ -330,7 +340,7 @@ class AnnotationScannerTest {
   }
 
   @Test
-  fun NoSetterTextContent() {
+  fun noSetterTextContent() {
     val componentFile = JavaFileObjects.forSourceLines("test.TextContent",
       "package test;",
       "",
@@ -338,14 +348,14 @@ class AnnotationScannerTest {
       "class TextContent {",
       "   @${TextContent::class.qualifiedName}",
       "   private String a;",
-      "   String getA(){ return a;}",
+      "   String getA() { return a; }",
       "}")
+
     Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
       .that(componentFile).processedWith(XmlProcessor())
       .failsToCompile()
       .withErrorContaining(
         "The field 'a' in class test.TextContent has private or protected visibility. Hence a corresponding setter method must be provided  with the name setA(java.lang.String) and minimum package visibility (or public visibility if this is a super class in a different package)Unfortunately, there is no such setter method. Please provide one!")
-
   }
 
   @Test
@@ -357,19 +367,19 @@ class AnnotationScannerTest {
       "class TextContent {",
       "   @${TextContent::class.qualifiedName}",
       "   private String a;",
-      "   String getA(){ return a;}",
-      "   private void setA(String a){}",
+      "   String getA() { return a; }",
+      "   private void setA(String a) {}",
       "}")
+
     Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
       .that(componentFile).processedWith(XmlProcessor())
       .failsToCompile()
       .withErrorContaining(
         "The field 'a' in class test.TextContent has private or protected visibility. Hence a corresponding setter method must be provided  with the name setA(java.lang.String) and minimum package visibility (or public visibility if this is a super class in a different package)Unfortunately, there is no such setter method. Please provide one!")
-
   }
 
   @Test
-  fun GetterSetterTextContent() {
+  fun getterSetterTextContent() {
     val componentFile = JavaFileObjects.forSourceLines("test.TextContent",
       "package test;",
       "",
@@ -377,16 +387,17 @@ class AnnotationScannerTest {
       "class TextContent {",
       "   @${TextContent::class.qualifiedName}",
       "   private String a;",
-      "   String getA(){ return a;}",
-      "   void setA(String a){}",
+      "   String getA() { return a; }",
+      "   void setA(String a) {}",
       "}")
+
     Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
       .that(componentFile).processedWith(XmlProcessor())
       .compilesWithoutError()
   }
 
   @Test
-  fun PublicGetterSetterTextContent() {
+  fun publicGetterSetterTextContent() {
     val componentFile = JavaFileObjects.forSourceLines("test.TextContent",
       "package test;",
       "",
@@ -394,9 +405,10 @@ class AnnotationScannerTest {
       "class TextContent {",
       "   @${TextContent::class.qualifiedName}",
       "   private String a;",
-      "   public String getA(){ return a;}",
-      "   public void setA(String a){}",
+      "   public String getA() { return a; }",
+      "   public void setA(String a) {}",
       "}")
+
     Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
       .that(componentFile).processedWith(XmlProcessor())
       .compilesWithoutError()
@@ -412,6 +424,7 @@ class AnnotationScannerTest {
       "   @${Attribute::class.qualifiedName}",
       "   private boolean a;",
       "}")
+
     Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
       .that(componentFile).processedWith(XmlProcessor())
       .failsToCompile().withErrorContaining(
@@ -426,9 +439,10 @@ class AnnotationScannerTest {
       "class BooleanField {",
       "   @${Attribute::class.qualifiedName}",
       "   private boolean a;",
-      "   boolean isA(){return a; }",
+      "   boolean isA() { return a; }",
       "   void setA(boolean a) {}",
       "}")
+
     Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
       .that(componentFile).processedWith(XmlProcessor())
       .compilesWithoutError()
@@ -442,9 +456,10 @@ class AnnotationScannerTest {
       "class BooleanField {",
       "   @${Attribute::class.qualifiedName}",
       "   private boolean mA;",
-      "   boolean ismA(){return mA; }",
+      "   boolean ismA() { return mA; }",
       "   void setmA(boolean a) {}",
       "}")
+
     Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
       .that(componentFile).processedWith(XmlProcessor())
       .compilesWithoutError()
@@ -458,9 +473,10 @@ class AnnotationScannerTest {
       "class BooleanField {",
       "   @${Attribute::class.qualifiedName}",
       "   private boolean mA;",
-      "   boolean isMA(){return mA; }",
+      "   boolean isMA() { return mA; }",
       "   void setMA(boolean a) {}",
       "}")
+
     Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
       .that(componentFile).processedWith(XmlProcessor())
       .compilesWithoutError()
@@ -469,43 +485,42 @@ class AnnotationScannerTest {
   @Test
   fun wrongReturnType() {
     val componentFile = JavaFileObjects.forSourceLines("test.WrongMethodReturnType",
-
+      "package test;",
       "@${Xml::class.qualifiedName}",
       "class WrongMethodReturnType {",
       "   @${Attribute::class.qualifiedName}",
       "   private String foo;",
-      "   int getFoo(){return 2; }", // correct getter name, wrong type
+      "   int getFoo() { return 2; }", // correct getter name, wrong type
       "   void setFoo(String a) {}",
       "}")
+
     Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
-      .that(componentFile)
-      .processedWith(XmlProcessor())
+      .that(componentFile).processedWith(XmlProcessor())
       .failsToCompile()
       .withErrorContaining(
-        "The field 'foo' in class WrongMethodReturnType has private or protected visibility. Hence a corresponding getter method must be provided with minimum package visibility (or public visibility if this is a super class in a different package) with the name getFoo() or isFoo() in case of a boolean. Unfortunately, there is no such getter method. Please provide one!")
+        "The field 'foo' in class test.WrongMethodReturnType has private or protected visibility. Hence a corresponding getter method must be provided with minimum package visibility (or public visibility if this is a super class in a different package) with the name getFoo() or isFoo() in case of a boolean. Unfortunately, there is no such getter method. Please provide one!")
   }
 
   @Test
   fun polymorphicElement() {
     val componentFile = JavaFileObjects.forSourceLines("test.PolymorphicElement",
-
+      "package test;",
       "@${Xml::class.qualifiedName}",
       "class PolymorphicElement {",
       "   @${Element::class.qualifiedName} ( typesByElement = {",
-      "     @${ElementNameMatcher::class.qualifiedName}(name=\"a\", type=A.class),",
-      "     @${ElementNameMatcher::class.qualifiedName}(name=\"b\", type=B.class),",
+      "       @${ElementNameMatcher::class.qualifiedName}(name=\"a\", type=A.class),",
+      "       @${ElementNameMatcher::class.qualifiedName}(name=\"b\", type=B.class),",
       "   })",
       "   Root element;",
       "",
       "   @${Xml::class.qualifiedName}",
       "   static class Root {} ",
-      "",
       "   @${Xml::class.qualifiedName}",
       "   static class A  extends Root {} ",
-      "",
       "   @${Xml::class.qualifiedName}",
       "   static class B extends Root {} ",
       "}")
+
     Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
       .that(componentFile).processedWith(XmlProcessor())
       .compilesWithoutError()
@@ -514,7 +529,7 @@ class AnnotationScannerTest {
   @Test
   fun polymorphicElementConflictingElementName() {
     val componentFile = JavaFileObjects.forSourceLines("test.PolymorphicElement",
-
+      "package test;",
       "@${Xml::class.qualifiedName}",
       "class PolymorphicElement {",
       "   @${Element::class.qualifiedName} ( typesByElement = {",
@@ -525,10 +540,8 @@ class AnnotationScannerTest {
       "",
       "   @${Xml::class.qualifiedName}",
       "   static class Root {} ",
-      "",
       "   @${Xml::class.qualifiedName}",
       "   static class A extends Root {} ",
-      "",
       "   @${Xml::class.qualifiedName}",
       "   static class B extends Root {} ",
       "}")
@@ -537,13 +550,13 @@ class AnnotationScannerTest {
       .processedWith(XmlProcessor())
       .failsToCompile()
       .withErrorContaining(
-        "Conflict: A @${ElementNameMatcher::class.simpleName} with the name \"a\" is already mapped to the type PolymorphicElement.A to resolve polymorphism. Hence it cannot be mapped to PolymorphicElement.B as well.")
+        "Conflict: A @${ElementNameMatcher::class.simpleName} with the name \"a\" is already mapped to the type test.PolymorphicElement.A to resolve polymorphism. Hence it cannot be mapped to test.PolymorphicElement.B as well.")
   }
 
   @Test
   fun polymorphicElementConflictingWithPropertyElement() {
     val componentFile = JavaFileObjects.forSourceLines("test.PolymorphicElement",
-
+      "package test;",
       "@${Xml::class.qualifiedName}",
       "class PolymorphicElement {",
       "   @${Element::class.qualifiedName} ( typesByElement = {",
@@ -554,27 +567,25 @@ class AnnotationScannerTest {
       "",
       "   @${PropertyElement::class.qualifiedName}",
       "   String a;",
-      "",
       "   @${Xml::class.qualifiedName}",
       "   static class Root {} ",
-      "",
       "   @${Xml::class.qualifiedName}",
       "   static class A  extends Root {} ",
-      "",
       "   @${Xml::class.qualifiedName}",
       "   static class B extends Root {} ",
       "}")
+
     Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
       .that(componentFile).processedWith(XmlProcessor())
       .failsToCompile()
       .withErrorContaining(
-        "Conflict: field 'a' in class PolymorphicElement is in conflict with field 'element' in class PolymorphicElement. Maybe both have the same xml name 'a' (you can change that via annotations) or @${Path::class.simpleName} is causing this conflict.")
+        "Conflict: field 'a' in class test.PolymorphicElement is in conflict with field 'element' in class test.PolymorphicElement. Maybe both have the same xml name 'a' (you can change that via annotations) or @${Path::class.simpleName} is causing this conflict.")
   }
 
   @Test
   fun polymorphicElementConflictingWithElement() {
     val componentFile = JavaFileObjects.forSourceLines("test.PolymorphicElement",
-
+      "package test;",
       "@${Xml::class.qualifiedName}",
       "class PolymorphicElement {",
       "   @${Element::class.qualifiedName} ( typesByElement = {",
@@ -585,85 +596,78 @@ class AnnotationScannerTest {
       "",
       "   @${Element::class.qualifiedName}(name=\"a\")",
       "   Root a;",
-      "",
       "   @${Xml::class.qualifiedName}",
       "   static class Root {} ",
-      "",
       "   @${Xml::class.qualifiedName}",
       "   static class A extends Root {} ",
-      "",
       "   @${Xml::class.qualifiedName}",
       "   static class B extends Root {} ",
       "}")
+
     Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
       .that(componentFile).processedWith(XmlProcessor())
       .failsToCompile()
       .withErrorContaining(
-        "Conflict: field 'a' in class PolymorphicElement is in conflict with field 'element' in class PolymorphicElement. Maybe both have the same xml name 'a' (you can change that via annotations) or @${Path::class.simpleName} is causing this conflict.")
+        "Conflict: field 'a' in class test.PolymorphicElement is in conflict with field 'element' in class test.PolymorphicElement. Maybe both have the same xml name 'a' (you can change that via annotations) or @${Path::class.simpleName} is causing this conflict.")
   }
 
   @Test
   fun polymorphicElementConflictingWithPathAttribute() {
     val componentFile = JavaFileObjects.forSourceLines("test.PolymorphicElement",
-
+      "package test;",
       "@${Xml::class.qualifiedName}",
       "class PolymorphicElement {",
       "   @${Element::class.qualifiedName} ( typesByElement = {",
-      "     @${ElementNameMatcher::class.qualifiedName}(name=\"a\" , type=A.class),  ",
-      "     @${ElementNameMatcher::class.qualifiedName}(name=\"b\" , type=B.class)  ",
+      "     @${ElementNameMatcher::class.qualifiedName}(name=\"a\", type=A.class), ",
+      "     @${ElementNameMatcher::class.qualifiedName}(name=\"b\", type=B.class) ",
       "   })",
       "   Root element;",
       "",
-      "    @${Path::class.qualifiedName}(\"b\")",
-      "    @${Attribute::class.qualifiedName}",
-      "    String attribute;",
-      "",
+      "   @${Path::class.qualifiedName}(\"b\")",
+      "   @${Attribute::class.qualifiedName}",
+      "   String attribute;",
       "   @${Xml::class.qualifiedName}",
       "   static class Root {} ",
-      "",
       "   @${Xml::class.qualifiedName}",
       "   static class A  extends Root {} ",
-      "",
       "   @${Xml::class.qualifiedName}",
       "   static class B extends Root {} ",
       "}")
+
     Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
       .that(componentFile).processedWith(XmlProcessor())
       .failsToCompile()
       .withErrorContaining(
-        "Element field 'element' in class PolymorphicElement can't have attributes that are accessed from outside of the TypeAdapter that is generated from @${Element::class.simpleName} annotated class! Therefore attribute field 'attribute' in class PolymorphicElement can't be added. Most likely the @${Path::class.simpleName} is in conflict with an @${Element::class.simpleName} annotation.")
+        "Element field 'element' in class test.PolymorphicElement can't have attributes that are accessed from outside of the TypeAdapter that is generated from @${Element::class.simpleName} annotated class! Therefore attribute field 'attribute' in class test.PolymorphicElement can't be added. Most likely the @${Path::class.simpleName} is in conflict with an @${Element::class.simpleName} annotation.")
   }
 
   @Test
   fun polymorphicElementConflictingWithPathAttribute2() {
     val componentFile = JavaFileObjects.forSourceLines("test.PolymorphicElement",
-
+      "package test;",
       "@${Xml::class.qualifiedName}",
       "class PolymorphicElement {",
-      "    @${Path::class.qualifiedName}(\"b\")",
-      "    @${Attribute::class.qualifiedName}",
-      "    String attribute;",
-      "",
+      "   @${Path::class.qualifiedName}(\"b\")",
+      "   @${Attribute::class.qualifiedName}",
+      "   String attribute;",
       "   @${Element::class.qualifiedName} ( typesByElement = {",
-      "     @${ElementNameMatcher::class.qualifiedName}(name=\"a\" , type=A.class),  ",
-      "     @${ElementNameMatcher::class.qualifiedName}(name=\"b\" , type=B.class)  ",
+      "     @${ElementNameMatcher::class.qualifiedName}(name=\"a\", type=A.class),",
+      "     @${ElementNameMatcher::class.qualifiedName}(name=\"b\", type=B.class)",
       "   })",
       "   Root element;",
-      "",
       "   @${Xml::class.qualifiedName}",
       "   static class Root {} ",
-      "",
       "   @${Xml::class.qualifiedName}",
       "   static class A extends Root {} ",
-      "",
       "   @${Xml::class.qualifiedName}",
       "   static class B extends Root {} ",
       "}")
+
     Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
       .that(componentFile).processedWith(XmlProcessor())
       .failsToCompile()
       .withErrorContaining(
-        "Conflict: field 'element' in class PolymorphicElement is in conflict with PolymorphicElement. Maybe both have the same xml name 'b' (you can change that via annotations) or @${Path::class.simpleName} is causing this conflict.")
+        "Conflict: field 'element' in class test.PolymorphicElement is in conflict with test.PolymorphicElement. Maybe both have the same xml name 'b' (you can change that via annotations) or @${Path::class.simpleName} is causing this conflict.")
   }
 
   /// LIST TESTS
@@ -671,115 +675,103 @@ class AnnotationScannerTest {
   @Test
   fun polymorphicElementList() {
     val componentFile = JavaFileObjects.forSourceLines("test.PolymorphicElement",
-
+      "package test;",
       "@${Xml::class.qualifiedName}",
       "class PolymorphicElement {",
       "   @${Element::class.qualifiedName} ( typesByElement = {",
-      "     @${ElementNameMatcher::class.qualifiedName}(name=\"a\" , type=A.class),  ",
-      "     @${ElementNameMatcher::class.qualifiedName}(name=\"b\" , type=B.class)  ",
+      "     @${ElementNameMatcher::class.qualifiedName}(name=\"a\", type=A.class),",
+      "     @${ElementNameMatcher::class.qualifiedName}(name=\"b\", type=B.class)",
       "   })",
       "   java.util.List<Root> element;",
-      "",
       "   @${Xml::class.qualifiedName}",
       "   static class Root {} ",
-      "",
       "   @${Xml::class.qualifiedName}",
       "   static class A  extends Root {} ",
-      "",
       "   @${Xml::class.qualifiedName}",
       "   static class B extends Root {} ",
       "}")
+
     Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
-      .that(componentFile)
-      .processedWith(XmlProcessor())
+      .that(componentFile).processedWith(XmlProcessor())
       .compilesWithoutError()
   }
 
   @Test
   fun polymorphicElementListConflictingElementName() {
     val componentFile = JavaFileObjects.forSourceLines("test.PolymorphicElement",
-
+      "package test;",
       "@${Xml::class.qualifiedName}",
       "class PolymorphicElement {",
       "   @${Element::class.qualifiedName} ( typesByElement = {",
-      "     @${ElementNameMatcher::class.qualifiedName}(name=\"a\" , type=A.class),  ",
-      "     @${ElementNameMatcher::class.qualifiedName}(name=\"a\" , type=B.class)  ",
+      "     @${ElementNameMatcher::class.qualifiedName}(name=\"a\", type=A.class),",
+      "     @${ElementNameMatcher::class.qualifiedName}(name=\"a\", type=B.class)",
       "   })",
       "   java.util.List<Root> element;",
-      "",
       "   @${Xml::class.qualifiedName}",
       "   static class Root {} ",
-      "",
       "   @${Xml::class.qualifiedName}",
       "   static class A extends Root {} ",
-      "",
       "   @${Xml::class.qualifiedName}",
       "   static class B extends Root {} ",
       "}")
+
     Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
       .that(componentFile).processedWith(XmlProcessor())
       .failsToCompile()
       .withErrorContaining(
-        "Conflict: A @${ElementNameMatcher::class.simpleName} with the name \"a\" is already mapped to the type PolymorphicElement.A to resolve polymorphism. Hence it cannot be mapped to PolymorphicElement.B as well.")
+        "Conflict: A @${ElementNameMatcher::class.simpleName} with the name \"a\" is already mapped to the type test.PolymorphicElement.A to resolve polymorphism. Hence it cannot be mapped to test.PolymorphicElement.B as well.")
   }
 
   @Test
   fun polymorphicElementInlineListConflictingWithPropertyElement() {
     val componentFile = JavaFileObjects.forSourceLines("test.PolymorphicElement",
-
+      "package test;",
       "@${Xml::class.qualifiedName}",
       "class PolymorphicElement {",
       "   @${Element::class.qualifiedName} ( typesByElement = {",
-      "     @${ElementNameMatcher::class.qualifiedName}(name=\"a\" , type=A.class),  ",
-      "     @${ElementNameMatcher::class.qualifiedName}(name=\"b\" , type=B.class)  ",
+      "     @${ElementNameMatcher::class.qualifiedName}(name=\"a\", type=A.class),",
+      "     @${ElementNameMatcher::class.qualifiedName}(name=\"b\", type=B.class)",
       "   })",
-      "",
       "   java.util.List<Root> element;",
-      "",
-      "    @${PropertyElement::class.qualifiedName}",
-      "    String a;",
-      "",
+      "   @${PropertyElement::class.qualifiedName}",
+      "   String a;",
       "   @${Xml::class.qualifiedName}",
       "   static class Root {} ",
-      "",
       "   @${Xml::class.qualifiedName}",
       "   static class A  extends Root {} ",
-      "",
       "   @${Xml::class.qualifiedName}",
       "   static class B extends Root {} ",
       "}")
+
     Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
       .that(componentFile)
       .processedWith(XmlProcessor())
       .failsToCompile()
       .withErrorContaining(
-        "Conflict: field 'a' in class PolymorphicElement is in conflict with field 'element' in class PolymorphicElement. Maybe both have the same xml name 'a' (you can change that via annotations) or @${Path::class.simpleName} is causing this conflict.")
+        "Conflict: field 'a' in class test.PolymorphicElement is in conflict with field 'element' in class test.PolymorphicElement. Maybe both have the same xml name 'a' (you can change that via annotations) or @${Path::class.simpleName} is causing this conflict.")
   }
 
   @Test
   fun polymorphicElementListNoConflictingWithPropertyElement() {
     val componentFile = JavaFileObjects.forSourceLines("test.PolymorphicElement",
-
+      "package test;",
       "@${Xml::class.qualifiedName}",
       "class PolymorphicElement {",
       "   @${Element::class.qualifiedName} ( typesByElement = {",
-      "     @${ElementNameMatcher::class.qualifiedName}(name=\"a\" , type=A.class),  ",
-      "     @${ElementNameMatcher::class.qualifiedName}(name=\"b\" , type=B.class)  ",
+      "     @${ElementNameMatcher::class.qualifiedName}(name=\"a\", type=A.class),",
+      "     @${ElementNameMatcher::class.qualifiedName}(name=\"b\", type=B.class)",
       "   })",
       "   java.util.List<Root> element;",
-      "",
-      "    @${PropertyElement::class.qualifiedName}",
-      "    String property;",
-      "",
+      "   @${PropertyElement::class.qualifiedName}",
+      "   String property;",
       "   @${Xml::class.qualifiedName}",
       "   static class Root {} ",
-      "",
       "   @${Xml::class.qualifiedName}",
       "   static class A  extends Root {} ",
-      "",
       "   @${Xml::class.qualifiedName}",
       "   static class B extends Root {} ",
       "}")
+
     Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
       .that(componentFile)
       .processedWith(XmlProcessor())
@@ -789,105 +781,93 @@ class AnnotationScannerTest {
   @Test
   fun polymorphicElementInlineListConflictingWithElement() {
     val componentFile = JavaFileObjects.forSourceLines("test.PolymorphicElement",
-
+      "package test;",
       "@${Xml::class.qualifiedName}",
       "class PolymorphicElement {",
       "   @${Element::class.qualifiedName} ( typesByElement = {",
-      "     @${ElementNameMatcher::class.qualifiedName}(name=\"a\" , type=A.class),  ",
-      "     @${ElementNameMatcher::class.qualifiedName}(name=\"b\" , type=B.class)  ",
+      "     @${ElementNameMatcher::class.qualifiedName}(name=\"a\", type=A.class),",
+      "     @${ElementNameMatcher::class.qualifiedName}(name=\"b\", type=B.class)",
       "   })",
-      "",
       "   java.util.List<Root> element;",
-      "",
       "   @${Element::class.qualifiedName}(name = \"a\")",
       "   Root a;",
-      "",
       "   @${Xml::class.qualifiedName}",
       "   static class Root {} ",
-      "",
       "   @${Xml::class.qualifiedName}",
       "   static class A  extends Root {} ",
-      "",
       "   @${Xml::class.qualifiedName}",
       "   static class B extends Root {} ",
       "}")
+
     Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
       .that(componentFile)
       .processedWith(XmlProcessor())
       .failsToCompile()
       .withErrorContaining(
-        "Conflict: field 'a' in class PolymorphicElement is in conflict with field 'element' in class PolymorphicElement. Maybe both have the same xml name 'a' (you can change that via annotations) or @${Path::class.simpleName} is causing this conflict.")
+        "Conflict: field 'a' in class test.PolymorphicElement is in conflict with field 'element' in class test.PolymorphicElement. Maybe both have the same xml name 'a' (you can change that via annotations) or @${Path::class.simpleName} is causing this conflict.")
   }
 
   @Test
   fun polymorphicElementListConflictingWithElement() {
     val componentFile = JavaFileObjects.forSourceLines("test.PolymorphicElement",
-
+      "package test;",
       "@${Xml::class.qualifiedName}",
       "class PolymorphicElement {",
       "   @${Element::class.qualifiedName} ( typesByElement = {",
-      "     @${ElementNameMatcher::class.qualifiedName}(name=\"a\" , type=A.class),  ",
-      "     @${ElementNameMatcher::class.qualifiedName}(name=\"b\" , type=B.class)  ",
+      "     @${ElementNameMatcher::class.qualifiedName}(name=\"a\", type=A.class),",
+      "     @${ElementNameMatcher::class.qualifiedName}(name=\"b\", type=B.class)",
       "   })",
       "   java.util.List<Root> element;",
-      "",
       "   @${Element::class.qualifiedName}",
       "   Root a;",
-      "",
       "   @${Xml::class.qualifiedName}",
       "   static class Root {} ",
-      "",
       "   @${Xml::class.qualifiedName}",
       "   static class A extends Root {} ",
-      "",
       "   @${Xml::class.qualifiedName}",
       "   static class B extends Root {} ",
       "}")
+
     Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
-      .that(componentFile)
-      .processedWith(XmlProcessor())
+      .that(componentFile).processedWith(XmlProcessor())
       .failsToCompile()
-      .withErrorContaining("Conflict: field 'a' in class PolymorphicElement is in conflict with field 'element' in class PolymorphicElement. Maybe both have the same xml name 'a' (you can change that via annotations) or @${Path::class.java.simpleName} is causing this conflict.")
+      .withErrorContaining(
+        "Conflict: field 'a' in class test.PolymorphicElement is in conflict with field 'element' in class test.PolymorphicElement. Maybe both have the same xml name 'a' (you can change that via annotations) or @${Path::class.java.simpleName} is causing this conflict.")
   }
 
   @Test
   fun polymorphicElementInlineListConflictingWithPathAttribute() {
     val componentFile = JavaFileObjects.forSourceLines("test.PolymorphicElement",
-
+      "package test;",
       "@${Xml::class.qualifiedName}",
       "class PolymorphicElement {",
       "   @${Element::class.qualifiedName} ( typesByElement = {",
-      "     @${ElementNameMatcher::class.qualifiedName}(name=\"a\" , type=A.class),  ",
-      "     @${ElementNameMatcher::class.qualifiedName}(name=\"b\" , type=B.class)  ",
+      "     @${ElementNameMatcher::class.qualifiedName}(name=\"a\", type=A.class),",
+      "     @${ElementNameMatcher::class.qualifiedName}(name=\"b\", type=B.class)",
       "   })",
-      "",
       "   java.util.List<Root> element;",
-      "",
       "   @${Path::class.qualifiedName}(\"b\")",
       "   @${Attribute::class.qualifiedName}",
       "   String attribute;",
-      "",
       "   @${Xml::class.qualifiedName}",
       "   static class Root {} ",
-      "",
       "   @${Xml::class.qualifiedName}",
       "   static class A  extends Root {} ",
-      "",
       "   @${Xml::class.qualifiedName}",
       "   static class B extends Root {} ",
       "}")
+
     Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
-      .that(componentFile)
-      .processedWith(XmlProcessor())
+      .that(componentFile).processedWith(XmlProcessor())
       .failsToCompile()
       .withErrorContaining(
-        "Element field 'element' in class PolymorphicElement can't have attributes that are accessed from outside of the TypeAdapter that is generated from @${Element::class.simpleName} annotated class! Therefore attribute field 'attribute' in class PolymorphicElement can't be added. Most likely the @${Path::class.simpleName} is in conflict with an @${Element::class.simpleName} annotation.")
+        "Element field 'element' in class test.PolymorphicElement can't have attributes that are accessed from outside of the TypeAdapter that is generated from @${Element::class.simpleName} annotated class! Therefore attribute field 'attribute' in class test.PolymorphicElement can't be added. Most likely the @${Path::class.simpleName} is in conflict with an @${Element::class.simpleName} annotation.")
   }
 
   @Test
-  fun polymorphicElementListNoConflictingWithPathAttribute() {
+  fun polymorphicElementListNoConflictingWithPathAttribute1() {
     val componentFile = JavaFileObjects.forSourceLines("test.PolymorphicElement",
-
+      "package test;",
       "@${Xml::class.qualifiedName}",
       "class PolymorphicElement {",
       "   @${Element::class.qualifiedName} ( typesByElement = {",
@@ -895,75 +875,113 @@ class AnnotationScannerTest {
       "     @${ElementNameMatcher::class.qualifiedName}(name=\"b\" , type=B.class)  ",
       "   })",
       "   java.util.List<Root> element;",
-      "",
-      "    @${Path::class.qualifiedName}(\"a\")",
-      "    @${Attribute::class.qualifiedName}",
-      "    String attribute;",
-      "",
+      "   @${Path::class.qualifiedName}(\"c\")",
+      "   @${Attribute::class.qualifiedName}",
+      "   String attribute;",
       "   @${Xml::class.qualifiedName}",
       "   static class Root {} ",
-      "",
       "   @${Xml::class.qualifiedName}",
       "   static class A  extends Root {} ",
-      "",
       "   @${Xml::class.qualifiedName}",
       "   static class B extends Root {} ",
       "}")
+
     Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
-      .that(componentFile)
-      .processedWith(XmlProcessor())
-      .failsToCompile()
-      .withErrorContaining(
-        "Element field 'element' in class PolymorphicElement can't have attributes that are accessed from outside of the TypeAdapter that is generated from @${Element::class.simpleName} annotated class! Therefore attribute field 'attribute' in class PolymorphicElement can't be added. Most likely the @${Path::class.simpleName} is in conflict with an @${Element::class.simpleName} annotation.")
+      .that(componentFile).processedWith(XmlProcessor())
+      .compilesWithoutError()
+  }
+
+  @Test
+  fun polymorphicElementListNoConflictingWithPathAttribute2() {
+    val componentFile = JavaFileObjects.forSourceLines("test.PolymorphicElement",
+      "package test;",
+      "@${Xml::class.qualifiedName}",
+      "class PolymorphicElement {",
+      "   @${Element::class.qualifiedName}",
+      "   java.util.List<Root> element;",
+      "   @${Path::class.qualifiedName}(\"c\")",
+      "   @${Attribute::class.qualifiedName}",
+      "   String attribute;",
+      "   @${Xml::class.qualifiedName}",
+      "   static class Root {} ",
+      "   @${Xml::class.qualifiedName}",
+      "   static class A  extends Root {} ",
+      "   @${Xml::class.qualifiedName}",
+      "   static class B extends Root {} ",
+      "}")
+
+    Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
+      .that(componentFile).processedWith(XmlProcessor())
+      .compilesWithoutError()
   }
 
   @Test
   fun polymorphicElementListConflictingWithPathAttribute2() {
     val componentFile = JavaFileObjects.forSourceLines("test.PolymorphicElement",
-
+      "package test;",
       "@${Xml::class.qualifiedName}",
       "class PolymorphicElement {",
-      "    @${Path::class.qualifiedName}(\"element/a\")",
-      "    @${Attribute::class.qualifiedName}",
-      "    String attribute;",
-      "",
-      "    @${Path::class.qualifiedName}(\"element\")",
+      "   @${Path::class.qualifiedName}(\"element/a\")",
+      "   @${Attribute::class.qualifiedName}",
+      "   String attribute;",
+      "   @${Path::class.qualifiedName}(\"element\")",
       "   @${Element::class.qualifiedName} ( typesByElement = {",
-      "     @${ElementNameMatcher::class.qualifiedName}(name=\"a\" , type=A.class),  ",
-      "     @${ElementNameMatcher::class.qualifiedName}(name=\"b\" , type=B.class)  ",
+      "     @${ElementNameMatcher::class.qualifiedName}(name=\"a\", type=A.class),",
+      "     @${ElementNameMatcher::class.qualifiedName}(name=\"b\", type=B.class)",
       "   })",
       "   java.util.List<Root> element;",
-      "",
       "   @${Xml::class.qualifiedName}",
-      "   static class Root {} ",
-      "",
+      "   static class Root {}",
       "   @${Xml::class.qualifiedName}",
-      "   static class A  extends Root {} ",
-      "",
+      "   static class A  extends Root {}",
       "   @${Xml::class.qualifiedName}",
-      "   static class B extends Root {} ",
+      "   static class B extends Root {}",
       "}")
+
     Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
-      .that(componentFile)
-      .processedWith(XmlProcessor())
+      .that(componentFile).processedWith(XmlProcessor())
       .failsToCompile()
       .withErrorContaining(
-        "Conflict: field 'element' in class PolymorphicElement is in conflict with PolymorphicElement. Maybe both have the same xml name 'a' (you can change that via annotations) or @${Path::class.simpleName} is causing this conflict.")
+        "Conflict: field 'element' in class test.PolymorphicElement is in conflict with test.PolymorphicElement. Maybe both have the same xml name 'a' (you can change that via annotations) or @${Path::class.simpleName} is causing this conflict.")
+  }
+
+  @Test
+  fun polymorphicElementListConflictingWithPathAttribute3() {
+    val componentFile = JavaFileObjects.forSourceLines("test.PolymorphicElement",
+      "package test;",
+      "@${Xml::class.qualifiedName}",
+      "class PolymorphicElement {",
+      "   @${Path::class.qualifiedName}(\"element/a\")",
+      "   @${Attribute::class.qualifiedName}",
+      "   String attribute;",
+      "   @${Path::class.qualifiedName}(\"element\")",
+      "   @${Element::class.qualifiedName}",
+      "   java.util.List<Root> element;",
+      "   @${Xml::class.qualifiedName}",
+      "   static class Root {}",
+      "   @${Xml::class.qualifiedName}",
+      "   static class A  extends Root {}",
+      "   @${Xml::class.qualifiedName}",
+      "   static class B extends Root {}",
+      "}")
+
+    Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
+      .that(componentFile).processedWith(XmlProcessor())
+      .failsToCompile()
+      .withErrorContaining(
+        "Conflict: field 'element' in class test.PolymorphicElement is in conflict with test.PolymorphicElement. Maybe both have the same xml name 'a' (you can change that via annotations) or @${Path::class.simpleName} is causing this conflict.")
   }
 
   @Test
   fun privateBooleanFieldWithGetterAndSetters() {
-    val componentFile = JavaFileObjects.forSourceLines("test.NoConstructorClass",
+    val componentFile = JavaFileObjects.forSourceLines("test.AnnotatedConstructorClass",
       "package test;",
-      "",
-      "import ${Xml::class.java.canonicalName};",
-      "import ${Attribute::class.java.canonicalName};",
-      "",
-      "@${Xml::class.java.simpleName}",
+      "@${Xml::class.qualifiedName}",
       "class AnnotatedConstructorClass {",
-      "    @${Attribute::class.java.simpleName} private boolean attribute;",
-      "    boolean isAttribute(){return false;}",
-      "    void setAttribute(boolean s){}",
+      "   @${Attribute::class.qualifiedName}",
+      "   private boolean attribute;",
+      "   boolean isAttribute() { return false; }",
+      "   void setAttribute(boolean s) {}",
       "}")
 
     Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
@@ -973,17 +991,14 @@ class AnnotationScannerTest {
 
   @Test
   fun privateBooleanFieldWithIsPrefixWithGetterAndSetters() {
-    val componentFile = JavaFileObjects.forSourceLines("test.NoConstructorClass",
+    val componentFile = JavaFileObjects.forSourceLines("test.AnnotatedConstructorClass",
       "package test;",
-      "",
-      "import ${Xml::class.java.canonicalName};",
-      "import ${Attribute::class.java.canonicalName};",
-      "",
-      "@${Xml::class.java.simpleName}",
+      "@${Xml::class.qualifiedName}",
       "class AnnotatedConstructorClass {",
-      "    @${Attribute::class.java.simpleName} private boolean isAttribute;",
-      "    boolean isAttribute(){return false;}",
-      "    void setAttribute(boolean s){}",
+      "   @${Attribute::class.qualifiedName}",
+      "   private boolean isAttribute;",
+      "   boolean isAttribute() { return false; }",
+      "   void setAttribute(boolean s) {}",
       "}")
 
     Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
@@ -995,13 +1010,10 @@ class AnnotationScannerTest {
   fun validTextContentOnly() {
     val componentFile = JavaFileObjects.forSourceLines("test.NoConstructorClass",
       "package test;",
-      "",
-      "import ${Xml::class.java.canonicalName};",
-      "import ${TextContent::class.java.canonicalName};",
-      "",
-      "@${Xml::class.java.simpleName}",
+      "@${Xml::class.qualifiedName}",
       "class AnnotatedConstructorClass {",
-      "    @${TextContent::class.java.simpleName} String someContent;",
+      "   @${TextContent::class.qualifiedName}",
+      "   String someContent;",
       "}")
 
     Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
@@ -1011,107 +1023,78 @@ class AnnotationScannerTest {
 
   @Test
   fun writeNamespaceContainsDoubleQuote() {
-
     val componentFile = JavaFileObjects.forSourceLines("test.NoConstructorClass",
       "package test;",
-      "",
-      "import ${Xml::class.java.canonicalName};",
-      "import ${Attribute::class.java.canonicalName};",
-      "",
-      "@${Xml::class.java.simpleName}(writeNamespaces = {\"\\\"http://test.com\\\"\"})",
-      "class NamespaceClass {",
-      "}")
+      "@${Xml::class.qualifiedName}(writeNamespaces = {\"\\\"http://test.com\\\"\"})",
+      "class NamespaceClass {}")
 
     Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
       .that(componentFile).processedWith(XmlProcessor())
       .failsToCompile()
       .withErrorContaining(
-        "@Xml annotated class NamespaceClass contains an illegal namespace definition \"http://test.com\" . The following characters are not allowed: < > \" ' to be used in a namespace definition")
+        "@Xml annotated class NamespaceClass contains an illegal namespace definition \"http://test.com\". The following characters are not allowed: < > \" ' to be used in a namespace definition")
   }
 
   @Test
   fun writeNamespaceContainsGreaterChar() {
-
     val componentFile = JavaFileObjects.forSourceLines("test.NoConstructorClass",
       "package test;",
-      "",
-      "import ${Xml::class.java.canonicalName};",
-      "import ${Attribute::class.java.canonicalName};",
-      "",
-      "@${Xml::class.java.simpleName}(writeNamespaces = {\"a=http<://test.com\"})",
-      "class NamespaceClass {",
-      "}")
+      "@${Xml::class.qualifiedName}(writeNamespaces = {\"a=http<://test.com\"})",
+      "class NamespaceClass {}")
 
     Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
       .that(componentFile).processedWith(XmlProcessor())
       .failsToCompile()
       .withErrorContaining(
-        "@Xml annotated class NamespaceClass contains an illegal namespace definition a=http<://test.com . The following characters are not allowed: < > \" ' to be used in a namespace definition")
+        "@Xml annotated class NamespaceClass contains an illegal namespace definition a=http<://test.com. The following characters are not allowed: < > \" ' to be used in a namespace definition")
   }
 
   @Test
   fun writeNamespaceContainsLessChar() {
-
     val componentFile = JavaFileObjects.forSourceLines("test.NoConstructorClass",
       "package test;",
-      "",
-      "import ${Xml::class.java.canonicalName};",
-      "import ${Attribute::class.java.canonicalName};",
-      "",
-      "@${Xml::class.java.simpleName}(writeNamespaces = {\"a>=http://test.com\"})",
-      "class NamespaceClass {",
-      "}")
+      "@${Xml::class.qualifiedName}(writeNamespaces = {\"a>=http://test.com\"})",
+      "class NamespaceClass {}")
 
     Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
       .that(componentFile).processedWith(XmlProcessor())
       .failsToCompile()
       .withErrorContaining(
-        "@Xml annotated class NamespaceClass contains an illegal namespace definition a>=http://test.com . The following characters are not allowed: < > \" ' to be used in a namespace definition")
+        "@Xml annotated class NamespaceClass contains an illegal namespace definition a>=http://test.com. The following characters are not allowed: < > \" ' to be used in a namespace definition")
   }
 
   @Test
   fun writeNamespaceContainsSingleQuote() {
-
     val componentFile = JavaFileObjects.forSourceLines("test.NoConstructorClass",
       "package test;",
-      "",
-      "import ${Xml::class.java.canonicalName};",
-      "import ${Attribute::class.java.canonicalName};",
-      "",
-      "@${Xml::class.java.simpleName}(writeNamespaces = {\"a=http://test.'com\"})",
-      "class NamespaceClass {",
-      "}")
+      "@${Xml::class.qualifiedName}(writeNamespaces = {\"a=http://test.'com\"})",
+      "class NamespaceClass {}")
 
     Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
       .that(componentFile).processedWith(XmlProcessor())
       .failsToCompile()
       .withErrorContaining(
-        "@Xml annotated class NamespaceClass contains an illegal namespace definition a=http://test.'com . The following characters are not allowed: < > \" ' to be used in a namespace definition")
+        "@Xml annotated class NamespaceClass contains an illegal namespace definition a=http://test.'com. The following characters are not allowed: < > \" ' to be used in a namespace definition")
   }
 
   @Test
   fun writeNamespaceContainsMultipleEqualsSigns() {
     val componentFile = JavaFileObjects.forSourceLines("test.NoConstructorClass",
       "package test;",
-      "",
-      "import ${Xml::class.java.canonicalName};",
-      "import ${Attribute::class.java.canonicalName};",
-      "",
-      "@${Xml::class.java.simpleName}(writeNamespaces = {\"a=b=http://test.com\"})",
-      "class NamespaceClass {",
-      "}")
+      "@${Xml::class.qualifiedName}(writeNamespaces = {\"a=b=http://test.com\"})",
+      "class NamespaceClass {}")
 
     Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
       .that(componentFile).processedWith(XmlProcessor())
       .failsToCompile()
       .withErrorContaining(
-        "contains an illegal namespace definition: a=b=http://test.com because it contains more than 1 equals sign (=) character")
+        "@Xml annotated class NamespaceClass contains an illegal namespace definition: a=b=http://test.com because it contains more than 1 equals sign (=) character")
   }
 
   @Test
   fun elementList() {
     val componentFile = JavaFileObjects.forSourceLines("test.ElementList",
-
+      "package test;",
       "@${Xml::class.qualifiedName}",
       "class ElementList {",
       "   @${Element::class.qualifiedName}",
@@ -1121,6 +1104,7 @@ class AnnotationScannerTest {
       "@${Xml::class.qualifiedName}",
       "class A {} "
     )
+
     Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
       .that(componentFile)
       .processedWith(XmlProcessor())
@@ -1130,7 +1114,7 @@ class AnnotationScannerTest {
   @Test
   fun elementListNoCompileTimeChecks() {
     val componentFile = JavaFileObjects.forSourceLines("test.ElementList",
-
+      "package test;",
       "@${Xml::class.qualifiedName}",
       "class ElementList {",
       "   @${Element::class.qualifiedName}(compileTimeChecks=false)",
@@ -1139,6 +1123,7 @@ class AnnotationScannerTest {
       "",
       "abstract class A {} "
     )
+
     Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
       .that(componentFile)
       .processedWith(XmlProcessor())
