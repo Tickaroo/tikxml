@@ -19,7 +19,6 @@
 package com.tickaroo.tikxml.processor;
 
 import com.google.auto.service.AutoService;
-import com.sun.tools.internal.ws.processor.ProcessorException;
 import com.tickaroo.tikxml.annotation.GenericAdapter;
 import com.tickaroo.tikxml.annotation.Xml;
 import com.tickaroo.tikxml.processor.field.AnnotatedClass;
@@ -131,9 +130,9 @@ public class XmlProcessor extends AbstractProcessor {
       }
 
       for (Element element : xmlElements) {
-        /*if (element.getKind() == ElementKind.CLASS && element.getModifiers().contains(Modifier.ABSTRACT)) {
+        if (element.getKind() == ElementKind.CLASS && element.getModifiers().contains(Modifier.ABSTRACT)) {
           continue;
-        }*/
+        }
 
         AnnotatedClass clazz = new AnnotatedClassImpl(element);
         // Scan class

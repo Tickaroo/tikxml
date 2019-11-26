@@ -329,8 +329,8 @@ class AnnotationScannerForConstructorsTest {
       "class ElementListWildcardInterfaceWithPolymorphism {",
       "   public ElementListWildcardInterfaceWithPolymorphism(",
       "   @${Element::class.java.canonicalName}(typesByElement = {",
-      "       @${ElementNameMatcher::class.qualifiedName}(name=\"foo\" , type=GrandParent.class),",
-      "       @${ElementNameMatcher::class.qualifiedName}(name=\"bar\" , type=Parent.class),",
+      "       @${ElementNameMatcher::class.qualifiedName}(name=\"foo\", type=GrandParent.class),",
+      "       @${ElementNameMatcher::class.qualifiedName}(name=\"bar\", type=Parent.class),",
       "   })",
       "   java.util.List<? super GrandParent> aList) {}",
       "   public java.util.List<? super GrandParent> getAList() { return null; }",
@@ -346,6 +346,6 @@ class AnnotationScannerForConstructorsTest {
 
     Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
       .that(componentFile).processedWith(XmlProcessor())
-      .failsToCompile()
+      .compilesWithoutError()
   }
 }

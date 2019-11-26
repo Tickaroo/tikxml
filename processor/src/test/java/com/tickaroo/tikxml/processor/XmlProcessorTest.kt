@@ -69,8 +69,7 @@ class XmlProcessorTest {
 
     Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
       .that(componentFile).processedWith(XmlProcessor())
-      .failsToCompile()
-      .withErrorContaining("Only classes can be annotated with")
+      .compilesWithoutError()
   }
 
   @Test

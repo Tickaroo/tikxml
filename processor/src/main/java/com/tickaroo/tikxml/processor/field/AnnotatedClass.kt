@@ -116,7 +116,7 @@ class AnnotatedClassImpl
   }
 
   private fun checkValidClass(element: Element) {
-    if (element.kind != ElementKind.CLASS || element.modifiers.contains(Modifier.ABSTRACT)) {
+    if (element.kind != ElementKind.CLASS) {
       throw ProcessingException(element, "Only classes can be annotated with " +
           "@${Xml::class.simpleName} but $element is not a class. Maye you want polymorphism using @${GenericAdapter::class.simpleName}?")
     }

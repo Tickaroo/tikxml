@@ -148,7 +148,7 @@ class AnnotationScannerTest {
       .that(componentFile).processedWith(XmlProcessor())
       .failsToCompile()
       .withErrorContaining(
-        "The field 'a' in class test.NoPublicSetter has private or protected visibility. Hence a corresponding setter method must be provided  with the name setA(int) and minimum package visibility (or public visibility if this is a super class in a different package)Unfortunately, there is no such setter method. Please provide one!")
+        "The field 'a' in class test.NoPublicSetter has private or protected visibility. Hence a corresponding setter method must be provided with the name setA(int) and minimum package visibility (or public visibility if this is a super class in a different package). Unfortunately, there is no such setter method. Please provide one!")
   }
 
   @Test
@@ -226,7 +226,7 @@ class AnnotationScannerTest {
       .that(componentFile).processedWith(XmlProcessor())
       .failsToCompile()
       .withErrorContaining(
-        "The field 'a' in class test.PrivateSetter has private or protected visibility. Hence a corresponding setter method must be provided  with the name setA(int) and minimum package visibility (or public visibility if this is a super class in a different package)Unfortunately, there is no such setter method. Please provide one!")
+        "The field 'a' in class test.PrivateSetter has private or protected visibility. Hence a corresponding setter method must be provided with the name setA(int) and minimum package visibility (or public visibility if this is a super class in a different package). Unfortunately, there is no such setter method. Please provide one!")
   }
 
   @Test
@@ -355,7 +355,7 @@ class AnnotationScannerTest {
       .that(componentFile).processedWith(XmlProcessor())
       .failsToCompile()
       .withErrorContaining(
-        "The field 'a' in class test.TextContent has private or protected visibility. Hence a corresponding setter method must be provided  with the name setA(java.lang.String) and minimum package visibility (or public visibility if this is a super class in a different package)Unfortunately, there is no such setter method. Please provide one!")
+        "The field 'a' in class test.TextContent has private or protected visibility. Hence a corresponding setter method must be provided with the name setA(java.lang.String) and minimum package visibility (or public visibility if this is a super class in a different package). Unfortunately, there is no such setter method. Please provide one!")
   }
 
   @Test
@@ -375,7 +375,7 @@ class AnnotationScannerTest {
       .that(componentFile).processedWith(XmlProcessor())
       .failsToCompile()
       .withErrorContaining(
-        "The field 'a' in class test.TextContent has private or protected visibility. Hence a corresponding setter method must be provided  with the name setA(java.lang.String) and minimum package visibility (or public visibility if this is a super class in a different package)Unfortunately, there is no such setter method. Please provide one!")
+        "The field 'a' in class test.TextContent has private or protected visibility. Hence a corresponding setter method must be provided with the name setA(java.lang.String) and minimum package visibility (or public visibility if this is a super class in a different package). Unfortunately, there is no such setter method. Please provide one!")
   }
 
   @Test
