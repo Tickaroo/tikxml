@@ -18,6 +18,7 @@ branches:
   - gh-pages
 sudo: false
 script: "./gradlew build test"
+dist: trusty
 cache:
   directories:
   - "$HOME/.gradle"
