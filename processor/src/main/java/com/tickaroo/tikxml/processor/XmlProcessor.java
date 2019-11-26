@@ -45,8 +45,10 @@ import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
 import javax.tools.Diagnostic;
+import net.ltgt.gradle.incap.IncrementalAnnotationProcessor;
 
 import static com.tickaroo.tikxml.processor.ProcessorConstants.AUTO_VALUE_POST_FIX;
+import static net.ltgt.gradle.incap.IncrementalAnnotationProcessorType.ISOLATING;
 
 /**
  * Annotation processor for @Xml annotated images
@@ -55,6 +57,7 @@ import static com.tickaroo.tikxml.processor.ProcessorConstants.AUTO_VALUE_POST_F
  * @since 1.0
  */
 @AutoService(Processor.class)
+@IncrementalAnnotationProcessor(ISOLATING)
 public class XmlProcessor extends AbstractProcessor {
 
   /**
