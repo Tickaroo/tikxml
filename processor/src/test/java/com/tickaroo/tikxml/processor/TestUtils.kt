@@ -24,19 +24,19 @@ import kotlin.test.fail
  * Excepts a [ProcessingException]
  */
 fun expectException(errorMsg: String? = null, blockToExecute: () -> Unit) {
-    try {
-        blockToExecute()
-        fail("Expected an exception, but no exception has been thrown")
-    } catch (error: AssertionError) {
-        throw error
-    } catch (t: ProcessingException) {
+  try {
+    blockToExecute()
+    fail("Expected an exception, but no exception has been thrown")
+  } catch (error: AssertionError) {
+    throw error
+  } catch (t: ProcessingException) {
 
-        if (errorMsg != null && errorMsg != t.message) {
-            fail("Expected an error message \n\"$errorMsg\"\nbut got:\n\"${t.message}\"")
-        }
-
-    } catch (other: Throwable) {
-        other.printStackTrace()
-        fail("Expected another type of exception, see stacktrace above")
+    if (errorMsg != null && errorMsg != t.message) {
+      fail("Expected an error message \n\"$errorMsg\"\nbut got:\n\"${t.message}\"")
     }
+
+  } catch (other: Throwable) {
+    other.printStackTrace()
+    fail("Expected another type of exception, see stacktrace above")
+  }
 }

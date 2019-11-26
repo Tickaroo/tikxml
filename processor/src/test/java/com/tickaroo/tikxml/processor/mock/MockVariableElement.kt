@@ -18,7 +18,12 @@
 
 package com.tickaroo.tikxml.processor.mock
 
-import javax.lang.model.element.*
+import javax.lang.model.element.AnnotationMirror
+import javax.lang.model.element.Element
+import javax.lang.model.element.ElementKind
+import javax.lang.model.element.ElementVisitor
+import javax.lang.model.element.Modifier
+import javax.lang.model.element.VariableElement
 import javax.lang.model.type.TypeMirror
 
 /**
@@ -27,46 +32,45 @@ import javax.lang.model.type.TypeMirror
  */
 class MockVariableElement(private val fieldName: String = "mockField") : VariableElement, Java8AnnotatedElement {
 
+  override fun getModifiers(): MutableSet<Modifier>? {
+    throw UnsupportedOperationException()
+  }
 
-    override fun getModifiers(): MutableSet<Modifier>? {
-        throw UnsupportedOperationException()
-    }
+  override fun getSimpleName() = MockName(fieldName)
 
-    override fun getSimpleName() = MockName(fieldName)
+  override fun getKind(): ElementKind? {
+    throw UnsupportedOperationException()
+  }
 
-    override fun getKind(): ElementKind? {
-        throw UnsupportedOperationException()
-    }
+  override fun asType(): TypeMirror? {
+    throw UnsupportedOperationException()
+  }
 
-    override fun asType(): TypeMirror? {
-        throw UnsupportedOperationException()
-    }
+  override fun getEnclosingElement() = MockClassElement()
 
-    override fun getEnclosingElement() = MockClassElement()
+  override fun <R : Any?, P : Any?> accept(v: ElementVisitor<R, P>?, p: P): R {
+    throw UnsupportedOperationException()
+  }
 
-    override fun <R : Any?, P : Any?> accept(v: ElementVisitor<R, P>?, p: P): R {
-        throw UnsupportedOperationException()
-    }
+  override fun <A : Annotation?> getAnnotation(annotationType: Class<A>?): A {
+    throw UnsupportedOperationException()
+  }
 
-    override fun <A : Annotation?> getAnnotation(annotationType: Class<A>?): A {
-        throw UnsupportedOperationException()
-    }
+  override fun getAnnotationMirrors(): MutableList<out AnnotationMirror>? {
+    throw UnsupportedOperationException()
+  }
 
-    override fun getAnnotationMirrors(): MutableList<out AnnotationMirror>? {
-        throw UnsupportedOperationException()
-    }
+  override fun getEnclosedElements(): MutableList<out Element>? {
+    throw UnsupportedOperationException()
+  }
 
-    override fun getEnclosedElements(): MutableList<out Element>? {
-        throw UnsupportedOperationException()
-    }
+  override fun getConstantValue(): Any? {
+    throw UnsupportedOperationException()
+  }
 
-    override fun getConstantValue(): Any? {
-        throw UnsupportedOperationException()
-    }
+  override fun <T : Annotation> getAnnotationsByType(annotationClass: Class<T>): Array<T> {
+    throw UnsupportedOperationException()
+  }
 
-    override fun <T : Annotation> getAnnotationsByType(annotationClass: Class<T>): Array<T> {
-        throw UnsupportedOperationException()
-    }
-
-    override fun toString() = simpleName.toString()
+  override fun toString() = simpleName.toString()
 }

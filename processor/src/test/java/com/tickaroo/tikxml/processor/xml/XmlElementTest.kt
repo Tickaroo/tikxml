@@ -38,29 +38,27 @@ class XmlElementTest {
 
   @Test
   fun addAttribute() {
-
-    val xmlElement = MockXmlElement();
+    val xmlElement = MockXmlElement()
     val attribute1 = AttributeField(MockVariableElement("foo"), "foo")
     val attribute2 = AttributeField(MockVariableElement("other"), "other")
+    val path = emptyList<String>()
 
-    xmlElement.addAttribute(attribute1, emptyList())
-    assertTrue(xmlElement.attributes["foo"] == attribute1)
+    xmlElement.addAttribute(attribute1, path)
+    assertEquals(xmlElement.attributes["foo"], attribute1)
 
-
-    xmlElement.addAttribute(attribute2, emptyList())
-    assertTrue(xmlElement.attributes["other"] == attribute2)
+    xmlElement.addAttribute(attribute2, path)
+    assertEquals(xmlElement.attributes["other"], attribute2)
   }
 
   @Test
   fun addAttributeInConflict() {
-
-    val xmlElement = MockXmlElement();
+    val xmlElement = MockXmlElement()
     val attribute1 = AttributeField(MockVariableElement("foo"), "foo")
     val attribute2 = AttributeField(MockVariableElement("other"), "foo")
     val path = emptyList<String>()
 
     xmlElement.addAttribute(attribute1, path)
-    assertTrue(xmlElement.attributes["foo"] == attribute1)
+    assertEquals(xmlElement.attributes["foo"], attribute1)
 
     expectException(
       "Conflict: field 'other' in class mocked.MockedClass has the same xml attribute name 'foo' as the field 'foo' in class mocked.MockedClass. You can specify another name via annotations.") {
@@ -70,18 +68,17 @@ class XmlElementTest {
 
   @Test
   fun noAttributeConflictBecauseDifferentPath() {
-
-    val xmlElement = MockXmlElement();
+    val xmlElement = MockXmlElement()
     val attribute1 = AttributeField(MockVariableElement("foo"), "foo")
     val attribute2 = AttributeField(MockVariableElement("other"), "foo")
     val path1 = emptyList<String>()
     val path2 = arrayListOf("some")
 
     xmlElement.addAttribute(attribute1, path1)
-    assertTrue(xmlElement.attributes["foo"] == attribute1)
+    assertEquals(xmlElement.attributes["foo"], attribute1)
 
     xmlElement.addAttribute(attribute2, path2)
-    assertTrue(xmlElement.getXmlElementForPath(path2).attributes["foo"] == attribute2)
+    assertEquals(xmlElement.getXmlElementForPath(path2).attributes["foo"], attribute2)
   }
 
   @Test
@@ -94,11 +91,10 @@ class XmlElementTest {
     val path = emptyList<String>()
 
     rootElement.addChildElement(childElement1, path)
-    assertTrue(childElement1 == rootElement.childElements["foo"])
+    assertEquals(childElement1, rootElement.childElements["foo"])
 
     rootElement.addChildElement(childElement2, path)
-    assertTrue(childElement2 == rootElement.childElements["other"])
-
+    assertEquals(childElement2, rootElement.childElements["other"])
   }
 
   @Test
@@ -112,10 +108,10 @@ class XmlElementTest {
     val path2 = listOf("a", "b")
 
     rootElement.addChildElement(childElement1, path1)
-    assertTrue(childElement1 == rootElement.getXmlElementForPath(path1).childElements["foo"])
+    assertEquals(childElement1, rootElement.getXmlElementForPath(path1).childElements["foo"])
 
     rootElement.addChildElement(childElement2, path2)
-    assertTrue(childElement2 == rootElement.getXmlElementForPath(path2).childElements["foo"])
+    assertEquals(childElement2, rootElement.getXmlElementForPath(path2).childElements["foo"])
 
   }
 
@@ -130,7 +126,7 @@ class XmlElementTest {
     val path2 = listOf("a")
 
     rootElement.addChildElement(childElement1, path1)
-    assertTrue(childElement1 == rootElement.getXmlElementForPath(path1).childElements["foo"])
+    assertEquals(childElement1, rootElement.getXmlElementForPath(path1).childElements["foo"])
 
     expectException(
       "Conflict: field 'foo' in class mocked.MockedClass is in conflict with field 'foo' in class mocked.MockedClass. Maybe both have the same xml name 'foo' (you can change that via annotations) or @${Path::class.simpleName} is causing this conflict.") {
@@ -149,22 +145,21 @@ class XmlElementTest {
 
     rootElement.addAttribute(attribute1, path1)
     assertTrue(rootElement.getXmlElementForPath(path1) is PlaceholderXmlElement)
-    assertTrue(rootElement.getXmlElementForPath(path1).attributes["attribute1"] == attribute1)
+    assertEquals(rootElement.getXmlElementForPath(path1).attributes["attribute1"], attribute1)
 
     rootElement.addChildElement(childElement1, path1)
     assertTrue(rootElement.getXmlElementForPath(path1) is PlaceholderXmlElement)
-    assertTrue(rootElement.getXmlElementForPath(path1.plus("foo")) == childElement1)
-    assertTrue(rootElement.getXmlElementForPath(path1).attributes["attribute1"] == attribute1)
+    assertEquals(rootElement.getXmlElementForPath(path1.plus("foo")), childElement1)
+    assertEquals(rootElement.getXmlElementForPath(path1).attributes["attribute1"], attribute1)
 
     // Add an attribute on existing PropertyField
     val attribute2 = AttributeField(MockVariableElement("attribute2"), "attribute2")
     val path2 = listOf("a", "foo") // Add child on childElement1
     rootElement.addAttribute(attribute2, path2)
-    assertTrue(rootElement.getXmlElementForPath(path2) == childElement1)
+    assertEquals(rootElement.getXmlElementForPath(path2), childElement1)
 
-    assertTrue(rootElement.getXmlElementForPath(path2).attributes["attribute2"] == attribute2)
-    assertTrue(childElement1.attributes["attribute2"] == attribute2)
-
+    assertEquals(rootElement.getXmlElementForPath(path2).attributes["attribute2"], attribute2)
+    assertEquals(childElement1.attributes["attribute2"], attribute2)
   }
 
   @Test
@@ -215,7 +210,6 @@ class XmlElementTest {
       "Element field 'foo' in class mocked.MockedClass can't have attributes that are accessed from outside of the TypeAdapter that is generated from @${Element::class.simpleName} annotated class! Therefore attribute field 'attribute1' in class mocked.MockedClass can't be added. Most likely the @${Path::class.simpleName} is in conflict with an @${Element::class.simpleName} annotation.") {
       rootElement.addAttribute(attribute, attributePath)
     }
-
   }
 
   @Test
@@ -233,6 +227,5 @@ class XmlElementTest {
       "Conflict: field 'attribute2' in class mocked.MockedClass has the same xml attribute name 'foo' as the field 'attribute1' in class mocked.MockedClass. You can specify another name via annotations.") {
       rootElement.addAttribute(attribute2, path)
     }
-
   }
 }

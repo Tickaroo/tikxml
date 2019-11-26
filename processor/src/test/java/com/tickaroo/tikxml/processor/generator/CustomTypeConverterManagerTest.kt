@@ -28,23 +28,23 @@ import kotlin.test.assertTrue
  */
 class CustomTypeConverterManagerTest {
 
-    @Test
-    fun getAndInsert() {
-        val manager = CustomTypeConverterManager()
-        assertEquals(0, manager.converterMap.size)
-        assertEquals("typeConverter1", manager.getFieldNameForConverter("com.foo.Converter1"))
-        assertEquals(1, manager.converterMap.size)
-        assertEquals("typeConverter1", manager.getFieldNameForConverter("com.foo.Converter1"))
-        assertEquals(1, manager.converterMap.size)
-        assertTrue(manager.converterMap.containsKey("com.foo.Converter1"))
+  @Test
+  fun getAndInsert() {
+    val manager = CustomTypeConverterManager()
+    assertEquals(0, manager.converterMap.size)
+    assertEquals("typeConverter1", manager.getFieldNameForConverter("com.foo.Converter1"))
+    assertEquals(1, manager.converterMap.size)
+    assertEquals("typeConverter1", manager.getFieldNameForConverter("com.foo.Converter1"))
+    assertEquals(1, manager.converterMap.size)
+    assertTrue(manager.converterMap.containsKey("com.foo.Converter1"))
 
-        assertEquals("typeConverter2", manager.getFieldNameForConverter("com.foo.Converter2"))
-        assertEquals(2, manager.converterMap.size)
-        assertEquals("typeConverter1", manager.getFieldNameForConverter("com.foo.Converter1"))
-        assertEquals(2, manager.converterMap.size)
-        assertEquals("typeConverter2", manager.getFieldNameForConverter("com.foo.Converter2"))
-        assertEquals(2, manager.converterMap.size)
-        assertTrue(manager.converterMap.containsKey("com.foo.Converter1"))
-        assertTrue(manager.converterMap.containsKey("com.foo.Converter2"))
-    }
+    assertEquals("typeConverter2", manager.getFieldNameForConverter("com.foo.Converter2"))
+    assertEquals(2, manager.converterMap.size)
+    assertEquals("typeConverter1", manager.getFieldNameForConverter("com.foo.Converter1"))
+    assertEquals(2, manager.converterMap.size)
+    assertEquals("typeConverter2", manager.getFieldNameForConverter("com.foo.Converter2"))
+    assertEquals(2, manager.converterMap.size)
+    assertTrue(manager.converterMap.containsKey("com.foo.Converter1"))
+    assertTrue(manager.converterMap.containsKey("com.foo.Converter2"))
+  }
 }

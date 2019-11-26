@@ -34,5 +34,4 @@ class DefaultVisibilityTypeConverter implements TypeConverter<Object> {
   public String write(Object value) throws Exception {
     return null;
   }
-
 }

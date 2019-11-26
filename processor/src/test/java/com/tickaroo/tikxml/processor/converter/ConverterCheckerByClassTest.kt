@@ -35,142 +35,152 @@ import kotlin.test.fail
  */
 class ConverterCheckerByClassTest {
 
-    @Test
-    fun interfaceConverter() {
-        val attributeConverterChecker = AttributeConverterChecker()
+  @Test
+  fun interfaceConverter() {
+    val attributeConverterChecker = AttributeConverterChecker()
 
-        val element = Mockito.mock(VariableElement::class.java)
-        val annotation = Mockito.mock(Attribute::class.java)
+    val element = Mockito.mock(VariableElement::class.java)
+    val annotation = Mockito.mock(Attribute::class.java)
 
-        Mockito.doReturn(InterfaceTypeConverter::class.java).`when`(annotation).converter
+    Mockito.doReturn(InterfaceTypeConverter::class.java).`when`(annotation).converter
 
-        try {
-            attributeConverterChecker.getQualifiedConverterName(element, annotation)
-            fail("Processing Exception expected")
-        } catch(e: ProcessingException) {
-            assertEquals("TypeConverter class com.tickaroo.tikxml.processor.converter.InterfaceTypeConverter must be a public class!", e.message)
-        }
+    try {
+      attributeConverterChecker.getQualifiedConverterName(element, annotation)
+      fail("Processing Exception expected")
+    } catch (e: ProcessingException) {
+      assertEquals("TypeConverter class com.tickaroo.tikxml.processor.converter.InterfaceTypeConverter must be a public class!",
+        e.message)
+    }
+  }
+
+  @Test
+  fun abstractClassConverter() {
+    val attributeConverterChecker = AttributeConverterChecker()
+
+    val element = Mockito.mock(VariableElement::class.java)
+    val annotation = Mockito.mock(Attribute::class.java)
+
+    Mockito.doReturn(AbstractTypeConverter::class.java).`when`(annotation).converter
+
+    try {
+      attributeConverterChecker.getQualifiedConverterName(element, annotation)
+      fail("Processing Exception expected")
+    } catch (e: ProcessingException) {
+      assertEquals("TypeConverter class com.tickaroo.tikxml.processor.converter.AbstractTypeConverter must be a public class!",
+        e.message)
+    }
+  }
+
+  @Test
+  fun defaultVisibiltiyConverter() {
+    val attributeConverterChecker = AttributeConverterChecker()
+
+    val element = Mockito.mock(VariableElement::class.java)
+    val annotation = Mockito.mock(Attribute::class.java)
+
+    Mockito.doReturn(DefaultVisibilityTypeConverter::class.java).`when`(annotation).converter
+
+    try {
+      attributeConverterChecker.getQualifiedConverterName(element, annotation)
+      fail("Processing Exception expected")
+    } catch (e: ProcessingException) {
+      assertEquals(
+        "TypeConverter class com.tickaroo.tikxml.processor.converter.DefaultVisibilityTypeConverter must be a public class!",
+        e.message)
+    }
+  }
+
+  @Test
+  fun privateVisibiltiyConverter() {
+    val attributeConverterChecker = AttributeConverterChecker()
+
+    val element = Mockito.mock(VariableElement::class.java)
+    val annotation = Mockito.mock(Attribute::class.java)
+
+    Mockito.doReturn(PrivateVisibilityTypeConverter::class.java).`when`(annotation).converter
+
+    try {
+      attributeConverterChecker.getQualifiedConverterName(element, annotation)
+      fail("Processing Exception expected")
+    } catch (e: ProcessingException) {
+      assertEquals(
+        "TypeConverter class com.tickaroo.tikxml.processor.converter.ConverterCheckerByClassTest.PrivateVisibilityTypeConverter must be a public class!",
+        e.message)
+    }
+  }
+
+  @Test
+  fun onlyPrivateConstructorConverter() {
+    val attributeConverterChecker = AttributeConverterChecker()
+
+    val element = Mockito.mock(VariableElement::class.java)
+    val annotation = Mockito.mock(Attribute::class.java)
+
+    Mockito.doReturn(PrivateConstructorTypeConverter::class.java).`when`(annotation).converter
+
+    try {
+      attributeConverterChecker.getQualifiedConverterName(element, annotation)
+      fail("Processing Exception expected")
+    } catch (e: ProcessingException) {
+      assertEquals(
+        "TypeConverter class com.tickaroo.tikxml.processor.converter.PrivateConstructorTypeConverter must provide an empty (parameter-less) public constructor",
+        e.message)
+    }
+  }
+
+  @Test
+  fun noEmptyConstructorConverter() {
+    val attributeConverterChecker = AttributeConverterChecker()
+
+    val element = Mockito.mock(VariableElement::class.java)
+    val annotation = Mockito.mock(Attribute::class.java)
+
+    Mockito.doReturn(NoParameterLessConstructorTypeConverter::class.java).`when`(annotation).converter
+
+    try {
+      attributeConverterChecker.getQualifiedConverterName(element, annotation)
+      fail("Processing Exception expected")
+    } catch (e: ProcessingException) {
+      assertEquals(
+        "TypeConverter class com.tickaroo.tikxml.processor.converter.NoParameterLessConstructorTypeConverter must provide an empty (parameter-less) public constructor",
+        e.message)
+    }
+  }
+
+  @Test
+  fun noConverterShouldBeUsedViaAttributeAnnotation() {
+    val attributeConverterChecker = AttributeConverterChecker()
+
+    val element = Mockito.mock(VariableElement::class.java)
+    val annotation = Mockito.mock(Attribute::class.java)
+
+    Mockito.doReturn(TypeConverter.NoneTypeConverter::class.java).`when`(annotation).converter
+
+    assertNull(attributeConverterChecker.getQualifiedConverterName(element, annotation))
+  }
+
+  @Test
+  fun noConverterShouldBeUsedViaPropertyElementAnnotation() {
+    val attributeConverterChecker = PropertyElementConverterChecker()
+
+    val element = Mockito.mock(VariableElement::class.java)
+    val annotation = Mockito.mock(PropertyElement::class.java)
+
+    Mockito.doReturn(TypeConverter.NoneTypeConverter::class.java).`when`(annotation).converter
+
+    assertNull(attributeConverterChecker.getQualifiedConverterName(element, annotation))
+  }
+
+  private class PrivateVisibilityTypeConverter : TypeConverter<Any> {
+
+    @Throws(Exception::class)
+    override fun read(value: String): Any? {
+      return null
     }
 
-    @Test
-    fun abstractClassConverter() {
-        val attributeConverterChecker = AttributeConverterChecker()
-
-        val element = Mockito.mock(VariableElement::class.java)
-        val annotation = Mockito.mock(Attribute::class.java)
-
-        Mockito.doReturn(AbstractTypeConverter::class.java).`when`(annotation).converter
-
-        try {
-            attributeConverterChecker.getQualifiedConverterName(element, annotation)
-            fail("Processing Exception expected")
-        } catch(e: ProcessingException) {
-            assertEquals("TypeConverter class com.tickaroo.tikxml.processor.converter.AbstractTypeConverter must be a public class!", e.message)
-        }
+    @Throws(Exception::class)
+    override fun write(value: Any): String? {
+      return null
     }
-
-    @Test
-    fun defaultVisibiltiyConverter() {
-        val attributeConverterChecker = AttributeConverterChecker()
-
-        val element = Mockito.mock(VariableElement::class.java)
-        val annotation = Mockito.mock(Attribute::class.java)
-
-        Mockito.doReturn(DefaultVisibilityTypeConverter::class.java).`when`(annotation).converter
-
-        try {
-            attributeConverterChecker.getQualifiedConverterName(element, annotation)
-            fail("Processing Exception expected")
-        } catch(e: ProcessingException) {
-            assertEquals("TypeConverter class com.tickaroo.tikxml.processor.converter.DefaultVisibilityTypeConverter must be a public class!", e.message)
-        }
-    }
-
-    @Test
-    fun privateVisibiltiyConverter() {
-        val attributeConverterChecker = AttributeConverterChecker()
-
-        val element = Mockito.mock(VariableElement::class.java)
-        val annotation = Mockito.mock(Attribute::class.java)
-
-        Mockito.doReturn(PrivateVisibilityTypeConverter::class.java).`when`(annotation).converter
-
-        try {
-            attributeConverterChecker.getQualifiedConverterName(element, annotation)
-            fail("Processing Exception expected")
-        } catch(e: ProcessingException) {
-            assertEquals("TypeConverter class com.tickaroo.tikxml.processor.converter.ConverterCheckerByClassTest.PrivateVisibilityTypeConverter must be a public class!", e.message)
-        }
-    }
-
-    @Test
-    fun onlyPrivateConstructorConverter() {
-        val attributeConverterChecker = AttributeConverterChecker()
-
-        val element = Mockito.mock(VariableElement::class.java)
-        val annotation = Mockito.mock(Attribute::class.java)
-
-        Mockito.doReturn(PrivateConstructorTypeConverter::class.java).`when`(annotation).converter
-
-        try {
-            attributeConverterChecker.getQualifiedConverterName(element, annotation)
-            fail("Processing Exception expected")
-        } catch(e: ProcessingException) {
-            assertEquals("TypeConverter class com.tickaroo.tikxml.processor.converter.PrivateConstructorTypeConverter must provide an empty (parameter-less) public constructor", e.message)
-        }
-    }
-
-    @Test
-    fun noEmptyConstructorConverter() {
-        val attributeConverterChecker = AttributeConverterChecker()
-
-        val element = Mockito.mock(VariableElement::class.java)
-        val annotation = Mockito.mock(Attribute::class.java)
-
-        Mockito.doReturn(NoParameterLessConstructorTypeConverter::class.java).`when`(annotation).converter
-
-        try {
-            attributeConverterChecker.getQualifiedConverterName(element, annotation)
-            fail("Processing Exception expected")
-        } catch(e: ProcessingException) {
-            assertEquals("TypeConverter class com.tickaroo.tikxml.processor.converter.NoParameterLessConstructorTypeConverter must provide an empty (parameter-less) public constructor", e.message)
-        }
-    }
-
-    @Test
-    fun noConverterShouldBeUsedViaAttributeAnnotation() {
-        val attributeConverterChecker = AttributeConverterChecker()
-
-        val element = Mockito.mock(VariableElement::class.java)
-        val annotation = Mockito.mock(Attribute::class.java)
-
-        Mockito.doReturn(TypeConverter.NoneTypeConverter::class.java).`when`(annotation).converter
-
-        assertNull(attributeConverterChecker.getQualifiedConverterName(element, annotation))
-    }
-
-    @Test
-    fun noConverterShouldBeUsedViaPropertyElementAnnotation() {
-        val attributeConverterChecker = PropertyElementConverterChecker()
-
-        val element = Mockito.mock(VariableElement::class.java)
-        val annotation = Mockito.mock(PropertyElement::class.java)
-
-        Mockito.doReturn(TypeConverter.NoneTypeConverter::class.java).`when`(annotation).converter
-
-        assertNull(attributeConverterChecker.getQualifiedConverterName(element, annotation))
-    }
-
-    private class PrivateVisibilityTypeConverter : TypeConverter<Any> {
-
-        @Throws(Exception::class)
-        override fun read(value: String): Any? {
-            return null
-        }
-
-        @Throws(Exception::class)
-        override fun write(value: Any): String? {
-            return null
-        }
-    }
+  }
 }

@@ -18,7 +18,15 @@
 
 package com.tickaroo.tikxml.processor.mock
 
-import javax.lang.model.element.*
+import javax.lang.model.element.AnnotationMirror
+import javax.lang.model.element.Element
+import javax.lang.model.element.ElementKind
+import javax.lang.model.element.ElementVisitor
+import javax.lang.model.element.Modifier
+import javax.lang.model.element.Name
+import javax.lang.model.element.NestingKind
+import javax.lang.model.element.TypeElement
+import javax.lang.model.element.TypeParameterElement
 import javax.lang.model.type.TypeMirror
 
 /**
@@ -28,7 +36,7 @@ import javax.lang.model.type.TypeMirror
  * https://docs.oracle.com/javase/8/docs/api/java/lang/reflect/AnnotatedElement.html#getAnnotationsByType-java.lang.Class-
  */
 interface Java8AnnotatedElement {
-    fun <T : Annotation> getAnnotationsByType(annotationClass: Class<T>): Array<T>
+  fun <T : Annotation> getAnnotationsByType(annotationClass: Class<T>): Array<T>
 }
 
 /**
@@ -37,66 +45,66 @@ interface Java8AnnotatedElement {
  */
 class MockClassElement : TypeElement, Java8AnnotatedElement {
 
-    override fun getSimpleName(): Name? {
-        throw UnsupportedOperationException()
-    }
+  override fun getSimpleName(): Name? {
+    throw UnsupportedOperationException()
+  }
 
-    override fun getSuperclass(): TypeMirror? {
-        throw UnsupportedOperationException()
-    }
+  override fun getSuperclass(): TypeMirror? {
+    throw UnsupportedOperationException()
+  }
 
-    override fun getQualifiedName(): Name? {
-        return MockName("mocked.MockedClass")
-    }
+  override fun getQualifiedName(): Name? {
+    return MockName("mocked.MockedClass")
+  }
 
-    override fun getTypeParameters(): MutableList<out TypeParameterElement>? {
-        throw UnsupportedOperationException()
-    }
+  override fun getTypeParameters(): MutableList<out TypeParameterElement>? {
+    throw UnsupportedOperationException()
+  }
 
-    override fun getEnclosingElement(): Element? {
-        throw UnsupportedOperationException()
-    }
+  override fun getEnclosingElement(): Element? {
+    throw UnsupportedOperationException()
+  }
 
-    override fun getInterfaces(): MutableList<out TypeMirror>? {
-        throw UnsupportedOperationException()
-    }
+  override fun getInterfaces(): MutableList<out TypeMirror>? {
+    throw UnsupportedOperationException()
+  }
 
-    override fun getNestingKind(): NestingKind? {
-        throw UnsupportedOperationException()
-    }
+  override fun getNestingKind(): NestingKind? {
+    throw UnsupportedOperationException()
+  }
 
-    override fun getEnclosedElements(): MutableList<out Element>? {
-        throw UnsupportedOperationException()
-    }
+  override fun getEnclosedElements(): MutableList<out Element>? {
+    throw UnsupportedOperationException()
+  }
 
-    override fun getModifiers(): MutableSet<Modifier>? {
-        throw UnsupportedOperationException()
-    }
+  override fun getModifiers(): MutableSet<Modifier>? {
+    throw UnsupportedOperationException()
+  }
 
-    override fun getKind(): ElementKind? {
-        throw UnsupportedOperationException()
-    }
+  override fun getKind(): ElementKind? {
+    throw UnsupportedOperationException()
+  }
 
-    override fun asType(): TypeMirror? {
-        throw UnsupportedOperationException()
-    }
+  override fun asType(): TypeMirror? {
+    throw UnsupportedOperationException()
+  }
 
-    override fun <R : Any?, P : Any?> accept(v: ElementVisitor<R, P>?, p: P): R {
-        throw UnsupportedOperationException()
-    }
+  override fun <R : Any?, P : Any?> accept(v: ElementVisitor<R, P>?, p: P): R {
+    throw UnsupportedOperationException()
+  }
 
-    override fun <A : Annotation?> getAnnotation(annotationType: Class<A>?): A {
-        throw UnsupportedOperationException()
-    }
+  override fun <A : Annotation?> getAnnotation(annotationType: Class<A>?): A {
+    throw UnsupportedOperationException()
+  }
 
-    override fun getAnnotationMirrors(): MutableList<out AnnotationMirror>? {
-        throw UnsupportedOperationException()
-    }
+  override fun getAnnotationMirrors(): MutableList<out AnnotationMirror>? {
+    throw UnsupportedOperationException()
+  }
 
-    override fun <T : Annotation> getAnnotationsByType(annotationClass: Class<T>): Array<T> {
-        throw UnsupportedOperationException()
-    }
+  override fun <T : Annotation> getAnnotationsByType(annotationClass: Class<T>): Array<T> {
+    throw UnsupportedOperationException()
+  }
 
-    override fun toString() = qualifiedName.toString()
+  override fun toString() = qualifiedName.toString()
 
 }

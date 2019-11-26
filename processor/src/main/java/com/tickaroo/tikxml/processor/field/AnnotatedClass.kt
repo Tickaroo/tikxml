@@ -18,6 +18,7 @@
 
 package com.tickaroo.tikxml.processor.field
 
+import com.tickaroo.tikxml.annotation.GenericAdapter
 import com.tickaroo.tikxml.annotation.Xml
 import com.tickaroo.tikxml.processor.ProcessingException
 import com.tickaroo.tikxml.processor.XmlCharacters
@@ -26,7 +27,9 @@ import com.tickaroo.tikxml.processor.xml.XmlRootElement
 import java.util.ArrayList
 import javax.lang.model.element.Element
 import javax.lang.model.element.ElementKind
+import javax.lang.model.element.ElementKind.ENUM
 import javax.lang.model.element.ExecutableElement
+import javax.lang.model.element.Modifier
 import javax.lang.model.element.TypeElement
 
 /**
@@ -113,11 +116,9 @@ class AnnotatedClassImpl
   }
 
   private fun checkValidClass(element: Element) {
-
-    if (element.kind != ElementKind.CLASS) {
+    if (element.kind != ElementKind.CLASS || element.modifiers.contains(Modifier.ABSTRACT)) {
       throw ProcessingException(element, "Only classes can be annotated with " +
-          "@${Xml::class.simpleName} but $element is not a class")
-
+          "@${Xml::class.simpleName} but $element is not a class. Maye you want polymorphism using @${GenericAdapter::class.simpleName}?")
     }
   }
 

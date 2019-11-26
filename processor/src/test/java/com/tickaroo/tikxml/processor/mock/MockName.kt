@@ -26,13 +26,13 @@ import javax.lang.model.element.Name
  */
 class MockName(val name: String) : Name {
 
-    override val length = name.length
+  override val length = name.length
 
-    override fun get(index: Int) = name.get(index)
+  override fun get(index: Int) = name[index]
 
-    override fun subSequence(start: Int, end: Int) = name.subSequence(start, end)
+  override fun subSequence(startIndex: Int, endIndex: Int) = name.subSequence(startIndex, endIndex)
 
-    override fun contentEquals(cs: CharSequence?) = if ( cs == null) false else name.contentEquals(cs)
+  override fun contentEquals(cs: CharSequence?) = if (cs == null) false else name.contentEquals(cs)
 
-    override fun toString(): String = name
+  override fun toString(): String = name
 }

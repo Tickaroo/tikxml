@@ -25,7 +25,7 @@ import com.tickaroo.tikxml.TypeConverter;
  */
 public class PrivateConstructorTypeConverter implements TypeConverter<Object> {
 
-  private PrivateConstructorTypeConverter(){
+  private PrivateConstructorTypeConverter() {
 
   }
 
@@ -38,5 +38,4 @@ public class PrivateConstructorTypeConverter implements TypeConverter<Object> {
   public String write(Object value) throws Exception {
     return null;
   }
-
 }
