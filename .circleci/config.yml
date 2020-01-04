@@ -12,10 +12,10 @@ jobs:
       - checkout
       - run:
           name: Build library
-          command: ./gradlew :annotation:build :annotationprocessortesting:build :annotationprocessortesting-kt:build :autovalue:build :converters:build :core:build :processor:build :processor-common:build :retrofit-converter:build
+          command: ./gradlew :annotation:build :annotationprocessortesting:build :annotationprocessortesting-kt:build :autovalue:build :converters:date-rfc3339:build :converters:htmlescape:build :core:build :processor:build :processor-common:build :retrofit-converter:build
       - run:
           name: Run library tests
-          command: ./gradlew :annotation:test :annotationprocessortesting:test :annotationprocessortesting-kt:test :autovalue:test :converters:test :core:test :processor:test :processor-common:test :retrofit-converter:test
+          command: ./gradlew :annotation:test :annotationprocessortesting:test :annotationprocessortesting-kt:test :autovalue:test :converters:date-rfc3339:test :converters:htmlescape:test :core:test :processor:test :processor-common:test :retrofit-converter:test
       - store_test_results:
           path: test-results
 
