@@ -6,16 +6,19 @@ jobs:
     docker:
       - image: circleci/android:api-29
     environment:
-      JVM_OPTS: -Xmx3200m
+      JVM_OPTS: -Xmx2048m -XX:MaxPermSize=512m -XX:+HeapDumpOnOutOfMemoryError -Dfile.encoding=UTF-8
       GRADLE_OPTS: -Dorg.gradle.daemon=false -Dorg.gradle.workers.max=2 -Dkotlin.incremental=false
     steps:
       - checkout
       - run:
           name: Build library
-          command: ./gradlew :processor:build
+          command: ./gradlew :annotation:build :annotationprocessortesting:build :annotationprocessortesting-kt:build :autovalue:build :converters:build :core:build :processor:build :processor-common:build :retrofit-converter:build
       - run:
           name: Run library tests
-          command: ./gradlew :processor:test
+          command: ./gradlew :annotation:test :annotationprocessortesting:test :annotationprocessortesting-kt:test :autovalue:test :converters:test :core:test :processor:test :processor-common:test :retrofit-converter:test
+      - store_test_results:
+          path: test-results
+
 
 workflows:
   version: 2
