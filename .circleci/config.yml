@@ -1,17 +1,13 @@
 version: 2
 
-executors:
-  android:
-    docker:
-      - image: circleci/android:api-29
-    working_directory: ~/repo
-    environment:
-      JAVA_TOOL_OPTIONS: "-Xmx1536m"
-      GRADLE_OPTS: "-Dorg.gradle.daemon=false -Dorg.gradle.workers.max=2 -Dkotlin.incremental=false"
-
 jobs:
   build_and_test:
-    executor: android
+    working_directory: ~/repo
+    docker:
+      - image: circleci/android:api-29-alpha
+    environment:
+      JVM_OPTS: -Xmx3200m
+      GRADLE_OPTS: -Dorg.gradle.daemon=false -Dorg.gradle.workers.max=2 -Dkotlin.incremental=false
     steps:
       - checkout
       - run:
