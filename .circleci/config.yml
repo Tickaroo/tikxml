@@ -28,9 +28,6 @@ jobs:
           paths:
             - ~/.gradle/caches
           key: v1-gradle-cache-{{ checksum "build.gradle" }}
-      - store_test_results:
-          path: build/test-results/test
-
 
 workflows:
   version: 2
