@@ -1,3 +1,5 @@
+version: 2
+
 executors:
   android:
     docker:
@@ -20,12 +22,10 @@ jobs:
           command: ./gradlew :processor:test
 
 workflows:
-  version: 2
-
   master-pipeline:
     jobs:
       - build_and_test:
           filters:
             branches:
               only:
-                - master
+                - circleci
