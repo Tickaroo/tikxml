@@ -1,0 +1,31 @@
+executors:
+  android:
+    docker:
+      - image: circleci/android:api-29
+    working_directory: ~/repo
+    environment:
+      JAVA_TOOL_OPTIONS: "-Xmx1536m"
+      GRADLE_OPTS: "-Dorg.gradle.daemon=false -Dorg.gradle.workers.max=2 -Dkotlin.incremental=false"
+
+jobs:
+  build_and_test:
+    executor: android
+    steps:
+      - checkout
+      - run:
+          name: Build library
+          command: ./gradlew :processor:build
+      - run:
+          name: Run library tests
+          command: ./gradlew :processor:test
+
+workflows:
+  version: 2
+
+  master-pipeline:
+    jobs:
+      - build_and_test:
+          filters:
+            branches:
+              only:
+                - master
