@@ -1,6 +1,6 @@
 # Work in Progress
 Please note that this is still **work in progress!**, although quite stable and used in production.
-[![Build Status](https://travis-ci.org/Tickaroo/tikxml.svg?branch=master)](https://travis-ci.org/Tickaroo/tikxml)
+[![CircleCI](https://circleci.com/gh/Tickaroo/tikxml/tree/master.svg?style=svg)](https://circleci.com/gh/Tickaroo/tikxml/tree/master)
 
 # TikXML
 A fast xml parser for android (and java)

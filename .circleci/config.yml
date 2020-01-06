@@ -1,23 +1,37 @@
-executors:
-  android:
-    docker:
-      - image: circleci/android:api-29
-    working_directory: ~/repo
-    environment:
-      JAVA_TOOL_OPTIONS: "-Xmx1536m"
-      GRADLE_OPTS: "-Dorg.gradle.daemon=false -Dorg.gradle.workers.max=2 -Dkotlin.incremental=false"
+version: 2
 
 jobs:
   build_and_test:
-    executor: android
+    working_directory: ~/repo
+    docker:
+      - image: circleci/openjdk:8
+    #  - image: circleci/android:api-29*/
+    environment:
+      _JAVA_OPTIONS: "-Xmx3g"
+      GRADLE_OPTS: "-Dorg.gradle.daemon=false -Dorg.gradle.workers.max=2 -Dkotlin.incremental=false"
     steps:
       - checkout
+      - restore_cache:
+          key: v1-gradle-wrapper-{{ checksum "gradle/wrapper/gradle-wrapper.properties" }}
+      - restore_cache:
+          key: v1-gradle-cache-{{ checksum "build.gradle" }}
       - run:
-          name: Build library
-          command: ./gradlew :processor:build
-      - run:
-          name: Run library tests
-          command: ./gradlew :processor:test
+          name: Build and test library
+          command: "./gradlew build test"
+      #- run:
+      #    name: Build and test library
+      #    command: "./gradlew :annotation:build :annotationprocessortesting:build :annotationprocessortesting-kt:build :autovalue:build :converters:date-rfc3339:build :converters:htmlescape:build :core:build :processor:build :processor-common:build :retrofit-converter:build"
+      #- run:
+      #    name: Run library tests
+      #    command: "./gradlew :annotation:test :annotationprocessortesting:test :annotationprocessortesting-kt:test :autovalue:test :converters:date-rfc3339:test :converters:htmlescape:test :core:test :processor:test :processor-common:test :retrofit-converter:test"
+      - save_cache:
+          paths:
+            - ~/.gradle/wrapper
+          key: v1-gradle-wrapper-{{ checksum "gradle/wrapper/gradle-wrapper.properties" }}
+      - save_cache:
+          paths:
+            - ~/.gradle/caches
+          key: v1-gradle-cache-{{ checksum "build.gradle" }}
 
 workflows:
   version: 2
@@ -28,4 +42,12 @@ workflows:
           filters:
             branches:
               only:
+                - master
+
+  other-pipeline:
+    jobs:
+      - build_and_test:
+          filters:
+            branches:
+              ignore:
                 - master
