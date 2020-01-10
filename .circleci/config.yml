@@ -70,7 +70,7 @@ jobs:
                   echo "signing.secretKeyRingFile=/home/circleci/.gnupg/secring.gpg" >> gradle.properties
       - run:
           name: Deploy artifacts
-          command: ./gradlew uploadArchieves
+          command: ./gradlew uploadArchives
 
 workflows:
   version: 2
