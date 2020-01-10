@@ -43,6 +43,11 @@ jobs:
       _JAVA_OPTIONS: "-Xmx3g"
       GRADLE_OPTS: "-Dorg.gradle.daemon=false -Dorg.gradle.workers.max=2 -Dkotlin.incremental=false"
     steps:
+     - checkout
+      - restore_cache:
+          key: v1-gradle-wrapper-{{ checksum "gradle/wrapper/gradle-wrapper.properties" }}
+      - restore_cache:
+          key: v1-gradle-cache-{{ checksum "build.gradle" }}
       - run:
           name: Prepare GPG keystore file
           command: |
