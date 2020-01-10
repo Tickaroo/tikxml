@@ -54,8 +54,8 @@ jobs:
       - run:
           name: Setting up Gradle signing
           command: |
-          echo "signing.password=$PGP_KEY" >> gradle.properties
-          echo "signing.secretKeyRingFile=/home/circleci/.gnupg/secring.gpg" >> gradle.properties
+                  echo "signing.password=$PGP_KEY" >> gradle.properties
+                  echo "signing.secretKeyRingFile=/home/circleci/.gnupg/secring.gpg" >> gradle.properties
       - run:
           name: Deploy artifacts
           command: ./gradlew uploadArchieves
