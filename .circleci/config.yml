@@ -1,80 +1,83 @@
 version: 2
+
 jobs:
   build_and_test:
     working_directory: ~/repo
     docker:
-      -
-        image: 'circleci/openjdk:8'
+      - image: circleci/openjdk:8
+    #  - image: circleci/android:api-29*/
     environment:
-      _JAVA_OPTIONS: '-Xmx3g'
-      GRADLE_OPTS: '-Dorg.gradle.daemon=false -Dorg.gradle.workers.max=2 -Dkotlin.incremental=false'
+      _JAVA_OPTIONS: "-Xmx3g"
+      GRADLE_OPTS: "-Dorg.gradle.daemon=false -Dorg.gradle.workers.max=2 -Dkotlin.incremental=false"
     steps:
       - checkout
-      -
-        restore_cache:
-          key: 'v1-gradle-wrapper-{{ checksum "gradle/wrapper/gradle-wrapper.properties" }}'
-      -
-        restore_cache:
-          key: 'v1-gradle-cache-{{ checksum "build.gradle" }}'
-      -
-        run:
-          name: 'Build and test library'
-          command: './gradlew build test'
-      -
-        save_cache:
+      - restore_cache:
+          key: v1-gradle-wrapper-{{ checksum "gradle/wrapper/gradle-wrapper.properties" }}
+      - restore_cache:
+          key: v1-gradle-cache-{{ checksum "build.gradle" }}
+      - run:
+          name: Build and test library
+          command: "./gradlew build test"
+      #- run:
+      #    name: Build and test library
+      #    command: "./gradlew :annotation:build :annotationprocessortesting:build :annotationprocessortesting-kt:build :autovalue:build :converters:date-rfc3339:build :converters:htmlescape:build :core:build :processor:build :processor-common:build :retrofit-converter:build"
+      #- run:
+      #    name: Run library tests
+      #    command: "./gradlew :annotation:test :annotationprocessortesting:test :annotationprocessortesting-kt:test :autovalue:test :converters:date-rfc3339:test :converters:htmlescape:test :core:test :processor:test :processor-common:test :retrofit-converter:test"
+      - save_cache:
           paths:
             - ~/.gradle/wrapper
-          key: 'v1-gradle-wrapper-{{ checksum "gradle/wrapper/gradle-wrapper.properties" }}'
-      -
-        save_cache:
+          key: v1-gradle-wrapper-{{ checksum "gradle/wrapper/gradle-wrapper.properties" }}
+      - save_cache:
           paths:
             - ~/.gradle/caches
-          key: 'v1-gradle-cache-{{ checksum "build.gradle" }}'
-  upload_to_oss_sonatype: null
-  steps:
-    -
-      run:
-        name: 'Prepare GPG keystore file'
-        command: "export GPG_KEY_FILE=`mktemp`\necho \"export GPG_KEY=$GPG_KEY_FILE\" >> $BASH_ENV\n"
-    -
-      run:
-        name: 'Base64 decode gpg keystore to file'
-        command: 'echo $SIGNING_PGP_BASE64 | base64 --decode > $GPG_KEY'
-    -
-      run:
-        name: 'Import GPG keys'
-        command: 'gpg --batch --import $GPG_KEY'
-    -
-      run:
-        name: 'Fixing GPG compatablity'
-        command: 'echo $PGP_KEY | gpg --batch --pinentry-mode=loopback --passphrase-fd 0 --export-secret-keys > /home/circleci/.gnupg/secring.gpg'
-    -
-      run:
-        name: 'Setting up Gradle signing'
-        command: "echo \"signing.password=$PGP_KEY\" >> gradle.properties\necho \"signing.secretKeyRingFile=/home/circleci/.gnupg/secring.gpg\" >> gradle.properties\n"
-    -
-      run:
-        name: 'Deploy artifacts'
-        command: './gradlew uploadArchieves'
+          key: v1-gradle-cache-{{ checksum "build.gradle" }}
+
+  # Job to publish artifacts on maven central via oss sonatype        
+  upload_to_oss_sonatype:
+    steps:
+      - run:
+          name: Prepare GPG keystore file
+          command: |
+                  export GPG_KEY_FILE=`mktemp`
+                  echo "export GPG_KEY=$GPG_KEY_FILE" >> $BASH_ENV
+      - run:
+          name: Base64 decode gpg keystore to file
+          command: echo $SIGNING_PGP_BASE64 | base64 --decode > $GPG_KEY
+      - run:
+          name: Import GPG keys
+          command: gpg --batch --import $GPG_KEY
+          # Gradle's signing plugin isn't compatible with GPG 2.1 https://github.com/gradle/gradle/issues/888
+      - run:
+          name: Fixing GPG compatablity
+          command:  echo $PGP_KEY | gpg --batch --pinentry-mode=loopback --passphrase-fd 0 --export-secret-keys > /home/circleci/.gnupg/secring.gpg
+      - run:
+          name: Setting up Gradle signing
+          command: |
+                  echo "signing.password=$PGP_KEY" >> gradle.properties
+                  echo "signing.secretKeyRingFile=/home/circleci/.gnupg/secring.gpg" >> gradle.properties
+      - run:
+          name: Deploy artifacts
+          command: ./gradlew uploadArchieves
+
 workflows:
   version: 2
+
   master-pipeline:
     jobs:
-      -
-        build_and_test:
+      - build_and_test:
           filters:
             branches:
               only:
                 - master
-      -
-        upload_to_oss_sonatype:
-          context: android-maven-publish
+      - upload_to_oss_sonatype:
+          context: "android-maven-publish"
           requires:
             - build_and_test
+
   other-pipeline:
     jobs:
-      -
-        build_and_test:
+      - build_and_test:
           filters:
             branches:
               ignore:
