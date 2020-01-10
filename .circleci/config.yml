@@ -35,6 +35,13 @@ jobs:
 
   # Job to publish artifacts on maven central via oss sonatype        
   upload_to_oss_sonatype:
+    working_directory: ~/repo
+    docker:
+      - image: circleci/openjdk:8
+    #  - image: circleci/android:api-29*/
+    environment:
+      _JAVA_OPTIONS: "-Xmx3g"
+      GRADLE_OPTS: "-Dorg.gradle.daemon=false -Dorg.gradle.workers.max=2 -Dkotlin.incremental=false"
     steps:
       - run:
           name: Prepare GPG keystore file
