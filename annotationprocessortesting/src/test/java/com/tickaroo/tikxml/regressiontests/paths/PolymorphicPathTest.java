@@ -33,7 +33,7 @@ import org.junit.*;
 public class PolymorphicPathTest {
 
   @Test
-  public void simple() throws IOException, ParseException {
+  public void simple() throws IOException {
     TikXml xml = new TikXml.Builder().exceptionOnUnreadXml(false).build();
 
     Company company =

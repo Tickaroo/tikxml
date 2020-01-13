@@ -21,18 +21,19 @@ package com.tickaroo.tikxml.processor.mock
 import com.tickaroo.tikxml.processor.field.AttributeField
 import com.tickaroo.tikxml.processor.xml.XmlChildElement
 import com.tickaroo.tikxml.processor.xml.XmlRootElement
-import java.util.*
+import java.util.LinkedHashMap
 import javax.lang.model.element.TypeElement
 
 /**
  *
  * @author Hannes Dorfmann
  */
-class MockXmlElement(override val nameAsRoot: String = "mockRoot", override val element: TypeElement = MockClassElement()) : XmlRootElement {
+class MockXmlElement(override val nameAsRoot: String = "mockRoot", override val element: TypeElement = MockClassElement()) :
+  XmlRootElement {
 
-    override val attributes = LinkedHashMap<String, AttributeField>()
-    override val childElements = LinkedHashMap<String, XmlChildElement>()
+  override val attributes = LinkedHashMap<String, AttributeField>()
+  override val childElements = LinkedHashMap<String, XmlChildElement>()
 
-    override fun isXmlElementAccessableFromOutsideTypeAdapter() = true
+  override fun isXmlElementAccessableFromOutsideTypeAdapter() = true
 
 }

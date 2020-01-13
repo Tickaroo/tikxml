@@ -22,6 +22,7 @@ import com.google.common.truth.Truth
 import com.google.testing.compile.JavaFileObjects
 import com.google.testing.compile.JavaSourceSubjectFactory
 import com.google.testing.compile.JavaSourcesSubject
+import com.tickaroo.tikxml.annotation.GenericAdapter
 import com.tickaroo.tikxml.annotation.Xml
 import org.junit.Test
 import javax.tools.JavaFileObject
@@ -33,80 +34,109 @@ import kotlin.test.assertEquals
  */
 class XmlProcessorTest {
 
-    @Test
-    fun annotatingInterface() {
-        val componentFile = JavaFileObjects.forSourceLines("test.NotAClass",
-                "package test;",
-                "",
-                "import ${Xml::class.java.canonicalName};",
-                "",
-                "@${Xml::class.java.simpleName}",
-                "interface NotAClass {}")
+  @Test
+  fun annotatingInterface() {
+    val componentFile = JavaFileObjects.forSourceLines("test.NotAClass",
+      "package test;",
+      "@${Xml::class.qualifiedName}",
+      "interface NotAClass {}")
 
-        Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
-                .that(componentFile).processedWith(XmlProcessor())
-                .failsToCompile()
-                .withErrorContaining("Only classes can be annotated with")
-    }
+    Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
+      .that(componentFile).processedWith(XmlProcessor())
+      .failsToCompile()
+      .withErrorContaining("Only classes can be annotated with")
+  }
 
-    @Test
-    fun annotatingEnum() {
-        val componentFile = JavaFileObjects.forSourceLines("test.NotAClass",
-                "package test;",
-                "",
-                "import ${Xml::class.java.canonicalName};",
-                "",
-                "@${Xml::class.java.simpleName}",
-                "enum NotAClass {}")
+  @Test
+  fun annotatingEnum() {
+    val componentFile = JavaFileObjects.forSourceLines("test.NotAClass",
+      "package test;",
+      "@${Xml::class.qualifiedName}",
+      "enum NotAClass {}")
 
-        Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
-                .that(componentFile).processedWith(XmlProcessor())
-                .failsToCompile()
-                .withErrorContaining("Only classes can be annotated with")
-    }
+    Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
+      .that(componentFile).processedWith(XmlProcessor())
+      .failsToCompile()
+      .withErrorContaining("Only classes can be annotated with")
+  }
 
-    @Test
-    fun abstractClass() {
-        val componentFile = JavaFileObjects.forSourceLines("test.AbstractClass",
-                "package test;",
-                "",
-                "@${Xml::class.qualifiedName}",
-                "abstract class AbstractClass {}")
+  @Test
+  fun abstractClass() {
+    val componentFile = JavaFileObjects.forSourceLines("test.AbstractClass",
+      "package test;",
+      "@${Xml::class.qualifiedName}",
+      "abstract class AbstractClass {}")
 
-        Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
-                .that(componentFile).processedWith(XmlProcessor())
-                .compilesWithoutError()
-    }
+    Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
+      .that(componentFile).processedWith(XmlProcessor())
+      .compilesWithoutError()
+  }
 
-    @Test
-    fun typeConverterForPrimitiveTypesNoOptions(){
-        val processor = XmlProcessor()
-        assertEquals(emptySet<String>(), processor.readPrimitiveTypeConverterOptions(null))
-        assertEquals(emptySet<String>(), processor.readPrimitiveTypeConverterOptions(""))
-    }
+  @Test
+  fun typeConverterForPrimitiveTypesNoOptions() {
+    val processor = XmlProcessor()
+    assertEquals(emptySet<String>(), processor.readPrimitiveTypeConverterOptions(null))
+    assertEquals(emptySet<String>(), processor.readPrimitiveTypeConverterOptions(""))
+  }
 
-    @Test
-    fun typeConverterForPrimitiveTypesSingle(){
+  @Test
+  fun typeConverterForPrimitiveTypesSingle() {
+    val expectedOptions = setOf("java.lang.String")
+    val processor = XmlProcessor()
+    assertEquals(expectedOptions, processor.readPrimitiveTypeConverterOptions("java.lang.String"))
 
-        val expectedOptions = setOf("java.lang.String")
-        val processor = XmlProcessor()
-        assertEquals(expectedOptions, processor.readPrimitiveTypeConverterOptions("java.lang.String"))
+  }
 
-    }
+  @Test
+  fun typeConverterForPrimitiveTypesMultiple() {
+    val expectedOptions = setOf("java.lang.String", "java.lang.int", "java.lang.Integer")
+    val processor = XmlProcessor()
+    assertEquals(expectedOptions,
+      processor.readPrimitiveTypeConverterOptions("java.lang.String, java.lang.int, java.lang.Integer"))
+  }
 
-    @Test
-    fun typeConverterForPrimitiveTypesMultiple(){
+  @Test
+  fun typeConverterForPrimitiveTypesMultipleTrim() {
+    val expectedOptions = setOf("java.lang.String", "java.lang.int", "java.lang.Integer")
+    val processor = XmlProcessor()
+    assertEquals(expectedOptions,
+      processor.readPrimitiveTypeConverterOptions("  java.lang.String,    java.lang.int  ,    java.lang.Integer   "))
+  }
 
-        val expectedOptions = setOf("java.lang.String", "java.lang.int", "java.lang.Integer")
-        val processor = XmlProcessor()
-        assertEquals(expectedOptions, processor.readPrimitiveTypeConverterOptions("java.lang.String, java.lang.int, java.lang.Integer"))
-    }
+  @Test
+  fun interfaceGenericAdapter() {
+    val componentFile = JavaFileObjects.forSourceLines("test.NotAClass",
+      "package test;",
+      "@${GenericAdapter::class.qualifiedName}",
+      "interface NotAClass {}")
 
-    @Test
-    fun typeConverterForPrimitiveTypesMultipleTrim(){
+    Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
+      .that(componentFile).processedWith(XmlProcessor())
+      .compilesWithoutError()
+  }
 
-        val expectedOptions = setOf("java.lang.String", "java.lang.int", "java.lang.Integer")
-        val processor = XmlProcessor()
-        assertEquals(expectedOptions, processor.readPrimitiveTypeConverterOptions("  java.lang.String,    java.lang.int  ,    java.lang.Integer   "))
-    }
+  @Test
+  fun abstractClassGenericAdapter() {
+    val componentFile = JavaFileObjects.forSourceLines("test.AbstractClass",
+      "package test;",
+      "@${GenericAdapter::class.qualifiedName}",
+      "abstract class AbstractClass {}")
+
+    Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
+      .that(componentFile).processedWith(XmlProcessor())
+      .compilesWithoutError()
+  }
+
+  @Test
+  fun classGenericAdapter() {
+    val componentFile = JavaFileObjects.forSourceLines("test.ConcreteClass",
+      "package test;",
+      "@${GenericAdapter::class.qualifiedName}",
+      "class ConcreteClass {}")
+
+    Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
+      .that(componentFile).processedWith(XmlProcessor())
+      .failsToCompile()
+      .withErrorContaining("Only interfaces and abstract classes can be annotated with @${GenericAdapter::class.java.simpleName}! Please remove @${GenericAdapter::class.java.simpleName} from test.ConcreteClass!")
+  }
 }

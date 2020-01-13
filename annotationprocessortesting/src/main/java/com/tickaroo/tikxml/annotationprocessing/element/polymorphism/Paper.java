@@ -21,6 +21,7 @@ package com.tickaroo.tikxml.annotationprocessing.element.polymorphism;
 import com.tickaroo.tikxml.annotation.Element;
 import com.tickaroo.tikxml.annotation.ElementNameMatcher;
 import com.tickaroo.tikxml.annotation.Xml;
+import java.util.Objects;
 
 /**
  * @author Hannes Dorfmann
@@ -41,7 +42,7 @@ public class Paper {
 
     Paper paper = (Paper) o;
 
-    return writer != null ? writer.equals(paper.writer) : paper.writer == null;
+    return Objects.equals(writer, paper.writer);
   }
 
   @Override public int hashCode() {

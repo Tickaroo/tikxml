@@ -25,7 +25,7 @@ import com.tickaroo.tikxml.TypeConverter;
  */
 public class NoParameterLessConstructorTypeConverter implements TypeConverter<Object> {
 
-  public NoParameterLessConstructorTypeConverter(int a){
+  public NoParameterLessConstructorTypeConverter(int a) {
 
   }
 
@@ -38,5 +38,4 @@ public class NoParameterLessConstructorTypeConverter implements TypeConverter<Ob
   public String write(Object value) throws Exception {
     return null;
   }
-
 }

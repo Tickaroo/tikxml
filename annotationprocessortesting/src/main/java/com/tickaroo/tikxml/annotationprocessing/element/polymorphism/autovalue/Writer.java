@@ -18,11 +18,13 @@
 
 package com.tickaroo.tikxml.annotationprocessing.element.polymorphism.autovalue;
 
+import com.tickaroo.tikxml.annotation.GenericAdapter;
 import com.tickaroo.tikxml.annotation.PropertyElement;
 
 /**
  * @author Hannes Dorfmann
  */
+@GenericAdapter
 public interface Writer {
-  @PropertyElement public abstract String name();
+  @PropertyElement String name();
 }

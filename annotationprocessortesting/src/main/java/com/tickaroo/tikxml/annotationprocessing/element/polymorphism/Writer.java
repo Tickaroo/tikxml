@@ -18,13 +18,16 @@
 
 package com.tickaroo.tikxml.annotationprocessing.element.polymorphism;
 
+import com.tickaroo.tikxml.annotation.GenericAdapter;
 import com.tickaroo.tikxml.annotation.PropertyElement;
 import com.tickaroo.tikxml.annotation.Xml;
+import java.util.Objects;
 
 /**
  * @author Hannes Dorfmann
  */
 @Xml
+@GenericAdapter
 public abstract class Writer {
   @PropertyElement String name;
 
@@ -34,7 +37,7 @@ public abstract class Writer {
 
     Writer writer = (Writer) o;
 
-    return name != null ? name.equals(writer.name) : writer.name == null;
+    return Objects.equals(name, writer.name);
   }
 
   @Override public int hashCode() {

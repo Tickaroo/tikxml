@@ -19,10 +19,10 @@
 package com.tickaroo.tikxml.annotationprocessing.elementlist.polymorphism;
 
 import com.tickaroo.tikxml.annotation.Element;
-import com.tickaroo.tikxml.annotation.ElementNameMatcher;
 import com.tickaroo.tikxml.annotation.PropertyElement;
 import com.tickaroo.tikxml.annotation.Xml;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @author Hannes Dorfmann
@@ -32,11 +32,7 @@ public class Company {
 
   @PropertyElement String name;
 
-  @Element(typesByElement = {
-      @ElementNameMatcher(type = Boss.class),
-      @ElementNameMatcher(type = Employee.class),
-  })
-  List<Person> persons;
+  @Element List<Person> persons;
 
   @Override public boolean equals(Object o) {
     if (this == o) return true;
@@ -44,8 +40,8 @@ public class Company {
 
     Company company = (Company) o;
 
-    if (name != null ? !name.equals(company.name) : company.name != null) return false;
-    return persons != null ? persons.equals(company.persons) : company.persons == null;
+    if (!Objects.equals(name, company.name)) return false;
+    return Objects.equals(persons, company.persons);
   }
 
   @Override public int hashCode() {

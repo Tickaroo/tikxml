@@ -11,11 +11,13 @@ dependencies {
     compile(project(":processor-common"))
     compile(Deps.autoValueAnnotation)
     implementation(Deps.javaPoet)
-    implementation(Deps.autoService)
     implementation(Deps.kotlinStdLib)
     implementation(Deps.autoValueProcessor)
+    implementation(Deps.autoServiceAnnotation)
 
     testImplementation(Deps.junit)
     testImplementation(Deps.truth)
     testImplementation(Deps.compileTesting)
+
+    annotationProcessor(Deps.autoServiceProcessor)
 }

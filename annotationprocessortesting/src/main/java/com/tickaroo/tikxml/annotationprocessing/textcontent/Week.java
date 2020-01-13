@@ -3,6 +3,7 @@ package com.tickaroo.tikxml.annotationprocessing.textcontent;
 import com.tickaroo.tikxml.annotation.Element;
 import com.tickaroo.tikxml.annotation.Xml;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @author Hannes Dorfmann
@@ -19,7 +20,7 @@ public class Week {
 
     Week week = (Week) o;
 
-    return days != null ? days.equals(week.days) : week.days == null;
+    return Objects.equals(days, week.days);
   }
 
   @Override public int hashCode() {

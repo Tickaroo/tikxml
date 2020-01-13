@@ -27,14 +27,13 @@ fun extractAutoValueProperties(autoValueClass: TypeElement, properties: Map<Stri
     //
     // Some checks for android parcelable
     //
-    var parcelable = false
-    try {
+    val parcelable = try {
         val parcelableType = elements.getTypeElement("android.os.Parcelable")
         if (parcelableType == null) {
             // android.os.Parcelable not in class path, hence no android project
-            parcelable = false
+            false
         } else {
-            parcelable = types.isAssignable(autoValueClass.asType(), parcelableType.asType())
+            types.isAssignable(autoValueClass.asType(), parcelableType.asType())
         }
     } catch (t: Throwable) {
         throw ProcessingException(autoValueClass, "An unexpected error has occurred while trying to scan ${autoValueClass.qualifiedName} inheritance hierarchy (incl. interfaces) to determine whether or not this class implements Parcelable (android)")
@@ -47,8 +46,8 @@ fun extractAutoValueProperties(autoValueClass: TypeElement, properties: Map<Stri
     if (annotatedPropropertiesCount != propertiesSize) {
         throw ProcessingException(autoValueClass, "class ${autoValueClass.qualifiedName} must have " +
                 "all methods (auto value properties methods) annotated with TikXml annotations " +
-                "like @${Attribute::class.simpleName}, @${PropertyElement::class.simpleName}, " +
-                "@${Element::class.simpleName} or @${TextContent::class.simpleName}. " +
+                "like @${Attribute::class.java.simpleName}, @${PropertyElement::class.java.simpleName}, " +
+                "@${Element::class.java.simpleName} or @${TextContent::class.java.simpleName}. " +
                 "It's not allowed to annotate just some of the property methods "+
         "(incl. implemented interface methods that are also auto value property methods).")
     }
@@ -97,16 +96,16 @@ fun toAnnotatedMethod(propertyName: String, element: ExecutableElement): Annotat
     if (annotationFound > 1) {
         // More than one annotation is not allowed
         throw ProcessingException(element, "Methods can ONLY be annotated with one of the "
-                + "following annotations @${Attribute::class.simpleName}, "
-                + "@${PropertyElement::class.simpleName}, @${Element::class.simpleName} or @${TextContent::class.simpleName}  "
-                + "and not multiple of them! The field ${element.simpleName.toString()} in class "
+                + "following annotations @${Attribute::class.java.simpleName}, "
+                + "@${PropertyElement::class.java.simpleName}, @${Element::class.java.simpleName} or @${TextContent::class.java.simpleName} "
+                + "and not multiple of them! The field ${element.simpleName} in class "
                 + "${(element.enclosingElement as TypeElement).qualifiedName} is annotated with more than one of these annotations. You must annotate a field with exactly one of these annotations (not multiple)!")
     }
 
     // In the case that only text content annotation has been found
     if (textContent != null) {
         if (pathAnnotation != null) {
-            throw ProcessingException(element, "@${Path::class.simpleName} can't be used with @${TextContent::class.simpleName} at $element in class ${(element.enclosingElement as TypeElement).qualifiedName}")
+            throw ProcessingException(element, "@${Path::class.java.simpleName} can't be used with @${TextContent::class.java.simpleName} at $element in class ${(element.enclosingElement as TypeElement).qualifiedName}")
         }
 
         return AnnotatedMethod.TextContentMethod(element, element.returnType, propertyName, textContent)

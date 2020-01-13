@@ -20,6 +20,7 @@ package com.tickaroo.tikxml.annotationprocessing.elementlist.autovalue
 
 import com.google.auto.value.AutoValue
 import com.tickaroo.tikxml.annotation.Attribute
+import com.tickaroo.tikxml.annotation.GenericAdapter
 import com.tickaroo.tikxml.annotation.PropertyElement
 import com.tickaroo.tikxml.annotation.Xml
 import com.tickaroo.tikxml.annotationprocessing.DateConverter
@@ -30,6 +31,7 @@ import java.util.Date
  */
 @Xml
 @AutoValue
+@GenericAdapter
 abstract class Book {
 
     @Attribute

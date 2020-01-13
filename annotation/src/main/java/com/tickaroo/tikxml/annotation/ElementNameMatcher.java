@@ -49,4 +49,5 @@ public @interface ElementNameMatcher {
    * class (i.e. no abstract class, interface, etc.)
    */
   boolean compileTimeChecks() default true;
+
 }

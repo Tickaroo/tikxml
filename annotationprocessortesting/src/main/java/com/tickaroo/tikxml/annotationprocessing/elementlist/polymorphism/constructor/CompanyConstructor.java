@@ -24,6 +24,7 @@ import com.tickaroo.tikxml.annotation.PropertyElement;
 import com.tickaroo.tikxml.annotation.Xml;
 import com.tickaroo.tikxml.annotationprocessing.elementlist.polymorphism.Person;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @author Hannes Dorfmann
@@ -57,8 +58,8 @@ public class CompanyConstructor {
 
     CompanyConstructor that = (CompanyConstructor) o;
 
-    if (name != null ? !name.equals(that.name) : that.name != null) return false;
-    return persons != null ? persons.equals(that.persons) : that.persons == null;
+    if (!Objects.equals(name, that.name)) return false;
+    return Objects.equals(persons, that.persons);
   }
 
   @Override public int hashCode() {
