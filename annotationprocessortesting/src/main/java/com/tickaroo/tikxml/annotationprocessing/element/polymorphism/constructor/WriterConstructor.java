@@ -18,6 +18,7 @@
 
 package com.tickaroo.tikxml.annotationprocessing.element.polymorphism.constructor;
 
+import com.tickaroo.tikxml.annotation.GenericAdapter;
 import com.tickaroo.tikxml.annotation.PropertyElement;
 import com.tickaroo.tikxml.annotation.Xml;
 
@@ -25,6 +26,7 @@ import com.tickaroo.tikxml.annotation.Xml;
  * @author Hannes Dorfmann
  */
 @Xml
+@GenericAdapter
 public abstract class WriterConstructor {
 
   private String name;

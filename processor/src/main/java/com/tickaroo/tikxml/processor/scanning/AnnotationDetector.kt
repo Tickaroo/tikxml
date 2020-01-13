@@ -28,6 +28,10 @@ import javax.lang.model.element.VariableElement
  */
 interface AnnotationDetector {
 
+    fun addGenericType(key: String, value: String?)
+
+    fun containsGenericType(key: String): Boolean
+
     /**
      * Checks if the given field should be mapped from xml document (write as xml or read from xml input),
      * Don't check for [com.tickaroo.tikxml.annotation.TextContent] annotation in this call.

@@ -28,7 +28,7 @@ import com.tickaroo.tikxml.annotation.PropertyElement
 import com.tickaroo.tikxml.annotation.Xml
 import com.tickaroo.tikxml.processor.XmlProcessor
 import org.junit.Test
-import java.util.*
+import java.util.Date
 import javax.tools.JavaFileObject
 
 /**
@@ -36,48 +36,45 @@ import javax.tools.JavaFileObject
  */
 class CustomTypeConverterTest {
 
-    @Test
-    fun customAttributeTypeConverter() {
-        val componentFile = JavaFileObjects.forSourceLines("test.MyDateConverter",
-                "package test;",
-                "",
-                "@${Xml::class.java.canonicalName}",
-                "class CustomTypeAdapterOnAttribute {",
-                "   @${Attribute::class.qualifiedName}",
-                "   ${Date::class.qualifiedName} foo;",
-                "}",
-                "",
-                "public class MyDateConverter implements ${TypeConverter::class.qualifiedName}<${Date::class.qualifiedName}>{",
-                "public ${Date::class.qualifiedName} read(String value) throws Exception{ return null; }",
-                "public String write(${Date::class.qualifiedName} value){ return null; }",
-                "}"
-        )
+  @Test
+  fun customAttributeTypeConverter() {
+    val componentFile = JavaFileObjects.forSourceLines("test.MyDateConverter",
+      "package test;",
+      "@${Xml::class.java.canonicalName}",
+      "class CustomTypeAdapterOnAttribute {",
+      "   @${Attribute::class.qualifiedName}",
+      "   ${Date::class.qualifiedName} foo;",
+      "}",
+      "",
+      "public class MyDateConverter implements ${TypeConverter::class.qualifiedName}<${Date::class.qualifiedName}>{",
+      "   public ${Date::class.qualifiedName} read(String value) throws Exception { return null; }",
+      "   public String write(${Date::class.qualifiedName} value) { return null; }",
+      "}"
+    )
 
-        Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
-                .that(componentFile).processedWith(XmlProcessor())
-                .compilesWithoutError()
-    }
+    Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
+      .that(componentFile).processedWith(XmlProcessor())
+      .compilesWithoutError()
+  }
 
+  @Test
+  fun propertyTypeConverter() {
+    val componentFile = JavaFileObjects.forSourceLines("test.MyDateConverter",
+      "package test;",
+      "@${Xml::class.java.canonicalName}",
+      "class CustomTypeAdapterOnAttribute {",
+      "   @${PropertyElement::class.qualifiedName}",
+      "   ${Date::class.qualifiedName} foo;",
+      "}",
+      "",
+      "public class MyDateConverter implements ${TypeConverter::class.qualifiedName}<${Date::class.qualifiedName}>{",
+      "   public ${Date::class.qualifiedName} read(String value) throws Exception { return null; }",
+      "   public String write(${Date::class.qualifiedName} value) { return null; }",
+      "}"
+    )
 
-    @Test
-    fun propertyTypeConverter() {
-        val componentFile = JavaFileObjects.forSourceLines("test.MyDateConverter",
-                "package test;",
-                "",
-                "@${Xml::class.java.canonicalName}",
-                "class CustomTypeAdapterOnAttribute {",
-                "   @${PropertyElement::class.qualifiedName}",
-                "   ${Date::class.qualifiedName} foo;",
-                "}",
-                "",
-                "public class MyDateConverter implements ${TypeConverter::class.qualifiedName}<${Date::class.qualifiedName}>{",
-                "public ${Date::class.qualifiedName} read(String value) throws Exception{ return null; }",
-                "public String write(${Date::class.qualifiedName} value){ return null; }",
-                "}"
-        )
-
-        Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
-                .that(componentFile).processedWith(XmlProcessor())
-                .compilesWithoutError()
-    }
+    Truth.assertAbout<JavaSourcesSubject.SingleSourceAdapter, JavaFileObject>(JavaSourceSubjectFactory.javaSource())
+      .that(componentFile).processedWith(XmlProcessor())
+      .compilesWithoutError()
+  }
 }

@@ -21,6 +21,7 @@ package com.tickaroo.tikxml.annotationprocessing.elementlist.polymorphism.constr
 import com.tickaroo.tikxml.annotation.Attribute;
 import com.tickaroo.tikxml.annotation.Xml;
 import com.tickaroo.tikxml.annotationprocessing.elementlist.polymorphism.Person;
+import java.util.Objects;
 
 /**
  * @author Hannes Dorfmann
@@ -49,9 +50,8 @@ public class BossConstructor implements Person {
 
     BossConstructor that = (BossConstructor) o;
 
-    if (firstName != null ? !firstName.equals(that.firstName) : that.firstName != null)
-      return false;
-    return lastName != null ? lastName.equals(that.lastName) : that.lastName == null;
+    if (!Objects.equals(firstName, that.firstName)) return false;
+    return Objects.equals(lastName, that.lastName);
   }
 
   @Override public int hashCode() {

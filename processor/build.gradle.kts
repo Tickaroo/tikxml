@@ -8,19 +8,24 @@ apply (plugin = "com.vanniktech.maven.publish")
 
 
 dependencies {
-    compile(project(":core"))
-    compile(project(":annotation"))
-    compile(project(":processor-common"))
+    api(project(":core"))
+    api(project(":annotation"))
+    api(project(":processor-common"))
+
+    compileOnly(Deps.incrementalAnnotation)
 
     implementation(Deps.guava)
     implementation(Deps.javaPoet)
-    implementation(Deps.autoService)
     implementation(Deps.kotlinStdLib)
     implementation(Deps.kotlinReflect)
+    implementation(Deps.autoServiceAnnotation)
 
     testImplementation(Deps.junit)
     testImplementation(Deps.truth)
     testImplementation(Deps.mockito)
     testImplementation(Deps.compileTesting)
     testImplementation(Deps.kotlinTestJunit)
+
+    annotationProcessor(Deps.autoServiceProcessor)
+    annotationProcessor(Deps.incrementalProcessor)
 }

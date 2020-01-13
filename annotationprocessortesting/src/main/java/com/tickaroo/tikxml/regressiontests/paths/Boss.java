@@ -2,6 +2,7 @@ package com.tickaroo.tikxml.regressiontests.paths;
 
 import com.tickaroo.tikxml.annotation.PropertyElement;
 import com.tickaroo.tikxml.annotation.Xml;
+import java.util.Objects;
 
 /**
  * @author Hannes Dorfmann
@@ -17,7 +18,7 @@ public class Boss extends Person {
 
     Boss boss = (Boss) o;
 
-    return name != null ? name.equals(boss.name) : boss.name == null;
+    return Objects.equals(name, boss.name);
   }
 
   @Override public int hashCode() {

@@ -22,11 +22,11 @@ class ItemConstructor(
         @param:Attribute var longWrapper: Long?
 ) {
 
-    override fun equals(o: Any?): Boolean {
-        if (this === o) return true
-        if (o !is ItemConstructor) return false
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is ItemConstructor) return false
 
-        val that = o as ItemConstructor?
+        val that = other as ItemConstructor?
 
         if (anInt != that!!.anInt) return false
         if (aBoolean != that.aBoolean) return false
