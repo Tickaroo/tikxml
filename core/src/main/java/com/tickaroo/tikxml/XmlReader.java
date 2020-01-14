@@ -51,6 +51,8 @@ public class XmlReader implements Closeable {
   private static final byte SINGLE_QUOTE = '\'';
   private static final byte OPENING_XML_ELEMENT = '<';
   private static final byte CLOSING_XML_ELEMENT = '>';
+  private static final byte OPENING_DOCTYPE_BRACKET = '[';
+  private static final byte CLOSING_DOCTYPE_BRACKET = ']';
 
   //
   // Peek states
@@ -811,7 +813,17 @@ public class XmlReader implements Closeable {
           if (index == -1) {
             throw syntaxError("Unterminated <!DOCTYPE> . Inline DOCTYPE is not support at the moment.");
           }
-          source.skip(index + 1); // skip behind >
+          // check if doctype uses brackets
+          long bracketIndex = source.indexOf(OPENING_DOCTYPE_BRACKET, DOCTYPE_OPEN.size(), index);
+          if (bracketIndex != -1) {
+            index = source.indexOf(ByteString.of(CLOSING_DOCTYPE_BRACKET, CLOSING_XML_ELEMENT), index + bracketIndex);
+            if (index == -1) {
+              throw syntaxError("Unterminated <!DOCTYPE []>. Expected closing ]>");
+            }
+            source.skip(index + 2); // skip behind ]>
+          } else {
+            source.skip(index + 1); // skip behind >
+          }
           // TODO inline DOCTYPE.
           p = 0;
           continue;
