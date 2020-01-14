@@ -321,8 +321,8 @@ open class DefaultAnnotationDetector(protected val elementUtils: Elements, prote
 
     // add generic types first
     genericTypes?.forEach { qualifiedName ->
-      val simpleName = qualifiedName.split(".").last().toLowerCase(Locale.GERMANY)
-      namingMap[simpleName] = PolymorphicTypeElementNameMatcher(simpleName.decapitalize(Locale.GERMANY), elementUtils.getTypeElement(qualifiedName).asType())
+      val simpleName = qualifiedName.split(".").last().decapitalize(Locale.GERMANY)
+      namingMap[simpleName] = PolymorphicTypeElementNameMatcher(simpleName, elementUtils.getTypeElement(qualifiedName).asType())
     }
 
     // maybe override with matcher annotations
