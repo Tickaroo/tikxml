@@ -68,6 +68,7 @@ import javax.lang.model.util.Types
  * A [AnnotationScanner] that scans the element by checking for TikXml annotations
  * @author Hannes Dorfmann
  */
+@ExperimentalStdlibApi
 open class DefaultAnnotationDetector(protected val elementUtils: Elements, protected val typeUtils: Types) : AnnotationDetector {
 
   private val genericTypes = mutableMapOf<String, Set<String>?>()
@@ -321,7 +322,7 @@ open class DefaultAnnotationDetector(protected val elementUtils: Elements, prote
     // add generic types first
     genericTypes?.forEach { qualifiedName ->
       val simpleName = qualifiedName.split(".").last().toLowerCase(Locale.GERMANY)
-      namingMap[simpleName] = PolymorphicTypeElementNameMatcher(simpleName, elementUtils.getTypeElement(qualifiedName).asType())
+      namingMap[simpleName] = PolymorphicTypeElementNameMatcher(simpleName.decapitalize(Locale.GERMANY), elementUtils.getTypeElement(qualifiedName).asType())
     }
 
     // maybe override with matcher annotations
