@@ -22,6 +22,7 @@ import com.tickaroo.tikxml.annotation.Element
 import com.tickaroo.tikxml.annotation.Path
 import com.tickaroo.tikxml.processor.ProcessingException
 import com.tickaroo.tikxml.processor.field.AttributeField
+import com.tickaroo.tikxml.processor.field.PolymorphicSubstitutionListField
 
 /**
  *
@@ -40,6 +41,9 @@ interface XmlElement {
   fun hasAttributes() = attributes.isNotEmpty()
 
   fun hasChildElements() = childElements.isNotEmpty()
+
+  val generateGenericChildBinder: Boolean
+    get() = childElements.size > 1 && childElements.all { it.value is PolymorphicSubstitutionListField }
 
   fun hasTextContent() = false
 

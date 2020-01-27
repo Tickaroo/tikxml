@@ -44,6 +44,11 @@ public interface TypeAdapter<T> {
   String GENERATED_CLASS_SUFFIX = "$$TypeAdapter";
 
   /**
+   * This name will be used as class suffix for the generated generic TypeAdapter by annotation processing
+   */
+  String GENERATED_GENERIC_CLASS_SUFFIS = GENERATED_CLASS_SUFFIX + "Generic";
+
+  /**
    * Read a java object from xml document
    *
    * @param reader The {@link XmlReader} to read the xml document

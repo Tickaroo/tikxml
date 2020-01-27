@@ -8,7 +8,7 @@ import com.tickaroo.tikxml.annotation.Xml;
  *
  * @author Hannes Dorfmann
  */
-@Xml class Team {
+@Xml public class Team {
 
   @Attribute int id;
   @Attribute String countryId;

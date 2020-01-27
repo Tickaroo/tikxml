@@ -33,7 +33,8 @@ import java.util.Map;
 final class TypeAdapters {
 
   private final static String AUTO_VALUE_NAME_PREFIX = "\\$*AutoValue_.+";
-  private final Map<Type, TypeAdapter<?>> adaptersCache = new HashMap<Type, TypeAdapter<?>>();
+  private final Map<Type, TypeAdapter<?>> adaptersCache = new HashMap<>();
+  private final Map<Type, TypeAdapter<?>> genericAdaptersCache = new HashMap<>();
 
   TypeAdapters() {
   } // package visibility
@@ -59,10 +60,29 @@ final class TypeAdapters {
    * reflections
    */
   public <T> TypeAdapter<T> get(Type type) throws TypeAdapterNotFoundException {
+    return get(type, false);
+  }
 
+  /**
+   * Get the a {@link TypeAdapter} for the given class
+   *
+   * @param type The class you want to query a TypeAdapter for
+   * @param <T> The generic type of the TypeAdapter
+   * @return The {@link TypeAdapter} for the given class
+   * @throws IOException If no {@link TypeAdapter} has been found or could be loaded dynamically via
+   * reflections
+   */
+  public <T> TypeAdapter<T> get(Type type, boolean generic) throws TypeAdapterNotFoundException {
     type = Types.canonicalize(type);
 
-    TypeAdapter<T> adapter = (TypeAdapter<T>) adaptersCache.get(type);
+    Map<Type, TypeAdapter<?>> cache;
+    if (generic) {
+      cache = genericAdaptersCache;
+    } else {
+      cache = adaptersCache;
+    }
+
+    TypeAdapter<T> adapter = (TypeAdapter<T>) cache.get(type);
 
     if (adapter != null) {
       return adapter;
@@ -80,15 +100,22 @@ final class TypeAdapters {
           }
         }
 
+        String adapterPostfix;
+        if (generic) {
+          adapterPostfix = TypeAdapter.GENERATED_GENERIC_CLASS_SUFFIS;
+        } else {
+          adapterPostfix = TypeAdapter.GENERATED_CLASS_SUFFIX;
+        }
+
         qualifiedTypeAdapterClassName.append(clazz.getSimpleName());
-        qualifiedTypeAdapterClassName.append(TypeAdapter.GENERATED_CLASS_SUFFIX);
+        qualifiedTypeAdapterClassName.append(adapterPostfix);
 
         try {
           Class<TypeAdapter<T>> adapterClass =
               (Class<TypeAdapter<T>>) Class.forName(qualifiedTypeAdapterClassName.toString());
 
           TypeAdapter<T> adapterInstance = adapterClass.newInstance();
-          adaptersCache.put(clazz, adapterInstance);
+          cache.put(clazz, adapterInstance);
           return adapterInstance;
         } catch (ClassNotFoundException e) {
           if (clazz.getSimpleName().matches(AUTO_VALUE_NAME_PREFIX)) {
@@ -96,7 +123,7 @@ final class TypeAdapters {
             Class<?> superClass = clazz.getSuperclass();
             if (superClass != null) {
               TypeAdapter<T> superClassAdapter = get(superClass);
-              adaptersCache.put(clazz, superClassAdapter);
+              cache.put(clazz, superClassAdapter);
               return superClassAdapter;
             } else {
               // No more super class

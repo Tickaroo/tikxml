@@ -21,6 +21,7 @@ package com.tickaroo.tikxml.annotationprocessing.element.polymorphism;
 import com.tickaroo.tikxml.annotation.Element;
 import com.tickaroo.tikxml.annotation.ElementNameMatcher;
 import com.tickaroo.tikxml.annotation.Xml;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -29,12 +30,7 @@ import java.util.Objects;
 @Xml
 public class Paper {
 
-  @Element(
-      typesByElement = {
-          @ElementNameMatcher(type = Journalist.class),
-          @ElementNameMatcher(type = Organisation.class)
-      }
-  ) Writer writer;
+  @Element Writer writer;
 
   @Override public boolean equals(Object o) {
     if (this == o) return true;

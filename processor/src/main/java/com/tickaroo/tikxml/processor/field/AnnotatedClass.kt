@@ -27,9 +27,7 @@ import com.tickaroo.tikxml.processor.xml.XmlRootElement
 import java.util.ArrayList
 import javax.lang.model.element.Element
 import javax.lang.model.element.ElementKind
-import javax.lang.model.element.ElementKind.ENUM
 import javax.lang.model.element.ExecutableElement
-import javax.lang.model.element.Modifier
 import javax.lang.model.element.TypeElement
 
 /**
@@ -37,6 +35,9 @@ import javax.lang.model.element.TypeElement
  * @author Hannes Dorfmann
  */
 interface AnnotatedClass : XmlRootElement {
+
+  fun getAllChildElementsRecursive(map: Map<String, XmlChildElement> = childElements,
+    allChildElements: MutableList<XmlChildElement> = mutableListOf()): List<XmlChildElement>
 
   override val element: TypeElement
   override val nameAsRoot: String
@@ -64,7 +65,7 @@ class AnnotatedClassImpl
   override val nameAsRoot: String
   override val simpleClassName: String
   override val qualifiedClassName: String
-  override var annotatedConstructor: ExecutableElement? = null; // TODO implement that
+  override var annotatedConstructor: ExecutableElement? = null // TODO implement that
 
   override var textContentField: TextContentField? = null
   override val writeNamespaces: List<Namespace>
@@ -113,6 +114,17 @@ class AnnotatedClassImpl
       writeNamespaces = namespaces
     }
 
+  }
+
+  override fun getAllChildElementsRecursive(map: Map<String, XmlChildElement>, allChildElements: MutableList<XmlChildElement>): List<XmlChildElement> {
+    map.forEach {
+      allChildElements.add(it.value)
+      if (it.value.childElements.isNotEmpty()) {
+        getAllChildElementsRecursive(it.value.childElements, allChildElements)
+      }
+    }
+
+    return allChildElements
   }
 
   private fun checkValidClass(element: Element) {

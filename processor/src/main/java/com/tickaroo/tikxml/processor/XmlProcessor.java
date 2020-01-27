@@ -23,6 +23,7 @@ import com.tickaroo.tikxml.annotation.GenericAdapter;
 import com.tickaroo.tikxml.annotation.Xml;
 import com.tickaroo.tikxml.processor.field.AnnotatedClass;
 import com.tickaroo.tikxml.processor.field.AnnotatedClassImpl;
+import com.tickaroo.tikxml.processor.generator.GenericAdapterCodeGenerator;
 import com.tickaroo.tikxml.processor.generator.TypeAdapterCodeGenerator;
 import com.tickaroo.tikxml.processor.scanning.AnnotationDetector;
 import com.tickaroo.tikxml.processor.scanning.AnnotationScanner;
@@ -126,11 +127,16 @@ public class XmlProcessor extends AbstractProcessor {
 
       Set<? extends Element> xmlElements = roundEnv.getElementsAnnotatedWith(Xml.class);
 
+
+
       // find all interfaces and abstract superclasses implemented by classes annotated with @Xml
       for (Element element : xmlElements) {
         addGenericAdapterInterfaces((TypeElement) element, (TypeElement) element);
         addGenericAdapterSuperclasses((TypeElement) element, (TypeElement) element);
       }
+
+      GenericAdapterCodeGenerator genericAdapterCodeGenerator = new GenericAdapterCodeGenerator(filer);
+      genericAdapterCodeGenerator.generateCode(annotationDetector.getGenericTypes());
 
       for (Element element : xmlElements) {
         if (element.getKind() == ElementKind.CLASS && element.getModifiers().contains(Modifier.ABSTRACT)) {

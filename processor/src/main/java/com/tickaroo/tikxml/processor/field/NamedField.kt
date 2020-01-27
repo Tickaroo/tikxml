@@ -26,10 +26,7 @@ import javax.lang.model.element.VariableElement
  *
  * @author Hannes Dorfmann
  */
-open class NamedField(
-        element: VariableElement,
-        val name: String) : Field(element) {
+open class NamedField(element: VariableElement, val name: String) : Field(element) {
 
-
-    override fun toString() = "field '${element.simpleName}' in class ${element.getSurroundingClassQualifiedName()}"
+  override fun toString() = "field '${element.simpleName}' in class ${element.getSurroundingClassQualifiedName()}"
 }

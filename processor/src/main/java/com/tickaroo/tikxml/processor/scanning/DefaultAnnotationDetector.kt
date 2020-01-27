@@ -71,7 +71,7 @@ import javax.lang.model.util.Types
 @ExperimentalStdlibApi
 open class DefaultAnnotationDetector(protected val elementUtils: Elements, protected val typeUtils: Types) : AnnotationDetector {
 
-  private val genericTypes = mutableMapOf<String, Set<String>?>()
+  override val genericTypes = mutableMapOf<String, Set<String>?>()
 
   protected fun isTextContentAnnotated(element: VariableElement): Boolean {
     val textContentAnnotated = element.getAnnotation(TextContent::class.java) != null

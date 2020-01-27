@@ -27,7 +27,6 @@ import com.tickaroo.tikxml.processor.utils.getSurroundingClassQualifiedName
 import javax.lang.model.element.Element
 import javax.lang.model.element.TypeElement
 import javax.lang.model.element.VariableElement
-import kotlin.collections.LinkedHashMap
 
 /**
  * This element represents a "placeholder" xml element. That means that we might have written a [com.tickaroo.tikxml.annotation.Path]
@@ -37,26 +36,26 @@ import kotlin.collections.LinkedHashMap
  */
 class PlaceholderXmlElement(override val name: String, override val element: Element) : XmlChildElement {
 
+  override val attributes = LinkedHashMap<String, AttributeField>()
+  override val childElements = LinkedHashMap<String, XmlChildElement>()
 
-    override val attributes = LinkedHashMap<String, AttributeField>()
-    override val childElements = LinkedHashMap<String, XmlChildElement>()
+  override fun isXmlElementAccessableFromOutsideTypeAdapter() = true
 
-    override fun isXmlElementAccessableFromOutsideTypeAdapter() = true
+  override fun toString(): String = when (element) {
+    is VariableElement -> "field '${element.simpleName}' in class ${element.getSurroundingClassQualifiedName()}"
+    is TypeElement -> element.qualifiedName.toString()
+    else -> throw IllegalArgumentException(
+      "Oops, unexpected element type $element. This should never happen. Please fill an issue here: https://github.com/Tickaroo/tikxml/issues")
+  }
 
-    override fun toString(): String = when (element) {
-        is VariableElement -> "field '${element.simpleName}' in class ${element.getSurroundingClassQualifiedName()}"
-        is TypeElement -> element.qualifiedName.toString()
-        else -> throw IllegalArgumentException("Oops, unexpected element type $element. This should never happen. Please fill an issue here: https://github.com/Tickaroo/tikxml/issues")
-    }
+  override fun generateReadXmlCode(codeGeneratorHelper: CodeGeneratorHelper): TypeSpec {
+    return codeGeneratorHelper.generateNestedChildElementBinder(this)
+  }
 
-    override fun generateReadXmlCode(codeGeneratorHelper: CodeGeneratorHelper): TypeSpec {
-        return codeGeneratorHelper.generateNestedChildElementBinder(this)
-    }
-
-    override fun generateWriteXmlCode(codeGeneratorHelper: CodeGeneratorHelper) =
-            CodeBlock.builder()
-                    .add(codeGeneratorHelper.writeBeginElementAndAttributes(this))
-                    .add(codeGeneratorHelper.writeChildrenByResolvingPolymorphismElementsOrFieldsOrDelegateToChildCodeGenerator(this))
-                    .endXmlElement()
-                    .build()
+  override fun generateWriteXmlCode(codeGeneratorHelper: CodeGeneratorHelper) =
+    CodeBlock.builder()
+      .add(codeGeneratorHelper.writeBeginElementAndAttributes(this))
+      .add(codeGeneratorHelper.writeChildrenByResolvingPolymorphismElementsOrFieldsOrDelegateToChildCodeGenerator(this))
+      .endXmlElement()
+      .build()
 }

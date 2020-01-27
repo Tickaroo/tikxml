@@ -67,8 +67,7 @@ public final class TikXmlConfig {
    * @throws TypeConverterNotFoundException Thrown if no TypeConverter has been found for the given
    * class
    */
-  public <T> TypeConverter<T> getTypeConverter(Class<T> clazz)
-      throws TypeConverterNotFoundException {
+  public <T> TypeConverter<T> getTypeConverter(Class<T> clazz) throws TypeConverterNotFoundException {
     return typeConverters.get(clazz);
   }
 
@@ -83,5 +82,19 @@ public final class TikXmlConfig {
    */
   public <T> TypeAdapter<T> getTypeAdapter(Type clazz) throws TypeAdapterNotFoundException {
     return typeAdapters.get(clazz);
+  }
+
+  /**
+   * Get the {@link TypeAdapter} for a given class
+   *
+   * @param clazz The class you want a {@link TypeAdapter}for
+   * @param generic whether you want a generic adapter
+   * @param <T> The type of the TypeAdapter
+   * @return The {@link TypeAdapter} for the given type
+   * @throws TypeAdapterNotFoundException Thrown if no {@link TypeAdapter} has been found for the
+   * given class
+   */
+  public <T> TypeAdapter<T> getTypeAdapter(Type clazz, boolean generic) throws TypeAdapterNotFoundException {
+    return typeAdapters.get(clazz, generic);
   }
 }

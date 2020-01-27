@@ -97,6 +97,7 @@ public class XmlReader implements Closeable {
 
   private final BufferedSource source;
   private final Buffer buffer;
+  private String currentElementName;
 
   private XmlReader(BufferedSource source) {
     if (source == null) {
@@ -879,14 +880,18 @@ public class XmlReader implements Closeable {
       throw syntaxError("Expected XML Tag Element name, but have " + peek());
     }
 
-    String result = nextUnquotedValue();
+    currentElementName = nextUnquotedValue();
 
     peeked = PEEKED_NONE;
-    pathNames[stackSize - 1] = result;
+    pathNames[stackSize - 1] = currentElementName;
 
     // Next we expect element attributes block
     pushStack(XmlScope.ELEMENT_ATTRIBUTE);
-    return result;
+    return currentElementName;
+  }
+
+  public String getCurrentElementName() {
+    return currentElementName;
   }
 
   /** Returns an unquoted value as a string. */

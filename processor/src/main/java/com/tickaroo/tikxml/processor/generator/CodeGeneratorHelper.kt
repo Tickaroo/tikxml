@@ -38,6 +38,7 @@ import com.tickaroo.tikxml.processor.utils.isInt
 import com.tickaroo.tikxml.processor.utils.isLong
 import com.tickaroo.tikxml.processor.utils.isPrimitive
 import com.tickaroo.tikxml.processor.utils.isString
+import com.tickaroo.tikxml.processor.xml.PlaceholderXmlElement
 import com.tickaroo.tikxml.processor.xml.XmlChildElement
 import com.tickaroo.tikxml.processor.xml.XmlElement
 import com.tickaroo.tikxml.typeadapter.AttributeBinder
@@ -236,6 +237,7 @@ class CodeGeneratorHelper(
     return builder.build()
   }
 
+
   /**
    * get the assignment statement for reading attributes
    */
@@ -287,7 +289,6 @@ class CodeGeneratorHelper(
    * Generate a [NestedChildElementBinder] and recursively calls [com.tickaroo.tikxml.processor.xml.XmlChildElement] to generate its code
    */
   fun generateNestedChildElementBinder(element: XmlElement): TypeSpec {
-
     val initializerBuilder = CodeBlock.builder()
     if (element.hasAttributes()) {
       val attributeMapType =
@@ -299,10 +300,16 @@ class CodeGeneratorHelper(
     if (element.hasChildElements()) {
       val childBinderTypeMap =
         ParameterizedTypeName.get(ClassName.get(HashMap::class.java), ClassName.get(String::class.java), childElementBinderType)
-      initializerBuilder.addStatement("$childElementBindersParam = new \$T()", childBinderTypeMap);
+      initializerBuilder.addStatement("$childElementBindersParam = new \$T()", childBinderTypeMap)
+
       for ((xmlName, xmlElement) in element.childElements) {
-        initializerBuilder.addStatement("${CodeGeneratorHelper.childElementBindersParam}.put(\$S, \$L)", xmlName,
-          xmlElement.generateReadXmlCode(this))
+        if (xmlElement.generateGenericChildBinder) {
+          val childElementBinderName = "${xmlElement.childElements.values.first().element.simpleName}ChildElementBinder"
+          initializerBuilder.addStatement("${childElementBindersParam}.put(\$S, \$N)", xmlName, childElementBinderName)
+        } else {
+          initializerBuilder.addStatement("${childElementBindersParam}.put(\$S, \$L)", xmlName,
+            xmlElement.generateReadXmlCode(this))
+        }
       }
     }
 

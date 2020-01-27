@@ -14,12 +14,11 @@ import java.util.Objects;
 public class Company {
 
   @Path("department/persons")
-  @Element(typesByElement = {
-      @ElementNameMatcher(type = Person.class),
-      @ElementNameMatcher(type = Employee.class),
-      @ElementNameMatcher(type = Boss.class)
-  })
+  @Element
   public List<Person> persons;
+
+  @Element
+  public List<Person> bosses;
 
   @Override public boolean equals(Object o) {
     if (this == o) return true;

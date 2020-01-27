@@ -28,6 +28,8 @@ import javax.lang.model.element.VariableElement
  */
 interface AnnotationDetector {
 
+    val genericTypes: Map<String, Set<String>?>
+
     fun addGenericType(key: String, value: String?)
 
     fun containsGenericType(key: String): Boolean
