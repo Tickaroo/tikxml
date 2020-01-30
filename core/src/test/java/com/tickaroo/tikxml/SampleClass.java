@@ -32,7 +32,7 @@ public class SampleClass {
   public static class $TypeAdapter implements TypeAdapter<SampleClass> {
 
     @Override
-    public SampleClass fromXml(XmlReader reader, TikXmlConfig config) {
+    public SampleClass fromXml(XmlReader reader, TikXmlConfig config, boolean isGenericList) {
       return null;
     }
 

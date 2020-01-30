@@ -32,8 +32,8 @@ public class DefaultPackageClass {
   int anInt;
 
   public static class $TypeAdapter implements TypeAdapter<DefaultPackageClass> {
-    @Override
-    public DefaultPackageClass fromXml(XmlReader reader, TikXmlConfig config) throws IOException {
+    @Override public DefaultPackageClass fromXml(XmlReader reader, TikXmlConfig config, boolean isGenericList)
+        throws IOException {
       return null;
     }
 

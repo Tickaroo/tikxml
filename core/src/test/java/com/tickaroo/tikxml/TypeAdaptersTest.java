@@ -57,7 +57,7 @@ public class TypeAdaptersTest {
   class TestTypeAdapter implements TypeAdapter<Object> {
 
     @Override
-    public Object fromXml(XmlReader reader, TikXmlConfig config) {
+    public Object fromXml(XmlReader reader, TikXmlConfig config, boolean isGenericList) {
       return null;
     }
 

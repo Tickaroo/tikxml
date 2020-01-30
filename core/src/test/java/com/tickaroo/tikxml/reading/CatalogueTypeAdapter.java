@@ -30,8 +30,7 @@ import java.util.ArrayList;
  */
 public class CatalogueTypeAdapter implements TypeAdapter<Catalogue> {
 
-  @Override
-  public Catalogue fromXml(XmlReader reader, TikXmlConfig config) throws IOException {
+  @Override public Catalogue fromXml(XmlReader reader, TikXmlConfig config, boolean isGenericList) throws IOException {
 
     Catalogue catalogue = new Catalogue();
     catalogue.books = new ArrayList<>();
@@ -39,7 +38,7 @@ public class CatalogueTypeAdapter implements TypeAdapter<Catalogue> {
     while (reader.hasElement()) {
       reader.beginElement();
       if (reader.nextElementName().equals("book")) {
-        catalogue.books.add((Book) config.getTypeAdapter(Book.class).fromXml(reader, config));
+        catalogue.books.add((Book) config.getTypeAdapter(Book.class).fromXml(reader, config, false));
       }
       reader.endElement();
     }

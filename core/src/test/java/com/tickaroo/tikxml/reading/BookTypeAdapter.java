@@ -31,7 +31,7 @@ public class BookTypeAdapter implements TypeAdapter<Book> {
 
 
   @Override
-  public Book fromXml(XmlReader reader, TikXmlConfig config) throws IOException {
+  public Book fromXml(XmlReader reader, TikXmlConfig config, boolean isGenericList) throws IOException {
 
     Book book = new Book();
     while (reader.hasAttribute()) {

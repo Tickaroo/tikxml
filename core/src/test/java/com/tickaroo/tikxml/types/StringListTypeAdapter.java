@@ -13,7 +13,7 @@ public class StringListTypeAdapter implements TypeAdapter<List<String>> {
 
 
     @Override
-    public List<String> fromXml(XmlReader reader, TikXmlConfig config) throws IOException {
+    public List<String> fromXml(XmlReader reader, TikXmlConfig config, boolean isGenericList) throws IOException {
 
         List<String> list = new ArrayList<>();
 
