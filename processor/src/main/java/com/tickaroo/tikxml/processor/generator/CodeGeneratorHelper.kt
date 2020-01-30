@@ -73,6 +73,7 @@ class CodeGeneratorHelper(
     const val textContentParam = "textContent"
     const val readerParam = "reader"
     const val writerParam = "writer"
+    const val isGenericListParam = "isGenericList"
     const val attributeBindersParam = "attributeBinders"
     const val childElementBindersParam = "childElementBinders"
 
@@ -237,7 +238,6 @@ class CodeGeneratorHelper(
     return builder.build()
   }
 
-
   /**
    * get the assignment statement for reading attributes
    */
@@ -303,8 +303,10 @@ class CodeGeneratorHelper(
       initializerBuilder.addStatement("$childElementBindersParam = new \$T()", childBinderTypeMap)
 
       for ((xmlName, xmlElement) in element.childElements) {
-        if (xmlElement.generateGenericChildBinder) {
-          val childElementBinderName = "${xmlElement.childElements.values.first().element.simpleName}ChildElementBinder"
+        if (xmlElement is PolymorphicSubstitutionListField || xmlElement.generateGenericChildBinder) {
+          val childElementBinderPrefix =
+            if (xmlElement.generateGenericChildBinder) xmlElement.childElements.values.first().element.simpleName else (element as? PlaceholderXmlElement)?.name
+          val childElementBinderName = "${childElementBinderPrefix}ChildElementBinder"
           initializerBuilder.addStatement("${childElementBindersParam}.put(\$S, \$N)", xmlName, childElementBinderName)
         } else {
           initializerBuilder.addStatement("${childElementBindersParam}.put(\$S, \$L)", xmlName,

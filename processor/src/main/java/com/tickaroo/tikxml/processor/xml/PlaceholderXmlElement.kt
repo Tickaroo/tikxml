@@ -21,6 +21,7 @@ package com.tickaroo.tikxml.processor.xml
 import com.squareup.javapoet.CodeBlock
 import com.squareup.javapoet.TypeSpec
 import com.tickaroo.tikxml.processor.field.AttributeField
+import com.tickaroo.tikxml.processor.field.ListElementField
 import com.tickaroo.tikxml.processor.generator.CodeGeneratorHelper
 import com.tickaroo.tikxml.processor.utils.endXmlElement
 import com.tickaroo.tikxml.processor.utils.getSurroundingClassQualifiedName

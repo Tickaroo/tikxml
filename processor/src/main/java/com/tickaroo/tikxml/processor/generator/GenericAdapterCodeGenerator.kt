@@ -2,25 +2,19 @@ package com.tickaroo.tikxml.processor.generator
 
 import com.squareup.javapoet.ClassName
 import com.squareup.javapoet.CodeBlock
-import com.squareup.javapoet.FieldSpec
 import com.squareup.javapoet.JavaFile
 import com.squareup.javapoet.MethodSpec
 import com.squareup.javapoet.ParameterizedTypeName
 import com.squareup.javapoet.TypeName
 import com.squareup.javapoet.TypeSpec
 import com.tickaroo.tikxml.TikXmlConfig
-import com.tickaroo.tikxml.TypeAdapterNotFoundException
 import com.tickaroo.tikxml.XmlReader
 import com.tickaroo.tikxml.XmlWriter
 import com.tickaroo.tikxml.typeadapter.TypeAdapter
-import com.tickaroo.tikxml.typeadapter.TypeAdapterRetriever
 import java.io.IOException
-import java.util.HashMap
 import java.util.Locale
 import javax.annotation.processing.Filer
 import javax.annotation.processing.FilerException
-import javax.lang.model.element.Modifier.FINAL
-import javax.lang.model.element.Modifier.PRIVATE
 import javax.lang.model.element.Modifier.PUBLIC
 
 @ExperimentalStdlibApi
@@ -58,8 +52,16 @@ class GenericAdapterCodeGenerator(private val filer: Filer) {
     implementationNames: Set<String>): MethodSpec {
     val codeBlockBuilder = CodeBlock.builder()
       .addStatement("\$T ${CodeGeneratorHelper.valueParam} = null", ClassName.get(packageName, className))
-      //.beginControlFlow("if (reader.hasElement())")
-      .addStatement("\$T elementName = reader.getCurrentElementName()", String::class.java)
+      .addStatement("\$T elementName", String::class.java)
+      .beginControlFlow("if (isGenericList)")
+      .beginControlFlow("while (${CodeGeneratorHelper.readerParam}.hasAttribute())")
+      .addStatement("${CodeGeneratorHelper.readerParam}.skipAttribute()")
+      .endControlFlow()
+      .addStatement("${CodeGeneratorHelper.readerParam}.beginElement()")
+      .addStatement("elementName = reader.nextElementName()")
+      .nextControlFlow("else")
+      .addStatement("elementName = reader.getCurrentElementName()")
+      .endControlFlow()
 
     implementationNames.forEachIndexed { index, implementationName ->
       val lastIndexOfPoint = implementationName.lastIndexOf(".")
@@ -70,7 +72,7 @@ class GenericAdapterCodeGenerator(private val filer: Filer) {
       codeBlockBuilder.run {
         val equalsCheck = "elementName.equals(\"${implClassName.decapitalize(Locale.GERMANY)}\")"
         if (index == 0) beginControlFlow("if ($equalsCheck)") else nextControlFlow("else if ($equalsCheck)")
-        addStatement("${CodeGeneratorHelper.valueParam} = (\$T) config.getTypeAdapter(\$T.class).fromXml(reader, config)", implTypeName, implTypeName)
+        addStatement("${CodeGeneratorHelper.valueParam} = (\$T) config.getTypeAdapter(\$T.class).fromXml(reader, config, false)", implTypeName, implTypeName)
       }
       /*val lastIndexOfPoint = implementationName.lastIndexOf(".")
       val packageName = implementationName.substring(0, lastIndexOfPoint)
@@ -94,9 +96,9 @@ class GenericAdapterCodeGenerator(private val filer: Filer) {
       .nextControlFlow("else if (${CodeGeneratorHelper.tikConfigParam}.exceptionOnUnreadXml())")
       .addStatement("throw new \$T(\"Could not map the xml element with the tag name <\" + elementName + \"> at path '\" + reader.getPath()+\"' to java class. Have you annotated such a field in your java class to map this xml attribute? Otherwise you can turn this error message off with TikXml.Builder().exceptionOnUnreadXml(false).build().\")", IOException::class.java)
       .nextControlFlow("else")
-      .addStatement("${CodeGeneratorHelper.readerParam}.beginElement()")
+      //.addStatement("${CodeGeneratorHelper.readerParam}.beginElement()")
       .addStatement("${CodeGeneratorHelper.readerParam}.skipRemainingElement()")
-      .addStatement("${CodeGeneratorHelper.readerParam}.endElement()")
+      //.addStatement("${CodeGeneratorHelper.readerParam}.endElement()")
       .endControlFlow()
       //.endControlFlow()
       .build()
@@ -106,6 +108,7 @@ class GenericAdapterCodeGenerator(private val filer: Filer) {
       .addModifiers(PUBLIC)
       .addParameter(XmlReader::class.java, CodeGeneratorHelper.readerParam)
       .addParameter(TikXmlConfig::class.java, "config")
+      .addParameter(Boolean::class.java, "isGenericList")
       .addException(IOException::class.java)
       .addCode(codeBlock)
       .addStatement("return ${CodeGeneratorHelper.valueParam}")

@@ -53,10 +53,11 @@ public interface TypeAdapter<T> {
    *
    * @param reader The {@link XmlReader} to read the xml document
    * @param config The {@link TikXmlConfig} where you can access {@link TypeConverter} etc.
+   * @param isGenericList reader has the generic list as current element
    * @return The instantiated java object of type T
    * @throws IOException
    */
-  T fromXml(XmlReader reader, TikXmlConfig config) throws IOException;
+  T fromXml(XmlReader reader, TikXmlConfig config, boolean isGenericList) throws IOException;
 
   /**
    * Writes a java object as xml

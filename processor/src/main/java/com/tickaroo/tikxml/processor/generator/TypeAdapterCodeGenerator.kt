@@ -32,6 +32,7 @@ import com.tickaroo.tikxml.processor.field.Namespace
 import com.tickaroo.tikxml.processor.field.PolymorphicSubstitutionField
 import com.tickaroo.tikxml.processor.field.PolymorphicSubstitutionListField
 import com.tickaroo.tikxml.processor.utils.isList
+import com.tickaroo.tikxml.processor.xml.PlaceholderXmlElement
 import com.tickaroo.tikxml.processor.xml.XmlChildElement
 import com.tickaroo.tikxml.typeadapter.AttributeBinder
 import com.tickaroo.tikxml.typeadapter.ChildElementBinder
@@ -86,13 +87,15 @@ class TypeAdapterCodeGenerator(
 
 
     for ((xmlName, xmlElement) in annotatedClass.childElements) {
-      if (xmlElement is PolymorphicSubstitutionField) {
-        val childElementBinderPrefix = if (xmlElement is PolymorphicSubstitutionListField) {
-          xmlElement.element.simpleName
-        } else {
-          val orginalElementTypeName = xmlElement.originalElementTypeMirror.toString().split(".").last()
-          "${orginalElementTypeName.substring(0, 1).toLowerCase(Locale.GERMANY)}${orginalElementTypeName.substring(1,
-            orginalElementTypeName.length)}"
+      if (xmlElement is PolymorphicSubstitutionField || xmlElement.generateGenericChildBinder) {
+        val childElementBinderPrefix = when (xmlElement) {
+          is PolymorphicSubstitutionListField -> xmlElement.element.simpleName
+          is PlaceholderXmlElement -> xmlName
+          else -> {
+            val orginalElementTypeName = (xmlElement as PolymorphicSubstitutionField).originalElementTypeMirror.toString().split(".").last()
+            "${orginalElementTypeName.substring(0, 1).toLowerCase(Locale.GERMANY)}${orginalElementTypeName.substring(1,
+              orginalElementTypeName.length)}"
+          }
         }
         constructorBuilder.addStatement("${CodeGeneratorHelper.childElementBindersParam}.put(\$S, \$N)", xmlName,
           "${childElementBinderPrefix}ChildElementBinder")
@@ -214,10 +217,11 @@ class TypeAdapterCodeGenerator(
           isList -> {
             val genericListType = (firstConcreteType as PolymorphicSubstitutionListField).genericListTypeMirror
             fieldName = "${genericName}ChildElementBinder"
+
             fromXmlMethodSpecBuilder
-              .beginControlFlow("if (${CodeGeneratorHelper.valueParam}.$genericName == null)")
-              .addStatement("${CodeGeneratorHelper.valueParam}.$genericName = new \$T()",
-                ParameterizedTypeName.get(ClassName.get(ArrayList::class.java), ClassName.get(genericListType)))
+              .beginControlFlow("if (${firstConcreteType.accessResolver.resolveGetterForReadingXml()} == null)")
+              .addCode("${firstConcreteType.accessResolver.resolveAssignment("new \$T()",
+                ParameterizedTypeName.get(ClassName.get(ArrayList::class.java), ClassName.get(genericListType)))}")
               .endControlFlow()
 
             if (!isRootList) {
@@ -231,11 +235,11 @@ class TypeAdapterCodeGenerator(
               typeUtils.asElement(
                 (concreteType as PolymorphicSubstitutionListField).typeMirror).simpleName.toString().toLowerCase(
                 Locale.GERMANY) != concreteType.name.toLowerCase(Locale.GERMANY)
-            }, fromXmlMethodSpecBuilder, genericListType, "v", !isRootList)
+            }, fromXmlMethodSpecBuilder, genericListType, "v", true, isRootList)
 
             fromXmlMethodSpecBuilder
               .beginControlFlow("if (v != null)")
-              .addStatement("${CodeGeneratorHelper.valueParam}.$genericName.add(v)")
+              .addStatement("${firstConcreteType.accessResolver.resolveGetterForReadingXml()}.add(v)")
             if (!isRootList) {
               fromXmlMethodSpecBuilder
                 .addStatement("${CodeGeneratorHelper.readerParam}.endElement()")
@@ -255,7 +259,7 @@ class TypeAdapterCodeGenerator(
               typeUtils.asElement(
                 (concreteType as PolymorphicSubstitutionField).typeMirror).simpleName.toString().toLowerCase(
                 Locale.GERMANY) != concreteType.name.toLowerCase(Locale.GERMANY)
-            }, fromXmlMethodSpecBuilder, genericType!!, "${CodeGeneratorHelper.valueParam}.$genericName", false)
+            }, fromXmlMethodSpecBuilder, genericType!!, "${CodeGeneratorHelper.valueParam}.$genericName", false, isRootList)
             fieldName =
               "${(genericType as DeclaredType).asElement().simpleName.toString().decapitalize(Locale.GERMANY)}ChildElementBinder"
           }
@@ -282,16 +286,18 @@ class TypeAdapterCodeGenerator(
     fromXmlMethodSpecBuilder: MethodSpec.Builder,
     genericType: TypeMirror,
     valueParam: String,
-    isGenericListAndNotRoot: Boolean) {
+    isGenericList: Boolean,
+    isRootList: Boolean) {
 
     var hasSpecialMapping = false
+    val firstConreteType = concreteTypes.first() as PolymorphicSubstitutionField
     concreteTypes
       .filter { concreteType -> filter(concreteType) }
       .takeIf { it.isNotEmpty() }
       ?.forEachIndexed { index, specialNamingType ->
         if (!hasSpecialMapping) {
           hasSpecialMapping = true
-          if (isGenericListAndNotRoot) {
+          if (isGenericList && !isRootList) {
             fromXmlMethodSpecBuilder
               .addStatement("\$T elementName", String::class.java)
               .beginControlFlow("if (${CodeGeneratorHelper.readerParam}.hasElement())")
@@ -314,25 +320,41 @@ class TypeAdapterCodeGenerator(
 
         val specialType = (specialNamingType as? PolymorphicSubstitutionField)?.typeMirror
           ?: (specialNamingType as? PolymorphicSubstitutionListField)?.typeMirror ?: genericType
-        fromXmlMethodSpecBuilder.addStatement(
-          "$valueParam = (\$T) ${CodeGeneratorHelper.tikConfigParam}.getTypeAdapter(\$T.class).fromXml(${CodeGeneratorHelper.readerParam}, ${CodeGeneratorHelper.tikConfigParam})",
-          specialType, specialType)
+        if (isGenericList) {
+          fromXmlMethodSpecBuilder
+            .addStatement(
+              "$valueParam = (\$T) ${CodeGeneratorHelper.tikConfigParam}.getTypeAdapter(\$T.class).fromXml(${CodeGeneratorHelper.readerParam}, ${CodeGeneratorHelper.tikConfigParam}, ${!isRootList && !hasSpecialMapping})",
+              specialType, specialType)
+        } else {
+          fromXmlMethodSpecBuilder
+            .addCode(firstConreteType.accessResolver.resolveAssignment(
+              "(\$T) ${CodeGeneratorHelper.tikConfigParam}.getTypeAdapter(\$T.class).fromXml(${CodeGeneratorHelper.readerParam}, ${CodeGeneratorHelper.tikConfigParam}, false)",
+              specialType, specialType))
+        }
       }
 
     if (hasSpecialMapping) {
       fromXmlMethodSpecBuilder.nextControlFlow("else")
-    } else if (isGenericListAndNotRoot) {
+    }
+    /*else if (isGenericList && !isRootList) {
       fromXmlMethodSpecBuilder
         .beginControlFlow("if (${CodeGeneratorHelper.readerParam}.hasElement())")
         .addStatement("${CodeGeneratorHelper.readerParam}.beginElement()")
         .addStatement("${CodeGeneratorHelper.readerParam}.nextElementName()")
         .endControlFlow()
-    }
+    }*/
 
-    fromXmlMethodSpecBuilder
-      .addStatement(
-        "$valueParam = (\$T) ${CodeGeneratorHelper.tikConfigParam}.getTypeAdapter(\$T.class, true).fromXml(${CodeGeneratorHelper.readerParam}, ${CodeGeneratorHelper.tikConfigParam})",
-        genericType, genericType)
+    if (isGenericList) {
+      fromXmlMethodSpecBuilder
+        .addStatement(
+          "$valueParam = (\$T) ${CodeGeneratorHelper.tikConfigParam}.getTypeAdapter(\$T.class, true).fromXml(${CodeGeneratorHelper.readerParam}, ${CodeGeneratorHelper.tikConfigParam}, ${!isRootList && !hasSpecialMapping})",
+          genericType, genericType)
+    } else {
+      fromXmlMethodSpecBuilder
+        .addCode(firstConreteType.accessResolver.resolveAssignment(
+          "(\$T) ${CodeGeneratorHelper.tikConfigParam}.getTypeAdapter(\$T.class, true).fromXml(${CodeGeneratorHelper.readerParam}, ${CodeGeneratorHelper.tikConfigParam}, false)",
+          genericType, genericType))
+    }
 
     if (hasSpecialMapping) {
       fromXmlMethodSpecBuilder.endControlFlow()
@@ -355,6 +377,7 @@ class TypeAdapterCodeGenerator(
       .addAnnotation(Override::class.java)
       .addParameter(XmlReader::class.java, reader)
       .addParameter(TikXmlConfig::class.java, config)
+      .addParameter(Boolean::class.java, "isGenericList")
       .addException(IOException::class.java)
       .addStatement("\$T \$L = new \$T()", targetClassToParseInto, value, targetClassToParseInto)
 

@@ -69,7 +69,7 @@ public abstract class DelegatingTypeAdapter<T> implements TypeAdapter<T> {
   }
 
   @Override
-  public T fromXml(XmlReader reader, TikXmlConfig config) throws IOException {
+  public T fromXml(XmlReader reader, TikXmlConfig config, boolean isGenericList) throws IOException {
 
     //
     // New instance

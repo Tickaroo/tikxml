@@ -42,10 +42,9 @@ open class ElementField(element: VariableElement, name: String) : NamedField(ele
   override fun isXmlElementAccessableFromOutsideTypeAdapter() = false
 
   override fun generateReadXmlCode(codeGeneratorHelper: CodeGeneratorHelper): TypeSpec {
-
     val fromXmlMethod = codeGeneratorHelper.fromXmlMethodBuilder()
       .addCode(accessResolver.resolveAssignment(
-        "(\$T)${CodeGeneratorHelper.tikConfigParam}.getTypeAdapter(\$T.class).fromXml(${CodeGeneratorHelper.readerParam}, ${CodeGeneratorHelper.tikConfigParam})",
+        "(\$T)${CodeGeneratorHelper.tikConfigParam}.getTypeAdapter(\$T.class).fromXml(${CodeGeneratorHelper.readerParam}, ${CodeGeneratorHelper.tikConfigParam}, false)",
         ClassName.get(element.asType()), ClassName.get(element.asType())))
       .build()
 
@@ -53,7 +52,6 @@ open class ElementField(element: VariableElement, name: String) : NamedField(ele
       .addSuperinterface(codeGeneratorHelper.childElementBinderType)
       .addMethod(fromXmlMethod)
       .build()
-
   }
 
   override fun generateWriteXmlCode(codeGeneratorHelper: CodeGeneratorHelper): CodeBlock {
@@ -74,7 +72,7 @@ class ListElementField(element: VariableElement, name: String, private val gener
     val valueTypeAsArrayList = ParameterizedTypeName.get(ClassName.get(ArrayList::class.java), ClassName.get(genericListType))
 
     val valueFromAdapter =
-      " ${CodeGeneratorHelper.tikConfigParam}.getTypeAdapter(\$T.class).fromXml(${CodeGeneratorHelper.readerParam}, ${CodeGeneratorHelper.tikConfigParam})"
+      " ${CodeGeneratorHelper.tikConfigParam}.getTypeAdapter(\$T.class).fromXml(${CodeGeneratorHelper.readerParam}, ${CodeGeneratorHelper.tikConfigParam}, false)"
 
     val fromXmlMethod = codeGeneratorHelper.fromXmlMethodBuilder()
       .addCode(CodeBlock.builder()

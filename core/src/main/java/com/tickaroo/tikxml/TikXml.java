@@ -110,7 +110,7 @@ public final class TikXml {
     reader.beginElement();
     reader.nextElementName(); // We don't care about the name of the root tag
 
-    T value = (T)config.getTypeAdapter(clazz).fromXml(reader, config);
+    T value = (T)config.getTypeAdapter(clazz).fromXml(reader, config, false);
 
     reader.endElement();
 

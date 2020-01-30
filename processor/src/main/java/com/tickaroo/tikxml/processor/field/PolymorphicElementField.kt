@@ -118,6 +118,8 @@ class PolymorphicSubstitutionListField(element: VariableElement, typeMirror: Typ
     val valueTypeAsArrayList =
       ParameterizedTypeName.get(ClassName.get(ArrayList::class.java), ClassName.get(genericListTypeMirror))
 
+
+    
     val valueFromAdapter =
       "${CodeGeneratorHelper.tikConfigParam}.getTypeAdapter(\$T.class).fromXml(${CodeGeneratorHelper.readerParam}, ${CodeGeneratorHelper.tikConfigParam})"
 
