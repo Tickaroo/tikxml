@@ -89,9 +89,12 @@ class TypeAdapterCodeGenerator(
       if (xmlElement is PolymorphicSubstitutionField || xmlElement.generateGenericChildBinder) {
         val childElementBinderPrefix = when (xmlElement) {
           is PolymorphicSubstitutionListField -> xmlElement.element.simpleName
-          is PlaceholderXmlElement -> xmlName
+          is PlaceholderXmlElement -> if (xmlElement.childElements.takeIf { it.isNotEmpty() }?.values?.all { it is PolymorphicSubstitutionField } == true) {
+            xmlElement.childElements.values.first().element.simpleName
+          } else xmlName
           else -> {
-            val orginalElementTypeName = (xmlElement as PolymorphicSubstitutionField).originalElementTypeMirror.toString().split(".").last()
+            val orginalElementTypeName =
+              (xmlElement as PolymorphicSubstitutionField).originalElementTypeMirror.toString().split(".").last()
             "${orginalElementTypeName.substring(0, 1).toLowerCase(Locale.GERMANY)}${orginalElementTypeName.substring(1,
               orginalElementTypeName.length)}"
           }
