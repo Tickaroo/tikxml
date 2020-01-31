@@ -135,7 +135,7 @@ public class XmlProcessor extends AbstractProcessor {
         addGenericAdapterSuperclasses((TypeElement) element, (TypeElement) element);
       }
 
-      GenericAdapterCodeGenerator genericAdapterCodeGenerator = new GenericAdapterCodeGenerator(filer);
+      GenericAdapterCodeGenerator genericAdapterCodeGenerator = new GenericAdapterCodeGenerator(filer, elementUtils);
       genericAdapterCodeGenerator.generateCode(annotationDetector.getGenericTypes());
 
       for (Element element : xmlElements) {
@@ -181,8 +181,7 @@ public class XmlProcessor extends AbstractProcessor {
 
     if (!typeMirror.toString().equals("java.lang.Object")) {
       if (annotationDetector.containsGenericType(typeMirror.toString())) {
-        annotationDetector.addGenericType(typeMirror.toString(),
-            originalElement.toString()); // add all abstract classes or interfaces types
+        annotationDetector.addGenericType(typeMirror.toString(), originalElement.toString()); // add all abstract classes or interfaces types
       } else if (!typeMirror.toString().equals(originalElement.toString())
           && element.getKind() == ElementKind.CLASS
           && element.asType().getKind() == TypeKind.DECLARED) {

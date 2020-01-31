@@ -16,31 +16,28 @@ import java.util.Locale
 import javax.annotation.processing.Filer
 import javax.annotation.processing.FilerException
 import javax.lang.model.element.Modifier.PUBLIC
+import javax.lang.model.util.Elements
 
 @ExperimentalStdlibApi
-class GenericAdapterCodeGenerator(private val filer: Filer) {
+class GenericAdapterCodeGenerator(private val filer: Filer, private val elementUtils: Elements) {
 
   fun generateCode(genericTypes: Map<String, Set<String>?>) {
     genericTypes
       .filter { (it.value?.size ?: 0) > 0 } // only generate generic adapters if at least one implementation is defined
       .forEach { (genericTypeName, implementationNames) ->
-        val lastIndexOfPoint = genericTypeName.lastIndexOf(".")
-        val packageName = genericTypeName.substring(0, lastIndexOfPoint)
-        val className = genericTypeName.substring(lastIndexOfPoint + 1, genericTypeName.length)
-
-        val typeAdapterObject = ClassName.get(packageName, className)
+        val typeAdapterObject = ClassName.get(elementUtils.getTypeElement(genericTypeName))
         val typeAdapterInterface = ParameterizedTypeName.get(ClassName.get(TypeAdapter::class.java), typeAdapterObject)
 
         val adapterClassBuilder =
           TypeSpec
-            .classBuilder("$className${TypeAdapter.GENERATED_GENERIC_CLASS_SUFFIS}")
+            .classBuilder("${typeAdapterObject.simpleName()}${TypeAdapter.GENERATED_GENERIC_CLASS_SUFFIS}")
             .addSuperinterface(typeAdapterInterface)
             .addModifiers(PUBLIC)
-            .addMethod(generateFromXml(typeAdapterObject, packageName, className, implementationNames!!))
+            .addMethod(generateFromXml(typeAdapterObject, implementationNames!!))
             .addMethod(generateTooXml(typeAdapterObject))
 
         try {
-          val javaFile = JavaFile.builder(packageName, adapterClassBuilder.build()).build()
+          val javaFile = JavaFile.builder(typeAdapterObject.packageName(), adapterClassBuilder.build()).build()
           javaFile.writeTo(filer)
         } catch (e: FilerException) {
 
@@ -48,10 +45,9 @@ class GenericAdapterCodeGenerator(private val filer: Filer) {
       }
   }
 
-  private fun generateFromXml(returnTypeName: TypeName, packageName: String, className: String,
-    implementationNames: Set<String>): MethodSpec {
+  private fun generateFromXml(returnTypeName: TypeName, implementationNames: Set<String>): MethodSpec {
     val codeBlockBuilder = CodeBlock.builder()
-      .addStatement("\$T ${CodeGeneratorHelper.valueParam} = null", ClassName.get(packageName, className))
+      .addStatement("\$T ${CodeGeneratorHelper.valueParam} = null", returnTypeName)
       .addStatement("\$T elementName", String::class.java)
       .beginControlFlow("if (isGenericList)")
       .beginControlFlow("while (${CodeGeneratorHelper.readerParam}.hasAttribute())")

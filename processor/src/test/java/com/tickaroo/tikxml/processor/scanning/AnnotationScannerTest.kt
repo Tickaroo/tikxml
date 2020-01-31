@@ -674,10 +674,10 @@ class AnnotationScannerTest {
 
   @Test
   fun polymorphicElementList() {
-    val componentFile = JavaFileObjects.forSourceLines("test.PolymorphicElement",
+    val componentFile = JavaFileObjects.forSourceLines("test.PolymorphicElementList",
       "package test;",
       "@${Xml::class.qualifiedName}",
-      "class PolymorphicElement {",
+      "class PolymorphicElementList {",
       "   @${Element::class.qualifiedName} ( typesByElement = {",
       "     @${ElementNameMatcher::class.qualifiedName}(name=\"a\", type=A.class),",
       "     @${ElementNameMatcher::class.qualifiedName}(name=\"b\", type=B.class)",
@@ -686,7 +686,7 @@ class AnnotationScannerTest {
       "   @${Xml::class.qualifiedName}",
       "   static class Root {} ",
       "   @${Xml::class.qualifiedName}",
-      "   static class A  extends Root {} ",
+      "   static class A extends Root {} ",
       "   @${Xml::class.qualifiedName}",
       "   static class B extends Root {} ",
       "}")
