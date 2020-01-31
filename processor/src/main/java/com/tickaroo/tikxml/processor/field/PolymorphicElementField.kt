@@ -86,7 +86,7 @@ open class PolymorphicSubstitutionField(element: VariableElement, override val t
   override fun generateReadXmlCode(codeGeneratorHelper: CodeGeneratorHelper): TypeSpec {
     val fromXmlMethod = codeGeneratorHelper.fromXmlMethodBuilder()
       .addCode(accessResolver.resolveAssignment(
-        " (\$T) ${CodeGeneratorHelper.tikConfigParam}.getTypeAdapter(\$T.class).fromXml(${CodeGeneratorHelper.readerParam}, ${CodeGeneratorHelper.tikConfigParam})",
+        " (\$T) ${CodeGeneratorHelper.tikConfigParam}.getTypeAdapter(\$T.class).fromXml(${CodeGeneratorHelper.readerParam}, ${CodeGeneratorHelper.tikConfigParam}, false)",
         ClassName.get(typeMirror), ClassName.get(typeMirror)))
       .build()
 
@@ -118,10 +118,9 @@ class PolymorphicSubstitutionListField(element: VariableElement, typeMirror: Typ
     val valueTypeAsArrayList =
       ParameterizedTypeName.get(ClassName.get(ArrayList::class.java), ClassName.get(genericListTypeMirror))
 
-
     
     val valueFromAdapter =
-      "${CodeGeneratorHelper.tikConfigParam}.getTypeAdapter(\$T.class).fromXml(${CodeGeneratorHelper.readerParam}, ${CodeGeneratorHelper.tikConfigParam})"
+      "${CodeGeneratorHelper.tikConfigParam}.getTypeAdapter(\$T.class).fromXml(${CodeGeneratorHelper.readerParam}, ${CodeGeneratorHelper.tikConfigParam}, false)"
 
     val fromXmlMethod = codeGeneratorHelper.fromXmlMethodBuilder()
       .addCode(CodeBlock.builder()

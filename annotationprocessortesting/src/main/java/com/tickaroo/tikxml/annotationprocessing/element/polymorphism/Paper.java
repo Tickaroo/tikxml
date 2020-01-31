@@ -20,6 +20,7 @@ package com.tickaroo.tikxml.annotationprocessing.element.polymorphism;
 
 import com.tickaroo.tikxml.annotation.Element;
 import com.tickaroo.tikxml.annotation.ElementNameMatcher;
+import com.tickaroo.tikxml.annotation.Path;
 import com.tickaroo.tikxml.annotation.Xml;
 import java.util.List;
 import java.util.Objects;

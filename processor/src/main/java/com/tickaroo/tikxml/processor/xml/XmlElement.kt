@@ -23,6 +23,7 @@ import com.tickaroo.tikxml.annotation.Path
 import com.tickaroo.tikxml.processor.ProcessingException
 import com.tickaroo.tikxml.processor.field.AttributeField
 import com.tickaroo.tikxml.processor.field.ListElementField
+import com.tickaroo.tikxml.processor.field.PolymorphicSubstitutionField
 import com.tickaroo.tikxml.processor.field.PolymorphicSubstitutionListField
 
 /**

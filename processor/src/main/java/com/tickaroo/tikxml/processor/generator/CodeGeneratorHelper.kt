@@ -302,10 +302,11 @@ class CodeGeneratorHelper(
         ParameterizedTypeName.get(ClassName.get(HashMap::class.java), ClassName.get(String::class.java), childElementBinderType)
       initializerBuilder.addStatement("$childElementBindersParam = new \$T()", childBinderTypeMap)
 
+
       for ((xmlName, xmlElement) in element.childElements) {
-        if (xmlElement is PolymorphicSubstitutionListField || xmlElement.generateGenericChildBinder) {
+        if (xmlElement is PolymorphicSubstitutionField || xmlElement.generateGenericChildBinder) {
           val childElementBinderPrefix =
-            if (xmlElement.generateGenericChildBinder) xmlElement.childElements.values.first().element.simpleName else (element as? PlaceholderXmlElement)?.name
+            if (xmlElement.generateGenericChildBinder) xmlElement.childElements.values.first().element.simpleName else if (element.childElements.takeIf { it.isNotEmpty() }?.values?.all { it is PolymorphicSubstitutionField } == true) element.childElements.values.first().element.simpleName else (element as? PlaceholderXmlElement)?.name
           val childElementBinderName = "${childElementBinderPrefix}ChildElementBinder"
           initializerBuilder.addStatement("${childElementBindersParam}.put(\$S, \$N)", xmlName, childElementBinderName)
         } else {

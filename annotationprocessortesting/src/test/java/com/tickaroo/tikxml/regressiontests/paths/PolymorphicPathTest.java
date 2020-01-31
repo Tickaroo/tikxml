@@ -20,6 +20,9 @@ package com.tickaroo.tikxml.regressiontests.paths;
 
 import com.tickaroo.tikxml.TestUtils;
 import com.tickaroo.tikxml.TikXml;
+import com.tickaroo.tikxml.regressiontests.paths.element.Book;
+import com.tickaroo.tikxml.regressiontests.paths.element.BookStore;
+import com.tickaroo.tikxml.regressiontests.paths.element.Roman;
 import java.io.IOException;
 import java.text.ParseException;
 import okio.Buffer;
@@ -61,5 +64,26 @@ public class PolymorphicPathTest {
 
     Company company2 = xml.read(TestUtils.sourceFrom(xmlStr), Company.class);
     Assert.assertEquals(company, company2);
+  }
+
+  @Test
+  public void polymorphicElement() throws IOException {
+    TikXml xml = new TikXml.Builder().exceptionOnUnreadXml(false).build();
+
+    BookStore bookStore = xml.read(TestUtils.sourceForFile("regression/bookstore.xml"), BookStore.class);
+    Assert.assertNotNull(bookStore.book);
+    Book specialBook = bookStore.book;
+    Assert.assertTrue(specialBook instanceof Roman);
+    Assert.assertEquals(((Roman)specialBook).name, "Roman 1");
+
+    // Writing xml test
+    Buffer buffer = new Buffer();
+    xml.write(buffer, bookStore);
+
+    String xmlStr =
+        "<?xml version=\"1.0\" encoding=\"UTF-8\"?><bookStore><specialBook><roman name=\"Roman 1\"/></specialBook></bookStore>";
+    Assert.assertEquals(xmlStr, TestUtils.bufferToString(buffer));
+    BookStore bookStore2 = xml.read(TestUtils.sourceFrom(xmlStr), BookStore.class);
+    Assert.assertEquals(bookStore, bookStore2);
   }
 }

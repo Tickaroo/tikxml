@@ -85,7 +85,6 @@ class TypeAdapterCodeGenerator(
       .addModifiers(PUBLIC)
       .addCode(codeGenUtils.generateAttributeBinders(annotatedClass))
 
-
     for ((xmlName, xmlElement) in annotatedClass.childElements) {
       if (xmlElement is PolymorphicSubstitutionField || xmlElement.generateGenericChildBinder) {
         val childElementBinderPrefix = when (xmlElement) {
