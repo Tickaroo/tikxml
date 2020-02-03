@@ -327,23 +327,17 @@ Lets say that a book can be written by either a `Author` or an `Journalist`:
 public class Book {
 
   @Attribute
-  String id; 
-  
+  String id;
+
   @PropertyElement
   String title;
- 
-  @Element(
-    typesByElement = {
-      @ElementNameMatcher(type = Author.class),
-      @ElementNameMatcher(type = Journalist.class)
-    }
-  )
+
+  @Element
   Author author;
 }
 ```
 
-So`@Element(typesByElement = @ElementNameMatcher)` is where we have to define how we determine polymorphism while reading xml.
-With `@ElementNameMatcher(type = Journalist.class)` we define that, xml element `<journalist>` is parsed into an `Journalist` object (class Journalist has to be annotated with `@Xml` and you can specify a `rootAsName` as described above).
+So`@Element(typesByElement = @ElementNameMatcher)` is no longer needed if the xml tags have the same naming as the class or specified in the `@Xml(name="foo")` annotation.
 
 ```xml
 <book id="111">
@@ -369,7 +363,7 @@ Additionally, `TikXml` is able to read an `Author`. We expect an xml element wit
 ```
 
 So TikXml will use the same mechanism as alrady mentioned to map `@Xml(name="foo")` annotated classes to `<author>` or `<journalist>` tag to `<author>`. We have already seen that we can override this mapping with `@Element(name="foo")`. 
-We can do the same with `@ElementNameMatcher( name="foo")` like this:
+We can do the same with `@ElementNameMatcher(name="foo")` like this:
 
 ```java
 @Xml
@@ -383,8 +377,7 @@ public class Book {
  
   @Element(
     typesByElement = {
-      @ElementNameMatcher(type = Author.class),
-      @ElementNameMatcher(type = Journalist.class, name = "journ",)
+      @ElementNameMatcher(type = Journalist.class, name = "journ")
     }
   )
   Author author;
@@ -404,8 +397,10 @@ to read a xml document like this:
 ```
 
 This kind of polymorphism resolving also works with `Interfaces`:
+For this you have to annotate the interface with `@GenericAdapter` so TikXml can autogenerate the generic adapter for all implementations of the interface in the same module
 
 ```java
+@GenericAdapter
 interface Writer {
   int getId();
 }
@@ -447,12 +442,7 @@ public class Book {
   @PropertyElement
   String title;
  
-  @Element(
-    typesByElement = {
-      @ElementNameMatcher(type = Author.class),
-      @ElementNameMatcher(type = Organization.class),
-    }
-  )
+  @Element
   Writer writer;
 }
 ```
@@ -480,7 +470,7 @@ and
 </book>
 ```
 
-You can define arbitrary many `@ElementNameMatcher` to resolve polymorphism. 
+You can define arbitrary many `@ElementNameMatcher` to resolve polymorphism when the xml tag name differs from the classes.
 Since resolution of polymorphism is done by **checking the xml element name (tag name)** the `<book>` can only have
 one single `<author />` tag, because we can't use xml element's name as property anymore (as we did with `@PropertyElement`).
 
@@ -496,21 +486,11 @@ public class Book {
   @PropertyElement
   String title;
  
-  @Element(
-    typesByElement = {
-      @ElementNameMatcher( name = "author", type = Author.class),
-      @ElementNameMatcher( name = "organization", type = Organization.class),
-    }
-  )
+  @Element
   Writer writer1;
   
-  @Element(
-      typesByElement = {
-        @ElementNameMatcher( name = "author", type = Author.class),
-        @ElementNameMatcher( name = "organization", type = Organization.class),
-      }
-    )
-    Writer writer2;
+  @Element
+  Writer writer2;
 }
 ```
 
@@ -549,9 +529,9 @@ which will read and write the following xml:
 
 ```xml
 <catalog>
-    <book id="1">...</book>
-    <book id="2">...</book>
-    <book id="3">...</book>
+  <book id="1">...</book>
+  <book id="2">...</book>
+  <book id="3">...</book>
 </catalog>
 ```
 
@@ -580,7 +560,7 @@ class Catalogue {
 ```
 
 
-With `@Element( typesByElement = @ElementNameMatcher(...) )` you can deal with polymorphism for lists the same way as already shown for other elements.
+With `@Element( typesByElement = @ElementNameMatcher(...) )` you can deal with polymorphism for lists the same way as already shown for other elements with different namings
 
 ## Paths 
 Have a look at the following example: Imagine we have a xml representation of a bookstore with only one single book and one single newspaper:
@@ -801,25 +781,20 @@ public class Book {
 
   public Book(@Attribute String id,
               @Path("some/path") @PropertyElement String title,
-              @Element(
-                  typesByElement = {
-                    @ElementNameMatcher(type = Author.class),
-                    @ElementNameMatcher(type = Journalist.class)
-                  })
-                 Author author) {
-
+              @Element Author author) {
     this.id = id;
     this.title = title;
     this.author = author;
   }
 
-  public String getId(){ return id; }
+  public String getId() { return id; }
 
-  public String getTitle(){ return title; }
+  public String getTitle() { return title; }
 
-  public Author getAuthor(){ return author; }
+  public Author getAuthor() { return author; }
 }
 ```
+
 As you see **you must** provide a getter method for each annotated constructor parameter with minimum package visibility because when serializing (writing xml from a java object)
 TikXml has to access the values somehow. This is done by getters and java naming conventions (like a annotated constructor parameter `foo` must have a getter `getFoo()`).
 
@@ -851,6 +826,7 @@ public class Book {
   }
 }
 ```
+
 Either annotate all constructor parameters with TikXml annotations (like @Attribute etc.) or none of the constructor parameters.
 
 However, you can have multiple constructors without TikXml annotations but you must have exactly one constructor containing parameters annotated with TikXml annotations only:

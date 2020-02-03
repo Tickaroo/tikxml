@@ -41,7 +41,8 @@ repositories {
 ```
 
 # Documentation
-The **documentation** can be found [here](https://github.com/Tickaroo/tikxml/blob/master/docs/AnnotatingModelClasses.md)
+The **documentation** (<= 0.9.x) can be found [here](https://github.com/Tickaroo/tikxml/blob/master/docs/AnnotatingModelClasses.md)
+The **documentation** (>= 0.9.x) can be found [here](https://github.com/Tickaroo/tikxml/blob/master/docs/AnnotatingModelClasses_0_9.md)
 
 # Benchmark
 We did benchmark on this early version of TikXml to compare field's results with other popular xml parsers like SimpleXml and Jackson.
