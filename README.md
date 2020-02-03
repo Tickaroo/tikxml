@@ -41,7 +41,7 @@ repositories {
 ```
 
 # Documentation
-The **documentation** (<= 0.9.x) can be found [here](https://github.com/Tickaroo/tikxml/blob/master/docs/AnnotatingModelClasses.md)
+The **documentation** (<= 0.8.x) can be found [here](https://github.com/Tickaroo/tikxml/blob/master/docs/AnnotatingModelClasses.md)
 The **documentation** (>= 0.9.x) can be found [here](https://github.com/Tickaroo/tikxml/blob/master/docs/AnnotatingModelClasses_0_9.md)
 
 # Benchmark
