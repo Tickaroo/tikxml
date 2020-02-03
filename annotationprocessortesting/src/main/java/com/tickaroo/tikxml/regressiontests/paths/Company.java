@@ -5,6 +5,7 @@ import com.tickaroo.tikxml.annotation.ElementNameMatcher;
 import com.tickaroo.tikxml.annotation.GenericAdapter;
 import com.tickaroo.tikxml.annotation.Path;
 import com.tickaroo.tikxml.annotation.Xml;
+import com.tickaroo.tikxml.regressiontests.paths.element.Book;
 import java.util.List;
 import java.util.Objects;
 

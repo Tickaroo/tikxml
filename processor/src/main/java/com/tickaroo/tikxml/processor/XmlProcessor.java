@@ -135,7 +135,7 @@ public class XmlProcessor extends AbstractProcessor {
         addGenericAdapterSuperclasses((TypeElement) element, (TypeElement) element);
       }
 
-      GenericAdapterCodeGenerator genericAdapterCodeGenerator = new GenericAdapterCodeGenerator(filer, elementUtils);
+      GenericAdapterCodeGenerator genericAdapterCodeGenerator = new GenericAdapterCodeGenerator(filer, typeUtils, elementUtils);
       genericAdapterCodeGenerator.generateCode(annotationDetector.getGenericTypes());
 
       for (Element element : xmlElements) {

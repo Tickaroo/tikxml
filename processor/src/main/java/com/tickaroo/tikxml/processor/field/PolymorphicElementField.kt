@@ -141,4 +141,4 @@ class PolymorphicSubstitutionListField(element: VariableElement, typeMirror: Typ
 
 }
 
-data class PolymorphicTypeElementNameMatcher(val xmlElementName: String, val type: TypeMirror)
+data class PolymorphicTypeElementNameMatcher(val xmlElementName: String, val type: TypeMirror, val genericListTypeMirror: TypeMirror? = null)

@@ -16,7 +16,7 @@ fun orderByInheritanceHierarchy(typeElementNameMatcher: List<PolymorphicTypeElem
 
 
     val matcherMap = HashMap<String, PolymorphicTypeElementNameMatcher>()
-    typeElementNameMatcher.forEach { matcherMap.put(it.type.toString(), it) }
+    typeElementNameMatcher.forEach { matcherMap[it.type.toString()] = it }
 
     val graph = GraphBuilder.directed().build<TypeElement>()
 

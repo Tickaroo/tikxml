@@ -10,6 +10,8 @@ import com.squareup.javapoet.TypeSpec
 import com.tickaroo.tikxml.TikXmlConfig
 import com.tickaroo.tikxml.XmlReader
 import com.tickaroo.tikxml.XmlWriter
+import com.tickaroo.tikxml.annotation.ElementNameMatcher
+import com.tickaroo.tikxml.processor.field.PolymorphicTypeElementNameMatcher
 import com.tickaroo.tikxml.typeadapter.TypeAdapter
 import java.io.IOException
 import java.util.Locale
@@ -17,9 +19,13 @@ import javax.annotation.processing.Filer
 import javax.annotation.processing.FilerException
 import javax.lang.model.element.Modifier.PUBLIC
 import javax.lang.model.util.Elements
+import javax.lang.model.util.Types
 
 @ExperimentalStdlibApi
-class GenericAdapterCodeGenerator(private val filer: Filer, private val elementUtils: Elements) {
+class GenericAdapterCodeGenerator(
+  private val filer: Filer,
+  private val typeUtils: Types,
+  private val elementUtils: Elements) {
 
   fun generateCode(genericTypes: Map<String, Set<String>?>) {
     genericTypes
@@ -34,7 +40,7 @@ class GenericAdapterCodeGenerator(private val filer: Filer, private val elementU
             .addSuperinterface(typeAdapterInterface)
             .addModifiers(PUBLIC)
             .addMethod(generateFromXml(typeAdapterObject, implementationNames!!))
-            .addMethod(generateTooXml(typeAdapterObject))
+            .addMethod(generateToXml(typeAdapterObject, implementationNames))
 
         try {
           val javaFile = JavaFile.builder(typeAdapterObject.packageName(), adapterClassBuilder.build()).build()
@@ -60,43 +66,24 @@ class GenericAdapterCodeGenerator(private val filer: Filer, private val elementU
       .endControlFlow()
 
     implementationNames.forEachIndexed { index, implementationName ->
-      val lastIndexOfPoint = implementationName.lastIndexOf(".")
-      val implPackageName = implementationName.substring(0, lastIndexOfPoint)
-      val implClassName = implementationName.substring(lastIndexOfPoint + 1, implementationName.length)
-      val implTypeName = ClassName.get(implPackageName, implClassName)
+      val implTypeName = elementUtils.getTypeElement(implementationName)
 
       codeBlockBuilder.run {
-        val equalsCheck = "elementName.equals(\"${implClassName.decapitalize(Locale.GERMANY)}\")"
+        val equalsCheck = "elementName.equals(\"${implTypeName.simpleName.toString().decapitalize(Locale.GERMANY)}\")"
         if (index == 0) beginControlFlow("if ($equalsCheck)") else nextControlFlow("else if ($equalsCheck)")
-        addStatement("${CodeGeneratorHelper.valueParam} = (\$T) config.getTypeAdapter(\$T.class).fromXml(reader, config, false)", implTypeName, implTypeName)
+        addStatement("${CodeGeneratorHelper.valueParam} = (\$T) config.getTypeAdapter(\$T.class).fromXml(reader, config, false)",
+          implTypeName, implTypeName)
       }
-      /*val lastIndexOfPoint = implementationName.lastIndexOf(".")
-      val packageName = implementationName.substring(0, lastIndexOfPoint)
-      val className = implementationName.substring(lastIndexOfPoint + 1, implementationName.length)
-
-      val typeAdapterRetrieverImpl = CodeBlock.builder()
-        .add("this.\$N.put(\"\$N\", new \$T() {\$W", GENERIC_TYPEADAPTER_MAP, className.decapitalize(Locale.GERMANY),
-          TypeAdapterRetriever::class.java)
-        .beginControlFlow("@\$T public \$T getTypeAdapter(\$T config) throws \$T", Override::class.java,
-          TypeAdapter::class.java, TikXmlConfig::class.java, TypeAdapterNotFoundException::class.java)
-        .addStatement("return config.getTypeAdapter(\$T.class)", ClassName.get(packageName, className))
-        .endControlFlow()
-        .addStatement("})")
-        .build()
-
-      constructorBuilder
-        .addCode(typeAdapterRetrieverImpl)*/
     }
 
     val codeBlock = codeBlockBuilder
       .nextControlFlow("else if (${CodeGeneratorHelper.tikConfigParam}.exceptionOnUnreadXml())")
-      .addStatement("throw new \$T(\"Could not map the xml element with the tag name <\" + elementName + \"> at path '\" + reader.getPath()+\"' to java class. Have you annotated such a field in your java class to map this xml attribute? Otherwise you can turn this error message off with TikXml.Builder().exceptionOnUnreadXml(false).build().\")", IOException::class.java)
+      .addStatement(
+        "throw new \$T(\"Could not map the xml element with the tag name <\" + elementName + \"> at path '\" + reader.getPath()+\"' to java class. Have you annotated such a field in your java class to map this xml attribute? Otherwise you can turn this error message off with TikXml.Builder().exceptionOnUnreadXml(false).build().\")",
+        IOException::class.java)
       .nextControlFlow("else")
-      //.addStatement("${CodeGeneratorHelper.readerParam}.beginElement()")
       .addStatement("${CodeGeneratorHelper.readerParam}.skipRemainingElement()")
-      //.addStatement("${CodeGeneratorHelper.readerParam}.endElement()")
       .endControlFlow()
-      //.endControlFlow()
       .build()
 
     return MethodSpec.methodBuilder("fromXml")
@@ -112,7 +99,37 @@ class GenericAdapterCodeGenerator(private val filer: Filer, private val elementU
       .build()
   }
 
-  private fun generateTooXml(valueTypeName: TypeName): MethodSpec {
+  private fun generateToXml(valueTypeName: TypeName, implementationNames: Set<String>): MethodSpec {
+    val codeBlockBuilder = CodeBlock.builder()
+
+    val typeElementNameMatcher = mutableListOf<PolymorphicTypeElementNameMatcher>()
+    implementationNames.forEach {
+      val implTypeName = elementUtils.getTypeElement(it)
+      typeElementNameMatcher.add(PolymorphicTypeElementNameMatcher(implTypeName.simpleName.toString().decapitalize(Locale.GERMANY), implTypeName.asType()))
+    }
+
+    val orderElements = orderByInheritanceHierarchy(typeElementNameMatcher, elementUtils, typeUtils)
+
+    orderElements.forEachIndexed { index, elementNameMatcher ->
+      if (index == 0) {
+        codeBlockBuilder.beginControlFlow("if (value instanceof \$T)", elementNameMatcher.type)
+      } else {
+        codeBlockBuilder.nextControlFlow("else if (value instanceof \$T)", elementNameMatcher.type)
+      }
+
+      codeBlockBuilder.addStatement(
+        "${CodeGeneratorHelper.tikConfigParam}.getTypeAdapter(\$T.class).toXml(${CodeGeneratorHelper.writerParam}, ${CodeGeneratorHelper.tikConfigParam}, (\$T) ${CodeGeneratorHelper.valueParam}, \$S)",
+        elementNameMatcher.type, elementNameMatcher.type, elementNameMatcher.xmlElementName)
+    }
+
+    val codeBlock = codeBlockBuilder
+      .nextControlFlow("else")
+      .addStatement("throw new \$T(\$S + value + \$S)", ClassName.get(IOException::class.java),
+        "Don't know how to write the element of type ",
+        " as XML. Most likely you have forgotten to register for this type with @${ElementNameMatcher::class.simpleName} when resolving polymorphism.")
+      .endControlFlow()
+      .build()
+
     return MethodSpec.methodBuilder("toXml")
       .addAnnotation(Override::class.java)
       .addModifiers(PUBLIC)
@@ -121,6 +138,7 @@ class GenericAdapterCodeGenerator(private val filer: Filer, private val elementU
       .addParameter(valueTypeName, "value")
       .addParameter(String::class.java, "overridingXmlElementTagName")
       .addException(IOException::class.java)
+      .addCode(codeBlock)
       .build()
   }
 

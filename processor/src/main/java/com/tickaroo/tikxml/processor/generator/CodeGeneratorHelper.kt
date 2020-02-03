@@ -47,6 +47,8 @@ import com.tickaroo.tikxml.typeadapter.NestedChildElementBinder
 import java.io.IOException
 import java.util.Collections
 import java.util.HashMap
+import java.util.Locale
+import java.util.Objects
 import javax.lang.model.element.Element
 import javax.lang.model.element.Modifier
 import javax.lang.model.type.TypeMirror
@@ -440,7 +442,13 @@ class CodeGeneratorHelper(
           throw ProcessingException(null,
             "Oops: an unexpected exception has occurred while determining the correct order for inheritance hierarchy. Please file an issue at https://github.com/Tickaroo/tikxml/issues . Some debug information: ordered hierarchy elements: ${orderdByInheritanceHierarchy.size} ;  TypeElementMatcher size ${typeElementNameMatcher.size} ; ordered hierarchy list: ${orderdByInheritanceHierarchy} ; TypeElementMatcher list ${typeElementNameMatcher}")
         }
-        orderdByInheritanceHierarchy.forEachIndexed { i, nameMatcher ->
+        val filteredOrderdByInheritanceHierarchy = orderdByInheritanceHierarchy.filter {
+          val typeElementName = typeUtils.asElement(it.type).simpleName.toString()
+          val typeName =
+            typeElementName.substring(0, 1).toLowerCase(Locale.GERMANY) + typeElementName.substring(1, typeElementName.length)
+          it.xmlElementName != typeName
+        }
+        filteredOrderdByInheritanceHierarchy.forEachIndexed { i, nameMatcher ->
           if (i == 0) {
             beginControlFlow("if ($variableName instanceof \$T)", ClassName.get(nameMatcher.type))
           } else {
@@ -450,15 +458,22 @@ class CodeGeneratorHelper(
             ClassName.get(nameMatcher.type), ClassName.get(nameMatcher.type), nameMatcher.xmlElementName)
         }
 
+        val hasSpecialMapping = filteredOrderdByInheritanceHierarchy.isNotEmpty()
+        val addGenericAdapter = filteredOrderdByInheritanceHierarchy.size != orderdByInheritanceHierarchy.size
+        if (addGenericAdapter) {
+          if (hasSpecialMapping) {
+            nextControlFlow("else")
+          }
 
-        if (typeElementNameMatcher.isNotEmpty()) {
-          nextControlFlow("else")
-          addStatement("throw new \$T(\$S + $variableName + \$S)", ClassName.get(IOException::class.java),
-            "Don't know how to write the element of type ",
-            " as XML. Most likely you have forgotten to register for this type with @${ElementNameMatcher::class.simpleName} when resolving polymorphism.")
+          val genericListTypeMirror = orderdByInheritanceHierarchy.first().genericListTypeMirror
+          val simpleName = typeUtils.asElement(genericListTypeMirror).simpleName.toString()
+          val xmlElementName = simpleName.substring(0, 1).toLowerCase(Locale.GERMANY) + simpleName.substring(1, simpleName.length)
+          addStatement("$tikConfigParam.getTypeAdapter(\$T.class, true).toXml($writerParam, $tikConfigParam, (\$T) $variableName, \$S)",
+            genericListTypeMirror, genericListTypeMirror, xmlElementName)
+        }
+        if (hasSpecialMapping) {
           endControlFlow()
         }
-
       }
       .build()
 
@@ -518,21 +533,19 @@ class CodeGeneratorHelper(
         if (first is PolymorphicSubstitutionListField) {
 
           // Resolve polymorphism on list items
-          val listType = ClassName.get(first.originalElementTypeMirror)
-          val sizeVariableName = "listSize"
-          val listVariableName = "list"
-          val itemVariableName = "item";
           val elementTypeMatchers: List<PolymorphicTypeElementNameMatcher> = it.value.map {
             val i = it as PolymorphicSubstitutionListField
-            PolymorphicTypeElementNameMatcher(i.name, i.typeMirror)
+            PolymorphicTypeElementNameMatcher(i.name, i.typeMirror, i.genericListTypeMirror)
           }
 
-          beginControlFlow("if (${first.accessResolver.resolveGetterForWritingXml()}!= null)")
-          addStatement("\$T $listVariableName = ${first.accessResolver.resolveGetterForWritingXml()}", listType)
-          addStatement("int $sizeVariableName = $listVariableName.size()")
-          beginControlFlow("for (int i =0; i<$sizeVariableName; i++)")
-          addStatement("\$T $itemVariableName = $listVariableName.get(i)", ClassName.get(Object::class.java))
-          add(writeResolvePolymorphismAndDelegteToTypeAdpters(itemVariableName,
+          val genericListTypeMirror = first.genericListTypeMirror
+          val genericListElementName = typeUtils.asElement(genericListTypeMirror).simpleName.toString().run {
+            substring(0, 1).toLowerCase(Locale.GERMANY) + substring(1, length)
+          }
+          val getterForWrittingXml = first.accessResolver.resolveGetterForWritingXml()
+          beginControlFlow("if ($getterForWrittingXml != null)")
+          beginControlFlow("for (\$T \$N : $getterForWrittingXml)", java.lang.Object::class.java, genericListElementName)
+          add(writeResolvePolymorphismAndDelegteToTypeAdpters(genericListElementName,
             elementTypeMatchers)) // does the if instance of checks
           endControlFlow() // end for loop
           endControlFlow() // end != null check
@@ -541,7 +554,7 @@ class CodeGeneratorHelper(
           // Resolve polymorphism for fields
           val elementTypeMatchers: List<PolymorphicTypeElementNameMatcher> = it.value.map {
             val i = it as PolymorphicSubstitutionField
-            PolymorphicTypeElementNameMatcher(i.name, i.typeMirror)
+            PolymorphicTypeElementNameMatcher(i.name, i.typeMirror, i.originalElementTypeMirror)
           }
           beginControlFlow("if (${first.accessResolver.resolveGetterForWritingXml()} != null)")
           addStatement("\$T element = ${first.accessResolver.resolveGetterForWritingXml()}",
