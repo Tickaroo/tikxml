@@ -321,7 +321,7 @@ defined in the Journalist class itself (only newspaperPublisher).
 
 Now let's take a look how to resolve polymorphism while reading xml.
 Lets say that a book can be written by either a `Author` or an `Journalist`:
-
+**Version: <= 0.8.x**
 ```java
 @Xml
 public class Book {
@@ -339,6 +339,28 @@ public class Book {
     }
   )
   Author author;
+}
+```
+**Version: >= 0.9.x**
+```java
+@Xml
+public class Book {
+
+  @Attribute
+  String id;
+
+  @PropertyElement
+  String title;
+
+  @Element(
+    typesByElement = {
+      @ElementNameMatcher(type = Author.class, name="auth"), -> is only needed if the xml tag has a different name than specified for Author
+      @ElementNameMatcher(type = Journalist.class, name="journ") -> is only needed if the xml tag has a different name than specified for Journalist
+    }
+  )
+  Author author;
+
+  @Element Author author; -> short version is tags equals class or specified xml names
 }
 ```
 
