@@ -25,7 +25,7 @@ import com.tickaroo.tikxml.annotationprocessing.elementlist.polymorphism.Person;
 /**
  * @author Hannes Dorfmann
  */
-@Xml(name = "employee")
+@Xml
 public class EmployeeConstructor implements Person {
 
   private String name;

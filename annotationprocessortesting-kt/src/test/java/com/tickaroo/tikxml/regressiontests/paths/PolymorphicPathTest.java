@@ -71,8 +71,8 @@ public class PolymorphicPathTest {
             xml.read(TestUtils.sourceForFile("regression/deep_polymprphic_paths.xml"), CompanyDataClass.class);
 
     Assert.assertEquals(company.getPersons().size(), 3);
-    BossDataClass boss = (BossDataClass) company.getPersons().get(0);
-    EmployeeDataClass employee = (EmployeeDataClass) company.getPersons().get(1);
+    Boss boss = (Boss) company.getPersons().get(0);
+    Employee employee = (Employee) company.getPersons().get(1);
     Person person = company.getPersons().get(2);
 
     Assert.assertEquals(boss.getId(), 1);

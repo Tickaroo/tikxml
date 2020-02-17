@@ -25,7 +25,7 @@ import com.tickaroo.tikxml.annotationprocessing.elementlist.polymorphism.Person
 /**
  * @author Hannes Dorfmann
  */
-@Xml(name = "boss")
+@Xml
 class BossConstructor(@param:Attribute val firstName: String?, @param:Attribute val lastName: String?) : Person {
 
     override fun equals(other: Any?): Boolean {

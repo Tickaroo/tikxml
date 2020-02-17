@@ -32,8 +32,8 @@ data class CompanyDataClass(
         var name: String? = null,
 
         @field:Element(typesByElement = [
-            ElementNameMatcher(type = BossDataClass::class),
-            ElementNameMatcher(type = EmployeeDataClass::class)
+            ElementNameMatcher(name = "boss", type = BossDataClass::class),
+            ElementNameMatcher(name = "employee", type = EmployeeDataClass::class)
         ])
         var persons: List<@JvmSuppressWildcards Person>? = null
 )

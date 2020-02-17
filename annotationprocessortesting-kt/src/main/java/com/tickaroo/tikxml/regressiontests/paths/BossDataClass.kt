@@ -6,7 +6,7 @@ import com.tickaroo.tikxml.annotation.Xml
 /**
  * @author Hannes Dorfmann
  */
-@Xml(name = "boss")
+@Xml
 data class BossDataClass(
         @field:PropertyElement
         var name: String? = null

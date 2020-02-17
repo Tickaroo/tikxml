@@ -24,5 +24,5 @@ import com.tickaroo.tikxml.annotation.Xml
 /**
  * @author Hannes Dorfmann
  */
-@Xml(name = "organisation")
+@Xml
 data class OrganisationDataClass(@field:PropertyElement var address: String? = null) : Writer()

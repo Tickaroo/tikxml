@@ -142,7 +142,6 @@ public class XmlProcessor extends AbstractProcessor {
         if (element.getKind() == ElementKind.CLASS && element.getModifiers().contains(Modifier.ABSTRACT)) {
           continue;
         }
-
         AnnotatedClass clazz = new AnnotatedClassImpl(element);
         // Scan class
         scanner.scan(clazz);

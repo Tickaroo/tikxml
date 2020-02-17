@@ -11,13 +11,16 @@ import com.tickaroo.tikxml.TikXmlConfig
 import com.tickaroo.tikxml.XmlReader
 import com.tickaroo.tikxml.XmlWriter
 import com.tickaroo.tikxml.annotation.ElementNameMatcher
+import com.tickaroo.tikxml.processor.ProcessingException
 import com.tickaroo.tikxml.processor.field.PolymorphicTypeElementNameMatcher
+import com.tickaroo.tikxml.processor.scanning.getXmlElementName
+import com.tickaroo.tikxml.processor.utils.getSurroundingClassQualifiedName
 import com.tickaroo.tikxml.typeadapter.TypeAdapter
 import java.io.IOException
-import java.util.Locale
 import javax.annotation.processing.Filer
 import javax.annotation.processing.FilerException
 import javax.lang.model.element.Modifier.PUBLIC
+import javax.lang.model.element.TypeElement
 import javax.lang.model.util.Elements
 import javax.lang.model.util.Types
 
@@ -67,9 +70,10 @@ class GenericAdapterCodeGenerator(
 
     implementationNames.forEachIndexed { index, implementationName ->
       val implTypeName = elementUtils.getTypeElement(implementationName)
+      val xmLElementName = (implTypeName as TypeElement).getXmlElementName()
 
       codeBlockBuilder.run {
-        val equalsCheck = "elementName.equals(\"${implTypeName.simpleName.toString().decapitalize(Locale.GERMANY)}\")"
+        val equalsCheck = "elementName.equals(\"$xmLElementName\")"
         if (index == 0) beginControlFlow("if ($equalsCheck)") else nextControlFlow("else if ($equalsCheck)")
         addStatement("${CodeGeneratorHelper.valueParam} = (\$T) config.getTypeAdapter(\$T.class).fromXml(reader, config, false)",
           implTypeName, implTypeName)
@@ -105,7 +109,13 @@ class GenericAdapterCodeGenerator(
     val typeElementNameMatcher = mutableListOf<PolymorphicTypeElementNameMatcher>()
     implementationNames.forEach {
       val implTypeName = elementUtils.getTypeElement(it)
-      typeElementNameMatcher.add(PolymorphicTypeElementNameMatcher(implTypeName.simpleName.toString().decapitalize(Locale.GERMANY), implTypeName.asType()))
+      val xmlElementName = (implTypeName as TypeElement).getXmlElementName()
+      // type element name matcher for name already exists
+      val duplicateTypElementNameMatcher = typeElementNameMatcher.firstOrNull { nameMatcher -> nameMatcher.xmlElementName == xmlElementName }
+      if (duplicateTypElementNameMatcher != null) {
+        throw ProcessingException(null, "The xmlElementName '$xmlElementName' for field '$it' is already used by '${duplicateTypElementNameMatcher.type}'")
+      }
+      typeElementNameMatcher.add(PolymorphicTypeElementNameMatcher(xmlElementName, implTypeName.asType()))
     }
 
     val orderElements = orderByInheritanceHierarchy(typeElementNameMatcher, elementUtils, typeUtils)

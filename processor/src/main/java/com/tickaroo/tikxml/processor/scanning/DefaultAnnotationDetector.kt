@@ -273,16 +273,14 @@ open class DefaultAnnotationDetector(protected val elementUtils: Elements, prote
       val (matcherType, matcherName) = try {
         Pair(matcher.type, matcher.name)
       } catch (mte: MirroredTypeException) {
-        Pair(mte.typeMirror, matcher.name.takeIf { it.isNotBlank() } ?: getXmlElementName(
-          (mte.typeMirror as DeclaredType).asElement() as TypeElement))
+        Pair(mte.typeMirror, matcher.name.takeIf { it.isNotBlank() } ?: ((mte.typeMirror as DeclaredType).asElement() as TypeElement).getXmlElementName())
       }
 
       val conflictingNameMatcher = nameMatchers.firstOrNull { nameMatcher ->
         val (nameMatcherType, nameMatcherName) = try {
           Pair(nameMatcher.type, matcher.name)
         } catch (mte: MirroredTypeException) {
-          Pair(mte.typeMirror, nameMatcher.name.takeIf { it.isNotBlank() } ?: getXmlElementName(
-            (mte.typeMirror as DeclaredType).asElement() as TypeElement))
+          Pair(mte.typeMirror, nameMatcher.name.takeIf { it.isNotBlank() } ?: ((mte.typeMirror as DeclaredType).asElement() as TypeElement).getXmlElementName())
         }
 
         nameMatcherName == matcherName && nameMatcherType != matcherType
@@ -321,7 +319,7 @@ open class DefaultAnnotationDetector(protected val elementUtils: Elements, prote
 
     // add generic types first
     genericTypes?.forEach { qualifiedName ->
-      val simpleName = qualifiedName.split(".").last().decapitalize(Locale.GERMANY)
+      val simpleName = elementUtils.getTypeElement(qualifiedName).getXmlElementName()
       namingMap[simpleName] = PolymorphicTypeElementNameMatcher(simpleName, elementUtils.getTypeElement(qualifiedName).asType())
     }
 
@@ -333,7 +331,7 @@ open class DefaultAnnotationDetector(protected val elementUtils: Elements, prote
 
         checkPublicClassWithEmptyConstructorOrAnnotatedConstructor(element, typeElement)
         checkTargetClassXmlAnnotated(element, typeElement)
-        val xmlElementName = if (matcher.name.isEmpty()) getXmlElementName(typeElement) else matcher.name
+        val xmlElementName = if (matcher.name.isEmpty()) typeElement.getXmlElementName() else matcher.name
 
         namingMap.values.firstOrNull { elementNameMatcher -> elementNameMatcher.type == typeElement.asType() }
           ?.also { elementNameMatcher ->
@@ -351,7 +349,7 @@ open class DefaultAnnotationDetector(protected val elementUtils: Elements, prote
         checkPublicClassWithEmptyConstructorOrAnnotatedConstructor(element, typeElement)
         checkTargetClassXmlAnnotated(element, typeElement)
 
-        val xmlElementName = if (matcher.name.isEmpty()) getXmlElementName(typeElement) else matcher.name
+        val xmlElementName = if (matcher.name.isEmpty()) typeElement.getXmlElementName() else matcher.name
 
         namingMap.values.firstOrNull { elementNameMatcher -> elementNameMatcher.type == typeMirror }
           ?.also { elementNameMatcher ->
@@ -469,15 +467,7 @@ open class DefaultAnnotationDetector(protected val elementUtils: Elements, prote
       throw ProcessingException(field,
         "The type ${typeElement.qualifiedName} used for field '$field' in ${field.getSurroundingClassQualifiedName()} can't be used, because it is not annotated with $annotationName. Annotate ${typeElement.qualifiedName} with $annotationName!")
     } else {
-      return getXmlElementName(typeElement)
+      return typeElement.getXmlElementName()
     }
   }
-
-  private fun getXmlElementName(typeElement: TypeElement, xmlAnnotation: Xml? = typeElement.getAnnotation(Xml::class.java),
-    genericAdapterAnnotation: GenericAdapter? = typeElement.getAnnotation(GenericAdapter::class.java)) =
-    if (xmlAnnotation == null || genericAdapterAnnotation == null && xmlAnnotation.name.isEmpty()) {
-      typeElement.simpleName.toString().decapitalize()
-    } else {
-      xmlAnnotation.name
-    }
 }

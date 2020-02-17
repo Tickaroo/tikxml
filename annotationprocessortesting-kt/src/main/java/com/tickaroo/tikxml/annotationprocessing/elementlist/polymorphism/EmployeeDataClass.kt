@@ -24,7 +24,7 @@ import com.tickaroo.tikxml.annotation.Xml
 /**
  * @author Hannes Dorfmann
  */
-@Xml(name = "employee")
+@Xml
 data class EmployeeDataClass(
         @field:PropertyElement
         var name: String? = null

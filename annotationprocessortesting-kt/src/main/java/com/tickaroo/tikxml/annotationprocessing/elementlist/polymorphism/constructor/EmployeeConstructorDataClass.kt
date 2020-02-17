@@ -25,5 +25,5 @@ import com.tickaroo.tikxml.annotationprocessing.elementlist.polymorphism.Person
 /**
  * @author Hannes Dorfmann
  */
-@Xml(name = "employee")
+@Xml
 data class EmployeeConstructorDataClass(@PropertyElement val name: String?) : Person

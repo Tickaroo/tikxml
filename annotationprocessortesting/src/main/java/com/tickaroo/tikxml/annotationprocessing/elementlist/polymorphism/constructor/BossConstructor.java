@@ -26,7 +26,7 @@ import java.util.Objects;
 /**
  * @author Hannes Dorfmann
  */
-@Xml(name = "boss")
+@Xml
 public class BossConstructor implements Person {
   private String firstName;
   private String lastName;

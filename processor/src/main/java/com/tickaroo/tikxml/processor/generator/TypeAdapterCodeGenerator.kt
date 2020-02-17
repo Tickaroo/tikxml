@@ -31,6 +31,7 @@ import com.tickaroo.tikxml.processor.field.AnnotatedClass
 import com.tickaroo.tikxml.processor.field.Namespace
 import com.tickaroo.tikxml.processor.field.PolymorphicSubstitutionField
 import com.tickaroo.tikxml.processor.field.PolymorphicSubstitutionListField
+import com.tickaroo.tikxml.processor.scanning.getXmlElementName
 import com.tickaroo.tikxml.processor.utils.isList
 import com.tickaroo.tikxml.processor.xml.PlaceholderXmlElement
 import com.tickaroo.tikxml.processor.xml.XmlChildElement
@@ -43,6 +44,7 @@ import javax.annotation.processing.Filer
 import javax.lang.model.element.Modifier
 import javax.lang.model.element.Modifier.PRIVATE
 import javax.lang.model.element.Modifier.PUBLIC
+import javax.lang.model.element.TypeElement
 import javax.lang.model.type.DeclaredType
 import javax.lang.model.type.TypeMirror
 import javax.lang.model.util.Elements
@@ -86,6 +88,7 @@ class TypeAdapterCodeGenerator(
       .addCode(codeGenUtils.generateAttributeBinders(annotatedClass))
 
     for ((xmlName, xmlElement) in annotatedClass.childElements) {
+
       if (xmlElement is PolymorphicSubstitutionField || xmlElement.generateGenericChildBinder) {
         val childElementBinderPrefix = when (xmlElement) {
           is PolymorphicSubstitutionListField -> xmlElement.element.simpleName
@@ -234,9 +237,9 @@ class TypeAdapterCodeGenerator(
 
             // check if you have to use different namings (e.g. ElementNameMatcher name attribute)
             generateSpecialMapping(concreteTypes, { concreteType ->
-              typeUtils.asElement(
-                (concreteType as PolymorphicSubstitutionListField).typeMirror).simpleName.toString().toLowerCase(
-                Locale.GERMANY) != concreteType.name.toLowerCase(Locale.GERMANY)
+              (typeUtils.asElement(
+                (concreteType as PolymorphicSubstitutionListField).typeMirror) as TypeElement).getXmlElementName() != concreteType.name.decapitalize(
+                Locale.GERMANY)
             }, fromXmlMethodSpecBuilder, genericListType, "v", true, isRootList)
 
             fromXmlMethodSpecBuilder
@@ -258,9 +261,9 @@ class TypeAdapterCodeGenerator(
           }
           else -> {
             generateSpecialMapping(concreteTypes, { concreteType ->
-              typeUtils.asElement(
-                (concreteType as PolymorphicSubstitutionField).typeMirror).simpleName.toString().toLowerCase(
-                Locale.GERMANY) != concreteType.name.toLowerCase(Locale.GERMANY)
+              (typeUtils.asElement(
+                (concreteType as PolymorphicSubstitutionField).typeMirror) as TypeElement).getXmlElementName() != concreteType.name.decapitalize(
+                Locale.GERMANY)
             }, fromXmlMethodSpecBuilder, genericType!!, "${CodeGeneratorHelper.valueParam}.$genericName", false, isRootList)
             fieldName =
               "${(genericType as DeclaredType).asElement().simpleName.toString().decapitalize(Locale.GERMANY)}ChildElementBinder"
@@ -594,7 +597,7 @@ class TypeAdapterCodeGenerator(
     val overridingXmlElementTagName = "overridingXmlElementTagName"
 
     val builder = MethodSpec.methodBuilder("toXml")
-      .addModifiers(Modifier.PUBLIC)
+      .addModifiers(PUBLIC)
       .addAnnotation(Override::class.java)
       .returns(Void.TYPE)
       .addParameter(XmlWriter::class.java, writer)

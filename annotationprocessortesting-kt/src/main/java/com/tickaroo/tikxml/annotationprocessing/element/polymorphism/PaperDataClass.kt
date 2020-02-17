@@ -28,8 +28,8 @@ import com.tickaroo.tikxml.annotation.Xml
 @Xml(name = "paper")
 data class PaperDataClass (
     @field:Element(typesByElement = [
-        ElementNameMatcher(type = JournalistDataClass::class),
-        ElementNameMatcher(type = OrganisationDataClass::class)
+        ElementNameMatcher(name = "journalist", type = JournalistDataClass::class),
+        ElementNameMatcher(name = "organisation", type = OrganisationDataClass::class)
     ])
     var writer: Writer? = null
 )

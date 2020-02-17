@@ -24,5 +24,5 @@ import com.tickaroo.tikxml.annotation.Xml
 /**
  * @author Hannes Dorfmann
  */
-@Xml(name = "journalist")
+@Xml
 data class JournalistDataClass(@field:PropertyElement var age: Int = 0) : Writer()
