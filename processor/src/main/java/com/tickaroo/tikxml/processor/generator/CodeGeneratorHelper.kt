@@ -32,6 +32,7 @@ import com.tickaroo.tikxml.processor.field.PolymorphicSubstitutionField
 import com.tickaroo.tikxml.processor.field.PolymorphicSubstitutionListField
 import com.tickaroo.tikxml.processor.field.PolymorphicTypeElementNameMatcher
 import com.tickaroo.tikxml.processor.field.access.FieldAccessResolver
+import com.tickaroo.tikxml.processor.scanning.getXmlElementName
 import com.tickaroo.tikxml.processor.utils.isBoolean
 import com.tickaroo.tikxml.processor.utils.isDouble
 import com.tickaroo.tikxml.processor.utils.isInt
@@ -51,6 +52,7 @@ import java.util.Locale
 import java.util.Objects
 import javax.lang.model.element.Element
 import javax.lang.model.element.Modifier
+import javax.lang.model.element.TypeElement
 import javax.lang.model.type.TypeMirror
 import javax.lang.model.util.Elements
 import javax.lang.model.util.Types
@@ -443,10 +445,7 @@ class CodeGeneratorHelper(
             "Oops: an unexpected exception has occurred while determining the correct order for inheritance hierarchy. Please file an issue at https://github.com/Tickaroo/tikxml/issues . Some debug information: ordered hierarchy elements: ${orderdByInheritanceHierarchy.size} ;  TypeElementMatcher size ${typeElementNameMatcher.size} ; ordered hierarchy list: ${orderdByInheritanceHierarchy} ; TypeElementMatcher list ${typeElementNameMatcher}")
         }
         val filteredOrderdByInheritanceHierarchy = orderdByInheritanceHierarchy.filter {
-          val typeElementName = typeUtils.asElement(it.type).simpleName.toString()
-          val typeName =
-            typeElementName.substring(0, 1).toLowerCase(Locale.GERMANY) + typeElementName.substring(1, typeElementName.length)
-          it.xmlElementName != typeName
+          (typeUtils.asElement(it.type) as TypeElement).getXmlElementName() != it.xmlElementName
         }
         filteredOrderdByInheritanceHierarchy.forEachIndexed { i, nameMatcher ->
           if (i == 0) {
