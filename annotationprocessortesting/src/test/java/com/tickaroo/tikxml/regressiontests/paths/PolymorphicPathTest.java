@@ -94,4 +94,27 @@ public class PolymorphicPathTest {
     BookStore bookStore2 = xml.read(TestUtils.sourceFrom(xmlStr), BookStore.class);
     Assert.assertEquals(bookStore, bookStore2);
   }
+
+  @Test
+  public void polymorphicEmptyElement() throws IOException {
+    TikXml xml = new TikXml.Builder().exceptionOnUnreadXml(false).build();
+
+    BookStore bookStore = xml.read(TestUtils.sourceForFile("regression/bookstore_empty.xml"), BookStore.class);
+    Assert.assertNotNull(bookStore.book);
+    Assert.assertEquals(bookStore.books.size(), 0);
+    Book specialBook = bookStore.book;
+    Assert.assertTrue(specialBook instanceof Roman);
+
+    Assert.assertEquals(((Roman)specialBook).name, "Roman 1");
+
+    // Writing xml test
+    Buffer buffer = new Buffer();
+    xml.write(buffer, bookStore);
+
+    String xmlStr =
+        "<?xml version=\"1.0\" encoding=\"UTF-8\"?><bookStore><specialBook><roman name=\"Roman 1\"/></specialBook><otherBooks/></bookStore>";
+    Assert.assertEquals(xmlStr, TestUtils.bufferToString(buffer));
+    BookStore bookStore2 = xml.read(TestUtils.sourceFrom(xmlStr), BookStore.class);
+    Assert.assertEquals(bookStore, bookStore2);
+  }
 }

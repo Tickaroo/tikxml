@@ -93,4 +93,26 @@ public class PolymorphicPathTest {
     CompanyDataClass company2 = xml.read(TestUtils.sourceFrom(xmlStr), CompanyDataClass.class);
     Assert.assertEquals(company, company2);
   }
+
+  @Test
+  public void emptyList() throws IOException, ParseException {
+    TikXml xml = new TikXml.Builder().exceptionOnUnreadXml(false).build();
+
+    CompanyDataClass company =
+        xml.read(TestUtils.sourceForFile("regression/polymprphic_empty_list.xml"), CompanyDataClass.class);
+
+    Assert.assertEquals(company.getPersons().size(), 0);
+
+    // Writing xml test
+
+    Buffer buffer = new Buffer();
+    xml.write(buffer, company);
+
+    String xmlStr =
+        "<?xml version=\"1.0\" encoding=\"UTF-8\"?><company><department><persons/></department></company>";
+    Assert.assertEquals(xmlStr, TestUtils.bufferToString(buffer));
+
+    CompanyDataClass company2 = xml.read(TestUtils.sourceFrom(xmlStr), CompanyDataClass.class);
+    Assert.assertEquals(company, company2);
+  }
 }
