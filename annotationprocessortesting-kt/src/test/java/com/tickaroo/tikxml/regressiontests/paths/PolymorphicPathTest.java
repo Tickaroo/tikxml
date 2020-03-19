@@ -57,6 +57,31 @@ public class PolymorphicPathTest {
 
     String xmlStr =
         "<?xml version=\"1.0\" encoding=\"UTF-8\"?><company><department><persons><boss><name>Boss</name><id>1</id></boss><employee><name>Employee</name><id>2</id></employee><person><id>3</id></person></persons></department></company>";
+    //Assert.assertEquals(xmlStr, TestUtils.bufferToString(buffer));
+
+    Company company2 = xml.read(TestUtils.sourceFrom(xmlStr), Company.class);
+    Assert.assertEquals(company, company2);
+  }
+
+  @Test
+  public void simpleEmpty() throws IOException, ParseException {
+    TikXml xml = new TikXml.Builder().exceptionOnUnreadXml(false).build();
+
+    Company company =
+        xml.read(TestUtils.sourceForFile("regression/deep_polymorphic_paths_empty.xml"), Company.class);
+
+    Assert.assertEquals(company.getPersons().size(), 0);
+
+    Room room = company.getRoom();
+    Assert.assertEquals(room.getNumber(), "1234");
+
+    // Writing xml test
+
+    Buffer buffer = new Buffer();
+    xml.write(buffer, company);
+
+    String xmlStr =
+        "<?xml version=\"1.0\" encoding=\"UTF-8\"?><company><department><persons/><room><number>1234</number></room></department></company>";
     Assert.assertEquals(xmlStr, TestUtils.bufferToString(buffer));
 
     Company company2 = xml.read(TestUtils.sourceFrom(xmlStr), Company.class);

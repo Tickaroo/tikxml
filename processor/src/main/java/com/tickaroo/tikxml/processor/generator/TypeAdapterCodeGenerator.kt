@@ -294,6 +294,8 @@ class TypeAdapterCodeGenerator(
     isGenericList: Boolean,
     isRootList: Boolean) {
 
+
+
     var hasSpecialMapping = false
     val firstConreteType = concreteTypes.first() as PolymorphicSubstitutionField
     concreteTypes

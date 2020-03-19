@@ -1,0 +1,12 @@
+<company>
+  <department>
+    <persons></persons>
+  </department>
+  <boss>
+    <id>1</id>
+    <name>Boss</name>
+  </boss>
+  <testStatisch>
+    <name>Test</name>
+  </testStatisch>
+</company>

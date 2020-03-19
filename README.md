@@ -29,7 +29,7 @@ Also, an [AutoValue](https://github.com/google/auto/tree/master/value) extension
 annotationProcessor 'com.tickaroo.tikxml:auto-value-tikxml:0.8.15'
 ```
 
-Latest snapshot `0.9.0_7-SNAPSHOT` available:
+Latest snapshot `0.9.0_8-SNAPSHOT` available:
 
 ```groovy
 repositories {

@@ -1,0 +1,6 @@
+<bookstore>
+  <specialBook>
+    <roman name="Roman 1"/>
+  </specialBook>
+  <otherBooks />
+</bookstore>

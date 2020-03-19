@@ -112,7 +112,9 @@ public final class TikXml {
 
     T value = (T)config.getTypeAdapter(clazz).fromXml(reader, config, false);
 
-    reader.endElement();
+    if (reader.hasElement()) {
+      reader.endElement();
+    }
 
     return value;
   }
