@@ -1,0 +1,1722 @@
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+	xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+	xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd"
+xmlns:rawvoice="http://www.rawvoice.com/rawvoiceRssModule/"
+xmlns:googleplay="http://www.google.com/schemas/play-podcasts/1.0"
+>
+
+<channel>
+	<title>Rádiofobia Classics</title>
+	<atom:link href="https://radiofobia.com.br/podcast/category/podcast/classics/feed/" rel="self" type="application/rss+xml" />
+	<link>https://radiofobia.com.br/podcast/category/podcast/classics/</link>
+	<description>Programa mensal apresentado por Leo Lopes, apresentando a biografia e alguns dos maiores sucessos dos grandes nomes da música mundial!</description>
+	<lastBuildDate>Tue, 24 Mar 2020 21:43:31 +0000</lastBuildDate>
+	<language>pt-BR</language>
+	<sy:updatePeriod>
+	hourly	</sy:updatePeriod>
+	<sy:updateFrequency>
+	1	</sy:updateFrequency>
+	<generator>https://wordpress.org/?v=5.3.2</generator>
+<!-- podcast_generator="Blubrry PowerPress/8.0.3" mode="advanced" category="450" Blubrry PowerPress Podcasting plugin for WordPress (https://www.blubrry.com/powerpress/) -->
+	<itunes:summary>Programa mensal apresentado por Leo Lopes, apresentando a biografia e alguns dos maiores sucessos dos grandes nomes da música mundial!</itunes:summary>
+	<itunes:author>Rádiofobia Podcast Network</itunes:author>
+	<itunes:image href="http://radiofobia.com.br/images/itunes/cover_classics_3000x3000-v2.jpg" />
+	<itunes:owner>
+		<itunes:name>Rádiofobia Podcast Network</itunes:name>
+		<itunes:email>radiofobia@gmail.com</itunes:email>
+	</itunes:owner>
+	<managingEditor>radiofobia@gmail.com (Rádiofobia Podcast Network)</managingEditor>
+	<copyright>Copyright &#xA9; RADIOFOBIA 2009-2017</copyright>
+	<itunes:subtitle>O podcast musical do RÁDIOFOBIA!</itunes:subtitle>
+	<image>
+		<title>Rádiofobia Classics</title>
+		<url>http://radiofobia.com.br/images/itunes/cover_classics_3000x3000-v2.jpg</url>
+		<link>https://radiofobia.com.br/podcast/category/podcast/classics/</link>
+	</image>
+	<itunes:category text="Music">
+	</itunes:category>
+	<googleplay:category text="Music"/>
+	<itunes:category text="Music">
+		<itunes:category text="Music History"></itunes:category>
+	</itunes:category>
+	<itunes:category text="Arts">
+	</itunes:category>
+	<rawvoice:subscribe feed="https://radiofobia.com.br/podcast/category/podcast/classics/feed/" itunes="https://itunes.apple.com/br/podcast/radiofobia-classics/id646787434"></rawvoice:subscribe>
+	<item>
+		<title>EDITORIAL &#8211; Ações da Rádiofobia Podcast Network face à pandemia do Coronavírus</title>
+		<link>https://radiofobia.com.br/podcast/2020/03/editorial-acoes-da-radiofobia-podcast-network-face-a-pandemia-do-coronavirus/</link>
+				<comments>https://radiofobia.com.br/podcast/2020/03/editorial-acoes-da-radiofobia-podcast-network-face-a-pandemia-do-coronavirus/#respond</comments>
+				<pubDate>Tue, 24 Mar 2020 21:43:31 +0000</pubDate>
+		<dc:creator><![CDATA[Leo Lopes]]></dc:creator>
+				<category><![CDATA[Alô Ténica]]></category>
+		<category><![CDATA[Mim Falei]]></category>
+		<category><![CDATA[Pod Isso, Arnaldo?]]></category>
+		<category><![CDATA[Podcast]]></category>
+		<category><![CDATA[RádiofoBeer]]></category>
+		<category><![CDATA[Rádiofobia]]></category>
+		<category><![CDATA[Rádiofobia Classics]]></category>
+		<category><![CDATA[Texto Sentido]]></category>
+		<category><![CDATA[Tirando o Pó]]></category>
+		<category><![CDATA[Voz Off]]></category>
+		<category><![CDATA[Coronavirus]]></category>
+		<category><![CDATA[Editorial]]></category>
+		<category><![CDATA[pandemia]]></category>
+
+		<guid isPermaLink="false">http://radiofobia.com.br/podcast/?p=22978</guid>
+				<description><![CDATA[Um áudio publicado nos FEEDS de todos os podcasts da Rádiofobia Podcast Network com um posicionamento sobre ações relacionadas à pandemia do Coronavírus.]]></description>
+						<wfw:commentRss>https://radiofobia.com.br/podcast/2020/03/editorial-acoes-da-radiofobia-podcast-network-face-a-pandemia-do-coronavirus/feed/</wfw:commentRss>
+		<slash:comments>0</slash:comments>
+				<enclosure url="https://media.blubrry.com/radiofobia/traffic.libsyn.com/radiofobia/editorial_coronavirus_mar_2020.mp3" length="6908852" type="audio/mpeg" />
+			<itunes:subtitle>Um áudio publicado nos FEEDS de todos os podcasts da Rádiofobia Podcast Network com um posicionamento sobre ações relacionadas à pandemia do Coronavírus.</itunes:subtitle>
+		<itunes:summary>Um áudio publicado nos FEEDS de todos os podcasts da Rádiofobia Podcast Network com um posicionamento sobre ações relacionadas à pandemia do Coronavírus.</itunes:summary>
+		<itunes:author>Rádiofobia Podcast Network</itunes:author>
+		<itunes:image href="http://radiofobia.com.br/podcast/wp-content/uploads/2020/03/cover_editorial-covid-19.jpg" />
+		<itunes:duration>9:03</itunes:duration>
+	</item>
+		<item>
+		<title>RÁDIOFOBIA Classics #62 &#8211; Bon Jovi</title>
+		<link>https://radiofobia.com.br/podcast/2018/11/radiofobia-classics-62-bon-jovi/</link>
+				<comments>https://radiofobia.com.br/podcast/2018/11/radiofobia-classics-62-bon-jovi/#comments</comments>
+				<pubDate>Mon, 12 Nov 2018 22:30:14 +0000</pubDate>
+		<dc:creator><![CDATA[Leo Lopes]]></dc:creator>
+				<category><![CDATA[Podcast]]></category>
+		<category><![CDATA[Rádiofobia Classics]]></category>
+		<category><![CDATA[Always]]></category>
+		<category><![CDATA[Bon Jovi]]></category>
+		<category><![CDATA[I'll Be There For You]]></category>
+		<category><![CDATA[Jon Bon Jovi]]></category>
+		<category><![CDATA[Leo Lopes]]></category>
+		<category><![CDATA[Living on a Prayer]]></category>
+		<category><![CDATA[Pop]]></category>
+		<category><![CDATA[RÁDIOFOBIA Classics]]></category>
+		<category><![CDATA[Rock]]></category>
+
+		<guid isPermaLink="false">http://radiofobia.com.br/podcast/?p=16250</guid>
+				<description><![CDATA[Um programa altamente nostálgico com a biografia e nada menos que 35 sucessos de um das maiores bandas de pop rock de todos os tempos: BON JOVI!]]></description>
+						<wfw:commentRss>https://radiofobia.com.br/podcast/2018/11/radiofobia-classics-62-bon-jovi/feed/</wfw:commentRss>
+		<slash:comments>3</slash:comments>
+				<enclosure url="http://media.blubrry.com/radiofobia/traffic.libsyn.com/radiofobia/radiofobia_classics_62_bon_jovi.mp3" length="198111972" type="audio/mpeg" />
+			<itunes:subtitle>Um programa altamente nostálgico com a biografia e nada menos que 35 sucessos de um das maiores bandas de pop rock de todos os tempos: BON JOVI!</itunes:subtitle>
+		<itunes:summary>Um programa altamente nostálgico com a biografia e nada menos que 35 sucessos de um das maiores bandas de pop rock de todos os tempos: BON JOVI!</itunes:summary>
+		<itunes:author>Rádiofobia Podcast Network</itunes:author>
+		<itunes:duration>3:25:37</itunes:duration>
+	</item>
+		<item>
+		<title>RÁDIOFOBIA Classics #61 &#8211; Aretha Franklin</title>
+		<link>https://radiofobia.com.br/podcast/2018/10/radiofobia-classics-61-aretha-franklin/</link>
+				<comments>https://radiofobia.com.br/podcast/2018/10/radiofobia-classics-61-aretha-franklin/#comments</comments>
+				<pubDate>Mon, 15 Oct 2018 03:01:27 +0000</pubDate>
+		<dc:creator><![CDATA[Leo Lopes]]></dc:creator>
+				<category><![CDATA[Podcast]]></category>
+		<category><![CDATA[Rádiofobia Classics]]></category>
+		<category><![CDATA[Aretha Franklin]]></category>
+		<category><![CDATA[Leo Lopes]]></category>
+		<category><![CDATA[RÁDIOFOBIA Classics]]></category>
+		<category><![CDATA[Respect]]></category>
+		<category><![CDATA[soul]]></category>
+		<category><![CDATA[soul music]]></category>
+		<category><![CDATA[Think]]></category>
+
+		<guid isPermaLink="false">http://radiofobia.com.br/podcast/?p=16098</guid>
+				<description><![CDATA[Neste mês de outubro trazemos a biografia e 46 sucessos da rainha do soul, aquela que é considerada a maior cantora de todos os tempos: ARETHA FRANKLIN!]]></description>
+						<wfw:commentRss>https://radiofobia.com.br/podcast/2018/10/radiofobia-classics-61-aretha-franklin/feed/</wfw:commentRss>
+		<slash:comments>2</slash:comments>
+				<enclosure url="http://media.blubrry.com/radiofobia/traffic.libsyn.com/radiofobia/radiofobia_classics_61_aretha_franklin.mp3" length="199837679" type="audio/mpeg" />
+			<itunes:subtitle>Neste mês de outubro trazemos a biografia e 46 sucessos da rainha do soul, aquela que é considerada a maior cantora de todos os tempos: ARETHA FRANKLIN!</itunes:subtitle>
+		<itunes:summary>Neste mês de outubro trazemos a biografia e 46 sucessos da rainha do soul, aquela que é considerada a maior cantora de todos os tempos: ARETHA FRANKLIN!</itunes:summary>
+		<itunes:author>Rádiofobia Podcast Network</itunes:author>
+		<itunes:duration>3:27:23</itunes:duration>
+	</item>
+		<item>
+		<title>RÁDIOFOBIA Classics #60 &#8211; Tears for Fears</title>
+		<link>https://radiofobia.com.br/podcast/2018/08/radiofobia-classics-60-tears-for-fears/</link>
+				<comments>https://radiofobia.com.br/podcast/2018/08/radiofobia-classics-60-tears-for-fears/#comments</comments>
+				<pubDate>Fri, 17 Aug 2018 14:18:11 +0000</pubDate>
+		<dc:creator><![CDATA[Leo Lopes]]></dc:creator>
+				<category><![CDATA[Podcast]]></category>
+		<category><![CDATA[Rádiofobia Classics]]></category>
+		<category><![CDATA[Curt Smith]]></category>
+		<category><![CDATA[Leo Lopes]]></category>
+		<category><![CDATA[new wave]]></category>
+		<category><![CDATA[Pop]]></category>
+		<category><![CDATA[RÁDIOFOBIA Classics]]></category>
+		<category><![CDATA[Rock]]></category>
+		<category><![CDATA[Roland Orzabal]]></category>
+		<category><![CDATA[Shout]]></category>
+		<category><![CDATA[Tears for Fears]]></category>
+
+		<guid isPermaLink="false">http://radiofobia.com.br/podcast/?p=15919</guid>
+				<description><![CDATA[Este mês apresentamos a biografia e 31 sucessos do duo britânico que ainda hoje é identificado como a cara da década de 1980: TEARS FOR FEARS!]]></description>
+						<wfw:commentRss>https://radiofobia.com.br/podcast/2018/08/radiofobia-classics-60-tears-for-fears/feed/</wfw:commentRss>
+		<slash:comments>5</slash:comments>
+				<enclosure url="http://media.blubrry.com/radiofobia/traffic.libsyn.com/radiofobia/radiofobia_classics_60_tears_for_fears.mp3" length="184897002" type="audio/mpeg" />
+			<itunes:subtitle>Este mês apresentamos a biografia e 31 sucessos do duo britânico que ainda hoje é identificado como a cara da década de 1980: TEARS FOR FEARS!</itunes:subtitle>
+		<itunes:summary>Este mês apresentamos a biografia e 31 sucessos do duo britânico que ainda hoje é identificado como a cara da década de 1980: TEARS FOR FEARS!</itunes:summary>
+		<itunes:author>Rádiofobia Podcast Network</itunes:author>
+		<itunes:duration>3:11:53</itunes:duration>
+	</item>
+		<item>
+		<title>RÁDIOFOBIA Classics #59 &#8211; Janis Joplin</title>
+		<link>https://radiofobia.com.br/podcast/2018/07/radiofobia-classics-59-janis-joplin/</link>
+				<comments>https://radiofobia.com.br/podcast/2018/07/radiofobia-classics-59-janis-joplin/#respond</comments>
+				<pubDate>Wed, 25 Jul 2018 01:19:22 +0000</pubDate>
+		<dc:creator><![CDATA[Leo Lopes]]></dc:creator>
+				<category><![CDATA[Podcast]]></category>
+		<category><![CDATA[Rádiofobia Classics]]></category>
+		<category><![CDATA[blues]]></category>
+		<category><![CDATA[Janis Joplin]]></category>
+		<category><![CDATA[Leo Lopes]]></category>
+		<category><![CDATA[Pearl]]></category>
+		<category><![CDATA[RÁDIOFOBIA Classics]]></category>
+		<category><![CDATA[Rock]]></category>
+		<category><![CDATA[soul]]></category>
+		<category><![CDATA[Woodstock]]></category>
+
+		<guid isPermaLink="false">http://radiofobia.com.br/podcast/?p=15857</guid>
+				<description><![CDATA[Neste mês de julho, trazemos a biografia e 32 sucessos de uma das maiores vozes da música mundial em todos os tempos: a "Pérola" JANIS JOPLIN!]]></description>
+						<wfw:commentRss>https://radiofobia.com.br/podcast/2018/07/radiofobia-classics-59-janis-joplin/feed/</wfw:commentRss>
+		<slash:comments>0</slash:comments>
+				<enclosure url="http://media.blubrry.com/radiofobia/traffic.libsyn.com/radiofobia/radiofobia_classics_59_janis_joplin.mp3" length="167728018" type="audio/mpeg" />
+			<itunes:subtitle>Neste mês de julho, trazemos a biografia e 32 sucessos de uma das maiores vozes da música mundial em todos os tempos: a &quot;Pérola&quot; JANIS JOPLIN!</itunes:subtitle>
+		<itunes:summary>Neste mês de julho, trazemos a biografia e 32 sucessos de uma das maiores vozes da música mundial em todos os tempos: a &quot;Pérola&quot; JANIS JOPLIN!</itunes:summary>
+		<itunes:author>Rádiofobia Podcast Network</itunes:author>
+		<itunes:duration>2:53:58</itunes:duration>
+	</item>
+		<item>
+		<title>RÁDIOFOBIA Classics #58 &#8211; Charlie Brown Jr</title>
+		<link>https://radiofobia.com.br/podcast/2018/06/radiofobia-classics-58-charlie-brown-jr/</link>
+				<comments>https://radiofobia.com.br/podcast/2018/06/radiofobia-classics-58-charlie-brown-jr/#comments</comments>
+				<pubDate>Fri, 15 Jun 2018 22:18:09 +0000</pubDate>
+		<dc:creator><![CDATA[Leo Lopes]]></dc:creator>
+				<category><![CDATA[Podcast]]></category>
+		<category><![CDATA[Rádiofobia Classics]]></category>
+		<category><![CDATA[Champignon]]></category>
+		<category><![CDATA[Charlie Brown Jr]]></category>
+		<category><![CDATA[Chorão]]></category>
+		<category><![CDATA[Leo Lopes]]></category>
+		<category><![CDATA[RÁDIOFOBIA Classics]]></category>
+		<category><![CDATA[Rock]]></category>
+
+		<guid isPermaLink="false">http://radiofobia.com.br/podcast/?p=15801</guid>
+				<description><![CDATA[No programa de junho, apresentamos a biografia e 31 sucessos de uma banda de rock brasileira que influenciou toda uma geração: CHARLIE BROWN JR!]]></description>
+						<wfw:commentRss>https://radiofobia.com.br/podcast/2018/06/radiofobia-classics-58-charlie-brown-jr/feed/</wfw:commentRss>
+		<slash:comments>6</slash:comments>
+				<enclosure url="http://media.blubrry.com/radiofobia/traffic.libsyn.com/radiofobia/radiofobia_classics_58_charlie_brown_jr.mp3" length="129513990" type="audio/mpeg" />
+			<itunes:subtitle>No programa de junho, apresentamos a biografia e 31 sucessos de uma banda de rock brasileira que influenciou toda uma geração: CHARLIE BROWN JR!</itunes:subtitle>
+		<itunes:summary>No programa de junho, apresentamos a biografia e 31 sucessos de uma banda de rock brasileira que influenciou toda uma geração: CHARLIE BROWN JR!</itunes:summary>
+		<itunes:author>Rádiofobia Podcast Network</itunes:author>
+		<itunes:duration>2:14:11</itunes:duration>
+	</item>
+		<item>
+		<title>RÁDIOFOBIA Classics #57 &#8211; Linkin Park</title>
+		<link>https://radiofobia.com.br/podcast/2018/05/radiofobia-classics-57-linkin-park/</link>
+				<comments>https://radiofobia.com.br/podcast/2018/05/radiofobia-classics-57-linkin-park/#comments</comments>
+				<pubDate>Sat, 26 May 2018 02:33:40 +0000</pubDate>
+		<dc:creator><![CDATA[Leo Lopes]]></dc:creator>
+				<category><![CDATA[Podcast]]></category>
+		<category><![CDATA[Rádiofobia Classics]]></category>
+		<category><![CDATA[Chester Bennington]]></category>
+		<category><![CDATA[Leo Lopes]]></category>
+		<category><![CDATA[Linkin Park]]></category>
+		<category><![CDATA[metal]]></category>
+		<category><![CDATA[Mike Shinoda]]></category>
+		<category><![CDATA[Numb]]></category>
+		<category><![CDATA[RÁDIOFOBIA Classics]]></category>
+
+		<guid isPermaLink="false">http://radiofobia.com.br/podcast/?p=15739</guid>
+				<description><![CDATA[No programa de maio, trazemos até você a biografia e 29 sucessos de uma das bandas mais importantes deste século: LINKIN PARK!]]></description>
+						<wfw:commentRss>https://radiofobia.com.br/podcast/2018/05/radiofobia-classics-57-linkin-park/feed/</wfw:commentRss>
+		<slash:comments>1</slash:comments>
+				<enclosure url="http://media.blubrry.com/radiofobia/traffic.libsyn.com/radiofobia/radiofobia_classics_57_linkin_park.mp3" length="119672588" type="audio/mpeg" />
+			<itunes:subtitle>No programa de maio, trazemos até você a biografia e 29 sucessos de uma das bandas mais importantes deste século: LINKIN PARK!</itunes:subtitle>
+		<itunes:summary>No programa de maio, trazemos até você a biografia e 29 sucessos de uma das bandas mais importantes deste século: LINKIN PARK!</itunes:summary>
+		<itunes:author>Rádiofobia Podcast Network</itunes:author>
+		<itunes:duration>2:03:56</itunes:duration>
+	</item>
+		<item>
+		<title>RÁDIOFOBIA Classics #56 &#8211; Bee Gees</title>
+		<link>https://radiofobia.com.br/podcast/2018/04/radiofobia-classics-56-bee-gees/</link>
+				<comments>https://radiofobia.com.br/podcast/2018/04/radiofobia-classics-56-bee-gees/#comments</comments>
+				<pubDate>Mon, 02 Apr 2018 03:01:46 +0000</pubDate>
+		<dc:creator><![CDATA[Leo Lopes]]></dc:creator>
+				<category><![CDATA[Podcast]]></category>
+		<category><![CDATA[Rádiofobia Classics]]></category>
+		<category><![CDATA[Barry Gibb]]></category>
+		<category><![CDATA[Bee Gees]]></category>
+		<category><![CDATA[disco music]]></category>
+		<category><![CDATA[Leo Lopes]]></category>
+		<category><![CDATA[Maurice Gibb]]></category>
+		<category><![CDATA[RÁDIOFOBIA Classics]]></category>
+		<category><![CDATA[Robin Gibb]]></category>
+
+		<guid isPermaLink="false">http://radiofobia.com.br/podcast/?p=15675</guid>
+				<description><![CDATA[No programa de abril de 2018, falamos tudo sobre a carreira de um dos maiores fenômenos da música mundial em todos os tempos: os BEE GEES!
+
+]]></description>
+						<wfw:commentRss>https://radiofobia.com.br/podcast/2018/04/radiofobia-classics-56-bee-gees/feed/</wfw:commentRss>
+		<slash:comments>1</slash:comments>
+				<enclosure url="http://media.blubrry.com/radiofobia/traffic.libsyn.com/radiofobia/radiofobia_classics_56_bee_gees.mp3" length="149750131" type="audio/mpeg" />
+			<itunes:subtitle>No programa de abril de 2018, falamos tudo sobre a carreira de um dos maiores fenômenos da música mundial em todos os tempos: os BEE GEES!</itunes:subtitle>
+		<itunes:summary>No programa de abril de 2018, falamos tudo sobre a carreira de um dos maiores fenômenos da música mundial em todos os tempos: os BEE GEES!</itunes:summary>
+		<itunes:author>Rádiofobia Podcast Network</itunes:author>
+		<itunes:duration>2:35:09</itunes:duration>
+	</item>
+		<item>
+		<title>RÁDIOFOBIA Classics #55 &#8211; Cássia Eller</title>
+		<link>https://radiofobia.com.br/podcast/2018/03/radiofobia-classics-55-cassia-eller/</link>
+				<comments>https://radiofobia.com.br/podcast/2018/03/radiofobia-classics-55-cassia-eller/#respond</comments>
+				<pubDate>Fri, 09 Mar 2018 02:59:09 +0000</pubDate>
+		<dc:creator><![CDATA[Leo Lopes]]></dc:creator>
+				<category><![CDATA[Podcast]]></category>
+		<category><![CDATA[Rádiofobia Classics]]></category>
+		<category><![CDATA[Cássia Eller]]></category>
+		<category><![CDATA[Leo Lopes]]></category>
+		<category><![CDATA[pop rock]]></category>
+		<category><![CDATA[Pop rock nacional]]></category>
+		<category><![CDATA[RÁDIOFOBIA Classics]]></category>
+
+		<guid isPermaLink="false">http://radiofobia.com.br/podcast/?p=15619</guid>
+				<description><![CDATA[Neste mês de março prestamos homenagem às mulheres trazendo a biografia e 25 sucessos de uma das maiores intérpretes que a música brasileira já conheceu: CÁSSIA ELLER!]]></description>
+						<wfw:commentRss>https://radiofobia.com.br/podcast/2018/03/radiofobia-classics-55-cassia-eller/feed/</wfw:commentRss>
+		<slash:comments>0</slash:comments>
+				<enclosure url="http://media.blubrry.com/radiofobia/traffic.libsyn.com/radiofobia/radiofobia_classics_55_cassia_eller.mp3" length="113931270" type="audio/mpeg" />
+			<itunes:subtitle>Neste mês de março prestamos homenagem às mulheres trazendo a biografia e 25 sucessos de uma das maiores intérpretes que a música brasileira já conheceu: CÁSSIA ELLER!</itunes:subtitle>
+		<itunes:summary>Neste mês de março prestamos homenagem às mulheres trazendo a biografia e 25 sucessos de uma das maiores intérpretes que a música brasileira já conheceu: CÁSSIA ELLER!</itunes:summary>
+		<itunes:author>Rádiofobia Podcast Network</itunes:author>
+		<itunes:duration>1:57:58</itunes:duration>
+	</item>
+		<item>
+		<title>RÁDIOFOBIA Classics #54 &#8211; George Michael</title>
+		<link>https://radiofobia.com.br/podcast/2018/02/radiofobia-classics-54-george-michael/</link>
+				<comments>https://radiofobia.com.br/podcast/2018/02/radiofobia-classics-54-george-michael/#respond</comments>
+				<pubDate>Mon, 05 Feb 2018 02:01:14 +0000</pubDate>
+		<dc:creator><![CDATA[Leo Lopes]]></dc:creator>
+				<category><![CDATA[Podcast]]></category>
+		<category><![CDATA[Rádiofobia Classics]]></category>
+		<category><![CDATA[Careless Whisper]]></category>
+		<category><![CDATA[Faith]]></category>
+		<category><![CDATA[Freedom]]></category>
+		<category><![CDATA[George Michael]]></category>
+		<category><![CDATA[Leo Lopes]]></category>
+		<category><![CDATA[RÁDIOFOBIA Classics]]></category>
+		<category><![CDATA[Wham!]]></category>
+
+		<guid isPermaLink="false">http://radiofobia.com.br/podcast/?p=15556</guid>
+				<description><![CDATA[No programa de hoje finalmente prestamos homenagem a um dos maiores artistas da música em todos os tempos, contando a história e tocando 30 sucessos de GEORGE MICHAEL!]]></description>
+						<wfw:commentRss>https://radiofobia.com.br/podcast/2018/02/radiofobia-classics-54-george-michael/feed/</wfw:commentRss>
+		<slash:comments>0</slash:comments>
+				<enclosure url="http://media.blubrry.com/radiofobia/traffic.libsyn.com/radiofobia/radiofobia_classics_54_george_michael.mp3" length="175827617" type="audio/mpeg" />
+			<itunes:subtitle>No programa de hoje finalmente prestamos homenagem a um dos maiores artistas da música em todos os tempos, contando a história e tocando 30 sucessos de GEORGE MICHAEL!</itunes:subtitle>
+		<itunes:summary>No programa de hoje finalmente prestamos homenagem a um dos maiores artistas da música em todos os tempos, contando a história e tocando 30 sucessos de GEORGE MICHAEL!</itunes:summary>
+		<itunes:author>Rádiofobia Podcast Network</itunes:author>
+		<itunes:duration>3:02:28</itunes:duration>
+	</item>
+		<item>
+		<title>RÁDIOFOBIA Classics #53 &#8211; Chico Science</title>
+		<link>https://radiofobia.com.br/podcast/2018/01/radiofobia-classics-53-chico-science/</link>
+				<comments>https://radiofobia.com.br/podcast/2018/01/radiofobia-classics-53-chico-science/#comments</comments>
+				<pubDate>Mon, 08 Jan 2018 02:01:37 +0000</pubDate>
+		<dc:creator><![CDATA[Leo Lopes]]></dc:creator>
+				<category><![CDATA[Podcast]]></category>
+		<category><![CDATA[Rádiofobia Classics]]></category>
+		<category><![CDATA[Chico Science]]></category>
+		<category><![CDATA[Leo Lopes]]></category>
+		<category><![CDATA[manguebeat]]></category>
+		<category><![CDATA[maracatu]]></category>
+		<category><![CDATA[Nação Zumbi]]></category>
+		<category><![CDATA[RÁDIOFOBIA Classics]]></category>
+
+		<guid isPermaLink="false">http://radiofobia.com.br/podcast/?p=15518</guid>
+				<description><![CDATA[No primeiro programa de 2018, você vai ouvir a história e 24 sucessos de um dos músicos mais originais da música brasileira: o poeta do mangue CHICO SCIENCE!]]></description>
+						<wfw:commentRss>https://radiofobia.com.br/podcast/2018/01/radiofobia-classics-53-chico-science/feed/</wfw:commentRss>
+		<slash:comments>3</slash:comments>
+				<enclosure url="http://media.blubrry.com/radiofobia/traffic.libsyn.com/radiofobia/radiofobia_classics_53_chico_science.mp3" length="110458126" type="audio/mpeg" />
+			<itunes:subtitle>No primeiro programa de 2018, você vai ouvir a história e 24 sucessos de um dos músicos mais originais da música brasileira: o poeta do mangue CHICO SCIENCE!</itunes:subtitle>
+		<itunes:summary>No primeiro programa de 2018, você vai ouvir a história e 24 sucessos de um dos músicos mais originais da música brasileira: o poeta do mangue CHICO SCIENCE!</itunes:summary>
+		<itunes:author>Rádiofobia Podcast Network</itunes:author>
+		<itunes:duration>1:54:20</itunes:duration>
+	</item>
+		<item>
+		<title>RÁDIOFOBIA Classics #52 &#8211; Johnny Cash</title>
+		<link>https://radiofobia.com.br/podcast/2017/12/radiofobia-classics-52-johnny-cash/</link>
+				<comments>https://radiofobia.com.br/podcast/2017/12/radiofobia-classics-52-johnny-cash/#comments</comments>
+				<pubDate>Sun, 10 Dec 2017 02:01:52 +0000</pubDate>
+		<dc:creator><![CDATA[Leo Lopes]]></dc:creator>
+				<category><![CDATA[Podcast]]></category>
+		<category><![CDATA[Rádiofobia Classics]]></category>
+		<category><![CDATA[Country]]></category>
+		<category><![CDATA[Hurt]]></category>
+		<category><![CDATA[Johnny Cash]]></category>
+		<category><![CDATA[Leo Lopes]]></category>
+		<category><![CDATA[RÁDIOFOBIA Classics]]></category>
+		<category><![CDATA[Ring of Fire]]></category>
+		<category><![CDATA[Rock]]></category>
+		<category><![CDATA[Rockabilly]]></category>
+
+		<guid isPermaLink="false">http://radiofobia.com.br/podcast/?p=15462</guid>
+				<description><![CDATA[No último programa do ano, apresentamos a biografia e tocamos 34 canções com a interpretação incomparável do "homem de preto" Johnny Cash!]]></description>
+						<wfw:commentRss>https://radiofobia.com.br/podcast/2017/12/radiofobia-classics-52-johnny-cash/feed/</wfw:commentRss>
+		<slash:comments>6</slash:comments>
+				<enclosure url="http://media.blubrry.com/radiofobia/traffic.libsyn.com/radiofobia/radiofobia_classics_52_johnny_cash.mp3" length="125779431" type="audio/mpeg" />
+			<itunes:subtitle>No último programa do ano, apresentamos a biografia e tocamos 34 canções com a interpretação incomparável do &quot;homem de preto&quot; Johnny Cash!</itunes:subtitle>
+		<itunes:summary>No último programa do ano, apresentamos a biografia e tocamos 34 canções com a interpretação incomparável do &quot;homem de preto&quot; Johnny Cash!</itunes:summary>
+		<itunes:author>Rádiofobia Podcast Network</itunes:author>
+		<itunes:duration>2:10:19</itunes:duration>
+	</item>
+		<item>
+		<title>RÁDIOFOBIA Classics #51 &#8211; Oasis</title>
+		<link>https://radiofobia.com.br/podcast/2017/11/radiofobia-classics-51-oasis/</link>
+				<comments>https://radiofobia.com.br/podcast/2017/11/radiofobia-classics-51-oasis/#comments</comments>
+				<pubDate>Mon, 13 Nov 2017 02:01:01 +0000</pubDate>
+		<dc:creator><![CDATA[Leo Lopes]]></dc:creator>
+				<category><![CDATA[Podcast]]></category>
+		<category><![CDATA[Rádiofobia Classics]]></category>
+		<category><![CDATA[britpop]]></category>
+		<category><![CDATA[Leo Lopes]]></category>
+		<category><![CDATA[Oasis]]></category>
+		<category><![CDATA[RÁDIOFOBIA Classics]]></category>
+		<category><![CDATA[Rock]]></category>
+
+		<guid isPermaLink="false">http://radiofobia.com.br/podcast/?p=15408</guid>
+				<description><![CDATA[No programa deste mês você vai conhecer a biografia e ouvir 24 sucessos de uma das bandas britânicas mais bem sucedidas da história: o OASIS!]]></description>
+						<wfw:commentRss>https://radiofobia.com.br/podcast/2017/11/radiofobia-classics-51-oasis/feed/</wfw:commentRss>
+		<slash:comments>5</slash:comments>
+				<enclosure url="http://media.blubrry.com/radiofobia/traffic.libsyn.com/radiofobia/radiofobia_classics_51_oasis.mp3" length="139985675" type="audio/mpeg" />
+			<itunes:subtitle>No programa deste mês você vai conhecer a biografia e ouvir 24 sucessos de uma das bandas britânicas mais bem sucedidas da história: o OASIS!</itunes:subtitle>
+		<itunes:summary>No programa deste mês você vai conhecer a biografia e ouvir 24 sucessos de uma das bandas britânicas mais bem sucedidas da história: o OASIS!</itunes:summary>
+		<itunes:author>Rádiofobia Podcast Network</itunes:author>
+		<itunes:duration>2:24:58</itunes:duration>
+	</item>
+		<item>
+		<title>RÁDIOFOBIA Classics #50 &#8211; ESPECIAL &#8211; The Beatles</title>
+		<link>https://radiofobia.com.br/podcast/2017/10/radiofobia-classics-50-especial-the-beatles/</link>
+				<comments>https://radiofobia.com.br/podcast/2017/10/radiofobia-classics-50-especial-the-beatles/#comments</comments>
+				<pubDate>Mon, 16 Oct 2017 02:01:45 +0000</pubDate>
+		<dc:creator><![CDATA[Leo Lopes]]></dc:creator>
+				<category><![CDATA[Podcast]]></category>
+		<category><![CDATA[Rádiofobia Classics]]></category>
+		<category><![CDATA[especial]]></category>
+		<category><![CDATA[Leo Lopes]]></category>
+		<category><![CDATA[RÁDIOFOBIA Classics]]></category>
+		<category><![CDATA[Rock]]></category>
+		<category><![CDATA[The Beatles]]></category>
+
+		<guid isPermaLink="false">http://radiofobia.com.br/podcast/?p=15347</guid>
+				<description><![CDATA[Nesta edição especial comemoramos 50 episódios com a biografia e 37 sucessos da banda mais bem sucedida da história da música mundial: The Beatles!]]></description>
+						<wfw:commentRss>https://radiofobia.com.br/podcast/2017/10/radiofobia-classics-50-especial-the-beatles/feed/</wfw:commentRss>
+		<slash:comments>5</slash:comments>
+				<enclosure url="http://media.blubrry.com/radiofobia/traffic.libsyn.com/radiofobia/radiofobia_classics_50_the_beatles.mp3" length="150356318" type="audio/mpeg" />
+			<itunes:subtitle>Nesta edição especial comemoramos 50 episódios com a biografia e 37 sucessos da banda mais bem sucedida da história da música mundial: The Beatles!</itunes:subtitle>
+		<itunes:summary>Nesta edição especial comemoramos 50 episódios com a biografia e 37 sucessos da banda mais bem sucedida da história da música mundial: The Beatles!</itunes:summary>
+		<itunes:author>Rádiofobia Podcast Network</itunes:author>
+		<itunes:duration>2:35:34</itunes:duration>
+	</item>
+		<item>
+		<title>RÁDIOFOBIA Classics #49 &#8211; Yusuf / Cat Stevens</title>
+		<link>https://radiofobia.com.br/podcast/2017/09/radiofobia-classics-49-yusuf-cat-stevens/</link>
+				<comments>https://radiofobia.com.br/podcast/2017/09/radiofobia-classics-49-yusuf-cat-stevens/#comments</comments>
+				<pubDate>Mon, 11 Sep 2017 03:01:47 +0000</pubDate>
+		<dc:creator><![CDATA[Leo Lopes]]></dc:creator>
+				<category><![CDATA[Podcast]]></category>
+		<category><![CDATA[Rádiofobia Classics]]></category>
+		<category><![CDATA[Cat Stevens]]></category>
+		<category><![CDATA[folk]]></category>
+		<category><![CDATA[Leo Lopes]]></category>
+		<category><![CDATA[RÁDIOFOBIA Classics]]></category>
+		<category><![CDATA[Rock]]></category>
+		<category><![CDATA[Yusuf]]></category>
+
+		<guid isPermaLink="false">http://radiofobia.com.br/podcast/?p=15271</guid>
+				<description><![CDATA[No programa deste mês você vai ouvir 28 músicas e conhecer a história de Yusuf, o "artista anteriormente conhecido como" Cat Stevens!]]></description>
+						<wfw:commentRss>https://radiofobia.com.br/podcast/2017/09/radiofobia-classics-49-yusuf-cat-stevens/feed/</wfw:commentRss>
+		<slash:comments>6</slash:comments>
+				<enclosure url="http://media.blubrry.com/radiofobia/traffic.libsyn.com/radiofobia/radiofobia_classics_49_yusuf_cat_stevens.mp3" length="129102366" type="audio/mpeg" />
+			<itunes:subtitle>No programa deste mês você vai ouvir 28 músicas e conhecer a história de Yusuf, o &quot;artista anteriormente conhecido como&quot; Cat Stevens!</itunes:subtitle>
+		<itunes:summary>No programa deste mês você vai ouvir 28 músicas e conhecer a história de Yusuf, o &quot;artista anteriormente conhecido como&quot; Cat Stevens!</itunes:summary>
+		<itunes:author>Rádiofobia Podcast Network</itunes:author>
+		<itunes:duration>2:13:35</itunes:duration>
+	</item>
+		<item>
+		<title>RÁDIOFOBIA Classics #48 &#8211; Raimundos</title>
+		<link>https://radiofobia.com.br/podcast/2017/08/radiofobia-classics-48-raimundos/</link>
+				<comments>https://radiofobia.com.br/podcast/2017/08/radiofobia-classics-48-raimundos/#comments</comments>
+				<pubDate>Mon, 14 Aug 2017 03:01:45 +0000</pubDate>
+		<dc:creator><![CDATA[Leo Lopes]]></dc:creator>
+				<category><![CDATA[Podcast]]></category>
+		<category><![CDATA[Rádiofobia Classics]]></category>
+		<category><![CDATA[Canisso]]></category>
+		<category><![CDATA[Digão]]></category>
+		<category><![CDATA[forró-core]]></category>
+		<category><![CDATA[Leo Lopes]]></category>
+		<category><![CDATA[RÁDIOFOBIA Classics]]></category>
+		<category><![CDATA[Raimundos]]></category>
+		<category><![CDATA[Rock]]></category>
+		<category><![CDATA[Rodolfo]]></category>
+
+		<guid isPermaLink="false">http://radiofobia.com.br/podcast/?p=15212</guid>
+				<description><![CDATA[Hoje você vai ouvir a história e 35 sucessos de uma das bandas mais influentes do rock brasileiro que está há 30 anos na estrada: Raimundos!]]></description>
+						<wfw:commentRss>https://radiofobia.com.br/podcast/2017/08/radiofobia-classics-48-raimundos/feed/</wfw:commentRss>
+		<slash:comments>6</slash:comments>
+				<enclosure url="http://media.blubrry.com/radiofobia/traffic.libsyn.com/radiofobia/radiofobia_classics_48_raimundos.mp3" length="132834716" type="audio/mpeg" />
+			<itunes:subtitle>Hoje você vai ouvir a história e 35 sucessos de uma das bandas mais influentes do rock brasileiro que está há 30 anos na estrada: Raimundos!</itunes:subtitle>
+		<itunes:summary>Hoje você vai ouvir a história e 35 sucessos de uma das bandas mais influentes do rock brasileiro que está há 30 anos na estrada: Raimundos!</itunes:summary>
+		<itunes:author>Rádiofobia Podcast Network</itunes:author>
+		<itunes:duration>2:17:38</itunes:duration>
+	</item>
+		<item>
+		<title>RÁDIOFOBIA Classics #47 &#8211; Scorpions</title>
+		<link>https://radiofobia.com.br/podcast/2017/07/radiofobia-classics-47-scorpions/</link>
+				<comments>https://radiofobia.com.br/podcast/2017/07/radiofobia-classics-47-scorpions/#comments</comments>
+				<pubDate>Mon, 17 Jul 2017 03:01:48 +0000</pubDate>
+		<dc:creator><![CDATA[Leo Lopes]]></dc:creator>
+				<category><![CDATA[Podcast]]></category>
+		<category><![CDATA[Rádiofobia Classics]]></category>
+		<category><![CDATA[hard rock]]></category>
+		<category><![CDATA[heavy metal]]></category>
+		<category><![CDATA[Leo Lopes]]></category>
+		<category><![CDATA[Rock]]></category>
+		<category><![CDATA[Scorpions]]></category>
+
+		<guid isPermaLink="false">http://radiofobia.com.br/podcast/?p=15163</guid>
+				<description><![CDATA[No programa deste mês você vai ouvir 36 sucessos e conhecer a história da banda de rock alemã mais bem sucedida de todos os tempos: SCORPIONS!]]></description>
+						<wfw:commentRss>https://radiofobia.com.br/podcast/2017/07/radiofobia-classics-47-scorpions/feed/</wfw:commentRss>
+		<slash:comments>7</slash:comments>
+				<enclosure url="http://media.blubrry.com/radiofobia/traffic.libsyn.com/radiofobia/radiofobia_classics_47_scorpions.mp3" length="177930219" type="audio/mpeg" />
+			<itunes:subtitle>No programa deste mês você vai ouvir 36 sucessos e conhecer a história da banda de rock alemã mais bem sucedida de todos os tempos: SCORPIONS!</itunes:subtitle>
+		<itunes:summary>No programa deste mês você vai ouvir 36 sucessos e conhecer a história da banda de rock alemã mais bem sucedida de todos os tempos: SCORPIONS!</itunes:summary>
+		<itunes:author>Rádiofobia Podcast Network</itunes:author>
+		<itunes:duration>3:04:40</itunes:duration>
+	</item>
+		<item>
+		<title>RÁDIOFOBIA Classics #46 &#8211; Prince</title>
+		<link>https://radiofobia.com.br/podcast/2017/06/radiofobia-classics-46-prince/</link>
+				<comments>https://radiofobia.com.br/podcast/2017/06/radiofobia-classics-46-prince/#comments</comments>
+				<pubDate>Mon, 19 Jun 2017 03:01:57 +0000</pubDate>
+		<dc:creator><![CDATA[Leo Lopes]]></dc:creator>
+				<category><![CDATA[Podcast]]></category>
+		<category><![CDATA[Rádiofobia Classics]]></category>
+		<category><![CDATA[Leo Lopes]]></category>
+		<category><![CDATA[Pop]]></category>
+		<category><![CDATA[Prince]]></category>
+		<category><![CDATA[Purple Rain]]></category>
+		<category><![CDATA[R&B]]></category>
+		<category><![CDATA[RÁDIOFOBIA Classics]]></category>
+		<category><![CDATA[Rock]]></category>
+
+		<guid isPermaLink="false">http://radiofobia.com.br/podcast/?p=15003</guid>
+				<description><![CDATA[Este mês trazemos um programa com a biografia e 23 sucessos de um dos mais versáteis astros da música de todos os tempos: PRINCE!]]></description>
+						<wfw:commentRss>https://radiofobia.com.br/podcast/2017/06/radiofobia-classics-46-prince/feed/</wfw:commentRss>
+		<slash:comments>4</slash:comments>
+				<enclosure url="http://media.blubrry.com/radiofobia/traffic.libsyn.com/radiofobia/radiofobia_classics_46_prince.mp3" length="139443866" type="audio/mpeg" />
+			<itunes:subtitle>Este mês trazemos um programa com a biografia e 23 sucessos de um dos mais versáteis astros da música de todos os tempos: PRINCE!</itunes:subtitle>
+		<itunes:summary>Este mês trazemos um programa com a biografia e 23 sucessos de um dos mais versáteis astros da música de todos os tempos: PRINCE!</itunes:summary>
+		<itunes:author>Rádiofobia Podcast Network</itunes:author>
+		<itunes:duration>2:24:17</itunes:duration>
+	</item>
+		<item>
+		<title>RÁDIOFOBIA Classics #45 &#8211; Ramones</title>
+		<link>https://radiofobia.com.br/podcast/2017/05/radiofobia-classics-45-ramones/</link>
+				<comments>https://radiofobia.com.br/podcast/2017/05/radiofobia-classics-45-ramones/#comments</comments>
+				<pubDate>Mon, 22 May 2017 03:01:29 +0000</pubDate>
+		<dc:creator><![CDATA[Leo Lopes]]></dc:creator>
+				<category><![CDATA[Podcast]]></category>
+		<category><![CDATA[Rádiofobia Classics]]></category>
+		<category><![CDATA[Joey Ramone]]></category>
+		<category><![CDATA[Leo Lopes]]></category>
+		<category><![CDATA[música]]></category>
+		<category><![CDATA[Pet Semetary]]></category>
+		<category><![CDATA[punk]]></category>
+		<category><![CDATA[RÁDIOFOBIA Classics]]></category>
+		<category><![CDATA[Ramones]]></category>
+		<category><![CDATA[Rock]]></category>
+
+		<guid isPermaLink="false">http://radiofobia.com.br/podcast/?p=14883</guid>
+				<description><![CDATA[Conheça a história de uma das bandas mais influentes de todos os tempos, essencial para a criação do punk como estilo musical: os Ramones!]]></description>
+						<wfw:commentRss>https://radiofobia.com.br/podcast/2017/05/radiofobia-classics-45-ramones/feed/</wfw:commentRss>
+		<slash:comments>4</slash:comments>
+				<enclosure url="http://media.blubrry.com/radiofobia/traffic.libsyn.com/radiofobia/radiofobia_classics_45_ramones.mp3" length="105883386" type="audio/mpeg" />
+			<itunes:subtitle>Conheça a história de uma das bandas mais influentes de todos os tempos, essencial para a criação do punk como estilo musical: os Ramones!</itunes:subtitle>
+		<itunes:summary>Conheça a história de uma das bandas mais influentes de todos os tempos, essencial para a criação do punk como estilo musical: os Ramones!</itunes:summary>
+		<itunes:author>Rádiofobia Podcast Network</itunes:author>
+		<itunes:duration>1:49:30</itunes:duration>
+	</item>
+		<item>
+		<title>RÁDIOFOBIA Classics #44 &#8211; Nelson Gonçalves</title>
+		<link>https://radiofobia.com.br/podcast/2017/04/radiofobia-classics-44-nelson-goncalves/</link>
+				<comments>https://radiofobia.com.br/podcast/2017/04/radiofobia-classics-44-nelson-goncalves/#comments</comments>
+				<pubDate>Mon, 24 Apr 2017 03:01:21 +0000</pubDate>
+		<dc:creator><![CDATA[Leo Lopes]]></dc:creator>
+				<category><![CDATA[Podcast]]></category>
+		<category><![CDATA[Rádiofobia Classics]]></category>
+		<category><![CDATA[bolero]]></category>
+		<category><![CDATA[Leo Lopes]]></category>
+		<category><![CDATA[MPB]]></category>
+		<category><![CDATA[Nelson Gonçalves]]></category>
+		<category><![CDATA[RÁDIOFOBIA Classics]]></category>
+		<category><![CDATA[tango]]></category>
+
+		<guid isPermaLink="false">http://radiofobia.com.br/podcast/?p=14839</guid>
+				<description><![CDATA[No programa deste mês, você vai conhecer a história e ouvir 30 sucessos de uma das maiores vozes que o Brasil já ouviu: o eterno boêmio Nelson Gonçalves!]]></description>
+						<wfw:commentRss>https://radiofobia.com.br/podcast/2017/04/radiofobia-classics-44-nelson-goncalves/feed/</wfw:commentRss>
+		<slash:comments>4</slash:comments>
+				<enclosure url="http://media.blubrry.com/radiofobia/traffic.libsyn.com/radiofobia/radiofobia_classics_44_nelson_goncalves.mp3" length="124558654" type="audio/mpeg" />
+			<itunes:subtitle>No programa deste mês, você vai conhecer a história e ouvir 30 sucessos de uma das maiores vozes que o Brasil já ouviu: o eterno boêmio Nelson Gonçalves!</itunes:subtitle>
+		<itunes:summary>No programa deste mês, você vai conhecer a história e ouvir 30 sucessos de uma das maiores vozes que o Brasil já ouviu: o eterno boêmio Nelson Gonçalves!</itunes:summary>
+		<itunes:author>Rádiofobia Podcast Network</itunes:author>
+		<itunes:duration>2:09:05</itunes:duration>
+	</item>
+		<item>
+		<title>RÁDIOFOBIA Classics #43 &#8211; The B-52s</title>
+		<link>https://radiofobia.com.br/podcast/2017/03/radiofobia-classics-43-b-52s/</link>
+				<comments>https://radiofobia.com.br/podcast/2017/03/radiofobia-classics-43-b-52s/#comments</comments>
+				<pubDate>Mon, 27 Mar 2017 03:01:38 +0000</pubDate>
+		<dc:creator><![CDATA[Leo Lopes]]></dc:creator>
+				<category><![CDATA[Podcast]]></category>
+		<category><![CDATA[Rádiofobia Classics]]></category>
+		<category><![CDATA[Legal Tender]]></category>
+		<category><![CDATA[Leo Lopes]]></category>
+		<category><![CDATA[Love Shack]]></category>
+		<category><![CDATA[new wave]]></category>
+		<category><![CDATA[RÁDIOFOBIA Classics]]></category>
+		<category><![CDATA[synthpop]]></category>
+		<category><![CDATA[The B52s]]></category>
+
+		<guid isPermaLink="false">http://radiofobia.com.br/podcast/?p=14797</guid>
+				<description><![CDATA[Vista sua roupa psicodélica e sua peruca gigante e prepare-se para conhecer a trajetória e ouvir 29 sucessos da banda americana de new wave The B-52s!]]></description>
+						<wfw:commentRss>https://radiofobia.com.br/podcast/2017/03/radiofobia-classics-43-b-52s/feed/</wfw:commentRss>
+		<slash:comments>3</slash:comments>
+				<enclosure url="http://media.blubrry.com/radiofobia/traffic.libsyn.com/radiofobia/radiofobia_classics_43_b52s.mp3" length="154188759" type="audio/mpeg" />
+			<itunes:subtitle>Vista sua roupa psicodélica e sua peruca gigante e prepare-se para conhecer a trajetória e ouvir 29 sucessos da banda americana de new wave The B-52s!</itunes:subtitle>
+		<itunes:summary>Vista sua roupa psicodélica e sua peruca gigante e prepare-se para conhecer a trajetória e ouvir 29 sucessos da banda americana de new wave The B-52s!</itunes:summary>
+		<itunes:author>Rádiofobia Podcast Network</itunes:author>
+		<itunes:duration>2:39:45</itunes:duration>
+	</item>
+		<item>
+		<title>RÁDIOFOBIA Classics #42 &#8211; Engenheiros do Hawaii</title>
+		<link>https://radiofobia.com.br/podcast/2017/02/radiofobia-classics-42-engenheiros-do-hawaii/</link>
+				<comments>https://radiofobia.com.br/podcast/2017/02/radiofobia-classics-42-engenheiros-do-hawaii/#comments</comments>
+				<pubDate>Mon, 27 Feb 2017 03:01:14 +0000</pubDate>
+		<dc:creator><![CDATA[Leo Lopes]]></dc:creator>
+				<category><![CDATA[Podcast]]></category>
+		<category><![CDATA[Rádiofobia Classics]]></category>
+		<category><![CDATA[Engenheiros do Hawaii]]></category>
+		<category><![CDATA[Humberto Gessinger]]></category>
+		<category><![CDATA[Leo Lopes]]></category>
+		<category><![CDATA[Pop rock nacional]]></category>
+		<category><![CDATA[RÁDIOFOBIA Classics]]></category>
+
+		<guid isPermaLink="false">http://radiofobia.com.br/podcast/?p=14729</guid>
+				<description><![CDATA[No programa deste mês, a biografia e 34 sucessos de uma das bandas de pop rock nacional mais influentes das décadas de 80 e 90: os Engenheiros do Hawaii!]]></description>
+						<wfw:commentRss>https://radiofobia.com.br/podcast/2017/02/radiofobia-classics-42-engenheiros-do-hawaii/feed/</wfw:commentRss>
+		<slash:comments>7</slash:comments>
+				<enclosure url="http://media.blubrry.com/radiofobia/traffic.libsyn.com/radiofobia/radiofobia_classics_42_engenheiros_do_hawaii.mp3" length="153759989" type="audio/mpeg" />
+			<itunes:subtitle>No programa deste mês, a biografia e 34 sucessos de uma das bandas de pop rock nacional mais influentes das décadas de 80 e 90: os Engenheiros do Hawaii!</itunes:subtitle>
+		<itunes:summary>No programa deste mês, a biografia e 34 sucessos de uma das bandas de pop rock nacional mais influentes das décadas de 80 e 90: os Engenheiros do Hawaii!</itunes:summary>
+		<itunes:author>Rádiofobia Podcast Network</itunes:author>
+		<itunes:duration>2:39:29</itunes:duration>
+	</item>
+		<item>
+		<title>RÁDIOFOBIA Classics #41 &#8211; U2</title>
+		<link>https://radiofobia.com.br/podcast/2017/01/radiofobia-classics-41-u2/</link>
+				<comments>https://radiofobia.com.br/podcast/2017/01/radiofobia-classics-41-u2/#comments</comments>
+				<pubDate>Mon, 30 Jan 2017 02:01:29 +0000</pubDate>
+		<dc:creator><![CDATA[Leo Lopes]]></dc:creator>
+				<category><![CDATA[Podcast]]></category>
+		<category><![CDATA[Rádiofobia Classics]]></category>
+		<category><![CDATA[Adam Clayton]]></category>
+		<category><![CDATA[Bono Vox]]></category>
+		<category><![CDATA[Larry Mullen Jr]]></category>
+		<category><![CDATA[Leo Lopes]]></category>
+		<category><![CDATA[Pop]]></category>
+		<category><![CDATA[RÁDIOFOBIA Classics]]></category>
+		<category><![CDATA[Rock]]></category>
+		<category><![CDATA[The Edge]]></category>
+		<category><![CDATA[U2]]></category>
+
+		<guid isPermaLink="false">http://radiofobia.com.br/podcast/?p=14681</guid>
+				<description><![CDATA[No primeiro Classics do ano, trazemos a biografia e 33 sucessos de uma das bandas mais bem sucedidas da música mundial: o U2!]]></description>
+						<wfw:commentRss>https://radiofobia.com.br/podcast/2017/01/radiofobia-classics-41-u2/feed/</wfw:commentRss>
+		<slash:comments>14</slash:comments>
+				<enclosure url="http://media.blubrry.com/radiofobia/traffic.libsyn.com/radiofobia/radiofobia_classics_41_u2.mp3" length="179857366" type="audio/mpeg" />
+			<itunes:subtitle>No primeiro Classics do ano, trazemos a biografia e 33 sucessos de uma das bandas mais bem sucedidas da música mundial: o U2!</itunes:subtitle>
+		<itunes:summary>No primeiro Classics do ano, trazemos a biografia e 33 sucessos de uma das bandas mais bem sucedidas da música mundial: o U2!</itunes:summary>
+		<itunes:author>Rádiofobia Podcast Network</itunes:author>
+		<itunes:duration>3:06:43</itunes:duration>
+	</item>
+		<item>
+		<title>RÁDIOFOBIA Classics #40 &#8211; A-HA</title>
+		<link>https://radiofobia.com.br/podcast/2016/12/radiofobia-classics-40-a-ha/</link>
+				<comments>https://radiofobia.com.br/podcast/2016/12/radiofobia-classics-40-a-ha/#comments</comments>
+				<pubDate>Mon, 19 Dec 2016 02:01:37 +0000</pubDate>
+		<dc:creator><![CDATA[Leo Lopes]]></dc:creator>
+				<category><![CDATA[Podcast]]></category>
+		<category><![CDATA[Rádiofobia Classics]]></category>
+		<category><![CDATA[A-ha]]></category>
+		<category><![CDATA[Leo Lopes]]></category>
+		<category><![CDATA[Morten]]></category>
+		<category><![CDATA[new wave]]></category>
+		<category><![CDATA[Pop]]></category>
+		<category><![CDATA[RÁDIOFOBIA Classics]]></category>
+		<category><![CDATA[Rock in Rio]]></category>
+		<category><![CDATA[synthpop]]></category>
+		<category><![CDATA[Take on Me]]></category>
+
+		<guid isPermaLink="false">http://radiofobia.com.br/podcast/?p=14635</guid>
+				<description><![CDATA[No último Classics de 2016, trazemos para você a biografia e 30 sucessos do trio que saiu da Noruega e conquistou o mundo ainda nos anos 1980: o A-ha!]]></description>
+						<wfw:commentRss>https://radiofobia.com.br/podcast/2016/12/radiofobia-classics-40-a-ha/feed/</wfw:commentRss>
+		<slash:comments>10</slash:comments>
+				<enclosure url="http://media.blubrry.com/radiofobia/traffic.libsyn.com/radiofobia/radiofobia_classics_40_a-ha.mp3" length="148292702" type="audio/mpeg" />
+			<itunes:subtitle>No último Classics de 2016, trazemos para você a biografia e 30 sucessos do trio que saiu da Noruega e conquistou o mundo ainda nos anos 1980: o A-ha!</itunes:subtitle>
+		<itunes:summary>No último Classics de 2016, trazemos para você a biografia e 30 sucessos do trio que saiu da Noruega e conquistou o mundo ainda nos anos 1980: o A-ha!</itunes:summary>
+		<itunes:author>Rádiofobia Podcast Network</itunes:author>
+		<itunes:duration>2:33:48</itunes:duration>
+	</item>
+		<item>
+		<title>RÁDIOFOBIA Classics #39 &#8211; Pearl Jam</title>
+		<link>https://radiofobia.com.br/podcast/2016/11/radiofobia-classics-39-pearl-jam/</link>
+				<comments>https://radiofobia.com.br/podcast/2016/11/radiofobia-classics-39-pearl-jam/#comments</comments>
+				<pubDate>Mon, 21 Nov 2016 02:01:11 +0000</pubDate>
+		<dc:creator><![CDATA[Leo Lopes]]></dc:creator>
+				<category><![CDATA[Podcast]]></category>
+		<category><![CDATA[Rádiofobia Classics]]></category>
+		<category><![CDATA[Eddie Vedder]]></category>
+		<category><![CDATA[grunge]]></category>
+		<category><![CDATA[Leo Lopes]]></category>
+		<category><![CDATA[Pearl Jam]]></category>
+		<category><![CDATA[RÁDIOFOBIA Classics]]></category>
+		<category><![CDATA[Rock]]></category>
+		<category><![CDATA[Seatle]]></category>
+
+		<guid isPermaLink="false">http://radiofobia.com.br/podcast/?p=14546</guid>
+				<description><![CDATA[No programa deste mês, você vai conhecer a história e ouvir 24 sucessos da banda de rock americana Pearl Jam!]]></description>
+						<wfw:commentRss>https://radiofobia.com.br/podcast/2016/11/radiofobia-classics-39-pearl-jam/feed/</wfw:commentRss>
+		<slash:comments>4</slash:comments>
+				<enclosure url="http://media.blubrry.com/radiofobia/traffic.libsyn.com/radiofobia/radiofobia_classics_39_pearl_jam.mp3" length="122140744" type="audio/mpeg" />
+			<itunes:subtitle>No programa deste mês, você vai conhecer a história e ouvir 24 sucessos da banda de rock americana Pearl Jam!</itunes:subtitle>
+		<itunes:summary>No programa deste mês, você vai conhecer a história e ouvir 24 sucessos da banda de rock americana Pearl Jam!</itunes:summary>
+		<itunes:author>Rádiofobia Podcast Network</itunes:author>
+		<itunes:duration>2:06:28</itunes:duration>
+	</item>
+		<item>
+		<title>RÁDIOFOBIA Classics #38 &#8211; Belchior</title>
+		<link>https://radiofobia.com.br/podcast/2016/10/radiofobia-classics-38-belchior/</link>
+				<comments>https://radiofobia.com.br/podcast/2016/10/radiofobia-classics-38-belchior/#comments</comments>
+				<pubDate>Mon, 24 Oct 2016 02:01:49 +0000</pubDate>
+		<dc:creator><![CDATA[Leo Lopes]]></dc:creator>
+				<category><![CDATA[Podcast]]></category>
+		<category><![CDATA[Rádiofobia Classics]]></category>
+		<category><![CDATA[Alucinação]]></category>
+		<category><![CDATA[Belchior]]></category>
+		<category><![CDATA[Leo Lopes]]></category>
+		<category><![CDATA[Medo de Avião]]></category>
+		<category><![CDATA[MPB]]></category>
+		<category><![CDATA[RÁDIOFOBIA Classics]]></category>
+
+		<guid isPermaLink="false">http://radiofobia.com.br/podcast/?p=14179</guid>
+				<description><![CDATA[Este mês você vai conhecer a história e ouvir 27 sucessos de Belchior, em homenagem ao seu aniversário de 70 anos!]]></description>
+						<wfw:commentRss>https://radiofobia.com.br/podcast/2016/10/radiofobia-classics-38-belchior/feed/</wfw:commentRss>
+		<slash:comments>7</slash:comments>
+				<enclosure url="http://media.blubrry.com/radiofobia/traffic.libsyn.com/radiofobia/radiofobia_classics_38_belchior.mp3" length="124347515" type="audio/mpeg" />
+			<itunes:subtitle>Este mês você vai conhecer a história e ouvir 27 sucessos de Belchior, em homenagem ao seu aniversário de 70 anos!</itunes:subtitle>
+		<itunes:summary>Este mês você vai conhecer a história e ouvir 27 sucessos de Belchior, em homenagem ao seu aniversário de 70 anos!</itunes:summary>
+		<itunes:author>Rádiofobia Podcast Network</itunes:author>
+	</item>
+		<item>
+		<title>RÁDIOFOBIA Classics #37 &#8211; ABBA</title>
+		<link>https://radiofobia.com.br/podcast/2016/09/radiofobia-classics-37-abba/</link>
+				<comments>https://radiofobia.com.br/podcast/2016/09/radiofobia-classics-37-abba/#comments</comments>
+				<pubDate>Mon, 26 Sep 2016 19:45:04 +0000</pubDate>
+		<dc:creator><![CDATA[Leo Lopes]]></dc:creator>
+				<category><![CDATA[Podcast]]></category>
+		<category><![CDATA[Rádiofobia Classics]]></category>
+		<category><![CDATA[ABBA]]></category>
+		<category><![CDATA[Dancing Queen]]></category>
+		<category><![CDATA[Europop]]></category>
+		<category><![CDATA[Leo Lopes]]></category>
+		<category><![CDATA[Mamma Mia]]></category>
+		<category><![CDATA[música]]></category>
+		<category><![CDATA[Pop]]></category>
+		<category><![CDATA[RÁDIOFOBIA Classics]]></category>
+
+		<guid isPermaLink="false">http://radiofobia.com.br/podcast/?p=14105</guid>
+				<description><![CDATA[Este mês apresentamos a biografia e tocamos 24 sucessos do quarteto sueco de maior sucesso de todos os tempos: o banda ABBA!]]></description>
+						<wfw:commentRss>https://radiofobia.com.br/podcast/2016/09/radiofobia-classics-37-abba/feed/</wfw:commentRss>
+		<slash:comments>6</slash:comments>
+				<enclosure url="http://media.blubrry.com/radiofobia/traffic.libsyn.com/radiofobia/radiofobia_classics_37_abba.mp3" length="111227365" type="audio/mpeg" />
+			<itunes:subtitle>Este mês apresentamos a biografia e tocamos 24 sucessos do quarteto sueco de maior sucesso de todos os tempos: o banda ABBA!</itunes:subtitle>
+		<itunes:summary>Este mês apresentamos a biografia e tocamos 24 sucessos do quarteto sueco de maior sucesso de todos os tempos: o banda ABBA!</itunes:summary>
+		<itunes:author>Rádiofobia Podcast Network</itunes:author>
+	</item>
+		<item>
+		<title>RÁDIOFOBIA Classics #36 &#8211; The Doors</title>
+		<link>https://radiofobia.com.br/podcast/2016/08/radiofobia-classics-36-the-doors/</link>
+				<comments>https://radiofobia.com.br/podcast/2016/08/radiofobia-classics-36-the-doors/#comments</comments>
+				<pubDate>Mon, 29 Aug 2016 16:39:58 +0000</pubDate>
+		<dc:creator><![CDATA[Leo Lopes]]></dc:creator>
+				<category><![CDATA[Podcast]]></category>
+		<category><![CDATA[Rádiofobia Classics]]></category>
+		<category><![CDATA[Jim Morrison]]></category>
+		<category><![CDATA[Leo Lopes]]></category>
+		<category><![CDATA[RÁDIOFOBIA Classics]]></category>
+		<category><![CDATA[Rock]]></category>
+		<category><![CDATA[The Doors]]></category>
+
+		<guid isPermaLink="false">http://radiofobia.com.br/podcast/?p=14044</guid>
+				<description><![CDATA[Este mês preparamos um programa com a biografia e 19 sucessos de uma das mais icônicas bandas de rock de todos os tempos: THE DOORS!]]></description>
+						<wfw:commentRss>https://radiofobia.com.br/podcast/2016/08/radiofobia-classics-36-the-doors/feed/</wfw:commentRss>
+		<slash:comments>5</slash:comments>
+				<enclosure url="http://media.blubrry.com/radiofobia/traffic.libsyn.com/radiofobia/radiofobia_classics_36_the_doors.mp3" length="128913698" type="audio/mpeg" />
+			<itunes:subtitle>Este mês preparamos um programa com a biografia e 19 sucessos de uma das mais icônicas bandas de rock de todos os tempos: THE DOORS!</itunes:subtitle>
+		<itunes:summary>Este mês preparamos um programa com a biografia e 19 sucessos de uma das mais icônicas bandas de rock de todos os tempos: THE DOORS!</itunes:summary>
+		<itunes:author>Rádiofobia Podcast Network</itunes:author>
+	</item>
+		<item>
+		<title>RÁDIOFOBIA Classics #35 &#8211; Billy Paul</title>
+		<link>https://radiofobia.com.br/podcast/2016/07/radiofobia-classics-35-billy-paul/</link>
+				<comments>https://radiofobia.com.br/podcast/2016/07/radiofobia-classics-35-billy-paul/#respond</comments>
+				<pubDate>Tue, 19 Jul 2016 05:28:25 +0000</pubDate>
+		<dc:creator><![CDATA[Leo Lopes]]></dc:creator>
+				<category><![CDATA[Podcast]]></category>
+		<category><![CDATA[Rádiofobia Classics]]></category>
+		<category><![CDATA[Billy Paul]]></category>
+		<category><![CDATA[Leo Lopes]]></category>
+		<category><![CDATA[RÁDIOFOBIA Classics]]></category>
+		<category><![CDATA[soul music]]></category>
+
+		<guid isPermaLink="false">http://radiofobia.com.br/podcast/?p=13990</guid>
+				<description><![CDATA[No programa deste mês, apresentamos a biografia e tocamos 25 sucessos de um dos ícones da soul music de todos os tempos: Billy Paul!]]></description>
+						<wfw:commentRss>https://radiofobia.com.br/podcast/2016/07/radiofobia-classics-35-billy-paul/feed/</wfw:commentRss>
+		<slash:comments>0</slash:comments>
+				<enclosure url="http://media.blubrry.com/radiofobia/traffic.libsyn.com/radiofobia/radiofobia_classics_35_billy_paul.mp3" length="147480265" type="audio/mpeg" />
+			<itunes:subtitle>No programa deste mês, apresentamos a biografia e tocamos 25 sucessos de um dos ícones da soul music de todos os tempos: Billy Paul!</itunes:subtitle>
+		<itunes:summary>No programa deste mês, apresentamos a biografia e tocamos 25 sucessos de um dos ícones da soul music de todos os tempos: Billy Paul!</itunes:summary>
+		<itunes:author>Rádiofobia Podcast Network</itunes:author>
+	</item>
+		<item>
+		<title>RÁDIOFOBIA Classics #34 &#8211; Cauby Peixoto</title>
+		<link>https://radiofobia.com.br/podcast/2016/06/radiofobia-classics-34-cauby-peixoto/</link>
+				<comments>https://radiofobia.com.br/podcast/2016/06/radiofobia-classics-34-cauby-peixoto/#comments</comments>
+				<pubDate>Tue, 21 Jun 2016 20:33:09 +0000</pubDate>
+		<dc:creator><![CDATA[Leo Lopes]]></dc:creator>
+				<category><![CDATA[Podcast]]></category>
+		<category><![CDATA[Rádiofobia Classics]]></category>
+		<category><![CDATA[Cauby Peixoto]]></category>
+		<category><![CDATA[Leo Lopes]]></category>
+		<category><![CDATA[MPB]]></category>
+		<category><![CDATA[radiofobia]]></category>
+		<category><![CDATA[RÁDIOFOBIA Classics]]></category>
+
+		<guid isPermaLink="false">http://radiofobia.com.br/podcast/?p=13896</guid>
+				<description><![CDATA[Este mês homenageamos uma das maiores vozes brasileiras apresentando a biografia e tocando 30 sucessos do professor Cauby Peixoto!]]></description>
+						<wfw:commentRss>https://radiofobia.com.br/podcast/2016/06/radiofobia-classics-34-cauby-peixoto/feed/</wfw:commentRss>
+		<slash:comments>3</slash:comments>
+				<enclosure url="http://media.blubrry.com/radiofobia/traffic.libsyn.com/radiofobia/radiofobia_classics_34_cauby_peixoto.mp3" length="137365956" type="audio/mpeg" />
+			<itunes:subtitle>Este mês homenageamos uma das maiores vozes brasileiras apresentando a biografia e tocando 30 sucessos do professor Cauby Peixoto!</itunes:subtitle>
+		<itunes:summary>Este mês homenageamos uma das maiores vozes brasileiras apresentando a biografia e tocando 30 sucessos do professor Cauby Peixoto!</itunes:summary>
+		<itunes:author>Rádiofobia Podcast Network</itunes:author>
+	</item>
+		<item>
+		<title>RÁDIOFOBIA Classics #33 &#8211; David Bowie</title>
+		<link>https://radiofobia.com.br/podcast/2016/05/radiofobia-classics-33-david-bowie/</link>
+				<comments>https://radiofobia.com.br/podcast/2016/05/radiofobia-classics-33-david-bowie/#comments</comments>
+				<pubDate>Mon, 16 May 2016 03:01:33 +0000</pubDate>
+		<dc:creator><![CDATA[Leo Lopes]]></dc:creator>
+				<category><![CDATA[Podcast]]></category>
+		<category><![CDATA[Rádiofobia Classics]]></category>
+		<category><![CDATA[camaleão]]></category>
+		<category><![CDATA[David Bowie]]></category>
+		<category><![CDATA[Leo Lopes]]></category>
+		<category><![CDATA[radiofobia]]></category>
+		<category><![CDATA[RÁDIOFOBIA Classics]]></category>
+		<category><![CDATA[Rock]]></category>
+		<category><![CDATA[Starman]]></category>
+		<category><![CDATA[Ziggy Stardust]]></category>
+
+		<guid isPermaLink="false">http://radiofobia.com.br/podcast/?p=13797</guid>
+				<description><![CDATA[No Classics deste mês apresentamos a biografia e tocamos 36 sucessos de um ícone da música mundial, o "camaleão do rock" David Bowie!]]></description>
+						<wfw:commentRss>https://radiofobia.com.br/podcast/2016/05/radiofobia-classics-33-david-bowie/feed/</wfw:commentRss>
+		<slash:comments>2</slash:comments>
+				<enclosure url="http://media.blubrry.com/radiofobia/traffic.libsyn.com/radiofobia/radiofobia_classics_33_david_bowie.mp3" length="181960079" type="audio/mpeg" />
+			<itunes:subtitle>No Classics deste mês apresentamos a biografia e tocamos 36 sucessos de um ícone da música mundial, o &quot;camaleão do rock&quot; David Bowie!</itunes:subtitle>
+		<itunes:summary>No Classics deste mês apresentamos a biografia e tocamos 36 sucessos de um ícone da música mundial, o &quot;camaleão do rock&quot; David Bowie!</itunes:summary>
+		<itunes:author>Rádiofobia Podcast Network</itunes:author>
+	</item>
+		<item>
+		<title>RÁDIOFOBIA Classics #32 &#8211; YES</title>
+		<link>https://radiofobia.com.br/podcast/2016/04/radiofobia-classics-32-yes/</link>
+				<comments>https://radiofobia.com.br/podcast/2016/04/radiofobia-classics-32-yes/#comments</comments>
+				<pubDate>Mon, 11 Apr 2016 03:01:39 +0000</pubDate>
+		<dc:creator><![CDATA[Leo Lopes]]></dc:creator>
+				<category><![CDATA[Podcast]]></category>
+		<category><![CDATA[Rádiofobia Classics]]></category>
+		<category><![CDATA[Leo Lopes]]></category>
+		<category><![CDATA[radiofobia]]></category>
+		<category><![CDATA[RÁDIOFOBIA Classics]]></category>
+		<category><![CDATA[rock progressivo]]></category>
+		<category><![CDATA[YES]]></category>
+
+		<guid isPermaLink="false">http://radiofobia.com.br/podcast/?p=13735</guid>
+				<description><![CDATA[Conheça a história e ouça 22 sucessos de uma das bandas precursoras - e talvez a maior - do rock progressivo da história da música: YES!]]></description>
+						<wfw:commentRss>https://radiofobia.com.br/podcast/2016/04/radiofobia-classics-32-yes/feed/</wfw:commentRss>
+		<slash:comments>8</slash:comments>
+				<enclosure url="http://media.blubrry.com/radiofobia/traffic.libsyn.com/radiofobia/radiofobia_classics_32_yes.mp3" length="170594999" type="audio/mpeg" />
+			<itunes:subtitle>Conheça a história e ouça 22 sucessos de uma das bandas precursoras - e talvez a maior - do rock progressivo da história da música: YES!</itunes:subtitle>
+		<itunes:summary>Conheça a história e ouça 22 sucessos de uma das bandas precursoras - e talvez a maior - do rock progressivo da história da música: YES!</itunes:summary>
+		<itunes:author>Rádiofobia Podcast Network</itunes:author>
+	</item>
+		<item>
+		<title>RÁDIOFOBIA Classics #31 &#8211; Renato Russo e Legião Urbana</title>
+		<link>https://radiofobia.com.br/podcast/2016/03/radiofobia-classics-31-renato-russo-e-legiao-urbana/</link>
+				<comments>https://radiofobia.com.br/podcast/2016/03/radiofobia-classics-31-renato-russo-e-legiao-urbana/#comments</comments>
+				<pubDate>Mon, 07 Mar 2016 03:01:59 +0000</pubDate>
+		<dc:creator><![CDATA[Leo Lopes]]></dc:creator>
+				<category><![CDATA[Podcast]]></category>
+		<category><![CDATA[Rádiofobia Classics]]></category>
+		<category><![CDATA[Aborto Elétrico]]></category>
+		<category><![CDATA[Faroeste Caboclo]]></category>
+		<category><![CDATA[Legião Urbana]]></category>
+		<category><![CDATA[Leo Lopes]]></category>
+		<category><![CDATA[radiofobia]]></category>
+		<category><![CDATA[RÁDIOFOBIA Classics]]></category>
+		<category><![CDATA[Renato Russo]]></category>
+
+		<guid isPermaLink="false">http://radiofobia.com.br/podcast/?p=13641</guid>
+				<description><![CDATA[Este mês apresentamos a biografia e 39 sucessos de Renato Russo, do Aborto Elétrico à Legião Urbana.]]></description>
+						<wfw:commentRss>https://radiofobia.com.br/podcast/2016/03/radiofobia-classics-31-renato-russo-e-legiao-urbana/feed/</wfw:commentRss>
+		<slash:comments>13</slash:comments>
+				<enclosure url="http://media.blubrry.com/radiofobia/traffic.libsyn.com/radiofobia/radiofobia_classics_31_renato_russo_legiao_urbana.mp3" length="181992175" type="audio/mpeg" />
+			<itunes:subtitle>Este mês apresentamos a biografia e 39 sucessos de Renato Russo, do Aborto Elétrico à Legião Urbana.</itunes:subtitle>
+		<itunes:summary>Este mês apresentamos a biografia e 39 sucessos de Renato Russo, do Aborto Elétrico à Legião Urbana.</itunes:summary>
+		<itunes:author>Rádiofobia Podcast Network</itunes:author>
+	</item>
+		<item>
+		<title>RÁDIOFOBIA Classics #30 &#8211; Phil Collins</title>
+		<link>https://radiofobia.com.br/podcast/2016/02/radiofobia-classics-30-phil-collins/</link>
+				<comments>https://radiofobia.com.br/podcast/2016/02/radiofobia-classics-30-phil-collins/#comments</comments>
+				<pubDate>Mon, 08 Feb 2016 02:01:56 +0000</pubDate>
+		<dc:creator><![CDATA[Leo Lopes]]></dc:creator>
+				<category><![CDATA[Podcast]]></category>
+		<category><![CDATA[Rádiofobia Classics]]></category>
+		<category><![CDATA[Leo Lopes]]></category>
+		<category><![CDATA[Phil Collins]]></category>
+		<category><![CDATA[RÁDIOFOBIA Classics]]></category>
+
+		<guid isPermaLink="false">http://radiofobia.com.br/podcast/?p=13589</guid>
+				<description><![CDATA[No programa deste mês, apresentamos a biografia e tocamos 20 sucessos de um dos artistas mais românticos da música mundial: Phil Collins!]]></description>
+						<wfw:commentRss>https://radiofobia.com.br/podcast/2016/02/radiofobia-classics-30-phil-collins/feed/</wfw:commentRss>
+		<slash:comments>5</slash:comments>
+				<enclosure url="http://media.blubrry.com/radiofobia/traffic.libsyn.com/radiofobia/radiofobia_classics_30_phil_collins.mp3" length="107003498" type="audio/mpeg" />
+			<itunes:subtitle>No programa deste mês, apresentamos a biografia e tocamos 20 sucessos de um dos artistas mais românticos da música mundial: Phil Collins!</itunes:subtitle>
+		<itunes:summary>No programa deste mês, apresentamos a biografia e tocamos 20 sucessos de um dos artistas mais românticos da música mundial: Phil Collins!</itunes:summary>
+		<itunes:author>Rádiofobia Podcast Network</itunes:author>
+	</item>
+		<item>
+		<title>RÁDIOFOBIA Classics #29 &#8211; New Order</title>
+		<link>https://radiofobia.com.br/podcast/2016/01/radiofobia-classics-29-new-order/</link>
+				<comments>https://radiofobia.com.br/podcast/2016/01/radiofobia-classics-29-new-order/#comments</comments>
+				<pubDate>Mon, 04 Jan 2016 02:01:17 +0000</pubDate>
+		<dc:creator><![CDATA[Leo Lopes]]></dc:creator>
+				<category><![CDATA[Podcast]]></category>
+		<category><![CDATA[Rádiofobia Classics]]></category>
+		<category><![CDATA[Blue Monday]]></category>
+		<category><![CDATA[dance music]]></category>
+		<category><![CDATA[dance rock]]></category>
+		<category><![CDATA[Joy Division]]></category>
+		<category><![CDATA[Leo Lopes]]></category>
+		<category><![CDATA[New Order]]></category>
+		<category><![CDATA[RÁDIOFOBIA Classics]]></category>
+
+		<guid isPermaLink="false">http://radiofobia.com.br/podcast/?p=13521</guid>
+				<description><![CDATA[No primeiro programa de 2016, você vai ouvir a biografia musical e 35 sucessos da banda inglesa de dance rock NEW ORDER!]]></description>
+						<wfw:commentRss>https://radiofobia.com.br/podcast/2016/01/radiofobia-classics-29-new-order/feed/</wfw:commentRss>
+		<slash:comments>3</slash:comments>
+				<enclosure url="http://media.blubrry.com/radiofobia/traffic.libsyn.com/radiofobia/radiofobia_classics_29_new_order.mp3" length="188643058" type="audio/mpeg" />
+			<itunes:subtitle>No primeiro programa de 2016, você vai ouvir a biografia musical e 35 sucessos da banda inglesa de dance rock NEW ORDER!</itunes:subtitle>
+		<itunes:summary>No primeiro programa de 2016, você vai ouvir a biografia musical e 35 sucessos da banda inglesa de dance rock NEW ORDER!</itunes:summary>
+		<itunes:author>Rádiofobia Podcast Network</itunes:author>
+	</item>
+		<item>
+		<title>RÁDIOFOBIA Classics #28 &#8211; Gonzaguinha</title>
+		<link>https://radiofobia.com.br/podcast/2015/12/radiofobia-classics-28-gonzaguinha/</link>
+				<comments>https://radiofobia.com.br/podcast/2015/12/radiofobia-classics-28-gonzaguinha/#comments</comments>
+				<pubDate>Mon, 07 Dec 2015 02:01:38 +0000</pubDate>
+		<dc:creator><![CDATA[Leo Lopes]]></dc:creator>
+				<category><![CDATA[Podcast]]></category>
+		<category><![CDATA[Rádiofobia Classics]]></category>
+		<category><![CDATA[Gonzaguinha]]></category>
+		<category><![CDATA[Leo Lopes]]></category>
+		<category><![CDATA[Luiz Gonzaga]]></category>
+		<category><![CDATA[MPB]]></category>
+		<category><![CDATA[RÁDIOFOBIA Classics]]></category>
+
+		<guid isPermaLink="false">http://radiofobia.com.br/podcast/?p=13457</guid>
+				<description><![CDATA[No último podcast de 2015, contamos a história e tocamos 25 sucessos de um dos maiores intérpretes da MPB: Gonzaguinha!]]></description>
+						<wfw:commentRss>https://radiofobia.com.br/podcast/2015/12/radiofobia-classics-28-gonzaguinha/feed/</wfw:commentRss>
+		<slash:comments>4</slash:comments>
+				<enclosure url="http://media.blubrry.com/radiofobia/traffic.libsyn.com/radiofobia/radiofobia_classics_28_gonzaguinha.mp3" length="103455369" type="audio/mpeg" />
+			<itunes:subtitle>No último podcast de 2015, contamos a história e tocamos 25 sucessos de um dos maiores intérpretes da MPB: Gonzaguinha!</itunes:subtitle>
+		<itunes:summary>No último podcast de 2015, contamos a história e tocamos 25 sucessos de um dos maiores intérpretes da MPB: Gonzaguinha!</itunes:summary>
+		<itunes:author>Rádiofobia Podcast Network</itunes:author>
+		<itunes:duration>1:47:40</itunes:duration>
+	</item>
+		<item>
+		<title>RÁDIOFOBIA Classics #27 &#8211; KISS</title>
+		<link>https://radiofobia.com.br/podcast/2015/11/radiofobia-classics-27-kiss/</link>
+				<comments>https://radiofobia.com.br/podcast/2015/11/radiofobia-classics-27-kiss/#comments</comments>
+				<pubDate>Mon, 09 Nov 2015 02:01:02 +0000</pubDate>
+		<dc:creator><![CDATA[Leo Lopes]]></dc:creator>
+				<category><![CDATA[Podcast]]></category>
+		<category><![CDATA[Rádiofobia Classics]]></category>
+		<category><![CDATA[Ace Frehley]]></category>
+		<category><![CDATA[Gene Simmons]]></category>
+		<category><![CDATA[KISS]]></category>
+		<category><![CDATA[Leo Lopes]]></category>
+		<category><![CDATA[Paul Stanley]]></category>
+		<category><![CDATA[Peter Criss]]></category>
+		<category><![CDATA[RÁDIOFOBIA Classics]]></category>
+		<category><![CDATA[Rock]]></category>
+
+		<guid isPermaLink="false">http://radiofobia.com.br/podcast/?p=13416</guid>
+				<description><![CDATA[No programa deste mês, apresentamos a biografia musical e 27 sucessos com o rock na veia do KISS!]]></description>
+						<wfw:commentRss>https://radiofobia.com.br/podcast/2015/11/radiofobia-classics-27-kiss/feed/</wfw:commentRss>
+		<slash:comments>2</slash:comments>
+				<enclosure url="http://media.blubrry.com/radiofobia/traffic.libsyn.com/radiofobia/radiofobia_classics_27_kiss.mp3" length="119809216" type="audio/mpeg" />
+			<itunes:subtitle>No programa deste mês, apresentamos a biografia musical e 27 sucessos com o rock na veia do KISS!</itunes:subtitle>
+		<itunes:summary>No programa deste mês, apresentamos a biografia musical e 27 sucessos com o rock na veia do KISS!</itunes:summary>
+		<itunes:author>Rádiofobia Podcast Network</itunes:author>
+	</item>
+		<item>
+		<title>RÁDIOFOBIA Classics #26 &#8211; Barão Vermelho</title>
+		<link>https://radiofobia.com.br/podcast/2015/10/radiofobia-classics-26-barao-vermelho/</link>
+				<comments>https://radiofobia.com.br/podcast/2015/10/radiofobia-classics-26-barao-vermelho/#comments</comments>
+				<pubDate>Mon, 12 Oct 2015 03:00:59 +0000</pubDate>
+		<dc:creator><![CDATA[Leo Lopes]]></dc:creator>
+				<category><![CDATA[Podcast]]></category>
+		<category><![CDATA[Rádiofobia Classics]]></category>
+		<category><![CDATA[Barão Vermelho]]></category>
+		<category><![CDATA[Cazuza]]></category>
+		<category><![CDATA[Frejat]]></category>
+		<category><![CDATA[música]]></category>
+		<category><![CDATA[Pop rock nacional]]></category>
+		<category><![CDATA[RÁDIOFOBIA Classics]]></category>
+
+		<guid isPermaLink="false">http://radiofobia.com.br/podcast/?p=13246</guid>
+				<description><![CDATA[Este mês apresentamos a biografia musical e 25 sucessos de uma das bandas de pop/rock mais influentes da música brasileira: Barão Vermelho!]]></description>
+						<wfw:commentRss>https://radiofobia.com.br/podcast/2015/10/radiofobia-classics-26-barao-vermelho/feed/</wfw:commentRss>
+		<slash:comments>2</slash:comments>
+				<enclosure url="http://media.blubrry.com/radiofobia/traffic.libsyn.com/radiofobia/radiofobia_classics_26_barao_vermelho.mp3" length="102226594" type="audio/mpeg" />
+			<itunes:subtitle>Este mês apresentamos a biografia musical e 25 sucessos de uma das bandas de pop/rock mais influentes da música brasileira: Barão Vermelho!</itunes:subtitle>
+		<itunes:summary>Este mês apresentamos a biografia musical e 25 sucessos de uma das bandas de pop/rock mais influentes da música brasileira: Barão Vermelho!</itunes:summary>
+		<itunes:author>Rádiofobia Podcast Network</itunes:author>
+		<itunes:duration>1:46:20</itunes:duration>
+	</item>
+		<item>
+		<title>RÁDIOFOBIA Classics #25 &#8211; Led Zeppelin</title>
+		<link>https://radiofobia.com.br/podcast/2015/09/radiofobia-classics-25-led-zeppelin/</link>
+				<comments>https://radiofobia.com.br/podcast/2015/09/radiofobia-classics-25-led-zeppelin/#comments</comments>
+				<pubDate>Mon, 14 Sep 2015 03:01:10 +0000</pubDate>
+		<dc:creator><![CDATA[Leo Lopes]]></dc:creator>
+				<category><![CDATA[Podcast]]></category>
+		<category><![CDATA[Rádiofobia Classics]]></category>
+		<category><![CDATA[heavy metal]]></category>
+		<category><![CDATA[Jimmy Page]]></category>
+		<category><![CDATA[John Bonham]]></category>
+		<category><![CDATA[John Paul Jones]]></category>
+		<category><![CDATA[led zeppelin]]></category>
+		<category><![CDATA[Leo Lopes]]></category>
+		<category><![CDATA[RÁDIOFOBIA Classics]]></category>
+		<category><![CDATA[Robert Plant]]></category>
+		<category><![CDATA[Rock]]></category>
+
+		<guid isPermaLink="false">http://radiofobia.com.br/podcast/?p=11865</guid>
+				<description><![CDATA[Prepare-se para quase 3h de programa com a biografia musical e 30 sucessos do quarteto britânico conhecido como LED ZEPPELIN!]]></description>
+						<wfw:commentRss>https://radiofobia.com.br/podcast/2015/09/radiofobia-classics-25-led-zeppelin/feed/</wfw:commentRss>
+		<slash:comments>17</slash:comments>
+				<enclosure url="http://media.blubrry.com/radiofobia/traffic.libsyn.com/radiofobia/radiofobia_classics_25_led_zeppelin.mp3" length="164728194" type="audio/mpeg" />
+			<itunes:subtitle>Prepare-se para quase 3h de programa com a biografia musical e 30 sucessos do quarteto britânico conhecido como LED ZEPPELIN!</itunes:subtitle>
+		<itunes:summary>Prepare-se para quase 3h de programa com a biografia musical e 30 sucessos do quarteto britânico conhecido como LED ZEPPELIN!</itunes:summary>
+		<itunes:author>Rádiofobia Podcast Network</itunes:author>
+	</item>
+		<item>
+		<title>RÁDIOFOBIA Classics #24 &#8211; Deep Purple</title>
+		<link>https://radiofobia.com.br/podcast/2015/08/radiofobia-classics-24-deep-purple/</link>
+				<comments>https://radiofobia.com.br/podcast/2015/08/radiofobia-classics-24-deep-purple/#comments</comments>
+				<pubDate>Wed, 12 Aug 2015 03:01:27 +0000</pubDate>
+		<dc:creator><![CDATA[Leo Lopes]]></dc:creator>
+				<category><![CDATA[Podcast]]></category>
+		<category><![CDATA[Rádiofobia Classics]]></category>
+		<category><![CDATA[Deep Purple]]></category>
+		<category><![CDATA[hard rock]]></category>
+		<category><![CDATA[heavy metal]]></category>
+		<category><![CDATA[Leo Lopes]]></category>
+		<category><![CDATA[RÁDIOFOBIA Classics]]></category>
+		<category><![CDATA[Rock]]></category>
+
+		<guid isPermaLink="false">http://radiofobia.com.br/podcast/?p=11802</guid>
+				<description><![CDATA[Este mês trazemos a biografia musical e 20 sucessos de uma das bandas mais icônicas da história do rock: Deep Purple!]]></description>
+						<wfw:commentRss>https://radiofobia.com.br/podcast/2015/08/radiofobia-classics-24-deep-purple/feed/</wfw:commentRss>
+		<slash:comments>7</slash:comments>
+				<enclosure url="http://media.blubrry.com/radiofobia/traffic.libsyn.com/radiofobia/radiofobia_classics_24_deep_purple.mp3" length="129514484" type="audio/mpeg" />
+			<itunes:subtitle>Este mês trazemos a biografia musical e 20 sucessos de uma das bandas mais icônicas da história do rock: Deep Purple!</itunes:subtitle>
+		<itunes:summary>Este mês trazemos a biografia musical e 20 sucessos de uma das bandas mais icônicas da história do rock: Deep Purple!</itunes:summary>
+		<itunes:author>Rádiofobia Podcast Network</itunes:author>
+	</item>
+		<item>
+		<title>RÁDIOFOBIA Classics #23 &#8211; Os Mutantes</title>
+		<link>https://radiofobia.com.br/podcast/2015/07/radiofobia-classics-23-os-mutantes/</link>
+				<comments>https://radiofobia.com.br/podcast/2015/07/radiofobia-classics-23-os-mutantes/#comments</comments>
+				<pubDate>Wed, 15 Jul 2015 03:01:19 +0000</pubDate>
+		<dc:creator><![CDATA[Leo Lopes]]></dc:creator>
+				<category><![CDATA[Podcast]]></category>
+		<category><![CDATA[Rádiofobia Classics]]></category>
+		<category><![CDATA[Leo Lopes]]></category>
+		<category><![CDATA[Os Mutantes]]></category>
+		<category><![CDATA[psicodelismo]]></category>
+		<category><![CDATA[RÁDIOFOBIA Classics]]></category>
+		<category><![CDATA[Rita Lee]]></category>
+		<category><![CDATA[Rock]]></category>
+		<category><![CDATA[tropicália]]></category>
+
+		<guid isPermaLink="false">http://radiofobia.com.br/podcast/?p=11717</guid>
+				<description><![CDATA[Um som psicodélico e letras que parecem saídas de um sonho maluco? Conheça a trajetória de uma das bandas mais influentes da música brasileira: OS MUTANTES!]]></description>
+						<wfw:commentRss>https://radiofobia.com.br/podcast/2015/07/radiofobia-classics-23-os-mutantes/feed/</wfw:commentRss>
+		<slash:comments>5</slash:comments>
+				<enclosure url="http://media.blubrry.com/radiofobia/traffic.libsyn.com/radiofobia/radiofobia_classics_23_os_mutantes.mp3" length="87545308" type="audio/mpeg" />
+			<itunes:subtitle>Um som psicodélico e letras que parecem saídas de um sonho maluco? Conheça a trajetória de uma das bandas mais influentes da música brasileira: OS MUTANTES!</itunes:subtitle>
+		<itunes:summary>Um som psicodélico e letras que parecem saídas de um sonho maluco? Conheça a trajetória de uma das bandas mais influentes da música brasileira: OS MUTANTES!</itunes:summary>
+		<itunes:author>Rádiofobia Podcast Network</itunes:author>
+		<itunes:duration>90:59</itunes:duration>
+	</item>
+		<item>
+		<title>RÁDIOFOBIA Classics #22 &#8211; Amy Winehouse</title>
+		<link>https://radiofobia.com.br/podcast/2015/06/radiofobia-classics-22-amy-winehouse/</link>
+				<comments>https://radiofobia.com.br/podcast/2015/06/radiofobia-classics-22-amy-winehouse/#comments</comments>
+				<pubDate>Wed, 17 Jun 2015 03:01:58 +0000</pubDate>
+		<dc:creator><![CDATA[Leo Lopes]]></dc:creator>
+				<category><![CDATA[Podcast]]></category>
+		<category><![CDATA[Rádiofobia Classics]]></category>
+		<category><![CDATA[Amy Winehouse]]></category>
+		<category><![CDATA[hip hop]]></category>
+		<category><![CDATA[jazz]]></category>
+		<category><![CDATA[Leo Lopes]]></category>
+		<category><![CDATA[R&B]]></category>
+		<category><![CDATA[RÁDIOFOBIA Classics]]></category>
+
+		<guid isPermaLink="false">http://radiofobia.com.br/podcast/?p=11661</guid>
+				<description><![CDATA[No programa deste mês, apresentamos a biografia e 19 sucessos de uma das vozes mais marcantes da música mundial: Amy Winehouse!]]></description>
+						<wfw:commentRss>https://radiofobia.com.br/podcast/2015/06/radiofobia-classics-22-amy-winehouse/feed/</wfw:commentRss>
+		<slash:comments>8</slash:comments>
+				<enclosure url="http://media.blubrry.com/radiofobia/traffic.libsyn.com/radiofobia/radiofobia_classics_22_amy_winehouse.mp3" length="85910801" type="audio/mpeg" />
+			<itunes:subtitle>No programa deste mês, apresentamos a biografia e 19 sucessos de uma das vozes mais marcantes da música mundial: Amy Winehouse!</itunes:subtitle>
+		<itunes:summary>No programa deste mês, apresentamos a biografia e 19 sucessos de uma das vozes mais marcantes da música mundial: Amy Winehouse!</itunes:summary>
+		<itunes:author>Rádiofobia Podcast Network</itunes:author>
+		<itunes:duration>89:22</itunes:duration>
+	</item>
+		<item>
+		<title>RÁDIOFOBIA Classics #21 &#8211; B.B. King</title>
+		<link>https://radiofobia.com.br/podcast/2015/05/radiofobia-classics-21-b-b-king/</link>
+				<comments>https://radiofobia.com.br/podcast/2015/05/radiofobia-classics-21-b-b-king/#comments</comments>
+				<pubDate>Wed, 20 May 2015 03:01:08 +0000</pubDate>
+		<dc:creator><![CDATA[Leo Lopes]]></dc:creator>
+				<category><![CDATA[Podcast]]></category>
+		<category><![CDATA[Rádiofobia Classics]]></category>
+		<category><![CDATA[B.B. King]]></category>
+		<category><![CDATA[blues]]></category>
+		<category><![CDATA[ídolos]]></category>
+		<category><![CDATA[King of Blues]]></category>
+		<category><![CDATA[Leo Lopes]]></category>
+		<category><![CDATA[RÁDIOFOBIA Classics]]></category>
+		<category><![CDATA[Rei do Blues]]></category>
+
+		<guid isPermaLink="false">http://radiofobia.com.br/podcast/?p=11595</guid>
+				<description><![CDATA[Este mês fazemos nossa homenagem ao Rei do Blues B.B King, contando a história de sua vida e tocando 20 dos seus maiores sucessos!]]></description>
+						<wfw:commentRss>https://radiofobia.com.br/podcast/2015/05/radiofobia-classics-21-b-b-king/feed/</wfw:commentRss>
+		<slash:comments>8</slash:comments>
+				<enclosure url="http://media.blubrry.com/radiofobia/traffic.libsyn.com/radiofobia/radiofobia_classics_21_bb_king.mp3" length="106534275" type="audio/mpeg" />
+			<itunes:subtitle>Este mês fazemos nossa homenagem ao Rei do Blues B.B King, contando a história de sua vida e tocando 20 dos seus maiores sucessos!</itunes:subtitle>
+		<itunes:summary>Este mês fazemos nossa homenagem ao Rei do Blues B.B King, contando a história de sua vida e tocando 20 dos seus maiores sucessos!</itunes:summary>
+		<itunes:author>Rádiofobia Podcast Network</itunes:author>
+		<itunes:duration>1:50:44</itunes:duration>
+	</item>
+		<item>
+		<title>RÁDIOFOBIA Classics #20 &#8211; James Brown</title>
+		<link>https://radiofobia.com.br/podcast/2015/04/radiofobia-classics-20-james-brown/</link>
+				<comments>https://radiofobia.com.br/podcast/2015/04/radiofobia-classics-20-james-brown/#comments</comments>
+				<pubDate>Wed, 22 Apr 2015 03:01:40 +0000</pubDate>
+		<dc:creator><![CDATA[Leo Lopes]]></dc:creator>
+				<category><![CDATA[Podcast]]></category>
+		<category><![CDATA[Rádiofobia Classics]]></category>
+		<category><![CDATA[funk]]></category>
+		<category><![CDATA[Godfather of Soul]]></category>
+		<category><![CDATA[I Feel Good]]></category>
+		<category><![CDATA[James Brown]]></category>
+		<category><![CDATA[Leo Lopes]]></category>
+		<category><![CDATA[radiofobia]]></category>
+		<category><![CDATA[RÁDIOFOBIA Classics]]></category>
+		<category><![CDATA[Sex Machine]]></category>
+		<category><![CDATA[soul music]]></category>
+
+		<guid isPermaLink="false">http://radiofobia.com.br/podcast/?p=10898</guid>
+				<description><![CDATA[No programa de abril, apresentamos a biografia e tocamos 15 sucessos do "Padrinho do Soul" JAMES BROWN!]]></description>
+						<wfw:commentRss>https://radiofobia.com.br/podcast/2015/04/radiofobia-classics-20-james-brown/feed/</wfw:commentRss>
+		<slash:comments>3</slash:comments>
+				<enclosure url="http://media.blubrry.com/radiofobia/traffic.libsyn.com/radiofobia/radiofobia_classics_20_james_brown.mp3" length="74691472" type="audio/mpeg" />
+			<itunes:subtitle>No programa de abril, apresentamos a biografia e tocamos 15 sucessos do &quot;Padrinho do Soul&quot; JAMES BROWN!</itunes:subtitle>
+		<itunes:summary>No programa de abril, apresentamos a biografia e tocamos 15 sucessos do &quot;Padrinho do Soul&quot; JAMES BROWN!</itunes:summary>
+		<itunes:author>Rádiofobia Podcast Network</itunes:author>
+		<itunes:duration>77:35</itunes:duration>
+	</item>
+		<item>
+		<title>RÁDIOFOBIA Classics #19 &#8211; Pink Floyd</title>
+		<link>https://radiofobia.com.br/podcast/2015/03/radiofobia-classics-19-pink-floyd-2/</link>
+				<comments>https://radiofobia.com.br/podcast/2015/03/radiofobia-classics-19-pink-floyd-2/#comments</comments>
+				<pubDate>Wed, 25 Mar 2015 03:01:33 +0000</pubDate>
+		<dc:creator><![CDATA[Leo Lopes]]></dc:creator>
+				<category><![CDATA[Podcast]]></category>
+		<category><![CDATA[Rádiofobia Classics]]></category>
+		<category><![CDATA[David Gilmour]]></category>
+		<category><![CDATA[Nick Mason]]></category>
+		<category><![CDATA[pink floyd]]></category>
+		<category><![CDATA[radiofobia]]></category>
+		<category><![CDATA[RÁDIOFOBIA Classics]]></category>
+		<category><![CDATA[Rick Wright]]></category>
+		<category><![CDATA[Rock]]></category>
+		<category><![CDATA[rock progressivo]]></category>
+		<category><![CDATA[Roger Waters]]></category>
+		<category><![CDATA[Syd Barret]]></category>
+		<category><![CDATA[The Wall]]></category>
+
+		<guid isPermaLink="false">http://radiofobia.com.br/podcast/?p=10818</guid>
+				<description><![CDATA[No Classics deste mês, apresentamos a história e tocamos os maiores sucessos da banda inglesa que fez história com seu rock progressivo: Pink Floyd!]]></description>
+						<wfw:commentRss>https://radiofobia.com.br/podcast/2015/03/radiofobia-classics-19-pink-floyd-2/feed/</wfw:commentRss>
+		<slash:comments>6</slash:comments>
+				<enclosure url="http://media.blubrry.com/radiofobia/traffic.libsyn.com/radiofobia/radiofobia_classics_19_pink_floyd.mp3" length="127567420" type="audio/mpeg" />
+			<itunes:subtitle>No Classics deste mês, apresentamos a história e tocamos os maiores sucessos da banda inglesa que fez história com seu rock progressivo: Pink Floyd!</itunes:subtitle>
+		<itunes:summary>No Classics deste mês, apresentamos a história e tocamos os maiores sucessos da banda inglesa que fez história com seu rock progressivo: Pink Floyd!</itunes:summary>
+		<itunes:author>Rádiofobia Podcast Network</itunes:author>
+		<itunes:duration>2:12:45</itunes:duration>
+	</item>
+		<item>
+		<title>RÁDIOFOBIA Classics #18 &#8211; Frank Sinatra</title>
+		<link>https://radiofobia.com.br/podcast/2015/02/radiofobia-classics-18-frank-sinatra/</link>
+				<comments>https://radiofobia.com.br/podcast/2015/02/radiofobia-classics-18-frank-sinatra/#comments</comments>
+				<pubDate>Wed, 25 Feb 2015 03:01:11 +0000</pubDate>
+		<dc:creator><![CDATA[Leo Lopes]]></dc:creator>
+				<category><![CDATA[Podcast]]></category>
+		<category><![CDATA[Rádiofobia Classics]]></category>
+		<category><![CDATA[A Voz]]></category>
+		<category><![CDATA[Blue Eyes]]></category>
+		<category><![CDATA[Frank Sinatra]]></category>
+		<category><![CDATA[Leo Lopes]]></category>
+		<category><![CDATA[radiofobia]]></category>
+		<category><![CDATA[RÁDIOFOBIA Classics]]></category>
+
+		<guid isPermaLink="false">http://radiofobia.com.br/?p=10720</guid>
+				<description><![CDATA[Fechamos o mês de fevereiro com a biografia e 22 sucessos imortalizados por um dos maiores intérpretes de todos os tempos: "a voz" FRANK SINATRA!]]></description>
+						<wfw:commentRss>https://radiofobia.com.br/podcast/2015/02/radiofobia-classics-18-frank-sinatra/feed/</wfw:commentRss>
+		<slash:comments>5</slash:comments>
+				<enclosure url="http://media.blubrry.com/radiofobia/traffic.libsyn.com/radiofobia/radiofobia_classics_18_frank_sinatra.mp3" length="88725424" type="audio/mpeg" />
+			<itunes:subtitle>Fechamos o mês de fevereiro com a biografia e 22 sucessos imortalizados por um dos maiores intérpretes de todos os tempos: &quot;a voz&quot; FRANK SINATRA!</itunes:subtitle>
+		<itunes:summary>Fechamos o mês de fevereiro com a biografia e 22 sucessos imortalizados por um dos maiores intérpretes de todos os tempos: &quot;a voz&quot; FRANK SINATRA!</itunes:summary>
+		<itunes:author>Rádiofobia Podcast Network</itunes:author>
+		<itunes:duration>92:10</itunes:duration>
+	</item>
+		<item>
+		<title>RÁDIOFOBIA Classics #17 &#8211; Nirvana</title>
+		<link>https://radiofobia.com.br/podcast/2015/01/radiofobia-classics-17-nirvana/</link>
+				<comments>https://radiofobia.com.br/podcast/2015/01/radiofobia-classics-17-nirvana/#comments</comments>
+				<pubDate>Wed, 28 Jan 2015 02:01:45 +0000</pubDate>
+		<dc:creator><![CDATA[Leo Lopes]]></dc:creator>
+				<category><![CDATA[Podcast]]></category>
+		<category><![CDATA[Rádiofobia Classics]]></category>
+		<category><![CDATA[Dave Grohl]]></category>
+		<category><![CDATA[grunge]]></category>
+		<category><![CDATA[Krist Novoselic]]></category>
+		<category><![CDATA[Kurt Cobain]]></category>
+		<category><![CDATA[Leo Lopes]]></category>
+		<category><![CDATA[Nirvana]]></category>
+		<category><![CDATA[punk]]></category>
+		<category><![CDATA[radiofobia]]></category>
+		<category><![CDATA[RÁDIOFOBIA Classics]]></category>
+		<category><![CDATA[Rock]]></category>
+
+		<guid isPermaLink="false">http://radiofobia.com.br/?p=10645</guid>
+				<description><![CDATA[No primeiro programa do ano, vamos contar a história e tocar 26 sucessos de uma das bandas mais importantes para o rock mundial em todos os tempos: o NIRVANA!]]></description>
+						<wfw:commentRss>https://radiofobia.com.br/podcast/2015/01/radiofobia-classics-17-nirvana/feed/</wfw:commentRss>
+		<slash:comments>15</slash:comments>
+				<enclosure url="http://media.blubrry.com/radiofobia/traffic.libsyn.com/radiofobia/radiofobia_classics_17_nirvana.mp3" length="131118491" type="audio/mpeg" />
+			<itunes:subtitle>No primeiro programa do ano, vamos contar a história e tocar 26 sucessos de uma das bandas mais importantes para o rock mundial em todos os tempos: o NIRVANA!</itunes:subtitle>
+		<itunes:summary>No primeiro programa do ano, vamos contar a história e tocar 26 sucessos de uma das bandas mais importantes para o rock mundial em todos os tempos: o NIRVANA!</itunes:summary>
+		<itunes:author>Rádiofobia Podcast Network</itunes:author>
+		<itunes:duration>2:16:24</itunes:duration>
+	</item>
+		<item>
+		<title>RÁDIOFOBIA Classics #16 &#8211; Tom Jobim</title>
+		<link>https://radiofobia.com.br/podcast/2014/12/radiofobia-classics-16-tom-jobim/</link>
+				<comments>https://radiofobia.com.br/podcast/2014/12/radiofobia-classics-16-tom-jobim/#comments</comments>
+				<pubDate>Wed, 17 Dec 2014 02:01:49 +0000</pubDate>
+		<dc:creator><![CDATA[Leo Lopes]]></dc:creator>
+				<category><![CDATA[Podcast]]></category>
+		<category><![CDATA[Rádiofobia Classics]]></category>
+		<category><![CDATA[Bossa Nova]]></category>
+		<category><![CDATA[especial]]></category>
+		<category><![CDATA[Leo Lopes]]></category>
+		<category><![CDATA[MPB]]></category>
+		<category><![CDATA[radiofobia]]></category>
+		<category><![CDATA[RÁDIOFOBIA Classics]]></category>
+		<category><![CDATA[Tom Jobim]]></category>
+
+		<guid isPermaLink="false">http://radiofobia.com.br/?p=9535</guid>
+				<description><![CDATA[Para fechar o ano com chave de ouro, apresentamos um programa especialíssimo com a biografia e 36 sucessos do insubstituível maestro Tom Jobim!]]></description>
+						<wfw:commentRss>https://radiofobia.com.br/podcast/2014/12/radiofobia-classics-16-tom-jobim/feed/</wfw:commentRss>
+		<slash:comments>2</slash:comments>
+				<enclosure url="http://media.blubrry.com/radiofobia/traffic.libsyn.com/radiofobia/radiofobia_classics_16_tom_jobim.mp3" length="165599860" type="audio/mpeg" />
+			<itunes:subtitle>Para fechar o ano com chave de ouro, apresentamos um programa especialíssimo com a biografia e 36 sucessos do insubstituível maestro Tom Jobim!</itunes:subtitle>
+		<itunes:summary>Para fechar o ano com chave de ouro, apresentamos um programa especialíssimo com a biografia e 36 sucessos do insubstituível maestro Tom Jobim!</itunes:summary>
+		<itunes:author>Rádiofobia Podcast Network</itunes:author>
+		<itunes:duration>2:52:23</itunes:duration>
+	</item>
+		<item>
+		<title>RÁDIOFOBIA Classics #15 &#8211; Dire Straits</title>
+		<link>https://radiofobia.com.br/podcast/2014/11/radiofobia-classics-15-dire-straits/</link>
+				<comments>https://radiofobia.com.br/podcast/2014/11/radiofobia-classics-15-dire-straits/#comments</comments>
+				<pubDate>Wed, 19 Nov 2014 02:01:04 +0000</pubDate>
+		<dc:creator><![CDATA[Leo Lopes]]></dc:creator>
+				<category><![CDATA[Podcast]]></category>
+		<category><![CDATA[Rádiofobia Classics]]></category>
+		<category><![CDATA[Anos 80]]></category>
+		<category><![CDATA[Dire Straits]]></category>
+		<category><![CDATA[Leo Lopes]]></category>
+		<category><![CDATA[Mark Knopfler]]></category>
+		<category><![CDATA[Money for Nothing]]></category>
+		<category><![CDATA[MTV]]></category>
+		<category><![CDATA[radiofobia]]></category>
+		<category><![CDATA[RÁDIOFOBIA Classics]]></category>
+
+		<guid isPermaLink="false">http://radiofobia.com.br/?p=9469</guid>
+				<description><![CDATA[Este mês apresentamos a biografia musical e tocamos 11 sucessos eternizados pela banda de rock britânica que mais vendeu discos em meados da década de 1980: Dire Straits!]]></description>
+						<wfw:commentRss>https://radiofobia.com.br/podcast/2014/11/radiofobia-classics-15-dire-straits/feed/</wfw:commentRss>
+		<slash:comments>4</slash:comments>
+				<enclosure url="http://media.blubrry.com/radiofobia/traffic.libsyn.com/radiofobia/radiofobia_classics_15_dire_straits.mp3" length="84431791" type="audio/mpeg" />
+			<itunes:subtitle>Este mês apresentamos a biografia musical e tocamos 11 sucessos eternizados pela banda de rock britânica que mais vendeu discos em meados da década de 1980: Dire Straits!</itunes:subtitle>
+		<itunes:summary>Este mês apresentamos a biografia musical e tocamos 11 sucessos eternizados pela banda de rock britânica que mais vendeu discos em meados da década de 1980: Dire Straits!</itunes:summary>
+		<itunes:author>Rádiofobia Podcast Network</itunes:author>
+		<itunes:duration>87:50</itunes:duration>
+	</item>
+		<item>
+		<title>RÁDIOFOBIA Classics #14 &#8211; Adoniran Barbosa</title>
+		<link>https://radiofobia.com.br/podcast/2014/09/radiofobia-classics-14-adoniran-barbosa/</link>
+				<comments>https://radiofobia.com.br/podcast/2014/09/radiofobia-classics-14-adoniran-barbosa/#comments</comments>
+				<pubDate>Wed, 10 Sep 2014 03:01:45 +0000</pubDate>
+		<dc:creator><![CDATA[Leo Lopes]]></dc:creator>
+				<category><![CDATA[Podcast]]></category>
+		<category><![CDATA[Rádiofobia Classics]]></category>
+		<category><![CDATA[Adoniran Barbosa]]></category>
+		<category><![CDATA[Bixiga]]></category>
+		<category><![CDATA[Leo Lopes]]></category>
+		<category><![CDATA[MPB]]></category>
+		<category><![CDATA[radiofobia]]></category>
+		<category><![CDATA[RÁDIOFOBIA Classics]]></category>
+		<category><![CDATA[samba]]></category>
+		<category><![CDATA[São Paulo]]></category>
+		<category><![CDATA[Trem das Onze]]></category>
+
+		<guid isPermaLink="false">http://radiofobia.com.br/?p=9243</guid>
+				<description><![CDATA[No programa deste mês, apresentamos a biografia e os maiores sucessos do maior cronista do povo que São Paulo já teve: Adoniran Barbosa!]]></description>
+						<wfw:commentRss>https://radiofobia.com.br/podcast/2014/09/radiofobia-classics-14-adoniran-barbosa/feed/</wfw:commentRss>
+		<slash:comments>5</slash:comments>
+				<enclosure url="http://media.blubrry.com/radiofobia/traffic.libsyn.com/radiofobia/radiofobia_classics_14_adoniran_barbosa.mp3" length="67317241" type="audio/mpeg" />
+			<itunes:subtitle>No programa deste mês, apresentamos a biografia e os maiores sucessos do maior cronista do povo que São Paulo já teve: Adoniran Barbosa!</itunes:subtitle>
+		<itunes:summary>No programa deste mês, apresentamos a biografia e os maiores sucessos do maior cronista do povo que São Paulo já teve: Adoniran Barbosa!</itunes:summary>
+		<itunes:author>Rádiofobia Podcast Network</itunes:author>
+		<itunes:duration>69:52</itunes:duration>
+	</item>
+		<item>
+		<title>RÁDIOFOBIA Classics #13 &#8211; Jimi Hendrix</title>
+		<link>https://radiofobia.com.br/podcast/2014/06/radiofobia-classics-13-jimi-hendrix/</link>
+				<comments>https://radiofobia.com.br/podcast/2014/06/radiofobia-classics-13-jimi-hendrix/#comments</comments>
+				<pubDate>Wed, 18 Jun 2014 03:01:45 +0000</pubDate>
+		<dc:creator><![CDATA[Leo Lopes]]></dc:creator>
+				<category><![CDATA[Podcast]]></category>
+		<category><![CDATA[Rádiofobia Classics]]></category>
+		<category><![CDATA[blues]]></category>
+		<category><![CDATA[guitarra]]></category>
+		<category><![CDATA[Jimi Hendrix]]></category>
+		<category><![CDATA[Leo Lopes]]></category>
+		<category><![CDATA[Pop]]></category>
+		<category><![CDATA[radiofobia]]></category>
+		<category><![CDATA[RÁDIOFOBIA Classics]]></category>
+		<category><![CDATA[Rock]]></category>
+		<category><![CDATA[Woodstock]]></category>
+
+		<guid isPermaLink="false">http://radiofobia.com.br/?p=8996</guid>
+				<description><![CDATA[No primeiro episódio da segunda temporada do Rádiofobia Classics, apresentamos a biografia e doze sucessos do maior guitarrista de todos os tempos: o genial Jimi Hendrix!]]></description>
+						<wfw:commentRss>https://radiofobia.com.br/podcast/2014/06/radiofobia-classics-13-jimi-hendrix/feed/</wfw:commentRss>
+		<slash:comments>6</slash:comments>
+				<enclosure url="http://media.blubrry.com/radiofobia/traffic.libsyn.com/radiofobia/radiofobia_classics_13_jimi_hendrix.mp3" length="67257494" type="audio/mpeg" />
+			<itunes:subtitle>No primeiro episódio da segunda temporada do Rádiofobia Classics, apresentamos a biografia e doze sucessos do maior guitarrista de todos os tempos: o genial Jimi Hendrix!</itunes:subtitle>
+		<itunes:summary>No primeiro episódio da segunda temporada do Rádiofobia Classics, apresentamos a biografia e doze sucessos do maior guitarrista de todos os tempos: o genial Jimi Hendrix!</itunes:summary>
+		<itunes:author>Rádiofobia Podcast Network</itunes:author>
+		<itunes:duration>69:54</itunes:duration>
+	</item>
+		<item>
+		<title>RÁDIOFOBIA Classics #12 &#8211; ESPECIAL &#8211; Michael Jackson</title>
+		<link>https://radiofobia.com.br/podcast/2014/04/radiofobia-classics-12-especial-michael-jackson/</link>
+				<comments>https://radiofobia.com.br/podcast/2014/04/radiofobia-classics-12-especial-michael-jackson/#comments</comments>
+				<pubDate>Wed, 23 Apr 2014 03:01:38 +0000</pubDate>
+		<dc:creator><![CDATA[Leo Lopes]]></dc:creator>
+				<category><![CDATA[Podcast]]></category>
+		<category><![CDATA[Rádiofobia Classics]]></category>
+		<category><![CDATA[Daniela Monteiro]]></category>
+		<category><![CDATA[especial]]></category>
+		<category><![CDATA[ídolos]]></category>
+		<category><![CDATA[Leo Lopes]]></category>
+		<category><![CDATA[michael jackson]]></category>
+		<category><![CDATA[Pop]]></category>
+		<category><![CDATA[radiofobia]]></category>
+		<category><![CDATA[RÁDIOFOBIA Classics]]></category>
+
+		<guid isPermaLink="false">http://radiofobia.com.br/?p=8767</guid>
+				<description><![CDATA[Nesta edição de aniversário, Leo Lopes e Daniela Monteiro apresentam um programa especialíssimo com a biografia e 30 sucessos do Rei do Pop Michael Jackson!]]></description>
+						<wfw:commentRss>https://radiofobia.com.br/podcast/2014/04/radiofobia-classics-12-especial-michael-jackson/feed/</wfw:commentRss>
+		<slash:comments>5</slash:comments>
+				<enclosure url="http://media.blubrry.com/radiofobia/traffic.libsyn.com/radiofobia/radiofobia_classics_12_especial_michael_jackson.mp3" length="156988807" type="audio/mpeg" />
+			<itunes:subtitle>Nesta edição de aniversário, Leo Lopes e Daniela Monteiro apresentam um programa especialíssimo com a biografia e 30 sucessos do Rei do Pop Michael Jackson!</itunes:subtitle>
+		<itunes:summary>Nesta edição de aniversário, Leo Lopes e Daniela Monteiro apresentam um programa especialíssimo com a biografia e 30 sucessos do Rei do Pop Michael Jackson!</itunes:summary>
+		<itunes:author>Rádiofobia Podcast Network</itunes:author>
+		<itunes:duration>2:43:24</itunes:duration>
+	</item>
+		<item>
+		<title>RÁDIOFOBIA Classics #11 &#8211; Gal Costa</title>
+		<link>https://radiofobia.com.br/podcast/2014/03/radiofobia-classics-11-gal-costa/</link>
+				<comments>https://radiofobia.com.br/podcast/2014/03/radiofobia-classics-11-gal-costa/#comments</comments>
+				<pubDate>Wed, 12 Mar 2014 03:01:13 +0000</pubDate>
+		<dc:creator><![CDATA[Leo Lopes]]></dc:creator>
+				<category><![CDATA[Podcast]]></category>
+		<category><![CDATA[Rádiofobia Classics]]></category>
+		<category><![CDATA[Daniela Monteiro]]></category>
+		<category><![CDATA[Gal Costa]]></category>
+		<category><![CDATA[ídolos]]></category>
+		<category><![CDATA[Leo Lopes]]></category>
+		<category><![CDATA[MPB]]></category>
+		<category><![CDATA[radiofobia]]></category>
+		<category><![CDATA[RÁDIOFOBIA Classics]]></category>
+		<category><![CDATA[voz]]></category>
+
+		<guid isPermaLink="false">http://radiofobia.com.br/?p=8597</guid>
+				<description><![CDATA[No programa deste mês, Leo Lopes e Daniela Monteiro apresentam a biografia e 35 grandes sucessos de uma das mais belas vozes da MPB: a inigualável Gal Costa!]]></description>
+						<wfw:commentRss>https://radiofobia.com.br/podcast/2014/03/radiofobia-classics-11-gal-costa/feed/</wfw:commentRss>
+		<slash:comments>2</slash:comments>
+				<enclosure url="http://media.blubrry.com/radiofobia/traffic.libsyn.com/radiofobia/radiofobia_classics_11_gal_costa.mp3" length="148927098" type="audio/mpeg" />
+			<itunes:subtitle>No programa deste mês, Leo Lopes e Daniela Monteiro apresentam a biografia e 35 grandes sucessos de uma das mais belas vozes da MPB: a inigualável Gal Costa!</itunes:subtitle>
+		<itunes:summary>No programa deste mês, Leo Lopes e Daniela Monteiro apresentam a biografia e 35 grandes sucessos de uma das mais belas vozes da MPB: a inigualável Gal Costa!</itunes:summary>
+		<itunes:author>Rádiofobia Podcast Network</itunes:author>
+		<itunes:duration>2:34:58</itunes:duration>
+	</item>
+		<item>
+		<title>RÁDIOFOBIA Classics #10 &#8211; Ray Charles</title>
+		<link>https://radiofobia.com.br/podcast/2014/02/radiofobia-classics-10-ray-charles/</link>
+				<comments>https://radiofobia.com.br/podcast/2014/02/radiofobia-classics-10-ray-charles/#comments</comments>
+				<pubDate>Wed, 12 Feb 2014 02:01:10 +0000</pubDate>
+		<dc:creator><![CDATA[Leo Lopes]]></dc:creator>
+				<category><![CDATA[Podcast]]></category>
+		<category><![CDATA[Rádiofobia Classics]]></category>
+		<category><![CDATA[blues]]></category>
+		<category><![CDATA[Daniela Monteiro]]></category>
+		<category><![CDATA[jazz]]></category>
+		<category><![CDATA[Leo Lopes]]></category>
+		<category><![CDATA[Pop]]></category>
+		<category><![CDATA[radiofobia]]></category>
+		<category><![CDATA[RÁDIOFOBIA Classics]]></category>
+		<category><![CDATA[Ray Charles]]></category>
+		<category><![CDATA[soul music]]></category>
+		<category><![CDATA[voz]]></category>
+
+		<guid isPermaLink="false">http://radiofobia.com.br/?p=8494</guid>
+				<description><![CDATA[Este mês atendemos a mais um pedido dos ouvintes e preparamos um programa antológico com a biografia e 25 grandes sucessos do pai da soul music Ray Charles!]]></description>
+						<wfw:commentRss>https://radiofobia.com.br/podcast/2014/02/radiofobia-classics-10-ray-charles/feed/</wfw:commentRss>
+		<slash:comments>7</slash:comments>
+				<enclosure url="http://media.blubrry.com/radiofobia/traffic.libsyn.com/radiofobia/radiofobia_classics_10_ray_charles.mp3" length="103480964" type="audio/mpeg" />
+			<itunes:subtitle>Este mês atendemos a mais um pedido dos ouvintes e preparamos um programa antológico com a biografia e 25 grandes sucessos do pai da soul music Ray Charles!</itunes:subtitle>
+		<itunes:summary>Este mês atendemos a mais um pedido dos ouvintes e preparamos um programa antológico com a biografia e 25 grandes sucessos do pai da soul music Ray Charles!</itunes:summary>
+		<itunes:author>Rádiofobia Podcast Network</itunes:author>
+		<itunes:duration>1:47:41</itunes:duration>
+	</item>
+		<item>
+		<title>RÁDIOFOBIA Classics #09 &#8211; Donna Summer</title>
+		<link>https://radiofobia.com.br/podcast/2014/01/radiofobia-classics-09-donna-summer/</link>
+				<comments>https://radiofobia.com.br/podcast/2014/01/radiofobia-classics-09-donna-summer/#comments</comments>
+				<pubDate>Wed, 15 Jan 2014 02:01:33 +0000</pubDate>
+		<dc:creator><![CDATA[Leo Lopes]]></dc:creator>
+				<category><![CDATA[Podcast]]></category>
+		<category><![CDATA[Rádiofobia Classics]]></category>
+		<category><![CDATA[Daniela Monteiro]]></category>
+		<category><![CDATA[disco]]></category>
+		<category><![CDATA[Donna Summer]]></category>
+		<category><![CDATA[Leo Lopes]]></category>
+		<category><![CDATA[Pop]]></category>
+		<category><![CDATA[radiofobia]]></category>
+		<category><![CDATA[RÁDIOFOBIA Classics]]></category>
+		<category><![CDATA[rainha]]></category>
+		<category><![CDATA[voz]]></category>
+
+		<guid isPermaLink="false">http://radiofobia.com.br/?p=8398</guid>
+				<description><![CDATA[No primeiro programa de 2014, apresentamos a história e tocamos 15 dos maiores sucessos da eterna rainha da disco music Donna Summer!]]></description>
+						<wfw:commentRss>https://radiofobia.com.br/podcast/2014/01/radiofobia-classics-09-donna-summer/feed/</wfw:commentRss>
+		<slash:comments>1</slash:comments>
+				<enclosure url="http://media.blubrry.com/radiofobia/traffic.libsyn.com/radiofobia/radiofobia_classics_09_donna_summer.mp3" length="93901935" type="audio/mpeg" />
+			<itunes:subtitle>No primeiro programa de 2014, apresentamos a história e tocamos 15 dos maiores sucessos da eterna rainha da disco music Donna Summer!</itunes:subtitle>
+		<itunes:summary>No primeiro programa de 2014, apresentamos a história e tocamos 15 dos maiores sucessos da eterna rainha da disco music Donna Summer!</itunes:summary>
+		<itunes:author>Rádiofobia Podcast Network</itunes:author>
+		<itunes:duration>1:37:38</itunes:duration>
+	</item>
+		<item>
+		<title>RÁDIOFOBIA Classics #08 &#8211; Tim Maia</title>
+		<link>https://radiofobia.com.br/podcast/2013/12/radiofobia-classics-08-tim-maia/</link>
+				<comments>https://radiofobia.com.br/podcast/2013/12/radiofobia-classics-08-tim-maia/#comments</comments>
+				<pubDate>Wed, 18 Dec 2013 02:01:46 +0000</pubDate>
+		<dc:creator><![CDATA[Leo Lopes]]></dc:creator>
+				<category><![CDATA[Podcast]]></category>
+		<category><![CDATA[Rádiofobia Classics]]></category>
+		<category><![CDATA[brasil]]></category>
+		<category><![CDATA[Daniela Monteiro]]></category>
+		<category><![CDATA[ídolos]]></category>
+		<category><![CDATA[Leo Lopes]]></category>
+		<category><![CDATA[MPB]]></category>
+		<category><![CDATA[RÁDIOFOBIA Classics]]></category>
+		<category><![CDATA[soul music]]></category>
+		<category><![CDATA[Tim Maia]]></category>
+		<category><![CDATA[voz]]></category>
+
+		<guid isPermaLink="false">http://radiofobia.com.br/?p=8283</guid>
+				<description><![CDATA[No último programa de 2013, Leo Lopes e Daniela Monteiro apresentam a história musical e 24 sucessos do rei da soul music brasileira: o síndico Tim Maia!]]></description>
+						<wfw:commentRss>https://radiofobia.com.br/podcast/2013/12/radiofobia-classics-08-tim-maia/feed/</wfw:commentRss>
+		<slash:comments>4</slash:comments>
+				<enclosure url="http://media.blubrry.com/radiofobia/traffic.libsyn.com/radiofobia/radiofobia_classics_08_tim_maia.mp3" length="110008573" type="audio/mpeg" />
+			<itunes:subtitle>No último programa de 2013, Leo Lopes e Daniela Monteiro apresentam a história musical e 24 sucessos do rei da soul music brasileira: o síndico Tim Maia!</itunes:subtitle>
+		<itunes:summary>No último programa de 2013, Leo Lopes e Daniela Monteiro apresentam a história musical e 24 sucessos do rei da soul music brasileira: o síndico Tim Maia!</itunes:summary>
+		<itunes:author>Rádiofobia Podcast Network</itunes:author>
+		<itunes:duration>1:54:25</itunes:duration>
+	</item>
+		<item>
+		<title>RÁDIOFOBIA Classics #07 &#8211; The Smiths</title>
+		<link>https://radiofobia.com.br/podcast/2013/11/radiofobia-classics-07-the-smiths/</link>
+				<comments>https://radiofobia.com.br/podcast/2013/11/radiofobia-classics-07-the-smiths/#comments</comments>
+				<pubDate>Wed, 20 Nov 2013 02:01:40 +0000</pubDate>
+		<dc:creator><![CDATA[Leo Lopes]]></dc:creator>
+				<category><![CDATA[Podcast]]></category>
+		<category><![CDATA[Rádiofobia Classics]]></category>
+		<category><![CDATA[Anos 80]]></category>
+		<category><![CDATA[Daniela Monteiro]]></category>
+		<category><![CDATA[Leo Lopes]]></category>
+		<category><![CDATA[Morrissey]]></category>
+		<category><![CDATA[Pop]]></category>
+		<category><![CDATA[radiofobia]]></category>
+		<category><![CDATA[RÁDIOFOBIA Classics]]></category>
+		<category><![CDATA[Rock]]></category>
+		<category><![CDATA[The Smiths]]></category>
+
+		<guid isPermaLink="false">http://radiofobia.com.br/?p=8057</guid>
+				<description><![CDATA[Este mês Leo Lopes e Daniela Monteiro apresentam a biografia musical e alguns dos maiores sucessos de uma banda inglesa de rock alternativo dos anos 80 que até hoje influencia muitos artistas pelo mundo: The Smiths!]]></description>
+						<wfw:commentRss>https://radiofobia.com.br/podcast/2013/11/radiofobia-classics-07-the-smiths/feed/</wfw:commentRss>
+		<slash:comments>1</slash:comments>
+				<enclosure url="http://media.blubrry.com/radiofobia/traffic.libsyn.com/radiofobia/radiofobia_classics_07_the_smiths.mp3" length="85542597" type="audio/mpeg" />
+			<itunes:subtitle>Este mês Leo Lopes e Daniela Monteiro apresentam a biografia musical e alguns dos maiores sucessos de uma banda inglesa de rock alternativo dos anos 80 que até hoje influencia muitos artistas pelo mundo: The Smiths!</itunes:subtitle>
+		<itunes:summary>Este mês Leo Lopes e Daniela Monteiro apresentam a biografia musical e alguns dos maiores sucessos de uma banda inglesa de rock alternativo dos anos 80 que até hoje influencia muitos artistas pelo mundo: The Smiths!</itunes:summary>
+		<itunes:author>Rádiofobia Podcast Network</itunes:author>
+		<itunes:duration>1:29:01</itunes:duration>
+	</item>
+		<item>
+		<title>RÁDIOFOBIA Classics #06 &#8211; Elis Regina</title>
+		<link>https://radiofobia.com.br/podcast/2013/10/radiofobia-classics-06-elis-regina/</link>
+				<comments>https://radiofobia.com.br/podcast/2013/10/radiofobia-classics-06-elis-regina/#comments</comments>
+				<pubDate>Wed, 23 Oct 2013 02:01:07 +0000</pubDate>
+		<dc:creator><![CDATA[Leo Lopes]]></dc:creator>
+				<category><![CDATA[Podcast]]></category>
+		<category><![CDATA[Rádiofobia Classics]]></category>
+		<category><![CDATA[Daniela Monteiro]]></category>
+		<category><![CDATA[Elis Regina]]></category>
+		<category><![CDATA[Leo Lopes]]></category>
+		<category><![CDATA[MPB]]></category>
+		<category><![CDATA[radiofobia]]></category>
+		<category><![CDATA[RÁDIOFOBIA Classics]]></category>
+
+		<guid isPermaLink="false">http://radiofobia.com.br/?p=7945</guid>
+				<description><![CDATA[No programa deste mês, apresentamos a história daquela que é considerada por muitos a maior cantora brasileira de todos os tempos: a pimentinha Elis Regina!]]></description>
+						<wfw:commentRss>https://radiofobia.com.br/podcast/2013/10/radiofobia-classics-06-elis-regina/feed/</wfw:commentRss>
+		<slash:comments>7</slash:comments>
+				<enclosure url="http://media.blubrry.com/radiofobia/traffic.libsyn.com/radiofobia/radiofobia_classics_06_elis_regina.mp3" length="87318116" type="audio/mpeg" />
+			<itunes:subtitle>No programa deste mês, apresentamos a história daquela que é considerada por muitos a maior cantora brasileira de todos os tempos: a pimentinha Elis Regina!</itunes:subtitle>
+		<itunes:summary>No programa deste mês, apresentamos a história daquela que é considerada por muitos a maior cantora brasileira de todos os tempos: a pimentinha Elis Regina!</itunes:summary>
+		<itunes:author>Rádiofobia Podcast Network</itunes:author>
+		<itunes:duration>1:30:48</itunes:duration>
+	</item>
+		<item>
+		<title>RÁDIOFOBIA Classics #05 &#8211; Whitney Houston</title>
+		<link>https://radiofobia.com.br/podcast/2013/09/radiofobia-classics-05-whitney-houston/</link>
+				<comments>https://radiofobia.com.br/podcast/2013/09/radiofobia-classics-05-whitney-houston/#comments</comments>
+				<pubDate>Wed, 25 Sep 2013 03:01:48 +0000</pubDate>
+		<dc:creator><![CDATA[Leo Lopes]]></dc:creator>
+				<category><![CDATA[Podcast]]></category>
+		<category><![CDATA[Rádiofobia Classics]]></category>
+		<category><![CDATA[Daniela Monteiro]]></category>
+		<category><![CDATA[Leo Lopes]]></category>
+		<category><![CDATA[música]]></category>
+		<category><![CDATA[Pop]]></category>
+		<category><![CDATA[R&B]]></category>
+		<category><![CDATA[radiofobia]]></category>
+		<category><![CDATA[RÁDIOFOBIA Classics]]></category>
+		<category><![CDATA[Whitney Houston]]></category>
+
+		<guid isPermaLink="false">http://radiofobia.com.br/?p=7765</guid>
+				<description><![CDATA[Na quinta edição do nosso podcast musical, apresentamos a história e 19 grandes sucessos da artista mais premiada de todos os tempos, segundo o Guiness Book: Whitney Houston - A VOZ!]]></description>
+						<wfw:commentRss>https://radiofobia.com.br/podcast/2013/09/radiofobia-classics-05-whitney-houston/feed/</wfw:commentRss>
+		<slash:comments>4</slash:comments>
+				<enclosure url="http://media.blubrry.com/radiofobia/traffic.libsyn.com/radiofobia/radiofobia_classics_05_whitney_houston.mp3" length="105365634" type="audio/mpeg" />
+			<itunes:subtitle>Na quinta edição do nosso podcast musical, apresentamos a história e 19 grandes sucessos da artista mais premiada de todos os tempos, segundo o Guiness Book: Whitney Houston - A VOZ!</itunes:subtitle>
+		<itunes:summary>Na quinta edição do nosso podcast musical, apresentamos a história e 19 grandes sucessos da artista mais premiada de todos os tempos, segundo o Guiness Book: Whitney Houston - A VOZ!</itunes:summary>
+		<itunes:author>Rádiofobia Podcast Network</itunes:author>
+		<itunes:duration>1:49:35</itunes:duration>
+	</item>
+		<item>
+		<title>RÁDIOFOBIA Classics #04 &#8211; Queen</title>
+		<link>https://radiofobia.com.br/podcast/2013/08/radiofobia-classics-04-queen/</link>
+				<comments>https://radiofobia.com.br/podcast/2013/08/radiofobia-classics-04-queen/#comments</comments>
+				<pubDate>Wed, 28 Aug 2013 03:01:12 +0000</pubDate>
+		<dc:creator><![CDATA[Leo Lopes]]></dc:creator>
+				<category><![CDATA[Podcast]]></category>
+		<category><![CDATA[Rádiofobia Classics]]></category>
+		<category><![CDATA[Daniela Monteiro]]></category>
+		<category><![CDATA[Freddie Mercury]]></category>
+		<category><![CDATA[Leo Lopes]]></category>
+		<category><![CDATA[música]]></category>
+		<category><![CDATA[Pop]]></category>
+		<category><![CDATA[queen]]></category>
+		<category><![CDATA[radiofobia]]></category>
+		<category><![CDATA[RÁDIOFOBIA Classics]]></category>
+		<category><![CDATA[Rock]]></category>
+
+		<guid isPermaLink="false">http://radiofobia.com.br/?p=7660</guid>
+				<description><![CDATA[Prepare-se para conhecer a biografia musical e ouvir 19 dos maiores sucessos de uma das maiores bandas de todos os tempos: QUEEN!]]></description>
+						<wfw:commentRss>https://radiofobia.com.br/podcast/2013/08/radiofobia-classics-04-queen/feed/</wfw:commentRss>
+		<slash:comments>17</slash:comments>
+				<enclosure url="http://media.blubrry.com/radiofobia/traffic.libsyn.com/radiofobia/radiofobia_classics_04_queen.mp3" length="115741892" type="audio/mpeg" />
+			<itunes:subtitle>Prepare-se para conhecer a biografia musical e ouvir 19 dos maiores sucessos de uma das maiores bandas de todos os tempos: QUEEN!</itunes:subtitle>
+		<itunes:summary>Prepare-se para conhecer a biografia musical e ouvir 19 dos maiores sucessos de uma das maiores bandas de todos os tempos: QUEEN!</itunes:summary>
+		<itunes:author>Rádiofobia Podcast Network</itunes:author>
+		<itunes:duration>2:00:27</itunes:duration>
+	</item>
+		<item>
+		<title>RÁDIOFOBIA Classics #03 &#8211; Elton John</title>
+		<link>https://radiofobia.com.br/podcast/2013/07/radiofobia-classics-03-elton-john/</link>
+				<comments>https://radiofobia.com.br/podcast/2013/07/radiofobia-classics-03-elton-john/#comments</comments>
+				<pubDate>Wed, 31 Jul 2013 03:01:32 +0000</pubDate>
+		<dc:creator><![CDATA[Leo Lopes]]></dc:creator>
+				<category><![CDATA[Podcast]]></category>
+		<category><![CDATA[Rádiofobia Classics]]></category>
+		<category><![CDATA[Daniela Monteiro]]></category>
+		<category><![CDATA[Elton John]]></category>
+		<category><![CDATA[Leo Lopes]]></category>
+		<category><![CDATA[música]]></category>
+		<category><![CDATA[Pop]]></category>
+		<category><![CDATA[radiofobia]]></category>
+		<category><![CDATA[RÁDIOFOBIA Classics]]></category>
+		<category><![CDATA[Rock]]></category>
+
+		<guid isPermaLink="false">http://radiofobia.com.br/?p=7419</guid>
+				<description><![CDATA[O primeiro astro da música pop internacional do RÁDIOFOBIA Classics é um sucesso com mais de 50 anos de carreira e 250 milhões de discos vendidos: Sir Elton John!]]></description>
+						<wfw:commentRss>https://radiofobia.com.br/podcast/2013/07/radiofobia-classics-03-elton-john/feed/</wfw:commentRss>
+		<slash:comments>5</slash:comments>
+				<enclosure url="http://media.blubrry.com/radiofobia/traffic.libsyn.com/radiofobia/radiofobia_classics_03_elton_john.mp3" length="109261932" type="audio/mpeg" />
+			<itunes:subtitle>O primeiro astro da música pop internacional do RÁDIOFOBIA Classics é um sucesso com mais de 50 anos de carreira e 250 milhões de discos vendidos: Sir Elton John!</itunes:subtitle>
+		<itunes:summary>O primeiro astro da música pop internacional do RÁDIOFOBIA Classics é um sucesso com mais de 50 anos de carreira e 250 milhões de discos vendidos: Sir Elton John!</itunes:summary>
+		<itunes:author>Rádiofobia Podcast Network</itunes:author>
+		<itunes:duration>1:53:35</itunes:duration>
+	</item>
+		<item>
+		<title>RÁDIOFOBIA Classics #02 &#8211; Wilson Simonal</title>
+		<link>https://radiofobia.com.br/podcast/2013/07/radiofobia-classics-02-wilson-simonal/</link>
+				<comments>https://radiofobia.com.br/podcast/2013/07/radiofobia-classics-02-wilson-simonal/#comments</comments>
+				<pubDate>Wed, 03 Jul 2013 03:01:40 +0000</pubDate>
+		<dc:creator><![CDATA[Leo Lopes]]></dc:creator>
+				<category><![CDATA[Podcast]]></category>
+		<category><![CDATA[Rádiofobia Classics]]></category>
+		<category><![CDATA[Daniela Monteiro]]></category>
+		<category><![CDATA[Leo Lopes]]></category>
+		<category><![CDATA[MPB]]></category>
+		<category><![CDATA[música]]></category>
+		<category><![CDATA[radiofobia]]></category>
+		<category><![CDATA[RÁDIOFOBIA Classics]]></category>
+		<category><![CDATA[Wilson Simonal]]></category>
+
+		<guid isPermaLink="false">http://radiofobia.com.br/?p=7285</guid>
+				<description><![CDATA[O primeiro artista verdadeiramente completo da MPB revolucionou sua época mas cometeu um erro cujo peso carregaria até o final de sua vida. É hora de conhecer Wilson Simonal!]]></description>
+						<wfw:commentRss>https://radiofobia.com.br/podcast/2013/07/radiofobia-classics-02-wilson-simonal/feed/</wfw:commentRss>
+		<slash:comments>12</slash:comments>
+				<enclosure url="http://media.blubrry.com/radiofobia/traffic.libsyn.com/radiofobia/radiofobia_classics_02_wilson_simonal.mp3" length="130633176" type="audio/mpeg" />
+			<itunes:subtitle>O primeiro artista verdadeiramente completo da MPB revolucionou sua época mas cometeu um erro cujo peso carregaria até o final de sua vida. É hora de conhecer Wilson Simonal!</itunes:subtitle>
+		<itunes:summary>O primeiro artista verdadeiramente completo da MPB revolucionou sua época mas cometeu um erro cujo peso carregaria até o final de sua vida. É hora de conhecer Wilson Simonal!</itunes:summary>
+		<itunes:author>Rádiofobia Podcast Network</itunes:author>
+		<itunes:duration>2:15:53</itunes:duration>
+	</item>
+		<item>
+		<title>RÁDIOFOBIA Classics #01 &#8211; Stevie Wonder</title>
+		<link>https://radiofobia.com.br/podcast/2013/06/radiofobia-classics-01-stevie-wonder/</link>
+				<comments>https://radiofobia.com.br/podcast/2013/06/radiofobia-classics-01-stevie-wonder/#comments</comments>
+				<pubDate>Wed, 05 Jun 2013 03:01:19 +0000</pubDate>
+		<dc:creator><![CDATA[Leo Lopes]]></dc:creator>
+				<category><![CDATA[Podcast]]></category>
+		<category><![CDATA[Rádiofobia Classics]]></category>
+		<category><![CDATA[Daniela Monteiro]]></category>
+		<category><![CDATA[Leo Lopes]]></category>
+		<category><![CDATA[música]]></category>
+		<category><![CDATA[rádio]]></category>
+		<category><![CDATA[radiofobia]]></category>
+		<category><![CDATA[RÁDIOFOBIA Classics]]></category>
+		<category><![CDATA[Stevie Wonder]]></category>
+		<category><![CDATA[sucessos]]></category>
+
+		<guid isPermaLink="false">http://radiofobia.com.br/?p=7165</guid>
+				<description><![CDATA[No primeiro RÁDIOFOBIA Classics, conheça a história musical e ouça 15 grandes sucessos do fantástico Stevie Wonder!]]></description>
+						<wfw:commentRss>https://radiofobia.com.br/podcast/2013/06/radiofobia-classics-01-stevie-wonder/feed/</wfw:commentRss>
+		<slash:comments>15</slash:comments>
+				<enclosure url="http://media.blubrry.com/radiofobia/traffic.libsyn.com/radiofobia/radiofobia_classics_01_stevie_wonder.mp3" length="104329319" type="audio/mpeg" />
+			<itunes:subtitle>No primeiro RÁDIOFOBIA Classics, conheça a história musical e ouça 15 grandes sucessos do fantástico Stevie Wonder!</itunes:subtitle>
+		<itunes:summary>No primeiro RÁDIOFOBIA Classics, conheça a história musical e ouça 15 grandes sucessos do fantástico Stevie Wonder!</itunes:summary>
+		<itunes:author>Rádiofobia Podcast Network</itunes:author>
+		<itunes:duration>1:48:27</itunes:duration>
+	</item>
+		<item>
+		<title>RÁDIOFOBIA Classics #00 &#8211; Piloto &#8211; Earth, Wind &#038; Fire</title>
+		<link>https://radiofobia.com.br/podcast/2013/05/radiofobia-classics-00-piloto-earth-wind-fire/</link>
+				<comments>https://radiofobia.com.br/podcast/2013/05/radiofobia-classics-00-piloto-earth-wind-fire/#comments</comments>
+				<pubDate>Wed, 08 May 2013 03:01:57 +0000</pubDate>
+		<dc:creator><![CDATA[Leo Lopes]]></dc:creator>
+				<category><![CDATA[Podcast]]></category>
+		<category><![CDATA[Rádiofobia Classics]]></category>
+		<category><![CDATA[Daniela Monteiro]]></category>
+		<category><![CDATA[Leo Lopes]]></category>
+		<category><![CDATA[música]]></category>
+		<category><![CDATA[piloto]]></category>
+		<category><![CDATA[rádio]]></category>
+		<category><![CDATA[radiofobia]]></category>
+		<category><![CDATA[RÁDIOFOBIA Classics]]></category>
+		<category><![CDATA[sucessos]]></category>
+
+		<guid isPermaLink="false">http://radiofobia.com.br/?p=7028</guid>
+				<description><![CDATA[No programa piloto do RÁDIOFOBIA Classics, a biografia e alguns dos maiores sucessos da banda americana Earth, Wind &#038; Fire!]]></description>
+						<wfw:commentRss>https://radiofobia.com.br/podcast/2013/05/radiofobia-classics-00-piloto-earth-wind-fire/feed/</wfw:commentRss>
+		<slash:comments>19</slash:comments>
+				<enclosure url="http://media.blubrry.com/radiofobia/traffic.libsyn.com/radiofobia/radiofobia_classics_00_piloto.mp3" length="63275366" type="audio/mpeg" />
+			<itunes:subtitle>No programa piloto do RÁDIOFOBIA Classics, a biografia e alguns dos maiores sucessos da banda americana Earth, Wind &amp; Fire!</itunes:subtitle>
+		<itunes:summary>No programa piloto do RÁDIOFOBIA Classics, a biografia e alguns dos maiores sucessos da banda americana Earth, Wind &amp; Fire!</itunes:summary>
+		<itunes:author>Rádiofobia Podcast Network</itunes:author>
+		<itunes:duration>1:05:42</itunes:duration>
+	</item>
+	</channel>
+</rss>
