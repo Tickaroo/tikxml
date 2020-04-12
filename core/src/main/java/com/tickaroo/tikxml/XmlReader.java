@@ -313,7 +313,7 @@ public class XmlReader implements Closeable {
    * @throws IOException
    */
   private boolean isCDATA() throws IOException {
-    return buffer.rangeEquals(0, CDATA_OPEN);
+    return fillBuffer(CDATA_OPEN.size()) && buffer.rangeEquals(0, CDATA_OPEN);
   }
 
   /**
@@ -831,6 +831,7 @@ public class XmlReader implements Closeable {
         } else if (peek == '!' && fillBuffer(4)) {
           long index = source.indexOf(COMMENT_CLOSE, 4); // skip <!-- in comparison by offset 4
           if (index == -1) {
+            System.out.println(source);
             throw syntaxError("Unterminated comment");
           }
           source.skip(index + COMMENT_CLOSE.size()); // skip behind --!>
