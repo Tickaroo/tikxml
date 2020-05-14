@@ -26,7 +26,6 @@ import com.squareup.javapoet.TypeSpec
 import com.tickaroo.tikxml.TikXmlConfig
 import com.tickaroo.tikxml.TypeConverterNotFoundException
 import com.tickaroo.tikxml.XmlReader
-import com.tickaroo.tikxml.annotation.ElementNameMatcher
 import com.tickaroo.tikxml.processor.ProcessingException
 import com.tickaroo.tikxml.processor.field.PolymorphicSubstitutionField
 import com.tickaroo.tikxml.processor.field.PolymorphicSubstitutionListField
@@ -49,7 +48,6 @@ import java.io.IOException
 import java.util.Collections
 import java.util.HashMap
 import java.util.Locale
-import java.util.Objects
 import javax.lang.model.element.Element
 import javax.lang.model.element.Modifier
 import javax.lang.model.element.TypeElement
@@ -433,11 +431,10 @@ class CodeGeneratorHelper(
   /**
    * Writes the code to generate xml by generating to the corresponding type adapter depending on the type of the element
    */
-  fun writeResolvePolymorphismAndDelegteToTypeAdpters(variableName: String,
+  fun writeResolvePolymorphismAndDelegateToTypeAdpters(variableName: String,
     typeElementNameMatcher: List<PolymorphicTypeElementNameMatcher>) =
     CodeBlock.builder()
       .apply {
-
         // Cannot be done with instanceof because then the inheritance hierarchy matters and so matters the order of the if checks
         val orderdByInheritanceHierarchy = orderByInheritanceHierarchy(typeElementNameMatcher, elementUtils, typeUtils)
         if (orderdByInheritanceHierarchy.size != typeElementNameMatcher.size) {
@@ -447,7 +444,23 @@ class CodeGeneratorHelper(
         val filteredOrderdByInheritanceHierarchy = orderdByInheritanceHierarchy.filter {
           (typeUtils.asElement(it.type) as TypeElement).getXmlElementName() != it.xmlElementName
         }
-        filteredOrderdByInheritanceHierarchy.forEachIndexed { i, nameMatcher ->
+
+        addStatement("\$T xmlElementName = null", String::class.java)
+        orderdByInheritanceHierarchy.forEachIndexed { i, nameMatcher ->
+          if (i == 0) {
+            beginControlFlow("if ($variableName instanceof \$T)", ClassName.get(nameMatcher.type))
+          } else {
+            nextControlFlow("else if ($variableName instanceof \$T)", ClassName.get(nameMatcher.type))
+          }
+          addStatement("xmlElementName = \$S", nameMatcher.xmlElementName)
+        }
+
+        endControlFlow()
+
+        val genericListTypeMirror = orderdByInheritanceHierarchy.first().genericListTypeMirror
+        addStatement("$tikConfigParam.getTypeAdapter(\$T.class, true).toXml($writerParam, $tikConfigParam, (\$T) $variableName, xmlElementName)",
+          genericListTypeMirror, genericListTypeMirror)
+        /*filteredOrderdByInheritanceHierarchy.forEachIndexed { i, nameMatcher ->
           if (i == 0) {
             beginControlFlow("if ($variableName instanceof \$T)", ClassName.get(nameMatcher.type))
           } else {
@@ -472,7 +485,7 @@ class CodeGeneratorHelper(
         }
         if (hasSpecialMapping) {
           endControlFlow()
-        }
+        }*/
       }
       .build()
 
@@ -544,7 +557,7 @@ class CodeGeneratorHelper(
           val getterForWrittingXml = first.accessResolver.resolveGetterForWritingXml()
           beginControlFlow("if ($getterForWrittingXml != null)")
           beginControlFlow("for (\$T \$N : $getterForWrittingXml)", java.lang.Object::class.java, genericListElementName)
-          add(writeResolvePolymorphismAndDelegteToTypeAdpters(genericListElementName,
+          add(writeResolvePolymorphismAndDelegateToTypeAdpters(genericListElementName,
             elementTypeMatchers)) // does the if instance of checks
           endControlFlow() // end for loop
           endControlFlow() // end != null check
@@ -558,7 +571,7 @@ class CodeGeneratorHelper(
           beginControlFlow("if (${first.accessResolver.resolveGetterForWritingXml()} != null)")
           addStatement("\$T element = ${first.accessResolver.resolveGetterForWritingXml()}",
             ClassName.get(first.originalElementTypeMirror))  // does the if instance of checks
-          add(writeResolvePolymorphismAndDelegteToTypeAdpters("element", elementTypeMatchers))
+          add(writeResolvePolymorphismAndDelegateToTypeAdpters("element", elementTypeMatchers))
           endControlFlow() // end != null check
 
         } else {

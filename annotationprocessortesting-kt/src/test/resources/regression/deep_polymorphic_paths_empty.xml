@@ -1,5 +1,14 @@
 <company>
   <department>
+    <emptyPersons>
+      <emptyPerson/>
+      <Boss>
+        <name>Boss</name>
+      </Boss>
+      <boss>
+        <name>Boss</name>
+      </boss>
+    </emptyPersons>
     <persons>
     </persons>
     <room>

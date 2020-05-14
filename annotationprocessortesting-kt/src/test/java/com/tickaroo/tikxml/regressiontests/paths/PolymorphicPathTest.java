@@ -56,8 +56,8 @@ public class PolymorphicPathTest {
     xml.write(buffer, company);
 
     String xmlStr =
-        "<?xml version=\"1.0\" encoding=\"UTF-8\"?><company><department><persons><boss><name>Boss</name><id>1</id></boss><employee><name>Employee</name><id>2</id></employee><person><id>3</id></person></persons></department></company>";
-    //Assert.assertEquals(xmlStr, TestUtils.bufferToString(buffer));
+        "<?xml version=\"1.0\" encoding=\"UTF-8\"?><company><department><persons><boss><name>Boss</name><id>1</id></boss><employee><name>Employee</name><id>2</id></employee><person><id>3</id></person></persons><emptyPersons/></department></company>";
+    Assert.assertEquals(xmlStr, TestUtils.bufferToString(buffer));
 
     Company company2 = xml.read(TestUtils.sourceFrom(xmlStr), Company.class);
     Assert.assertEquals(company, company2);
@@ -71,6 +71,7 @@ public class PolymorphicPathTest {
         xml.read(TestUtils.sourceForFile("regression/deep_polymorphic_paths_empty.xml"), Company.class);
 
     Assert.assertEquals(company.getPersons().size(), 0);
+    Assert.assertEquals(company.getEmptyPersons().size(), 2);
 
     Room room = company.getRoom();
     Assert.assertEquals(room.getNumber(), "1234");
@@ -81,7 +82,7 @@ public class PolymorphicPathTest {
     xml.write(buffer, company);
 
     String xmlStr =
-        "<?xml version=\"1.0\" encoding=\"UTF-8\"?><company><department><persons/><room><number>1234</number></room></department></company>";
+        "<?xml version=\"1.0\" encoding=\"UTF-8\"?><company><department><persons/><emptyPersons><emptyPerson><id>0</id></emptyPerson><boss><name>Boss</name><id>0</id></boss></emptyPersons><room><number>1234</number></room></department></company>";
     Assert.assertEquals(xmlStr, TestUtils.bufferToString(buffer));
 
     Company company2 = xml.read(TestUtils.sourceFrom(xmlStr), Company.class);

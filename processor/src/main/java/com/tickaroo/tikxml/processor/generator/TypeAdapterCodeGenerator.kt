@@ -311,7 +311,8 @@ class TypeAdapterCodeGenerator(
               .addStatement("${CodeGeneratorHelper.readerParam}.beginElement()")
               .addStatement("elementName = ${CodeGeneratorHelper.readerParam}.nextElementName()")
               .nextControlFlow("else")
-              .addStatement("elementName = ${CodeGeneratorHelper.readerParam}.getCurrentElementName()")
+              .addStatement("break")
+              //.addStatement("elementName = ${CodeGeneratorHelper.readerParam}.getCurrentElementName()")
               .endControlFlow()
           } else {
             fromXmlMethodSpecBuilder

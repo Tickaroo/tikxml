@@ -17,6 +17,7 @@ import com.tickaroo.tikxml.processor.scanning.getXmlElementName
 import com.tickaroo.tikxml.processor.utils.getSurroundingClassQualifiedName
 import com.tickaroo.tikxml.typeadapter.TypeAdapter
 import java.io.IOException
+import java.util.Optional
 import javax.annotation.processing.Filer
 import javax.annotation.processing.FilerException
 import javax.lang.model.element.Modifier.PUBLIC
@@ -67,8 +68,8 @@ class GenericAdapterCodeGenerator(
       .endControlFlow()
       .addStatement("${CodeGeneratorHelper.readerParam}.beginElement()")
       .addStatement("elementName = ${CodeGeneratorHelper.readerParam}.nextElementName()")
-      .nextControlFlow("else if (${CodeGeneratorHelper.readerParam}.peek() == XmlReader.XmlToken.ELEMENT_END)")
-      .addStatement("return null")
+      /*.nextControlFlow("else if (${CodeGeneratorHelper.readerParam}.peek() == XmlReader.XmlToken.ELEMENT_END)")
+      .addStatement("return null")*/
       .nextControlFlow("else")
       .addStatement("elementName = reader.getCurrentElementName()")
       .endControlFlow()
@@ -91,7 +92,9 @@ class GenericAdapterCodeGenerator(
         "throw new \$T(\"Could not map the xml element with the tag name <\" + elementName + \"> at path '\" + reader.getPath()+\"' to java class. Have you annotated such a field in your java class to map this xml attribute? Otherwise you can turn this error message off with TikXml.Builder().exceptionOnUnreadXml(false).build().\")",
         IOException::class.java)
       .nextControlFlow("else")
+      .addStatement("${CodeGeneratorHelper.readerParam}.beginElement()")
       .addStatement("${CodeGeneratorHelper.readerParam}.skipRemainingElement()")
+      .addStatement("${CodeGeneratorHelper.readerParam}.endElement()")
       .endControlFlow()
       .build()
 
@@ -133,8 +136,8 @@ class GenericAdapterCodeGenerator(
       }
 
       codeBlockBuilder.addStatement(
-        "${CodeGeneratorHelper.tikConfigParam}.getTypeAdapter(\$T.class).toXml(${CodeGeneratorHelper.writerParam}, ${CodeGeneratorHelper.tikConfigParam}, (\$T) ${CodeGeneratorHelper.valueParam}, \$S)",
-        elementNameMatcher.type, elementNameMatcher.type, elementNameMatcher.xmlElementName)
+        "${CodeGeneratorHelper.tikConfigParam}.getTypeAdapter(\$T.class).toXml(${CodeGeneratorHelper.writerParam}, ${CodeGeneratorHelper.tikConfigParam}, (\$T) ${CodeGeneratorHelper.valueParam}, \$T.ofNullable(overridingXmlElementTagName).orElse(\$S))",
+        elementNameMatcher.type, elementNameMatcher.type, Optional::class.java, elementNameMatcher.xmlElementName)
     }
 
     val codeBlock = codeBlockBuilder

@@ -54,7 +54,7 @@ open class PolymorphicElementField(
       .ifValueNotNullCheck(this) {
         val varName = codeGeneratorHelper.uniqueVariableName("tmp")
         addStatement("\$T $varName = ${accessResolver.resolveGetterForWritingXml()}", ClassName.get(element.asType()))
-        add(codeGeneratorHelper.writeResolvePolymorphismAndDelegteToTypeAdpters(varName, typeElementNameMatcher))
+        add(codeGeneratorHelper.writeResolvePolymorphismAndDelegateToTypeAdpters(varName, typeElementNameMatcher))
       }
       .build()
 }

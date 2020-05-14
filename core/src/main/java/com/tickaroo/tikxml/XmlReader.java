@@ -154,7 +154,7 @@ public class XmlReader implements Closeable {
   }
 
   /**
-   * Actually do a peek. This method will return the peeked token and updates the internal varible
+   * Actually do a peek. This method will return the peeked token and updates the internal variable
    * {@link #peeked}
    *
    * @return The peeked token

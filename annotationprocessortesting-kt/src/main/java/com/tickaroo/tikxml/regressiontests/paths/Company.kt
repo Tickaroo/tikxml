@@ -13,11 +13,19 @@ class Company {
 
     @Path("department/persons")
     @Element(typesByElement = [
-        ElementNameMatcher(type = Person::class, name="person1"),
+        ElementNameMatcher(type = Person::class),
         ElementNameMatcher(type = Employee::class),
         ElementNameMatcher(type = Boss::class)
     ])
     var persons: List<@JvmSuppressWildcards Person>? = null
+
+    @Path("department/emptyPersons")
+    @Element(typesByElement = [
+        ElementNameMatcher(type = Person::class, name="person1"),
+        ElementNameMatcher(type = Employee::class),
+        ElementNameMatcher(type = Boss::class)
+    ])
+    var emptyPersons: List<@JvmSuppressWildcards Person>? = null
 
     @Path("department") @Element
     var room: Room? = null
