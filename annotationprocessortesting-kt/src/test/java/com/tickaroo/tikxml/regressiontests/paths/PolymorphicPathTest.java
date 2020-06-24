@@ -141,4 +141,26 @@ public class PolymorphicPathTest {
     CompanyDataClass company2 = xml.read(TestUtils.sourceFrom(xmlStr), CompanyDataClass.class);
     Assert.assertEquals(company, company2);
   }
+
+  @Test
+  public void unkownElements() throws IOException, ParseException {
+    TikXml xml = new TikXml.Builder().exceptionOnUnreadXml(false).build();
+
+    CompanyDataClass company =
+        xml.read(TestUtils.sourceForFile("regression/polymprphic_list_with_unknown_element.xml"), CompanyDataClass.class);
+
+    Assert.assertEquals(3, company.getPersons().size());
+
+    // Writing xml test
+
+    Buffer buffer = new Buffer();
+    xml.write(buffer, company);
+
+    String xmlStr =
+        "<?xml version=\"1.0\" encoding=\"UTF-8\"?><company><department><persons><boss><name>Boss</name><id>1</id></boss><employee><name>Employee</name><id>2</id></employee><person><id>3</id></person></persons></department></company>";
+    Assert.assertEquals(xmlStr, TestUtils.bufferToString(buffer));
+
+    CompanyDataClass company2 = xml.read(TestUtils.sourceFrom(xmlStr), CompanyDataClass.class);
+    Assert.assertEquals(company, company2);
+  }
 }

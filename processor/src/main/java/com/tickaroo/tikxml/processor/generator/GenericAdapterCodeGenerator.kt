@@ -92,8 +92,13 @@ class GenericAdapterCodeGenerator(
         "throw new \$T(\"Could not map the xml element with the tag name <\" + elementName + \"> at path '\" + reader.getPath()+\"' to java class. Have you annotated such a field in your java class to map this xml attribute? Otherwise you can turn this error message off with TikXml.Builder().exceptionOnUnreadXml(false).build().\")",
         IOException::class.java)
       .nextControlFlow("else")
+      .beginControlFlow("while (${CodeGeneratorHelper.readerParam}.hasAttribute())")
+      .addStatement("${CodeGeneratorHelper.readerParam}.skipAttribute()")
+      .endControlFlow()
+      .beginControlFlow("if (${CodeGeneratorHelper.readerParam}.hasElement())")
       .addStatement("${CodeGeneratorHelper.readerParam}.beginElement()")
       .addStatement("${CodeGeneratorHelper.readerParam}.skipRemainingElement()")
+      .endControlFlow()
       .addStatement("${CodeGeneratorHelper.readerParam}.endElement()")
       .endControlFlow()
       .build()
