@@ -95,7 +95,7 @@ class GenericAdapterCodeGenerator(
       .beginControlFlow("while (${CodeGeneratorHelper.readerParam}.hasAttribute())")
       .addStatement("${CodeGeneratorHelper.readerParam}.skipAttribute()")
       .endControlFlow()
-      .beginControlFlow("if (${CodeGeneratorHelper.readerParam}.hasElement())")
+      .beginControlFlow("while (${CodeGeneratorHelper.readerParam}.hasElement())")
       .addStatement("${CodeGeneratorHelper.readerParam}.beginElement()")
       .addStatement("${CodeGeneratorHelper.readerParam}.skipRemainingElement()")
       .endControlFlow()

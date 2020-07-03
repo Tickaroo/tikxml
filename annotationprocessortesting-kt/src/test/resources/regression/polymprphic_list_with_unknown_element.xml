@@ -16,7 +16,10 @@
 
       </unknown>
 
-      <unknown2 test=""/>
+      <unknown2>
+        <unknown/>
+        <unknown></unknown>
+      </unknown2>
 
       <person>
         <id>3</id>
