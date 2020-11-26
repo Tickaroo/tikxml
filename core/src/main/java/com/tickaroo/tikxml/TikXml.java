@@ -21,6 +21,8 @@ package com.tickaroo.tikxml;
 import com.tickaroo.tikxml.typeadapter.TypeAdapter;
 import java.io.IOException;
 import java.lang.reflect.Type;
+import java.nio.charset.Charset;
+
 import okio.BufferedSink;
 import okio.BufferedSource;
 
@@ -65,6 +67,17 @@ public final class TikXml {
     }
 
     /**
+     * Specify the charset
+     *
+     * @param charset character encoding set to use when reading and writing the xml document
+     * @return The Builder itself
+     */
+    public Builder charset(Charset charset) {
+      config.charset = charset;
+      return this;
+    }
+
+    /**
      * Adds an type converter for the given class
      *
      * @param clazz The class you want to register a TypeConverter for
@@ -105,7 +118,7 @@ public final class TikXml {
 
   public <T> T read(BufferedSource source, Type clazz) throws IOException {
 
-    XmlReader reader = XmlReader.of(source);
+    XmlReader reader = XmlReader.of(source, config.charset);
 
     reader.beginElement();
     reader.nextElementName(); // We don't care about the name of the root tag
@@ -125,7 +138,7 @@ public final class TikXml {
 
   public <T> void write(BufferedSink sink, T valueToWrite, Type typeOfValueToWrite) throws IOException {
 
-    XmlWriter writer = XmlWriter.of(sink);
+    XmlWriter writer = XmlWriter.of(sink, config.charset);
 
     TypeAdapter<T> adapter = config.getTypeAdapter(typeOfValueToWrite);
     if (config.writeDefaultXmlDeclaration()) {

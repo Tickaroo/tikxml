@@ -18,15 +18,15 @@
 
 package com.tickaroo.tikxml;
 
-import java.io.Closeable;
-import java.io.IOException;
 import okio.BufferedSink;
 import okio.ByteString;
 
-import static com.tickaroo.tikxml.XmlScope.ELEMENT_CONTENT;
-import static com.tickaroo.tikxml.XmlScope.ELEMENT_OPENING;
-import static com.tickaroo.tikxml.XmlScope.NONEMPTY_DOCUMENT;
-import static com.tickaroo.tikxml.XmlScope.getTopStackElementAsToken;
+import java.io.Closeable;
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+
+import static com.tickaroo.tikxml.XmlScope.*;
 
 /**
  * With this class you can write xml with a convinient API.
@@ -75,16 +75,16 @@ public class XmlWriter implements Closeable {
   private static final Byte DOUBLE_QUOTE = (byte) '"';
   private static final Byte OPENING_XML_ELEMENT = (byte) '<';
   private static final Byte CLOSING_XML_ELEMENT = (byte) '>';
-  private static final ByteString CLOSING_XML_ELEMENT_START = ByteString.encodeUtf8("</");
-  private static final ByteString INLINE_CLOSING_XML_ELEMENT = ByteString.encodeUtf8("/>");
-  private static final ByteString ATTRIBUTE_ASSIGNMENT_BEGIN = ByteString.encodeUtf8("=\"");
-  private static final ByteString OPENING_CDATA = ByteString.encodeUtf8("<![CDATA[");
-  private static final ByteString CLOSING_CDATA = ByteString.encodeUtf8("]]>");
-  private static final ByteString XML_DECLARATION =
-      ByteString.encodeUtf8("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+  private final ByteString closingXmlElementStart;
+  private final ByteString inlineClosingXmlElement;
+  private final ByteString attributeAssignmentBegin;
+  private final ByteString openingCdata;
+  private final ByteString closingCdata;
+  private final ByteString xmlDeclaration;
 
   /** The output data, containing at most one top-level array or object. */
   private final BufferedSink sink;
+  private final Charset charset;
   private boolean xmlDeclarationWritten = false;
 
   private int[] stack = new int[32];
@@ -97,18 +97,30 @@ public class XmlWriter implements Closeable {
     stack[stackSize++] = XmlScope.EMPTY_DOCUMENT;
   }
 
-  private XmlWriter(BufferedSink sink) {
+  private XmlWriter(BufferedSink sink, Charset charset) {
     if (sink == null) {
       throw new NullPointerException("sink == null");
     }
     this.sink = sink;
+    this.charset = charset;
+
+    closingXmlElementStart = ByteString.encodeString("</", charset);
+    inlineClosingXmlElement = ByteString.encodeString("/>", charset);
+    attributeAssignmentBegin = ByteString.encodeString("=\"", charset);
+    openingCdata = ByteString.encodeString("<![CDATA[", charset);
+    closingCdata = ByteString.encodeString("]]>", charset);
+    xmlDeclaration = ByteString.encodeString("<?xml version=\"1.0\" encoding=\"" + charset.name() + "\"?>", charset);
   }
 
   /**
    * Returns a new instance.
    */
   public static XmlWriter of(BufferedSink source) {
-    return new XmlWriter(source);
+    return new XmlWriter(source, StandardCharsets.UTF_8);
+  }
+
+  public static XmlWriter of(BufferedSink source, Charset charset) {
+    return new XmlWriter(source, charset);
   }
 
   private void pushStack(int newTop) {
@@ -190,14 +202,14 @@ public class XmlWriter implements Closeable {
         pushStack(XmlScope.ELEMENT_OPENING);
         pathNames[stackSize - 1] = elementTagName;
         sink.writeByte(OPENING_XML_ELEMENT)
-            .writeUtf8(elementTagName);
+            .writeString(elementTagName, charset);
         break;
 
       case XmlScope.ELEMENT_CONTENT: // write a nested xml element <parent> Some optional text <nested>
         pushStack(XmlScope.ELEMENT_OPENING);
         pathNames[stackSize - 1] = elementTagName;
         sink.writeByte(OPENING_XML_ELEMENT)
-            .writeUtf8(elementTagName);
+            .writeString(elementTagName, charset);
         break;
 
       case XmlScope.ELEMENT_OPENING: // write a nested xml element by closing the parent's xml opening header
@@ -206,7 +218,7 @@ public class XmlWriter implements Closeable {
         pathNames[stackSize - 1] = elementTagName;
         sink.writeByte(CLOSING_XML_ELEMENT)
             .writeByte(OPENING_XML_ELEMENT)
-            .writeUtf8(elementTagName);
+            .writeString(elementTagName, charset);
         break;
 
       case XmlScope.NONEMPTY_DOCUMENT:
@@ -234,12 +246,12 @@ public class XmlWriter implements Closeable {
     int topOfStack = peekStack();
     switch (topOfStack) {
       case XmlScope.ELEMENT_OPENING:
-        sink.write(INLINE_CLOSING_XML_ELEMENT);
+        sink.write(inlineClosingXmlElement);
         popStack();
         break;
       case XmlScope.ELEMENT_CONTENT:
-        sink.write(CLOSING_XML_ELEMENT_START)
-            .writeUtf8(pathNames[stackSize - 1])
+        sink.write(closingXmlElementStart)
+            .writeString(pathNames[stackSize - 1], charset)
             .writeByte(CLOSING_XML_ELEMENT);
         popStack();
         break;
@@ -273,11 +285,11 @@ public class XmlWriter implements Closeable {
       case ELEMENT_OPENING:
         sink.writeByte(CLOSING_XML_ELEMENT);
         replaceTopOfStack(XmlScope.ELEMENT_CONTENT);
-        sink.writeUtf8(textContentValue);
+        sink.writeString(textContentValue, charset);
         break;
 
       case ELEMENT_CONTENT:
-        sink.writeUtf8(textContentValue);
+        sink.writeString(textContentValue, charset);
         break;
 
       default:
@@ -345,15 +357,15 @@ public class XmlWriter implements Closeable {
       case ELEMENT_OPENING:
         replaceTopOfStack(XmlScope.ELEMENT_CONTENT);
         sink.writeByte(CLOSING_XML_ELEMENT)
-            .write(OPENING_CDATA)
-            .writeUtf8(textContentValue)
-            .write(CLOSING_CDATA);
+            .write(openingCdata)
+            .writeString(textContentValue, charset)
+            .write(closingCdata);
         break;
 
       case ELEMENT_CONTENT:
-        sink.write(OPENING_CDATA)
-            .writeUtf8(textContentValue)
-            .write(CLOSING_CDATA);
+        sink.write(openingCdata)
+            .writeString(textContentValue, charset)
+            .write(closingCdata);
         break;
 
       default:
@@ -386,9 +398,9 @@ public class XmlWriter implements Closeable {
   public XmlWriter attribute(String attributeName, String value) throws IOException {
     if (XmlScope.ELEMENT_OPENING == peekStack()) {
       sink.writeByte(' ') // Write a whitespace
-          .writeUtf8(attributeName)
-          .write(ATTRIBUTE_ASSIGNMENT_BEGIN)
-          .writeUtf8(value)
+          .writeString(attributeName, charset)
+          .write(attributeAssignmentBegin)
+          .writeString(value, charset)
           .writeByte(DOUBLE_QUOTE);
     } else {
       throw syntaxError("Error while trying to write attribute "
@@ -459,17 +471,17 @@ public class XmlWriter implements Closeable {
 
     if (!xmlDeclarationWritten) {
       if (peekStack() == XmlScope.EMPTY_DOCUMENT) {
-        sink.write(XML_DECLARATION);
+        sink.write(xmlDeclaration);
         xmlDeclarationWritten = true;
       } else {
-        throw syntaxError("Xml Declatraion "
-            + XML_DECLARATION.utf8()
+        throw syntaxError("Xml Declaration "
+            + xmlDeclaration.string(charset)
             + " can only be written at the beginning of a xml document! You are not at the beginning of a xml document: current xml scope is "
             + XmlScope.getTopStackElementAsToken(stackSize, stack));
       }
     } else {
       throw new IOException("Xml declaration "
-          + XML_DECLARATION.utf8()
+          + xmlDeclaration.string(charset)
           + " has already been written in this xml document. Xml declaration can only be written once at the beginning of the document.");
     }
 

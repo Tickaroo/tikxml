@@ -19,6 +19,8 @@
 package com.tickaroo.tikxml;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -50,5 +52,21 @@ public class TikXmlBuilderTest {
         .build();
 
     Assert.assertSame(converter, tikXml.config.getTypeConverter(Object.class));
+  }
+
+  @Test
+  public void defaultCharsetUTF8() {
+    TikXml tikXml = new TikXml.Builder().build();
+
+    Assert.assertEquals(StandardCharsets.UTF_8, tikXml.config.charset());
+  }
+
+  @Test
+  public void charset() {
+    TikXml tikXml = new TikXml.Builder()
+            .charset(StandardCharsets.ISO_8859_1)
+            .build();
+
+    Assert.assertEquals(StandardCharsets.ISO_8859_1, tikXml.config.charset());
   }
 }

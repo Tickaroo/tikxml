@@ -26,6 +26,8 @@ import okio.ByteString;
 import java.io.Closeable;
 import java.io.EOFException;
 import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 /**
  * A class to read and parse an xml stream.
@@ -37,14 +39,13 @@ public class XmlReader implements Closeable {
 
   //private static final ByteString LINEFEED_OR_CARRIAGE_RETURN = ByteString.encodeUtf8("\n\r");
 
-  private static final ByteString UNQUOTED_STRING_TERMINALS
-      = ByteString.encodeUtf8(" >/=\n");
+  private final ByteString unquotedStringTerminals;
 
-  private static final ByteString CDATA_CLOSE = ByteString.encodeUtf8("]]>");
-  private static final ByteString CDATA_OPEN = ByteString.encodeUtf8("<![CDATA[");
-  private static final ByteString DOCTYPE_OPEN = ByteString.encodeUtf8("<!DOCTYPE");
-  private static final ByteString COMMENT_CLOSE = ByteString.encodeUtf8("-->");
-  private static final ByteString XML_DECLARATION_CLOSE = ByteString.encodeUtf8("?>");
+  private final ByteString cdataClose;
+  private final ByteString cdataOpen;
+  private final ByteString doctypeOpen;
+  private final ByteString commentClose;
+  private final ByteString xmlDeclarationClose;
   private static final ByteString UTF8_BOM = ByteString.of((byte) 0xEF, (byte) 0xBB, (byte) 0xBF);
 
   private static final byte DOUBLE_QUOTE = '"';
@@ -97,21 +98,33 @@ public class XmlReader implements Closeable {
 
   private final BufferedSource source;
   private final Buffer buffer;
+  private final Charset charset;
   private String currentElementName;
 
-  private XmlReader(BufferedSource source) {
+  private XmlReader(BufferedSource source, Charset charset) {
     if (source == null) {
       throw new NullPointerException("source == null");
     }
     this.source = source;
     this.buffer = source.buffer();
+    this.charset = charset;
+    unquotedStringTerminals = ByteString.encodeString(" >/=\n", charset);
+    cdataClose = ByteString.encodeString("]]>", charset);
+    cdataOpen = ByteString.encodeString("<![CDATA[", charset);
+    doctypeOpen = ByteString.encodeString("<!DOCTYPE", charset);
+    commentClose = ByteString.encodeString("-->", charset);
+    xmlDeclarationClose = ByteString.encodeString("?>", charset);
   }
 
   /**
    * Returns a new instance that reads a XML-encoded stream from {@code source}.
    */
   public static XmlReader of(BufferedSource source) {
-    return new XmlReader(source);
+    return new XmlReader(source, StandardCharsets.UTF_8);
+  }
+
+  public static XmlReader of(BufferedSource source, Charset charset) {
+    return new XmlReader(source, charset);
   }
 
   /**
@@ -313,7 +326,7 @@ public class XmlReader implements Closeable {
    * @throws IOException
    */
   private boolean isCDATA() throws IOException {
-    return fillBuffer(CDATA_OPEN.size()) && buffer.rangeEquals(0, CDATA_OPEN);
+    return fillBuffer(cdataOpen.size()) && buffer.rangeEquals(0, cdataOpen);
   }
 
   /**
@@ -324,8 +337,8 @@ public class XmlReader implements Closeable {
    * @throws IOException
    */
   private boolean isDocTypeDefinition() throws IOException {
-    return buffer.size() >= DOCTYPE_OPEN.size() &&
-            buffer.snapshot(DOCTYPE_OPEN.size()).toAsciiUppercase().equals(DOCTYPE_OPEN);
+    return buffer.size() >= doctypeOpen.size() &&
+            buffer.snapshot(doctypeOpen.size()).toAsciiUppercase().equals(doctypeOpen);
   }
 
   /**
@@ -564,14 +577,14 @@ public class XmlReader implements Closeable {
             + "> but haven't found");
       }
 
-      return buffer.readUtf8(index);
+      return buffer.readString(index, charset);
     } else if (p == PEEKED_CDATA) {
       peeked = PEEKED_NONE;
 
       // Search index of closing CDATA tag ]]>
       long index = indexOfClosingCDATA();
 
-      String result = buffer.readUtf8(index);
+      String result = buffer.readString(index, charset);
       buffer.skip(3); // consume ]]>
       return result;
     } else if (p == PEEKED_ELEMENT_END) {
@@ -673,7 +686,7 @@ public class XmlReader implements Closeable {
    * @throws IOException
    */
   private long indexOfClosingCDATA() throws IOException {
-    long index = source.indexOf(CDATA_CLOSE);
+    long index = source.indexOf(cdataClose);
     if (index == -1) {
       throw new EOFException("<![CDATA[ at " + getPath() + " has never been closed with ]]>");
     }
@@ -810,12 +823,12 @@ public class XmlReader implements Closeable {
         int peekStack = stack[stackSize - 1];
 
         if (peekStack == XmlScope.NONEMPTY_DOCUMENT && isDocTypeDefinition()) {
-          long index = source.indexOf(CLOSING_XML_ELEMENT, DOCTYPE_OPEN.size());
+          long index = source.indexOf(CLOSING_XML_ELEMENT, doctypeOpen.size());
           if (index == -1) {
             throw syntaxError("Unterminated <!DOCTYPE> . Inline DOCTYPE is not support at the moment.");
           }
           // check if doctype uses brackets
-          long bracketIndex = source.indexOf(OPENING_DOCTYPE_BRACKET, DOCTYPE_OPEN.size(), index);
+          long bracketIndex = source.indexOf(OPENING_DOCTYPE_BRACKET, doctypeOpen.size(), index);
           if (bracketIndex != -1) {
             index = source.indexOf(ByteString.of(CLOSING_DOCTYPE_BRACKET, CLOSING_XML_ELEMENT), index + bracketIndex);
             if (index == -1) {
@@ -829,19 +842,19 @@ public class XmlReader implements Closeable {
           p = 0;
           continue;
         } else if (peek == '!' && fillBuffer(4)) {
-          long index = source.indexOf(COMMENT_CLOSE, 4); // skip <!-- in comparison by offset 4
+          long index = source.indexOf(commentClose, 4); // skip <!-- in comparison by offset 4
           if (index == -1) {
             throw syntaxError("Unterminated comment");
           }
-          source.skip(index + COMMENT_CLOSE.size()); // skip behind --!>
+          source.skip(index + commentClose.size()); // skip behind --!>
           p = 0;
           continue;
         } else if (peek == '?') {
-          long index = source.indexOf(XML_DECLARATION_CLOSE, 2); // skip <? in comparison by offset 2
+          long index = source.indexOf(xmlDeclarationClose, 2); // skip <? in comparison by offset 2
           if (index == -1) {
             throw syntaxError("Unterminated xml declaration or processing instruction \"<?\"");
           }
-          source.skip(index + XML_DECLARATION_CLOSE.size()); // skip behind ?>
+          source.skip(index + xmlDeclarationClose.size()); // skip behind ?>
           p = 0;
           continue;
         }
@@ -896,8 +909,8 @@ public class XmlReader implements Closeable {
 
   /** Returns an unquoted value as a string. */
   private String nextUnquotedValue() throws IOException {
-    long i = source.indexOfElement(UNQUOTED_STRING_TERMINALS);
-    return i != -1 ? buffer.readUtf8(i) : buffer.readUtf8();
+    long i = source.indexOfElement(unquotedStringTerminals);
+    return i != -1 ? buffer.readString(i, charset) : buffer.readString(charset);
   }
 
   /**
@@ -920,7 +933,7 @@ public class XmlReader implements Closeable {
       // If we've got an escape character, we're going to need a string builder.
       if (buffer.getByte(index) == '\\') {
         if (builder == null) builder = new StringBuilder();
-        builder.append(buffer.readUtf8(index));
+        builder.append(buffer.readString(index, charset));
         buffer.readByte(); // '\'
         builder.append(readEscapeCharacter());
         continue;
@@ -928,11 +941,11 @@ public class XmlReader implements Closeable {
 
       // If it isn't the escape character, it's the quote. Return the string.
       if (builder == null) {
-        String result = buffer.readUtf8(index);
+        String result = buffer.readString(index, charset);
         buffer.readByte(); // Consume the quote character.
         return result;
       } else {
-        builder.append(buffer.readUtf8(index));
+        builder.append(buffer.readString(index, charset));
         buffer.readByte(); // Consume the quote character.
         return builder.toString();
       }
@@ -988,7 +1001,7 @@ public class XmlReader implements Closeable {
           } else if (c >= 'A' && c <= 'F') {
             result += (c - 'A' + 10);
           } else {
-            throw syntaxError("\\u" + buffer.readUtf8(4));
+            throw syntaxError("\\u" + buffer.readString(4, charset));
           }
         }
         buffer.skip(4);
