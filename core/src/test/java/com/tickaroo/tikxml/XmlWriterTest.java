@@ -1,7 +1,11 @@
 package com.tickaroo.tikxml;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+
 import okio.Buffer;
+import okio.BufferedSource;
+import okio.ByteString;
 import org.junit.*;
 
 /**
@@ -435,7 +439,7 @@ public class XmlWriterTest {
       Assert.fail("Exception expected");
     } catch (IOException e) {
       Assert.assertEquals(
-          "Xml Declatraion <?xml version=\"1.0\" encoding=\"UTF-8\"?> can only be written at the beginning of a xml document! You are not at the beginning of a xml document: current xml scope is ELEMENT_OPENING at path /foo",
+          "Xml Declaration <?xml version=\"1.0\" encoding=\"UTF-8\"?> can only be written at the beginning of a xml document! You are not at the beginning of a xml document: current xml scope is ELEMENT_OPENING at path /foo",
           e.getMessage());
     }
   }
@@ -452,7 +456,7 @@ public class XmlWriterTest {
       Assert.fail("Exception expected");
     } catch (IOException e) {
       Assert.assertEquals(
-          "Xml Declatraion <?xml version=\"1.0\" encoding=\"UTF-8\"?> can only be written at the beginning of a xml document! You are not at the beginning of a xml document: current xml scope is ELEMENT_CONTENT at path /foo/text()",
+          "Xml Declaration <?xml version=\"1.0\" encoding=\"UTF-8\"?> can only be written at the beginning of a xml document! You are not at the beginning of a xml document: current xml scope is ELEMENT_CONTENT at path /foo/text()",
           e.getMessage());
     }
   }
@@ -470,7 +474,7 @@ public class XmlWriterTest {
       Assert.fail("Exception expected");
     } catch (IOException e) {
       Assert.assertEquals(
-          "Xml Declatraion <?xml version=\"1.0\" encoding=\"UTF-8\"?> can only be written at the beginning of a xml document! You are not at the beginning of a xml document: current xml scope is NONEMPTY_DOCUMENT at path /",
+          "Xml Declaration <?xml version=\"1.0\" encoding=\"UTF-8\"?> can only be written at the beginning of a xml document! You are not at the beginning of a xml document: current xml scope is NONEMPTY_DOCUMENT at path /",
           e.getMessage());
     }
   }
@@ -542,5 +546,75 @@ public class XmlWriterTest {
     } catch (IOException e) {
       Assert.assertEquals("Error while trying to write attribute xmlns:m=\"http://foo.com\". Attributes can only be written in a opening xml element but was in xml scope NONEMPTY_DOCUMENT at path /", e.getMessage());
     }
+  }
+
+  @Test
+  public void validElementContentContinuation() throws IOException {
+    Buffer buffer = new Buffer();
+    XmlWriter writer = XmlWriter.of(buffer)
+            .xmlDeclaration()
+            .beginElement("root")
+            .beginElement("foo")
+            .attribute("other", 123)
+            .textContent("hello")
+            .textContent(" ")
+            .textContent("world")
+            .endElement()
+            .endElement();
+
+    Assert.assertEquals(
+            "<?xml version=\"1.0\" encoding=\"UTF-8\"?><root><foo other=\"123\">hello world</foo></root>",
+            TestUtils.bufferToString(buffer));
+  }
+
+  @Test
+  public void validElementContentCData() throws IOException {
+    Buffer buffer = new Buffer();
+    XmlWriter writer = XmlWriter.of(buffer)
+            .xmlDeclaration()
+            .beginElement("root")
+            .beginElement("foo")
+            .attribute("other", 123)
+            .textContent("hello world")
+            .textContentAsCData("Hello<>world")
+            .textContent("hello world")
+            .endElement()
+            .endElement();
+
+    Assert.assertEquals(
+            "<?xml version=\"1.0\" encoding=\"UTF-8\"?><root><foo other=\"123\">hello world<![CDATA[Hello<>world]]>hello world</foo></root>",
+            TestUtils.bufferToString(buffer));
+  }
+
+  @Test
+  public void xmlDeclarationCharset() throws IOException {
+    Buffer buffer = new Buffer();
+    XmlWriter.of(buffer, StandardCharsets.ISO_8859_1)
+            .xmlDeclaration()
+            .beginElement("root")
+            .endElement()
+            .close();
+    String actual = TestUtils.bufferToString(buffer);
+    String expected = "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?><root/>";
+
+    Assert.assertEquals(expected, actual);
+  }
+
+  @Test
+  public void iso_8859_1() throws IOException {
+    Buffer buffer = new Buffer();
+    ByteString encoded = ByteString.encodeUtf8("Lorem superposés valise pourparlers rêver chiots rendez-vous naissance Eiffel myrtille.");
+    XmlWriter.of(buffer, StandardCharsets.ISO_8859_1)
+            .xmlDeclaration()
+            .beginElement("root")
+            .textContent(encoded.string(StandardCharsets.ISO_8859_1))
+            .endElement()
+            .close();
+    String actual = TestUtils.bufferToString(buffer);
+
+    String expected = TestUtils.sourceForFile("iso_8859_1.xml")
+            .readString(StandardCharsets.ISO_8859_1);
+
+    Assert.assertEquals(expected, actual);
   }
 }

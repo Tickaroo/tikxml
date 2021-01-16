@@ -19,6 +19,7 @@
 package com.tickaroo.tikxml;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
 import okio.Buffer;
 import org.junit.Assert;
@@ -1155,6 +1156,16 @@ public class XmlReaderTest {
             } else if (reader.hasTextContent()) {
                 reader.skipTextContent();
             }
+        }
+    }
+
+    @Test
+    public void iso_8859_1() throws IOException {
+       try (XmlReader reader = XmlReader.of(TestUtils.sourceForFile("iso_8859_1.xml"), StandardCharsets.ISO_8859_1)) {
+            reader.beginElement();
+            reader.nextElementName();
+            Assert.assertEquals("Lorem superposés valise pourparlers rêver chiots rendez-vous naissance Eiffel myrtille.", reader.nextTextContent());
+            reader.endElement();
         }
     }
 }
