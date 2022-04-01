@@ -6,7 +6,7 @@ Please note that this is still **work in progress!**, although quite stable and 
 A fast xml parser for android (and java)
 
 ```groovy
-implementation 'com.tickaroo.tikxml:annotation:0.8.15'
+implementation 'com.tickaroo.tikxml:annotation:0.8.13'
 implementation 'com.tickaroo.tikxml:core:0.8.15'
 
 annotationProcessor 'com.tickaroo.tikxml:processor:0.8.15'
