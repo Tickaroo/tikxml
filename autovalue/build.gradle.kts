@@ -1,15 +1,16 @@
 plugins {
-    java
+    `java-library`
     id("kotlin")
+    id("com.vanniktech.maven.publish")
 }
 // apply(from = "../maven-push-java-lib.gradle")
-apply (plugin = "com.vanniktech.maven.publish")
+//apply (plugin = "com.vanniktech.maven.publish")
 
 dependencies {
-    compile(project(":core"))
-    compile(project(":annotation"))
-    compile(project(":processor-common"))
-    compile(Deps.autoValueAnnotation)
+    api(project(":core"))
+    api(project(":annotation"))
+    api(project(":processor-common"))
+    api(Deps.autoValueAnnotation)
     implementation(Deps.javaPoet)
     implementation(Deps.kotlinStdLib)
     implementation(Deps.autoValueProcessor)

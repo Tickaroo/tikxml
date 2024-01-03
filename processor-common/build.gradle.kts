@@ -1,13 +1,14 @@
 plugins {
     java
     id("kotlin")
+    id("com.vanniktech.maven.publish")
 }
 
 // apply(from = "$rootDir/maven-push-java-lib.gradle")
-apply (plugin = "com.vanniktech.maven.publish")
+// apply (plugin = "com.vanniktech.maven.publish")
 
 dependencies {
-    compile(project(":annotation"))
-    compile(Deps.kotlinStdLib)
+    api(project(":annotation"))
+    implementation(Deps.kotlinStdLib)
     implementation(Deps.kotlinReflect)
 }

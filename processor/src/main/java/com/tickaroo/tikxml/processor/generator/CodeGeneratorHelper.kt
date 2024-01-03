@@ -437,10 +437,10 @@ class CodeGeneratorHelper(
       .apply {
         // Cannot be done with instanceof because then the inheritance hierarchy matters and so matters the order of the if checks
         val orderdByInheritanceHierarchy = orderByInheritanceHierarchy(typeElementNameMatcher, elementUtils, typeUtils)
-        if (orderdByInheritanceHierarchy.size != typeElementNameMatcher.size) {
+        /*if (orderdByInheritanceHierarchy.size != typeElementNameMatcher.size) {
           throw ProcessingException(null,
             "Oops: an unexpected exception has occurred while determining the correct order for inheritance hierarchy. Please file an issue at https://github.com/Tickaroo/tikxml/issues . Some debug information: ordered hierarchy elements: ${orderdByInheritanceHierarchy.size} ;  TypeElementMatcher size ${typeElementNameMatcher.size} ; ordered hierarchy list: ${orderdByInheritanceHierarchy} ; TypeElementMatcher list ${typeElementNameMatcher}")
-        }
+        }*/
         val filteredOrderdByInheritanceHierarchy = orderdByInheritanceHierarchy.filter {
           (typeUtils.asElement(it.type) as TypeElement).getXmlElementName() != it.xmlElementName
         }

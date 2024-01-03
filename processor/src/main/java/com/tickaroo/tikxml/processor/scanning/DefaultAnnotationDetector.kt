@@ -53,6 +53,7 @@ import com.tickaroo.tikxml.processor.utils.isPublic
 import com.tickaroo.tikxml.processor.utils.isSamePackageAs
 import com.tickaroo.tikxml.processor.utils.isString
 import java.util.Locale
+import javax.annotation.processing.Messager
 import javax.lang.model.element.TypeElement
 import javax.lang.model.element.VariableElement
 import javax.lang.model.type.DeclaredType
@@ -63,13 +64,14 @@ import javax.lang.model.type.WildcardType
 import javax.lang.model.util.ElementFilter
 import javax.lang.model.util.Elements
 import javax.lang.model.util.Types
+import javax.tools.Diagnostic
 
 /**
  * A [AnnotationScanner] that scans the element by checking for TikXml annotations
  * @author Hannes Dorfmann
  */
 @ExperimentalStdlibApi
-open class DefaultAnnotationDetector(protected val elementUtils: Elements, protected val typeUtils: Types) : AnnotationDetector {
+open class DefaultAnnotationDetector(protected val elementUtils: Elements, protected val typeUtils: Types, private val messager: Messager) : AnnotationDetector {
 
   override val genericTypes = mutableMapOf<String, Set<String>?>()
 
@@ -323,6 +325,7 @@ open class DefaultAnnotationDetector(protected val elementUtils: Elements, prote
       namingMap[simpleName] = PolymorphicTypeElementNameMatcher(simpleName, elementUtils.getTypeElement(qualifiedName).asType())
     }
 
+
     // maybe override with matcher annotations
     for (matcher in matcherAnnotations) {
       try {
@@ -333,9 +336,15 @@ open class DefaultAnnotationDetector(protected val elementUtils: Elements, prote
         checkTargetClassXmlAnnotated(element, typeElement)
         val xmlElementName = if (matcher.name.isEmpty()) typeElement.getXmlElementName() else matcher.name
 
+        if (element.getSurroundingClassQualifiedName().endsWith("m.CompanyDataClass")) {
+          messager.printMessage(
+            Diagnostic.Kind.WARNING, "Test2 -> ${namingMap.entries.joinToString()} "
+          )
+        }
+
         namingMap.values.firstOrNull { elementNameMatcher -> elementNameMatcher.type == typeElement.asType() }
           ?.also { elementNameMatcher ->
-            namingMap.remove(elementNameMatcher.xmlElementName)
+            //namingMap.remove(elementNameMatcher.xmlElementName)
           } // delete common generic type if already in list
         namingMap[xmlElementName] = PolymorphicTypeElementNameMatcher(xmlElementName, typeElement.asType())
       } catch (mte: MirroredTypeException) {
@@ -353,7 +362,7 @@ open class DefaultAnnotationDetector(protected val elementUtils: Elements, prote
 
         namingMap.values.firstOrNull { elementNameMatcher -> elementNameMatcher.type == typeMirror }
           ?.also { elementNameMatcher ->
-            namingMap.remove(elementNameMatcher.xmlElementName)
+            //namingMap.remove(elementNameMatcher.xmlElementName)
           }
         namingMap[xmlElementName] = PolymorphicTypeElementNameMatcher(xmlElementName, typeElement.asType())
       }

@@ -80,7 +80,7 @@ public class XmlProcessor extends AbstractProcessor {
     filer = processingEnv.getFiler();
     elementUtils = processingEnv.getElementUtils();
     typeUtils = processingEnv.getTypeUtils();
-    annotationDetector = new DefaultAnnotationDetector(elementUtils, typeUtils);
+    annotationDetector = new DefaultAnnotationDetector(elementUtils, typeUtils, messager);
   }
 
   @Override
@@ -109,7 +109,7 @@ public class XmlProcessor extends AbstractProcessor {
     try {
       String primitiveTypeConverterOptions = processingEnv.getOptions().get(OPTION_TYPE_CONVERTER_FOR_PRIMITIVES);
       Set<String> primitiveTypeConverters = readPrimitiveTypeConverterOptions(primitiveTypeConverterOptions);
-      AnnotationScanner scanner = new AnnotationScanner(elementUtils, typeUtils, annotationDetector);
+      AnnotationScanner scanner = new AnnotationScanner(elementUtils, typeUtils, annotationDetector, messager);
 
       Set<? extends Element> genericAdapterElements = roundEnv.getElementsAnnotatedWith(GenericAdapter.class);
 
