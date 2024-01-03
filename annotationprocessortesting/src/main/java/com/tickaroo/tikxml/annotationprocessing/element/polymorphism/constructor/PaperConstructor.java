@@ -36,7 +36,7 @@ public class PaperConstructor {
       @Element(
           typesByElement = {
               @ElementNameMatcher(type = JournalistConstructor.class, name = "journalist"),
-              @ElementNameMatcher(type = OrganisationConstructor.class, name = "organisation")
+              @ElementNameMatcher(type = OrganisationConstructor.class, name = "organisation"),
           }
       ) WriterConstructor writer) {
     this.writer = writer;

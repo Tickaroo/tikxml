@@ -1,6 +1,6 @@
 object Versions {
   const val autoService = "1.0-rc7"
-  const val autoValue = "1.7.3"
+  const val autoValue = "1.10.4"
   const val junit = "4.13"
   const val kotlin = "1.9.20"
   const val javaPoet = "1.13.0"

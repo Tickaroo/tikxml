@@ -41,6 +41,7 @@ import com.tickaroo.tikxml.typeadapter.TypeAdapter
 import java.io.IOException
 import java.util.Locale
 import javax.annotation.processing.Filer
+import javax.annotation.processing.Messager
 import javax.lang.model.element.Modifier
 import javax.lang.model.element.Modifier.PRIVATE
 import javax.lang.model.element.Modifier.PUBLIC
@@ -62,7 +63,8 @@ class TypeAdapterCodeGenerator(
   private val elementUtils: Elements,
   private val typeUtils: Types,
   private val typeConvertersForPrimitives: Set<String>,
-  private val mapImpl: String?) {
+  private val mapImpl: String?,
+  private val messager: Messager,) {
 
   /**
    * The name of the class that holds some value when we have to parse xml into a constructor
@@ -81,7 +83,7 @@ class TypeAdapterCodeGenerator(
 
     val customTypeConverterManager = CustomTypeConverterManager()
     val codeGenUtils =
-      CodeGeneratorHelper(customTypeConverterManager, typeConvertersForPrimitives, parseIntoValueType, elementUtils, typeUtils)
+      CodeGeneratorHelper(customTypeConverterManager, typeConvertersForPrimitives, parseIntoValueType, elementUtils, typeUtils, messager)
 
     val constructorBuilder = MethodSpec.constructorBuilder()
       .addModifiers(PUBLIC)

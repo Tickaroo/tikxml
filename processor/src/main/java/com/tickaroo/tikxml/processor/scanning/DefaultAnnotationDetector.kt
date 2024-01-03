@@ -317,14 +317,13 @@ open class DefaultAnnotationDetector(protected val elementUtils: Elements, prote
         "Neither @${ElementNameMatcher::class.simpleName} nor @${GenericAdapter::class.simpleName} specified to resolve polymorphism!")
     }
 
-    val namingMap = hashMapOf<String, PolymorphicTypeElementNameMatcher>()
+    val namingMap = linkedMapOf<String, PolymorphicTypeElementNameMatcher>()
 
     // add generic types first
     genericTypes?.forEach { qualifiedName ->
       val simpleName = elementUtils.getTypeElement(qualifiedName).getXmlElementName()
       namingMap[simpleName] = PolymorphicTypeElementNameMatcher(simpleName, elementUtils.getTypeElement(qualifiedName).asType())
     }
-
 
     // maybe override with matcher annotations
     for (matcher in matcherAnnotations) {
@@ -336,15 +335,9 @@ open class DefaultAnnotationDetector(protected val elementUtils: Elements, prote
         checkTargetClassXmlAnnotated(element, typeElement)
         val xmlElementName = if (matcher.name.isEmpty()) typeElement.getXmlElementName() else matcher.name
 
-        if (element.getSurroundingClassQualifiedName().endsWith("m.CompanyDataClass")) {
-          messager.printMessage(
-            Diagnostic.Kind.WARNING, "Test2 -> ${namingMap.entries.joinToString()} "
-          )
-        }
-
         namingMap.values.firstOrNull { elementNameMatcher -> elementNameMatcher.type == typeElement.asType() }
           ?.also { elementNameMatcher ->
-            //namingMap.remove(elementNameMatcher.xmlElementName)
+            namingMap.remove(elementNameMatcher.xmlElementName)
           } // delete common generic type if already in list
         namingMap[xmlElementName] = PolymorphicTypeElementNameMatcher(xmlElementName, typeElement.asType())
       } catch (mte: MirroredTypeException) {
@@ -360,11 +353,17 @@ open class DefaultAnnotationDetector(protected val elementUtils: Elements, prote
 
         val xmlElementName = if (matcher.name.isEmpty()) typeElement.getXmlElementName() else matcher.name
 
-        namingMap.values.firstOrNull { elementNameMatcher -> elementNameMatcher.type == typeMirror }
+        namingMap.values.firstOrNull { elementNameMatcher -> elementNameMatcher.xmlElementName == xmlElementName }
           ?.also { elementNameMatcher ->
-            //namingMap.remove(elementNameMatcher.xmlElementName)
+            namingMap.remove(elementNameMatcher.xmlElementName)
           }
         namingMap[xmlElementName] = PolymorphicTypeElementNameMatcher(xmlElementName, typeElement.asType())
+
+        if (element.getSurroundingClassQualifiedName().endsWith("CompanyConstructor")) {
+          messager.printMessage(
+            Diagnostic.Kind.WARNING, "Test2 -> ${namingMap.entries.joinToString()} "
+          )
+        }
       }
     }
 

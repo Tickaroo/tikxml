@@ -48,12 +48,14 @@ import java.io.IOException
 import java.util.Collections
 import java.util.HashMap
 import java.util.Locale
+import javax.annotation.processing.Messager
 import javax.lang.model.element.Element
 import javax.lang.model.element.Modifier
 import javax.lang.model.element.TypeElement
 import javax.lang.model.type.TypeMirror
 import javax.lang.model.util.Elements
 import javax.lang.model.util.Types
+import javax.tools.Diagnostic
 
 /**
  *
@@ -64,7 +66,8 @@ class CodeGeneratorHelper(
   val typeConvertersForPrimitives: Set<String>,
   val valueType: ClassName,
   val elementUtils: Elements,
-  val typeUtils: Types
+  val typeUtils: Types,
+  val messager: Messager,
 ) {
 
   // Constants

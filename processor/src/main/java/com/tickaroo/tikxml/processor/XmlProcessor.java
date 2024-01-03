@@ -148,7 +148,7 @@ public class XmlProcessor extends AbstractProcessor {
 
         String mapImpl = processingEnv.getOptions().get(MAP_IMPL);
         TypeAdapterCodeGenerator generator =
-            new TypeAdapterCodeGenerator(filer, elementUtils, typeUtils, primitiveTypeConverters, mapImpl);
+            new TypeAdapterCodeGenerator(filer, elementUtils, typeUtils, primitiveTypeConverters, mapImpl, messager);
         generator.generateCode(clazz);
       }
     } catch (ProcessingException e) {

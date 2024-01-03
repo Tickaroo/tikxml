@@ -23,6 +23,7 @@ import com.tickaroo.tikxml.annotation.ElementNameMatcher;
 import com.tickaroo.tikxml.annotation.PropertyElement;
 import com.tickaroo.tikxml.annotation.Xml;
 import com.tickaroo.tikxml.annotationprocessing.elementlist.polymorphism.Person;
+
 import java.util.List;
 import java.util.Objects;
 
@@ -32,39 +33,42 @@ import java.util.Objects;
 @Xml(name = "company")
 public class CompanyConstructor {
 
-  private String name;
-  private List<Person> persons;
+    private String name;
+    private List<Person> persons;
 
-  public CompanyConstructor(@PropertyElement String name,
-      @Element(typesByElement = {
-          @ElementNameMatcher(type = BossConstructor.class, name = "boss"),
-          @ElementNameMatcher(type = EmployeeConstructor.class, name = "employee"),
-      }) List<Person> persons) {
-    this.name = name;
-    this.persons = persons;
-  }
+    public CompanyConstructor(
+            @PropertyElement String name,
+            @Element(typesByElement = {
+                    @ElementNameMatcher(type = BossConstructor.class, name = "boss"),
+                    @ElementNameMatcher(type = EmployeeConstructor.class, name = "employee"),
+            }) List<Person> persons) {
+        this.name = name;
+        this.persons = persons;
+    }
 
-  public String getName() {
-    return name;
-  }
+    public String getName() {
+        return name;
+    }
 
-  public List<Person> getPersons() {
-    return persons;
-  }
+    public List<Person> getPersons() {
+        return persons;
+    }
 
-  @Override public boolean equals(Object o) {
-    if (this == o) return true;
-    if (!(o instanceof CompanyConstructor)) return false;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof CompanyConstructor)) return false;
 
-    CompanyConstructor that = (CompanyConstructor) o;
+        CompanyConstructor that = (CompanyConstructor) o;
 
-    if (!Objects.equals(name, that.name)) return false;
-    return Objects.equals(persons, that.persons);
-  }
+        if (!Objects.equals(name, that.name)) return false;
+        return Objects.equals(persons, that.persons);
+    }
 
-  @Override public int hashCode() {
-    int result = name != null ? name.hashCode() : 0;
-    result = 31 * result + (persons != null ? persons.hashCode() : 0);
-    return result;
-  }
+    @Override
+    public int hashCode() {
+        int result = name != null ? name.hashCode() : 0;
+        result = 31 * result + (persons != null ? persons.hashCode() : 0);
+        return result;
+    }
 }
