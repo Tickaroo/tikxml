@@ -1,5 +1,5 @@
 plugins {
-    java
+    `java-library`
     id("com.vanniktech.maven.publish")
 }
 
@@ -7,7 +7,7 @@ plugins {
 // apply (plugin = "com.vanniktech.maven.publish")
 
 dependencies {
-    implementation(Deps.okio)
+    api(Deps.okio)
     testImplementation(Deps.junit)
     testImplementation(Deps.assertj)
 }
