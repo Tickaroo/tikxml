@@ -5,7 +5,8 @@ jobs:
   build_and_test:
     working_directory: ~/repo
     docker:
-      - image: circleci/openjdk:8
+      - image: cimg/openjdk:17.0
+    #- image: circleci/openjdk:8
     #  - image: circleci/android:api-29*/
     environment:
       _JAVA_OPTIONS: "-Xmx3g"
@@ -38,7 +39,7 @@ jobs:
   upload_to_oss_sonatype:
     working_directory: ~/repo
     docker:
-      - image: circleci/openjdk:8
+      - image: cimg/openjdk:17.0
     #  - image: circleci/android:api-29*/
     environment:
       _JAVA_OPTIONS: "-Xmx3g"
