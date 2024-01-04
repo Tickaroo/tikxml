@@ -6,10 +6,10 @@ plugins {
 // apply(plugin = "com.vanniktech.maven.publish")
 
 dependencies {
-    implementation(project(":core"))
-    implementation(project(":annotation"))
-    implementation(Deps.retrofit)
-    implementation(Deps.kotlinStdLib)
+    api(project(":core"))
+    api(project(":annotation"))
+    api(Deps.retrofit)
+    api(Deps.kotlinStdLib)
     implementation(project(":processor-common"))
     testAnnotationProcessor(project(":processor"))
     testImplementation(Deps.mockWebserver)
