@@ -72,7 +72,7 @@ jobs:
                   echo "signing.secretKeyRingFile=/home/circleci/.gnupg/secring.gpg" >> gradle.properties
       - run:
           name: Deploy artifacts
-          command: ./gradlew publish
+          command: ./gradlew publishAllPublicationsToMavenCentralRepository --no-configuration-cache
 
 workflows:
   version: 2
