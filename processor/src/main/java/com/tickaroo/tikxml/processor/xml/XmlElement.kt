@@ -123,8 +123,17 @@ interface XmlElement {
       } else {
         // Conflict
         val variableField = toInsert.element
-        throw ProcessingException(variableField,
-          "Conflict: $toInsert is in conflict with $existingElement. Maybe both have the same xml name '${toInsert.name}' (you can change that via annotations) or @${Path::class.simpleName} is causing this conflict.")
+        if (toInsert is PolymorphicSubstitutionField || toInsert is PolymorphicSubstitutionListField) {
+          throw ProcessingException(
+            variableField,
+            "Conflict: $toInsert is in conflict with $existingElement. Maybe both have the same xml name or type or @${Path::class.simpleName} is causing this conflict."
+          )
+        } else {
+          throw ProcessingException(
+            variableField,
+            "Conflict: $toInsert is in conflict with $existingElement. Maybe both have the same xml name '${toInsert.name}' (you can change that via annotations) or @${Path::class.simpleName} is causing this conflict."
+          )
+        }
       }
 
     } else {

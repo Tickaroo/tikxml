@@ -593,7 +593,6 @@ class AnnotationScannerTest {
       "     @${ElementNameMatcher::class.qualifiedName}(name=\"b\", type=B.class) ",
       "   })",
       "   Root element;",
-      "",
       "   @${Element::class.qualifiedName}(name=\"a\")",
       "   Root a;",
       "   @${Xml::class.qualifiedName}",
@@ -608,7 +607,7 @@ class AnnotationScannerTest {
       .that(componentFile).processedWith(XmlProcessor())
       .failsToCompile()
       .withErrorContaining(
-        "Conflict: field 'a' in class test.PolymorphicElement is in conflict with field 'element' in class test.PolymorphicElement. Maybe both have the same xml name 'a' (you can change that via annotations) or @${Path::class.simpleName} is causing this conflict.")
+        "Conflict: field 'a' in class test.PolymorphicElement is in conflict with field 'element' in class test.PolymorphicElement. Maybe both have the same xml name or type or @${Path::class.simpleName} is causing this conflict.")
   }
 
   @Test
@@ -667,7 +666,7 @@ class AnnotationScannerTest {
       .that(componentFile).processedWith(XmlProcessor())
       .failsToCompile()
       .withErrorContaining(
-        "Conflict: field 'element' in class test.PolymorphicElement is in conflict with test.PolymorphicElement. Maybe both have the same xml name 'b' (you can change that via annotations) or @${Path::class.simpleName} is causing this conflict.")
+        "Conflict: field 'element' in class test.PolymorphicElement is in conflict with test.PolymorphicElement. Maybe both have the same xml name or type or @${Path::class.simpleName} is causing this conflict.")
   }
 
   /// LIST TESTS
@@ -727,7 +726,7 @@ class AnnotationScannerTest {
     val componentFile = JavaFileObjects.forSourceLines("test.PolymorphicElement",
       "package test;",
       "@${Xml::class.qualifiedName}",
-      "class PolymorphicElement {",
+      "class PolymorphicElement{",
       "   @${Element::class.qualifiedName} ( typesByElement = {",
       "     @${ElementNameMatcher::class.qualifiedName}(name=\"a\", type=A.class),",
       "     @${ElementNameMatcher::class.qualifiedName}(name=\"b\", type=B.class)",
@@ -804,7 +803,7 @@ class AnnotationScannerTest {
       .processedWith(XmlProcessor())
       .failsToCompile()
       .withErrorContaining(
-        "Conflict: field 'a' in class test.PolymorphicElement is in conflict with field 'element' in class test.PolymorphicElement. Maybe both have the same xml name 'a' (you can change that via annotations) or @${Path::class.simpleName} is causing this conflict.")
+        "Conflict: field 'a' in class test.PolymorphicElement is in conflict with field 'element' in class test.PolymorphicElement. Maybe both have the same xml name or type or @${Path::class.simpleName} is causing this conflict.")
   }
 
   @Test
@@ -832,7 +831,7 @@ class AnnotationScannerTest {
       .that(componentFile).processedWith(XmlProcessor())
       .failsToCompile()
       .withErrorContaining(
-        "Conflict: field 'a' in class test.PolymorphicElement is in conflict with field 'element' in class test.PolymorphicElement. Maybe both have the same xml name 'a' (you can change that via annotations) or @${Path::class.java.simpleName} is causing this conflict.")
+        "Conflict: field 'a' in class test.PolymorphicElement is in conflict with field 'element' in class test.PolymorphicElement. Maybe both have the same xml name or type or @${Path::class.simpleName} is causing this conflict.")
   }
 
   @Test
@@ -942,7 +941,7 @@ class AnnotationScannerTest {
       .that(componentFile).processedWith(XmlProcessor())
       .failsToCompile()
       .withErrorContaining(
-        "Conflict: field 'element' in class test.PolymorphicElement is in conflict with test.PolymorphicElement. Maybe both have the same xml name 'a' (you can change that via annotations) or @${Path::class.simpleName} is causing this conflict.")
+        "Conflict: field 'element' in class test.PolymorphicElement is in conflict with test.PolymorphicElement. Maybe both have the same xml name or type or @${Path::class.simpleName} is causing this conflict.")
   }
 
   @Test
@@ -969,7 +968,7 @@ class AnnotationScannerTest {
       .that(componentFile).processedWith(XmlProcessor())
       .failsToCompile()
       .withErrorContaining(
-        "Conflict: field 'element' in class test.PolymorphicElement is in conflict with test.PolymorphicElement. Maybe both have the same xml name 'a' (you can change that via annotations) or @${Path::class.simpleName} is causing this conflict.")
+        "Conflict: field 'element' in class test.PolymorphicElement is in conflict with test.PolymorphicElement. Maybe both have the same xml name or type or @${Path::class.simpleName} is causing this conflict.")
   }
 
   @Test

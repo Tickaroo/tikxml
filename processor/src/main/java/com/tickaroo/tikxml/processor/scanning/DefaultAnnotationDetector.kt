@@ -358,12 +358,6 @@ open class DefaultAnnotationDetector(protected val elementUtils: Elements, prote
             namingMap.remove(elementNameMatcher.xmlElementName)
           }
         namingMap[xmlElementName] = PolymorphicTypeElementNameMatcher(xmlElementName, typeElement.asType())
-
-        if (element.getSurroundingClassQualifiedName().endsWith("CompanyConstructor")) {
-          messager.printMessage(
-            Diagnostic.Kind.WARNING, "Test2 -> ${namingMap.entries.joinToString()} "
-          )
-        }
       }
     }
 
