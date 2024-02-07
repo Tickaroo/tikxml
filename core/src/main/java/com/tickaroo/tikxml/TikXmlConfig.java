@@ -21,6 +21,8 @@ package com.tickaroo.tikxml;
 import com.tickaroo.tikxml.typeadapter.TypeAdapter;
 
 import java.lang.reflect.Type;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 /**
  * Holds the config for parsing and writing xml via {@link TikXml}
@@ -34,6 +36,7 @@ public final class TikXmlConfig {
   TypeConverters typeConverters = new TypeConverters();
   TypeAdapters typeAdapters = new TypeAdapters();
   boolean writeDefaultXmlDeclaration = true;
+  Charset charset = StandardCharsets.UTF_8;
 
   TikXmlConfig() {
   }
@@ -56,6 +59,15 @@ public final class TikXmlConfig {
    */
   public boolean writeDefaultXmlDeclaration() {
     return writeDefaultXmlDeclaration;
+  }
+
+  /**
+   * The charset
+   *
+   * @return character encoding set to use when reading and writing the xml document
+   */
+  public Charset charset() {
+    return charset;
   }
 
   /**
