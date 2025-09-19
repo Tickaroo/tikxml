@@ -17,6 +17,10 @@ jobs:
           key: v1-gradle-wrapper-{{ checksum "gradle/wrapper/gradle-wrapper.properties" }}
       - restore_cache:
           key: v1-gradle-cache-{{ checksum "build.gradle" }}
+      - run: echo $SONATYPE_NEXUS_USERNAME
+      - run: echo $SONATYPE_NEXUS_PASSWORD
+      - run: echo $ORG_GRADLE_PROJECT_mavenCentralUsername
+      - run: echo $ORG_GRADLE_PROJECT_mavenCentralPassword
       - run:
           name: Build and test library
           command: "./gradlew build test"
