@@ -15,6 +15,10 @@ buildscript {
   }
 }
 
+plugins {
+  id 'com.vanniktech.maven.publish' version '0.34.0' apply false
+}
+
 allprojects {
   repositories {
     google()
@@ -23,6 +27,19 @@ allprojects {
     maven {
       url "http://oss.sonatype.org/content/repositories/snapshots"
       allowInsecureProtocol = true
+    }
+  }
+}
+
+subprojects {
+  plugins.withId('com.vanniktech.maven.publish') {
+    def isJitpack = System.getenv('JITPACK') == 'true'
+    def isSnapshot = version.toString().endsWith('SNAPSHOT')
+
+    mavenPublishing {
+      if (!isJitpack && !isSnapshot) {
+        signAllPublications()
+      }
     }
   }
 }
